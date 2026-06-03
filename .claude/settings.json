@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc --noEmit *)",
+      "Bash(npx prisma migrate status *)",
+      "Bash(npx prisma migrate status)",
+      "Bash(curl -s http://localhost*)",
+      "Bash(curl -s -o /dev/null *)",
+      "Bash(ollama list)",
+      "Bash(pg_isready *)",
+      "Bash(where psql *)",
+      "Bash(npm --version)",
+      "Bash(npm config get *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\Hp\\\\Documents\\\\Projects\\\\SES\" -Recurse -Name)",
+      "PowerShell(Get-Process -Name \"node\" -ErrorAction SilentlyContinue)"
+    ]
+  }
+}

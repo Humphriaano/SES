@@ -1,0 +1,5808 @@
+{
+  "panels": [
+    {
+      "id": "panel_0",
+      "panelName": "Renal function tests",
+      "searchNames": [
+        "Renal function tests",
+        "RFTs",
+        "Kidney function tests",
+        "Urea and Electrolytes",
+        "U & Es"
+      ],
+      "specimen": "Blood",
+      "components": [
+        {
+          "id": 31,
+          "name": "Creatinine",
+          "abbr": "Creatinine",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 32,
+          "name": "Creatinine Clearance",
+          "abbr": "Creatinine Clrnce",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "ml/min",
+          "referenceRange": null
+        },
+        {
+          "id": 33,
+          "name": "Blood Urea Nitrogen",
+          "abbr": "BUN",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 34,
+          "name": "Sodium",
+          "abbr": "Na+",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 35,
+          "name": "Potassium",
+          "abbr": "K+",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 36,
+          "name": "Chloride",
+          "abbr": "Cl-",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 37,
+          "name": "Bicarbonate (CO2)",
+          "abbr": "CO2",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 39,
+          "name": "Calcium",
+          "abbr": "Ca++",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null
+        }
+      ]
+    },
+    {
+      "id": "panel_1",
+      "panelName": "Liver function tests",
+      "searchNames": [
+        "Liver function tests",
+        "LFTs",
+        "Liver panel",
+        "Liver blood tests"
+      ],
+      "specimen": "Blood",
+      "components": [
+        {
+          "id": 48,
+          "name": "Aspartate aminotransferase (AST or SGOT)",
+          "abbr": "AST",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "U/L",
+          "referenceRange": null
+        },
+        {
+          "id": 49,
+          "name": "Alanine transaminase (ALT or SGPT)",
+          "abbr": "ALT",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "U/L",
+          "referenceRange": null
+        },
+        {
+          "id": 50,
+          "name": "Alkaline phosphatase (ALP)",
+          "abbr": "ALP",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "U/L",
+          "referenceRange": null
+        },
+        {
+          "id": 51,
+          "name": "Gamma-glutamyl transpeptidase (GGT)",
+          "abbr": "GGT",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "U/L",
+          "referenceRange": null
+        },
+        {
+          "id": 43,
+          "name": "Total protein",
+          "abbr": "T/Prot",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "g/L",
+          "referenceRange": null
+        },
+        {
+          "id": 44,
+          "name": "Albumin",
+          "abbr": "Alb",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "g/L",
+          "referenceRange": null
+        },
+        {
+          "id": 45,
+          "name": "Total Bilirubin",
+          "abbr": "Totl. Bili",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 46,
+          "name": "Direct Bilirubin",
+          "abbr": "Dir. Bili",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 47,
+          "name": "Indirect Bilirubin",
+          "abbr": "Indir. Bili",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mcmol/L",
+          "referenceRange": null
+        }
+      ]
+    },
+    {
+      "id": "panel_2",
+      "panelName": "Cardiac enzymes",
+      "searchNames": [
+        "Cardiac enzymes",
+        "Cardiac biomarkers",
+        "Troponin",
+        "Creatine kinase",
+        "Myoglobin"
+      ],
+      "specimen": "Blood",
+      "components": [
+        {
+          "id": 404,
+          "name": "Troponin T",
+          "abbr": "TnT",
+          "specimen": "Blood",
+          "dataType": "free_text",
+          "units": "ng/mL",
+          "referenceRange": null
+        },
+        {
+          "id": 405,
+          "name": "Troponin I",
+          "abbr": "cTnl",
+          "specimen": "Blood",
+          "dataType": "free_text",
+          "units": "ng/mL",
+          "referenceRange": null
+        },
+        {
+          "id": 406,
+          "name": "Creatine Kinase MB",
+          "abbr": "CKMB",
+          "specimen": "Blood",
+          "dataType": "free_text",
+          "units": "ng/mL",
+          "referenceRange": null
+        },
+        {
+          "id": 407,
+          "name": "Creatine Kinase MB",
+          "abbr": "CKMB",
+          "specimen": "Serum",
+          "dataType": "free_text",
+          "units": "ng/mL",
+          "referenceRange": null
+        },
+        {
+          "id": 408,
+          "name": "Creatine Kinase",
+          "abbr": "CK",
+          "specimen": "Blood",
+          "dataType": "free_text",
+          "units": "U/L",
+          "referenceRange": null
+        },
+        {
+          "id": 409,
+          "name": "Myoglobin",
+          "abbr": "",
+          "specimen": "Blood",
+          "dataType": "free_text",
+          "units": "hg/mL",
+          "referenceRange": null
+        }
+      ]
+    },
+    {
+      "id": "panel_3",
+      "panelName": "FBC",
+      "searchNames": [
+        "FBC",
+        "Full blood count",
+        "CBC",
+        "Complete blood count",
+        "Blood cell count"
+      ],
+      "specimen": "Blood",
+      "components": [
+        {
+          "id": 1,
+          "name": "Red Blood Cell count",
+          "abbr": "RBC",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "x10^12/L",
+          "referenceRange": null
+        },
+        {
+          "id": 2,
+          "name": "Haemoglobin",
+          "abbr": "HGB",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "g/dL",
+          "referenceRange": null
+        },
+        {
+          "id": 3,
+          "name": "Haematocrit or Packed Cell Volume",
+          "abbr": "Hct/PCV",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "%",
+          "referenceRange": null
+        },
+        {
+          "id": 4,
+          "name": "Mean Cell Volume",
+          "abbr": "MCV",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "fL",
+          "referenceRange": null
+        },
+        {
+          "id": 5,
+          "name": "Mean Cell Haemoglobin",
+          "abbr": "MCH",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "pg",
+          "referenceRange": null
+        },
+        {
+          "id": 6,
+          "name": "Mean Cell Haemoglobin Concentration",
+          "abbr": "MCHC",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "g/dL",
+          "referenceRange": null
+        },
+        {
+          "id": 7,
+          "name": "RBC Distribution Width",
+          "abbr": "RDW",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "%",
+          "referenceRange": null
+        },
+        {
+          "id": 8,
+          "name": "Reticulocyte Count %",
+          "abbr": "Retic Ct %",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "%",
+          "referenceRange": null
+        },
+        {
+          "id": 9,
+          "name": "Platelet count",
+          "abbr": "PLT",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "x10^9/L",
+          "referenceRange": null
+        },
+        {
+          "id": 11,
+          "name": "White Blood Cell count",
+          "abbr": "WBC",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "x10^9/L",
+          "referenceRange": null
+        },
+        {
+          "id": 12,
+          "name": "Neutrophils (PMN, Band, Seg)",
+          "abbr": "Neutrophils",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "x10^9/L",
+          "referenceRange": null
+        },
+        {
+          "id": 13,
+          "name": "Lymphocyte Count (TLC)",
+          "abbr": "Lymphocyte (TLC)",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "x10^9/L",
+          "referenceRange": null
+        },
+        {
+          "id": 14,
+          "name": "Monocytes",
+          "abbr": "Monocytes",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "x10^9/L",
+          "referenceRange": null
+        },
+        {
+          "id": 15,
+          "name": "Eosinophils",
+          "abbr": "Eosinophils",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "x10^9/L",
+          "referenceRange": null
+        },
+        {
+          "id": 16,
+          "name": "Basophils",
+          "abbr": "Basophils",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "x10^9/L",
+          "referenceRange": null
+        },
+        {
+          "id": 17,
+          "name": "% Neutrophils (PMN, Band, Seg)",
+          "abbr": "% Neutrophils",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "%",
+          "referenceRange": null
+        },
+        {
+          "id": 18,
+          "name": "% Lymphocytes",
+          "abbr": "% Lymphocytes",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "%",
+          "referenceRange": null
+        },
+        {
+          "id": 19,
+          "name": "% Monocytes",
+          "abbr": "% Monocytes",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "%",
+          "referenceRange": null
+        },
+        {
+          "id": 20,
+          "name": "% Eosinophils",
+          "abbr": "% Eosinophils",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "%",
+          "referenceRange": null
+        },
+        {
+          "id": 21,
+          "name": "% Basophils",
+          "abbr": "% Basophils",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "%",
+          "referenceRange": null
+        }
+      ]
+    },
+    {
+      "id": "panel_4",
+      "panelName": "Urine dipstick",
+      "searchNames": [
+        "Urine dipstick",
+        "urinalysis biochemistry",
+        "urinalysis routine",
+        "urine analysis",
+        "urine analysis"
+      ],
+      "specimen": "Urine",
+      "components": [
+        {
+          "id": 185,
+          "name": "Specific gravity",
+          "abbr": "Urine Dpstk Sp. Gravity",
+          "specimen": "Urine",
+          "dataType": "float",
+          "units": null,
+          "referenceRange": null
+        },
+        {
+          "id": 186,
+          "name": "pH",
+          "abbr": "Urine Dpstk pH",
+          "specimen": "Urine",
+          "dataType": "float",
+          "units": "pH",
+          "referenceRange": null
+        },
+        {
+          "id": 187,
+          "name": "Glucose dipstick (+s)",
+          "abbr": "Glucose Dpstk (+s)",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Negative",
+            "Trace",
+            "+",
+            "++",
+            "+++"
+          ]
+        },
+        {
+          "id": 188,
+          "name": "Glucose dipstick (mmol/L)",
+          "abbr": "Glucose Dpstk (mmol/L)",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Negative",
+            "0.5 mmol/L",
+            "14 mmol/L",
+            "28 mmol/L",
+            "55 mmol/L"
+          ]
+        },
+        {
+          "id": 189,
+          "name": "Protein",
+          "abbr": "Urine Dpstk Protein",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Negative",
+            "Trace",
+            "+",
+            "++",
+            "+++",
+            "++++"
+          ]
+        },
+        {
+          "id": 190,
+          "name": "Ketones",
+          "abbr": "Urine Dpstk Ketones",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Negative",
+            "Trace",
+            "Small",
+            "Moderate",
+            "Large"
+          ]
+        },
+        {
+          "id": 191,
+          "name": "Nitrite",
+          "abbr": "Urine Dpstk Nitrite",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Negative",
+            "Trace",
+            "Positive"
+          ]
+        },
+        {
+          "id": 192,
+          "name": "RBCs non haemolyzed (Haematuria)",
+          "abbr": "Urine Dpstk RBCs non haemolysed",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Negative",
+            "+",
+            "++"
+          ]
+        },
+        {
+          "id": 193,
+          "name": "Blood /HGB (Haemoglobinurea)",
+          "abbr": "Urine Dpstk Blood/HGB",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Negative",
+            "Trace",
+            "+",
+            "++",
+            "+++",
+            "++++"
+          ]
+        },
+        {
+          "id": 194,
+          "name": "Leucocytes",
+          "abbr": "Urine Dpstk Leucocytes",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Negative",
+            "Trace",
+            "+",
+            "++",
+            "+++",
+            "++++"
+          ]
+        },
+        {
+          "id": 195,
+          "name": "Urobilinogen",
+          "abbr": "Urine Dpstk Urobilinogen",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Normal",
+            "Trace",
+            "16mcmol/L",
+            "33mcmol/L",
+            "66mcmol/L",
+            "131mcmo"
+          ]
+        },
+        {
+          "id": 197,
+          "name": "Bilirubin",
+          "abbr": "Urine Dpstk Bilirubin",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Negative",
+            "+",
+            "++",
+            "+++"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "panel_5",
+      "panelName": "Urine microscopy",
+      "searchNames": [
+        "Urine microscopy",
+        "Urine sediment analysis",
+        "Urine microscopic exmination"
+      ],
+      "specimen": "Urine",
+      "components": [
+        {
+          "id": 180,
+          "name": "Urine Pus cells",
+          "abbr": "Urine Micro-Pus Cells",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Nil",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10-14",
+            "15-24",
+            ">=25/hpf"
+          ]
+        },
+        {
+          "id": 181,
+          "name": "RBCs",
+          "abbr": "Urine Micro-RBCs",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Nil",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10-14",
+            "15-24",
+            "25-34",
+            "35-50",
+            "Pack"
+          ]
+        },
+        {
+          "id": 182,
+          "name": "Epithelial cells",
+          "abbr": "Urine Micro-Epithelial",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Nil",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10-14",
+            "15-24",
+            ">=25/hpf"
+          ]
+        },
+        {
+          "id": 183,
+          "name": "Urine casts - Hyaline",
+          "abbr": "Urine Casts-Hyaline",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "0-1",
+            "2-4",
+            "5-10",
+            ">=10/lpf"
+          ]
+        },
+        {
+          "id": 178,
+          "name": "Urine Other",
+          "abbr": "Urine Other",
+          "specimen": "Urine",
+          "dataType": "free text",
+          "units": "Free Text",
+          "referenceRange": null
+        },
+        {
+          "id": 276,
+          "name": "Urine direct microscopy, Other specified",
+          "abbr": "Urine microscopy-Other",
+          "specimen": "Urine",
+          "dataType": "free text",
+          "units": "Free text",
+          "referenceRange": "Urine direct microscopy other test component"
+        },
+        {
+          "id": 307,
+          "name": "Casts - Cellular",
+          "abbr": "Casts cellular",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "0-1",
+            "2-4",
+            "5-10",
+            ">=10/lpf"
+          ]
+        },
+        {
+          "id": 308,
+          "name": "Casts - Fatty",
+          "abbr": "Casts fatty",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "0-1",
+            "2-4",
+            "5-10",
+            ">=10/lpf"
+          ]
+        },
+        {
+          "id": 309,
+          "name": "Casts - Granular-coarse",
+          "abbr": "Casts granular coarse",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "0-1",
+            "2-4",
+            "5-10",
+            ">=10/lpf"
+          ]
+        },
+        {
+          "id": 310,
+          "name": "Casts - Granular-fine",
+          "abbr": "Casts granular fine",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "0-1",
+            "2-4",
+            "5-10",
+            ">=10/lpf"
+          ]
+        },
+        {
+          "id": 311,
+          "name": "Casts - Waxy",
+          "abbr": "Casts waxy",
+          "specimen": "Urine",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "0-1",
+            "2-4",
+            "5-10",
+            ">=10/lpf"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "panel_6",
+      "panelName": "Lipid profile",
+      "searchNames": [
+        "Lipid profile",
+        "Lipid test",
+        "lipid panel",
+        "Choleststerol test",
+        "Triglyceride test"
+      ],
+      "specimen": "Blood",
+      "components": [
+        {
+          "id": 55,
+          "name": "Total Cholesterol",
+          "abbr": "Totl. Cholesterol",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 56,
+          "name": "High Density Lipoproteins",
+          "abbr": "HDL",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 57,
+          "name": "Low Density Lipoproteins",
+          "abbr": "LDL",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 58,
+          "name": "Triglycerides",
+          "abbr": "Triglycerides",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null
+        }
+      ]
+    },
+    {
+      "id": "panel_7",
+      "panelName": "Thyroid function test",
+      "searchNames": [
+        "Thyroid function test",
+        "Thyroid blood test",
+        "Thyroid panel"
+      ],
+      "specimen": "Blood",
+      "components": [
+        {
+          "id": 80,
+          "name": "Triiodothyronine",
+          "abbr": "T3",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "nmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 81,
+          "name": "Thyroxine",
+          "abbr": "T4",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "nmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 82,
+          "name": "Thyroid Stimulating Hormone",
+          "abbr": "TSH",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mU/L",
+          "referenceRange": null
+        },
+        {
+          "id": 402,
+          "name": "Free Thyroxine",
+          "abbr": "FT4",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "pmol/L",
+          "referenceRange": null
+        }
+      ]
+    },
+    {
+      "id": "panel_8",
+      "panelName": "Inflammatory markers",
+      "searchNames": [
+        "Inflammatory markers",
+        "Inflammation blood tests"
+      ],
+      "specimen": "Blood",
+      "components": [
+        {
+          "id": 10,
+          "name": "Erythrocyte Sedimentation Rate, Westergren method",
+          "abbr": "ESR",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mm/hr",
+          "referenceRange": "M0-25, F0-42"
+        },
+        {
+          "id": 76,
+          "name": "C-Reactive Protein",
+          "abbr": "CRP",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mg/L",
+          "referenceRange": null
+        }
+      ]
+    },
+    {
+      "id": "panel_9",
+      "panelName": "Sex hormonal profile",
+      "searchNames": [
+        "Sex hormonal profile",
+        "Hormonal panel"
+      ],
+      "specimen": "Blood",
+      "components": [
+        {
+          "id": 83,
+          "name": "Prolactin",
+          "abbr": "Prolactin",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "mU/L",
+          "referenceRange": null
+        },
+        {
+          "id": 84,
+          "name": "Follicle Stimulating Hormone",
+          "abbr": "FSH",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "U/L",
+          "referenceRange": null
+        },
+        {
+          "id": 85,
+          "name": "Luteinizing Hormone",
+          "abbr": "LH",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "U/L",
+          "referenceRange": null
+        },
+        {
+          "id": 86,
+          "name": "Estradiol",
+          "abbr": "Estradiol",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "pmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 87,
+          "name": "Progesterone",
+          "abbr": "Progesterone",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "nmol/L",
+          "referenceRange": null
+        },
+        {
+          "id": 88,
+          "name": "Testosterone",
+          "abbr": "Testosterone",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "nmol/L",
+          "referenceRange": null
+        }
+      ]
+    },
+    {
+      "id": "panel_10",
+      "panelName": "Coagulation profile",
+      "searchNames": [
+        "Coagulation profile",
+        "Coagulation panel"
+      ],
+      "specimen": "Blood",
+      "components": [
+        {
+          "id": 24,
+          "name": "Prothrombin Time",
+          "abbr": "Prothrombin Time",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "sec",
+          "referenceRange": null
+        },
+        {
+          "id": 25,
+          "name": "Partial Thromboplastin Time LI",
+          "abbr": "PTT LI",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "sec",
+          "referenceRange": null
+        },
+        {
+          "id": 26,
+          "name": "Activated Partial Thromboplastin Time",
+          "abbr": "APTT",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "sec",
+          "referenceRange": null
+        },
+        {
+          "id": 27,
+          "name": "Fibrinogen",
+          "abbr": "Fibrinogen",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "g/L",
+          "referenceRange": null
+        },
+        {
+          "id": 9,
+          "name": "Platelet count",
+          "abbr": "PLT",
+          "specimen": "Blood",
+          "dataType": "float",
+          "units": "x10^9/L",
+          "referenceRange": null
+        }
+      ]
+    },
+    {
+      "id": "panel_11",
+      "panelName": "Tumor marker test",
+      "searchNames": [
+        "Tumor marker test",
+        "Cancer marker test",
+        "Biomarker test"
+      ],
+      "specimen": "Blood",
+      "components": [
+        {
+          "id": 409,
+          "name": "Alpha-fetoprotein (AFP)",
+          "abbr": "AFP",
+          "specimen": "Blood",
+          "dataType": "free_text",
+          "units": "μg/mL",
+          "referenceRange": null
+        },
+        {
+          "id": 410,
+          "name": "Alpha-fetoprotein (AFP)",
+          "abbr": "AFP",
+          "specimen": "Blood",
+          "dataType": "free_text",
+          "units": "μg/mL",
+          "referenceRange": null
+        },
+        {
+          "id": 411,
+          "name": "Alpha-fetoprotein (AFP)",
+          "abbr": "AFP",
+          "specimen": "Blood",
+          "dataType": "free_text",
+          "units": "μg/mL",
+          "referenceRange": null
+        },
+        {
+          "id": 412,
+          "name": "Carcinoembryonic antigen",
+          "abbr": "CFA",
+          "specimen": "Blood",
+          "dataType": "free_text",
+          "units": "ng/mL",
+          "referenceRange": null
+        },
+        {
+          "id": 413,
+          "name": "Cancer antigen 125",
+          "abbr": "CA 125",
+          "specimen": "Blood",
+          "dataType": "free_text",
+          "units": "ng/mL",
+          "referenceRange": null
+        },
+        {
+          "id": 414,
+          "name": "Cancer Antigen 15-3",
+          "abbr": "CA 15-3",
+          "specimen": "Blood",
+          "dataType": "free_text",
+          "units": "U/mL",
+          "referenceRange": null
+        },
+        {
+          "id": 415,
+          "name": "Cancer Antigen 19-9",
+          "abbr": "CA 19-9",
+          "specimen": "Blood",
+          "dataType": "free_text",
+          "units": "U/mL",
+          "referenceRange": null
+        }
+      ]
+    }
+  ],
+  "singles": [
+    {
+      "id": 0,
+      "name": "Unspecified",
+      "abbr": "Unspecified",
+      "specimen": "Unspecified",
+      "dataType": "float",
+      "units": "Unspecified",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 1,
+      "name": "Red Blood Cell count",
+      "abbr": "RBC",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "x10^12/L",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 2,
+      "name": "Haemoglobin",
+      "abbr": "HGB",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "g/dL",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 3,
+      "name": "Haematocrit or Packed Cell Volume",
+      "abbr": "Hct/PCV",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 4,
+      "name": "Mean Cell Volume",
+      "abbr": "MCV",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "fL",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 5,
+      "name": "Mean Cell Haemoglobin",
+      "abbr": "MCH",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "pg",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 6,
+      "name": "Mean Cell Haemoglobin Concentration",
+      "abbr": "MCHC",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "g/dL",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 7,
+      "name": "RBC Distribution Width",
+      "abbr": "RDW",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 8,
+      "name": "Reticulocyte Count %",
+      "abbr": "Retic Ct %",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 9,
+      "name": "Platelet count",
+      "abbr": "PLT",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "x10^9/L",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 10,
+      "name": "Erythrocyte Sedimentation Rate, Westergren method",
+      "abbr": "ESR",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mm/hr",
+      "referenceRange": "M0-25, F0-42",
+      "subType": "Haematology"
+    },
+    {
+      "id": 11,
+      "name": "White Blood Cell count",
+      "abbr": "WBC",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "x10^9/L",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 12,
+      "name": "Neutrophils (PMN, Band, Seg)",
+      "abbr": "Neutrophils",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "x10^9/L",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 13,
+      "name": "Lymphocyte Count (TLC)",
+      "abbr": "Lymphocyte (TLC)",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "x10^9/L",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 14,
+      "name": "Monocytes",
+      "abbr": "Monocytes",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "x10^9/L",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 15,
+      "name": "Eosinophils",
+      "abbr": "Eosinophils",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "x10^9/L",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 16,
+      "name": "Basophils",
+      "abbr": "Basophils",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "x10^9/L",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 17,
+      "name": "% Neutrophils (PMN, Band, Seg)",
+      "abbr": "% Neutrophils",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 18,
+      "name": "% Lymphocytes",
+      "abbr": "% Lymphocytes",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 19,
+      "name": "% Monocytes",
+      "abbr": "% Monocytes",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 20,
+      "name": "% Eosinophils",
+      "abbr": "% Eosinophils",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 21,
+      "name": "% Basophils",
+      "abbr": "% Basophils",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 22,
+      "name": "Bleeding Time (Ivy's Method)",
+      "abbr": "Bleeding Time (Ivy)",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "min",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 23,
+      "name": "Clotting Time (Tube Method)",
+      "abbr": "Clotting Time (Tube)",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "min",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 24,
+      "name": "Prothrombin Time",
+      "abbr": "Prothrombin Time",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "sec",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 25,
+      "name": "Partial Thromboplastin Time LI",
+      "abbr": "PTT LI",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "sec",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 26,
+      "name": "Activated Partial Thromboplastin Time",
+      "abbr": "APTT",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "sec",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 27,
+      "name": "Fibrinogen",
+      "abbr": "Fibrinogen",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "g/L",
+      "referenceRange": null,
+      "subType": "Haematology"
+    },
+    {
+      "id": 28,
+      "name": "Sickling test sodium metabisulphite",
+      "abbr": "Sickling Slide",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Haematology",
+      "options": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "id": 29,
+      "name": "Sickling test solubility",
+      "abbr": "HGB-S Solubility",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Haematology",
+      "options": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "id": 30,
+      "name": "HGB Electrophoresis",
+      "abbr": "HGB Electro",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Haematology",
+      "options": [
+        "AA",
+        "AF",
+        "AS",
+        "SS"
+      ]
+    },
+    {
+      "id": 31,
+      "name": "Creatinine",
+      "abbr": "Creatinine",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 32,
+      "name": "Creatinine Clearance",
+      "abbr": "Creatinine Clrnce",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "ml/min",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 33,
+      "name": "Blood Urea Nitrogen",
+      "abbr": "BUN",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 34,
+      "name": "Sodium",
+      "abbr": "Na+",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 35,
+      "name": "Potassium",
+      "abbr": "K+",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 36,
+      "name": "Chloride",
+      "abbr": "Cl-",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 37,
+      "name": "Bicarbonate (CO2)",
+      "abbr": "CO2",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 38,
+      "name": "Lactate",
+      "abbr": "Lactate",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 39,
+      "name": "Calcium",
+      "abbr": "Ca++",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 40,
+      "name": "Magnesium",
+      "abbr": "Mg++",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 41,
+      "name": "Phosphate",
+      "abbr": "Phosphate",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 42,
+      "name": "Serum Osmolality",
+      "abbr": "Ser. Osmolality",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mOsmol/kg",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 43,
+      "name": "Total protein",
+      "abbr": "T/Prot",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "g/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 44,
+      "name": "Albumin",
+      "abbr": "Alb",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "g/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 45,
+      "name": "Total Bilirubin",
+      "abbr": "Totl. Bili",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 46,
+      "name": "Direct Bilirubin",
+      "abbr": "Dir. Bili",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 47,
+      "name": "Indirect Bilirubin",
+      "abbr": "Indir. Bili",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mcmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 48,
+      "name": "Aspartate aminotransferase (AST or SGOT)",
+      "abbr": "AST",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 49,
+      "name": "LFT-Alanine transaminase (ALT or SGPT)",
+      "abbr": "ALT",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 50,
+      "name": "Alkaline phosphatase (ALP)",
+      "abbr": "ALP",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 51,
+      "name": "Gamma-glutamyl transpeptidase (GGT)",
+      "abbr": "GGT",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 52,
+      "name": "Lactic acid dehydrogenase (LDH)",
+      "abbr": "LDH",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 53,
+      "name": "Fasting blood sugar",
+      "abbr": "Glucose - FBS",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 54,
+      "name": "Random blood sugar",
+      "abbr": "Glucose - RBS",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 55,
+      "name": "Total Cholesterol",
+      "abbr": "Totl. Cholesterol",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 56,
+      "name": "High Density Lipoproteins",
+      "abbr": "HDL",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 57,
+      "name": "Low Density Lipoproteins",
+      "abbr": "LDL",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 58,
+      "name": "Triglycerides",
+      "abbr": "Triglycerides",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 59,
+      "name": "Insulin",
+      "abbr": "Insulin",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mcU/mL",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 60,
+      "name": "Uric Acid",
+      "abbr": "Uric acid",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": "male 3.7-8.6, female",
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 61,
+      "name": "Total Glycocylated Haemoglobin",
+      "abbr": "Totl. Glycated HGB",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 62,
+      "name": "Haemoglobin A1C percent",
+      "abbr": "HGB A1C %",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 63,
+      "name": "Creatinine Phospho-kinase",
+      "abbr": "CPK",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 64,
+      "name": "Creatinine Phospho-kinase M-Band",
+      "abbr": "CPK MB",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 65,
+      "name": "Glucose-6-phosphate dehydrogenase",
+      "abbr": "G6PD",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Blood Chemistry",
+      "options": [
+        "Deficient",
+        "Normal"
+      ]
+    },
+    {
+      "id": 66,
+      "name": "Red Blood Cell Folate",
+      "abbr": "RBC Folate",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "nmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 67,
+      "name": "Serum Folate",
+      "abbr": "Serum Folate",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "nmol/L",
+      "referenceRange": "ng/mL",
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 68,
+      "name": "Lipase",
+      "abbr": "Lipase",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 69,
+      "name": "Amylase",
+      "abbr": "Amylase",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 70,
+      "name": "Prostatic Acid phosphatase",
+      "abbr": "PA Phosphatase",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "ng/mL",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 71,
+      "name": "Carcino-Embryonic Antigen",
+      "abbr": "CEA",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mcg/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 72,
+      "name": "Total Iron Binding Capacity",
+      "abbr": "TIBC",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mcmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 73,
+      "name": "Transferrin",
+      "abbr": "Transferrin",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "g/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 74,
+      "name": "Total Iron",
+      "abbr": "Totl. Iron",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mcmol/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 75,
+      "name": "Blood alcohol concentration (BAC)",
+      "abbr": "Blood Alcohol Conc.",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 76,
+      "name": "C-Reactive Protein",
+      "abbr": "CRP",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mg/L",
+      "referenceRange": null,
+      "subType": "Blood Chemistry"
+    },
+    {
+      "id": 77,
+      "name": "Cerbrospinal Fluid Glucose",
+      "abbr": "CSF Glucose",
+      "specimen": "CSF",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Chemistry/Endocrine"
+    },
+    {
+      "id": 78,
+      "name": "Cerbrospinal Fluid Protein",
+      "abbr": "CSF Protein",
+      "specimen": "CSF",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Chemistry/Endocrine"
+    },
+    {
+      "id": 79,
+      "name": "CSF Chloride",
+      "abbr": "CSF Cl-",
+      "specimen": "CSF",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Chemistry/Endocrine"
+    },
+    {
+      "id": 80,
+      "name": "Triiodothyronine",
+      "abbr": "T3",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "nmol/L",
+      "referenceRange": null,
+      "subType": "Chemistry/Endocrine"
+    },
+    {
+      "id": 81,
+      "name": "Thyroxine",
+      "abbr": "T4",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "nmol/L",
+      "referenceRange": null,
+      "subType": "Chemistry/Endocrine"
+    },
+    {
+      "id": 82,
+      "name": "Thyroid Stimulating Hormone",
+      "abbr": "TSH",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mU/L",
+      "referenceRange": null,
+      "subType": "Chemistry/Endocrine"
+    },
+    {
+      "id": 83,
+      "name": "Prolactin",
+      "abbr": "Prolactin",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "mU/L",
+      "referenceRange": null,
+      "subType": "Chemistry/Endocrine"
+    },
+    {
+      "id": 84,
+      "name": "Follicle Stimulating Hormone",
+      "abbr": "FSH",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Chemistry/Endocrine"
+    },
+    {
+      "id": 85,
+      "name": "Luteinizing Hormone",
+      "abbr": "LH",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Chemistry/Endocrine"
+    },
+    {
+      "id": 86,
+      "name": "Estradiol",
+      "abbr": "Estradiol",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "pmol/L",
+      "referenceRange": null,
+      "subType": "Chemistry/Endocrine"
+    },
+    {
+      "id": 87,
+      "name": "Progesterone",
+      "abbr": "Progesterone",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "nmol/L",
+      "referenceRange": null,
+      "subType": "Chemistry/Endocrine"
+    },
+    {
+      "id": 88,
+      "name": "Testosterone",
+      "abbr": "Testosterone",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "nmol/L",
+      "referenceRange": null,
+      "subType": "Chemistry/Endocrine"
+    },
+    {
+      "id": 89,
+      "name": "HIV RDT unspecified",
+      "abbr": "HIV RDT",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 90,
+      "name": "Human Immunodeficiency Virus - Abbott 1/2",
+      "abbr": "HIV-1/2 Abbott",
+      "specimen": "Serum, plasma, blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "HIV type spec. Redundant with Alere Determine. 20131118",
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 91,
+      "name": "Human Immunodeficiency Virus - Genie Fast 1/2",
+      "abbr": "HIV-1/2 Genie Fast",
+      "specimen": "Serum, plasma",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "HIV type spec. Lab test rename. 20131118",
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 92,
+      "name": "Human Immunodeficiency Virus - Bionor 1/2",
+      "abbr": "HIV-1/2 Bionor",
+      "specimen": "Serum, plasma, blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "HIV type spec. Lab test rename. 20131118",
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 93,
+      "name": "Human Immunodeficiency Virus - Bioline 1/2",
+      "abbr": "HIV-1/2 Bioline",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "HIV type spec. 20131118",
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 94,
+      "name": "Human Immunodeficiency Virus - Oraquick Rapid Antibody Test 1/2",
+      "abbr": "HIV-1/2 Oraquick Rapid AB Test",
+      "specimen": "Serum, plasma, blood, saliva",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "HIV type spec. Lab test name specification. 20131118",
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 95,
+      "name": "Human Immunodeficiency Virus - Unigold 1/2",
+      "abbr": "HIV-1/2 Unigold",
+      "specimen": "Serum, plasma, blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "HIV type spec. 20131118",
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 96,
+      "name": "Human Immunodeficiency Virus - Western blot",
+      "abbr": "HIV Western blot",
+      "specimen": "Serum, plasma, blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 97,
+      "name": "Human Immunodeficiency Virus - Other specified",
+      "abbr": "HIV Other Test",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 99,
+      "name": "HIV TNA Real Time PCR",
+      "abbr": "HIV TNA PCR",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Detectable",
+        "Not detected",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 100,
+      "name": "HIV RNA PCR",
+      "abbr": "HIV RNA PCR",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Detectable",
+        "Not detected",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 101,
+      "name": "HIV p24 Antigen",
+      "abbr": "HIV p24 Antigen",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Detectable",
+        "Not detected",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 102,
+      "name": "Viral Load",
+      "abbr": "Viral Load",
+      "specimen": "Plasma",
+      "dataType": "float",
+      "units": "copies/mL",
+      "referenceRange": null,
+      "subType": "Immuno/Sero"
+    },
+    {
+      "id": 103,
+      "name": "CD4 T-cell Cluster of Differentiation 4",
+      "abbr": "CD4 Count",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "cells/mL",
+      "referenceRange": null,
+      "subType": "Immuno/Sero"
+    },
+    {
+      "id": 104,
+      "name": "CD4 % of Total Lymphocyte Count (TLC)",
+      "abbr": "CD4%",
+      "specimen": "Blood",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Immuno/Sero"
+    },
+    {
+      "id": 105,
+      "name": "T-cell Cluster of Differentiation 8",
+      "abbr": "CD8",
+      "specimen": "Serum",
+      "dataType": "float",
+      "units": "cells/mcL",
+      "referenceRange": "M: 318-1891 sd362,",
+      "subType": "Immuno/Sero"
+    },
+    {
+      "id": 106,
+      "name": "CD4 to CD8 Ratio",
+      "abbr": "CD4-CD8 Ratio",
+      "specimen": "Serum",
+      "dataType": "float",
+      "units": null,
+      "referenceRange": "M: 0.4-2.1 sd 0.4,  F: 0.6-2.7 sd 0.5",
+      "subType": "Immuno/Sero"
+    },
+    {
+      "id": 107,
+      "name": "Average CD3",
+      "abbr": "Avg. CD3",
+      "specimen": "Serum",
+      "dataType": "float",
+      "units": "cells/mcL",
+      "referenceRange": "M: 696-2738 sd485,",
+      "subType": "Immuno/Sero"
+    },
+    {
+      "id": 108,
+      "name": "HIV Drug Resistance",
+      "abbr": "HIV Resistance",
+      "specimen": "Serum",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Immuno/Sero"
+    },
+    {
+      "id": 109,
+      "name": "Pregnancy RDT",
+      "abbr": "Pregnancy RDT",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "id": 110,
+      "name": "RPR",
+      "abbr": "Rapid Plasma Reagin",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Reactive",
+        "Non-reactive"
+      ]
+    },
+    {
+      "id": 111,
+      "name": "Treponema Pallidum Haemagglutination",
+      "abbr": "TPHA",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 112,
+      "name": "Cytomegalovirus Immunoglobulin G",
+      "abbr": "CMV IgG",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 113,
+      "name": "Epstein Barr Virus",
+      "abbr": "Epstein Barr Virus",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 114,
+      "name": "Hepatitis A Virus",
+      "abbr": "Hep. A Virus",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 115,
+      "name": "Hepatitis B Virus",
+      "abbr": "Hep. B Virus",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 116,
+      "name": "Hepatitis B surface antigen",
+      "abbr": "Hep. B sAg",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 117,
+      "name": "Hepatitis B core antibody IgM (HBcAb)",
+      "abbr": "Hep. B cAb",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 118,
+      "name": "Hepatitis B surface-antibody (HBsAb)",
+      "abbr": "Hep. B sAb",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 119,
+      "name": "Hepatitis C Virus",
+      "abbr": "Hep. C Virus",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 120,
+      "name": "Herpes Simplex Virus II",
+      "abbr": "HSV-II",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 121,
+      "name": "Varicella (Chicken Pox)",
+      "abbr": "Varicella",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 122,
+      "name": "Rheumatoid Factor",
+      "abbr": "Rheumatoid Factor",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 123,
+      "name": "Toxoplasma",
+      "abbr": "Toxoplasma",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 124,
+      "name": "PPD skin test for TB exposure",
+      "abbr": "PPD TB Skin Test",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive (>=5 mm)",
+        "Negative (<5mm)",
+        "Client did not r"
+      ]
+    },
+    {
+      "id": 125,
+      "name": "AntiStreptolysin-O titer (ASLO)",
+      "abbr": "ASOT",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 126,
+      "name": "Prostate specific antigen",
+      "abbr": "PSA",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 127,
+      "name": "Card agglutination test -Trypanosomiasis",
+      "abbr": "Card Agg. Test Trypanosomiasis",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 128,
+      "name": "Thin Layer Chromatography",
+      "abbr": "Thin Layer Chromatography",
+      "specimen": "Serum",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "drop this one",
+      "subType": "Immuno/Sero"
+    },
+    {
+      "id": 129,
+      "name": "Specimen type",
+      "abbr": "Specimen Type",
+      "specimen": "",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "drop this one",
+      "subType": "Microbiology",
+      "options": [
+        "choice list next tab"
+      ]
+    },
+    {
+      "id": 130,
+      "name": "Specimen",
+      "abbr": "Specimen",
+      "specimen": "",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "drop this one",
+      "subType": "Microbiology",
+      "options": [
+        "choice list next tab"
+      ]
+    },
+    {
+      "id": 131,
+      "name": "Gram variable-other",
+      "abbr": "Gram Variable-Other",
+      "specimen": "Multiple",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 132,
+      "name": "Microscopy, Culture & Sensitivity",
+      "abbr": "Micro C&S",
+      "specimen": "Multiple",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 133,
+      "name": "modifed Thayer Martin culture",
+      "abbr": "MTM for GC",
+      "specimen": "Multiple",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Growth",
+        "no growth"
+      ]
+    },
+    {
+      "id": 134,
+      "name": "Mycology (for candida, other fungus)",
+      "abbr": "Mycology",
+      "specimen": "Multiple",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 135,
+      "name": "Cryptococcal antigen",
+      "abbr": "Cryptococcal Antigen",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 136,
+      "name": "Colony count",
+      "abbr": "Colony Ct.",
+      "specimen": "Multiple",
+      "dataType": "integer",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 137,
+      "name": "Sensitivity1",
+      "abbr": "Sensitivity1",
+      "specimen": "Multiple",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Intermediate",
+        "Resistant",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 138,
+      "name": "Sensitivity2",
+      "abbr": "Sensitivity2",
+      "specimen": "Multiple",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Intermediate",
+        "Resistant",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 139,
+      "name": "Sensitivity3",
+      "abbr": "Sensitivity3",
+      "specimen": "Multiple",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Intermediate",
+        "Resistant",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 140,
+      "name": "Sensitivity4",
+      "abbr": "Sensitivity4",
+      "specimen": "Multiple",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Intermediate",
+        "Resistant",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 141,
+      "name": "Sensitivity5",
+      "abbr": "Sensitivity5",
+      "specimen": "Multiple",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Intermediate",
+        "Resistant",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 142,
+      "name": "Sensitivity6",
+      "abbr": "Sensitivity6",
+      "specimen": "Multiple",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Intermediate",
+        "Resistant",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 143,
+      "name": "Antibiotic1",
+      "abbr": "Antibiotic1",
+      "specimen": "Multiple",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 144,
+      "name": "Antibiotic2",
+      "abbr": "Antibiotic2",
+      "specimen": "Multiple",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 145,
+      "name": "Antibiotic3",
+      "abbr": "Antibiotic3",
+      "specimen": "Multiple",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 146,
+      "name": "Antibiotic4",
+      "abbr": "Antibiotic4",
+      "specimen": "Multiple",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 147,
+      "name": "Antibiotic5",
+      "abbr": "Antibiotic5",
+      "specimen": "Multiple",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 148,
+      "name": "Antibiotic6",
+      "abbr": "Antibiotic6",
+      "specimen": "Multiple",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 149,
+      "name": "Syphilis RDT",
+      "abbr": "Syphilis RDT",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "id": 150,
+      "name": "Malaria RDT",
+      "abbr": "Malaria RDT",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "id": 151,
+      "name": "Blood slide for malaria",
+      "abbr": "MP Slide",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Malaria 1+",
+        "Malaria 2+",
+        "Malaria 3+",
+        "Malaria 4+",
+        "no Mal"
+      ]
+    },
+    {
+      "id": 152,
+      "name": "Giemsa slide for parasites",
+      "abbr": "Giemsa Slide Parasites",
+      "specimen": "Blood",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 153,
+      "name": "Stool consistency",
+      "abbr": "Stool Consistency",
+      "specimen": "Stool",
+      "dataType": "free text",
+      "units": "Formed (solid),Semiformed (not solid),Watery (loos",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 154,
+      "name": "Stool colour",
+      "abbr": "Stool Colour",
+      "specimen": "Stool",
+      "dataType": "free text",
+      "units": "Free Text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 155,
+      "name": "Stool elements",
+      "abbr": "Stool Elements",
+      "specimen": "Stool",
+      "dataType": "free text",
+      "units": "Free Text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 156,
+      "name": "Stool microscopy",
+      "abbr": "Stool routine",
+      "specimen": "Stool",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 157,
+      "name": "Stool O&P (ova and parasites) wet mount-Other, specify",
+      "abbr": "Stool O&P Wet Mount-Other",
+      "specimen": "Stool",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "Stool O&P wet mount slide other test component",
+      "subType": "Microbiology"
+    },
+    {
+      "id": 158,
+      "name": "Stool for Occult Blood",
+      "abbr": "Stool Occult Blood",
+      "specimen": "Stool",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Positive",
+        "Negative x1",
+        "Negative x2",
+        "Negative x3"
+      ]
+    },
+    {
+      "id": 159,
+      "name": "Stool comments",
+      "abbr": "Stool Comments",
+      "specimen": "Stool",
+      "dataType": "free text",
+      "units": "Free Text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 160,
+      "name": "pH vaginal swab (alk assoc. with vaginosis)",
+      "abbr": "vaginal pH",
+      "specimen": "HVS",
+      "dataType": "float",
+      "units": "pH",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 161,
+      "name": "Whiff test (KOH) for vaginosis",
+      "abbr": "KOH Whiff test",
+      "specimen": "HVS",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "id": 162,
+      "name": "HVS  Wet Mount for Pus cells",
+      "abbr": "HVS micro - Pus Cells",
+      "specimen": "HVS",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Nil",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10-14",
+        "15-24",
+        ">=25/hpf"
+      ]
+    },
+    {
+      "id": 163,
+      "name": "HVS gram stain",
+      "abbr": "HVS GS",
+      "specimen": "HVS",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Candida sp.",
+        "Clue cells",
+        "GC",
+        ">5PMN's/hpf",
+        "Bacterial Vaginosis",
+        "Yeast",
+        "Other"
+      ]
+    },
+    {
+      "id": 164,
+      "name": "HVS BV Score",
+      "abbr": "HVS BV Score",
+      "specimen": "HVS",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "id": 165,
+      "name": "HVS BV Comments",
+      "abbr": "HVS BV Comments",
+      "specimen": "HVS",
+      "dataType": "free text",
+      "units": "Free Text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 166,
+      "name": "RBC cell count",
+      "abbr": "RBC Cell Ct.",
+      "specimen": "CSF",
+      "dataType": "float",
+      "units": "mL",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 167,
+      "name": "WBC cell count",
+      "abbr": "WBC Cell Ct.",
+      "specimen": "CSF",
+      "dataType": "float",
+      "units": "mL",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 168,
+      "name": "PMN%",
+      "abbr": "PMN%",
+      "specimen": "CSF",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 169,
+      "name": "Lymphocyte %",
+      "abbr": "Lymphocyte %",
+      "specimen": "CSF",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 170,
+      "name": "Cryptococcus Indian Ink Stain",
+      "abbr": "Crypto-Indian Ink",
+      "specimen": "CSF",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 171,
+      "name": "Giemsa slide for Microorganism",
+      "abbr": "Giemsa slide",
+      "specimen": "CSF",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 173,
+      "name": "Semen Analysis",
+      "abbr": "Semen Analysis",
+      "specimen": "Semen",
+      "dataType": "free text",
+      "units": "Free Text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 174,
+      "name": "Urine colour",
+      "abbr": "Urine Colour",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Straw",
+        "Pale Yellow",
+        "Yellow",
+        "Deep Yellow",
+        "Amber"
+      ]
+    },
+    {
+      "id": 175,
+      "name": "Urine turbidity",
+      "abbr": "Urine Turbidity",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Clear",
+        "Cloudy"
+      ]
+    },
+    {
+      "id": 176,
+      "name": "Urine elements",
+      "abbr": "Urine Elements",
+      "specimen": "Urine",
+      "dataType": "free text",
+      "units": "Free Text",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 177,
+      "name": "Urine visible blood",
+      "abbr": "Urine Visible Bl",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "previously urine occult blood",
+      "subType": "Urinalysis",
+      "options": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "id": 178,
+      "name": "Urine Other",
+      "abbr": "Urine Other",
+      "specimen": "Urine",
+      "dataType": "free text",
+      "units": "Free Text",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 179,
+      "name": "Urine sediment for ova and parasites-Other,specify",
+      "abbr": "Urine Sediment O&P-Other",
+      "specimen": "Urine",
+      "dataType": "free text",
+      "units": "Free Text",
+      "referenceRange": "Urine sediment for O&P other test component",
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 180,
+      "name": "Urine Pus cells",
+      "abbr": "Urine Micro-Pus Cells",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Nil",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10-14",
+        "15-24",
+        ">=25/hpf"
+      ]
+    },
+    {
+      "id": 181,
+      "name": "RBCs",
+      "abbr": "Urine Micro-RBCs",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Nil",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10-14",
+        "15-24",
+        "25-34",
+        "35-50",
+        "Pack"
+      ]
+    },
+    {
+      "id": 182,
+      "name": "Epithelial cells",
+      "abbr": "Urine Micro-Epithelial",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Nil",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10-14",
+        "15-24",
+        ">=25/hpf"
+      ]
+    },
+    {
+      "id": 183,
+      "name": "Urine casts - Hyaline",
+      "abbr": "Urine Casts-Hyaline",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "0-1",
+        "2-4",
+        "5-10",
+        ">=10/lpf"
+      ]
+    },
+    {
+      "id": 184,
+      "name": "Urine crystals-bilirubin",
+      "abbr": "Urine Crystals-Bilirubin",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Nil",
+        "Scanty",
+        "Moderate",
+        "Numerous"
+      ]
+    },
+    {
+      "id": 185,
+      "name": "Specific gravity",
+      "abbr": "Urine Dpstk Sp. Gravity",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 186,
+      "name": "pH",
+      "abbr": "Urine Dpstk pH",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "pH",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 187,
+      "name": "Glucose dipstick (+s)",
+      "abbr": "Glucose Dpstk (+s)",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Negative",
+        "Trace",
+        "+",
+        "++",
+        "+++"
+      ]
+    },
+    {
+      "id": 188,
+      "name": "Glucose dipstick (mmol/L)",
+      "abbr": "Glucose Dpstk (mmol/L)",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Negative",
+        "0.5 mmol/L",
+        "14 mmol/L",
+        "28 mmol/L",
+        "55 mmol/L"
+      ]
+    },
+    {
+      "id": 189,
+      "name": "Protein",
+      "abbr": "Urine Dpstk Protein",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Negative",
+        "Trace",
+        "+",
+        "++",
+        "+++",
+        "++++"
+      ]
+    },
+    {
+      "id": 190,
+      "name": "Ketones",
+      "abbr": "Urine Dpstk Ketones",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Negative",
+        "Trace",
+        "Small",
+        "Moderate",
+        "Large"
+      ]
+    },
+    {
+      "id": 191,
+      "name": "Nitrite",
+      "abbr": "Urine Dpstk Nitrite",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Negative",
+        "Trace",
+        "Positive"
+      ]
+    },
+    {
+      "id": 192,
+      "name": "RBCs non haemolyzed (Haematuria)",
+      "abbr": "Urine Dpstk RBCs non haemolysed",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Negative",
+        "+",
+        "++"
+      ]
+    },
+    {
+      "id": 193,
+      "name": "Blood /HGB (Haemoglobinurea)",
+      "abbr": "Urine Dpstk Blood/HGB",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Negative",
+        "Trace",
+        "+",
+        "++",
+        "+++",
+        "++++"
+      ]
+    },
+    {
+      "id": 194,
+      "name": "Leucocytes",
+      "abbr": "Urine Dpstk Leucocytes",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Negative",
+        "Trace",
+        "+",
+        "++",
+        "+++",
+        "++++"
+      ]
+    },
+    {
+      "id": 195,
+      "name": "Urobilinogen",
+      "abbr": "Urine Dpstk Urobilinogen",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Normal",
+        "Trace",
+        "16mcmol/L",
+        "33mcmol/L",
+        "66mcmol/L",
+        "131mcmo"
+      ]
+    },
+    {
+      "id": 196,
+      "name": "Urobilin",
+      "abbr": "Urine Dpstk Urobilin",
+      "specimen": "Urine",
+      "dataType": "?",
+      "units": null,
+      "referenceRange": "drop this one",
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 197,
+      "name": "Bilirubin",
+      "abbr": "Urine Dpstk Bilirubin",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Negative",
+        "+",
+        "++",
+        "+++"
+      ]
+    },
+    {
+      "id": 198,
+      "name": "Urine Uric acid",
+      "abbr": "Urine 24hr Uric Acid",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "mcmol/day",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 199,
+      "name": "Urine Calcuim",
+      "abbr": "Urine 24hr Ca++",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "mmol/day",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 200,
+      "name": "Urine Phosphate",
+      "abbr": "Urine 24hr Phosphate",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "mmol/day",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 201,
+      "name": "Vanilylmandelic acid",
+      "abbr": "Urine 24hr VMA",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "mg/day",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 202,
+      "name": "Urine Creatinine",
+      "abbr": "Urine 24hr Creatinine",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "mcmol/day",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 203,
+      "name": "Urine Urea",
+      "abbr": "Urine 24hr Urea",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "mmol/day",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 204,
+      "name": "Urine Sodium",
+      "abbr": "Urine 24hr Na+",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "mmol/day",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 205,
+      "name": "Urine Potassium",
+      "abbr": "Urine 24hr K+",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "mmol/day",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 206,
+      "name": "Urine Chloride",
+      "abbr": "Urine 24hr Cl-",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "mmol/day",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 207,
+      "name": "Urine Mycology-Other,Specify",
+      "abbr": "Urine Mycology-Other",
+      "specimen": "Urine",
+      "dataType": "free text",
+      "units": "Free Text",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 208,
+      "name": "Urine Bile Salts",
+      "abbr": "Urine Bile Salts",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "id": 209,
+      "name": "Urine Lithium clearance",
+      "abbr": "Urine Lithium Cl.",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": null,
+      "referenceRange": "drop",
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 210,
+      "name": "Urine Osmolality",
+      "abbr": "Urine Osmolality",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "mOsmol/kg",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 211,
+      "name": "Urine alcohol concentration  (UAC)",
+      "abbr": "Urine Alcohol Conc.",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "mg/dl",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 212,
+      "name": "Ziehl-Neelson Acid-fast bacillus microscopy for TB",
+      "abbr": "ZN AFB Smear",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "AFB not seen",
+        "1+",
+        "2+",
+        "3+"
+      ]
+    },
+    {
+      "id": 213,
+      "name": "Sputum for AFB: Auramine Acid Fast Bacillus stain",
+      "abbr": "Auramine AFB stain",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "AFB not seen",
+        "1+",
+        "2+",
+        "3+"
+      ]
+    },
+    {
+      "id": 214,
+      "name": "TB Gradings",
+      "abbr": "TB Gradings",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "1 bacillus",
+        "2 bacilli",
+        "3 bacilli",
+        "4 bacilli",
+        "5 bacilli",
+        "6 bacilli",
+        "7 bacilli",
+        "8 bacilli",
+        "9 bacilli",
+        "1+",
+        "2+",
+        "3+"
+      ]
+    },
+    {
+      "id": 215,
+      "name": "TB Culture",
+      "abbr": "TB Culture",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "id": 217,
+      "name": "TB Sensitivity to ethambutol (E/Emb/ETH)",
+      "abbr": "TB Sens. ethambutol (E/Emb/ETH)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 218,
+      "name": "TB Sensitivity to Isoniazid (H/Inh/INH)",
+      "abbr": "TB Sens. isoniazid (H/Inh/INH)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was add",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 219,
+      "name": "TB Sensitivity to rifampicin (R/RIF)",
+      "abbr": "TB Sens. rifampicin (R/RIF)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was add",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 220,
+      "name": "TB Sensitivity to  pyrazinamide (Z/Pza/PZ)",
+      "abbr": "TB Sens. pyrazinamide (Z/Pza/PZ)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 221,
+      "name": "TB Sensitivity to streptomycin (S/Stm/Strep)",
+      "abbr": "TB Sens. streptomycin (S/Stm/Strep)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 222,
+      "name": "Biopsy - general",
+      "abbr": "Gen. Biopsy",
+      "specimen": "Tissue",
+      "dataType": "free text",
+      "units": "Free text (specimen type,diagnosis,comments)",
+      "referenceRange": null,
+      "subType": "Pathology"
+    },
+    {
+      "id": 223,
+      "name": "Bone marrow biopsy",
+      "abbr": "Bone Marrow Biopsy",
+      "specimen": "Bone marrow",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Pathology"
+    },
+    {
+      "id": 224,
+      "name": "Culposcopy with cervical biopsy",
+      "abbr": "Cervical Bx Biopsy",
+      "specimen": "Cervix",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Pathology",
+      "options": [
+        "Normal",
+        "ASCUS - Atypical Squamous Cell of Undetermi"
+      ]
+    },
+    {
+      "id": 225,
+      "name": "Cytology",
+      "abbr": "Cytology",
+      "specimen": "Cervix",
+      "dataType": "free text",
+      "units": "Free text (specimen type,diagnosis,comments)",
+      "referenceRange": null,
+      "subType": "Pathology"
+    },
+    {
+      "id": 226,
+      "name": "Pap Smear",
+      "abbr": "Pap Smear",
+      "specimen": "Cervix",
+      "dataType": "free text",
+      "units": "Free text (specimen type,diagnosis,comments)",
+      "referenceRange": null,
+      "subType": "Pathology"
+    },
+    {
+      "id": 227,
+      "name": "Blood group",
+      "abbr": "Blood group",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Blood Bank",
+      "options": [
+        "A",
+        "B",
+        "AB",
+        "O"
+      ]
+    },
+    {
+      "id": 228,
+      "name": "Rh group",
+      "abbr": "Rh",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Blood Bank",
+      "options": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "id": 229,
+      "name": "Indirect Coombs Test (ICT)",
+      "abbr": "Indirect Coombs Test",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Blood Bank",
+      "options": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "id": 230,
+      "name": "Direct Coombs Test (DCT)",
+      "abbr": "Direct Coombs Test",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Blood Bank",
+      "options": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "id": 231,
+      "name": "Cross match",
+      "abbr": "Cross match",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Blood Bank",
+      "options": [
+        "Compatible",
+        "Incompatible"
+      ]
+    },
+    {
+      "id": 232,
+      "name": "Antibody screen",
+      "abbr": "Antibody screen",
+      "specimen": "Blood",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Blood Bank"
+    },
+    {
+      "id": 233,
+      "name": "Rapid Plasma Reagin",
+      "abbr": "RPR",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "dup for ID 109",
+      "subType": "Blood Bank",
+      "options": [
+        "Reactive",
+        "Nonreactive"
+      ]
+    },
+    {
+      "id": 234,
+      "name": "Hepatitis B surface antigen (donor)",
+      "abbr": "Donor Hep. B sAg",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "dup for ID 115",
+      "subType": "Blood Bank",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 235,
+      "name": "Human Immunodeficiency Virus",
+      "abbr": "HIV",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "dup for ID 89",
+      "subType": "Blood Bank",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 236,
+      "name": "Treponema Pallidum Haemagglutination",
+      "abbr": "TPHA",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "dup for ID 110",
+      "subType": "Blood Bank",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 237,
+      "name": "Hepatitis C Virus",
+      "abbr": "HCV",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "dup for ID 118",
+      "subType": "Blood Bank",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 238,
+      "name": "Malaria slide",
+      "abbr": "Malaria",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "dup for ID 149 or 15",
+      "subType": "Blood Bank",
+      "options": [
+        "Malaria present",
+        "No malaria parasites seen"
+      ]
+    },
+    {
+      "id": 239,
+      "name": "CT Scan",
+      "abbr": "CT Scan",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Radiology"
+    },
+    {
+      "id": 240,
+      "name": "Ultrasound",
+      "abbr": "Ultrasound",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Radiology"
+    },
+    {
+      "id": 242,
+      "name": "Chest x-ray result date",
+      "abbr": "Chest X-Ray result date",
+      "specimen": "X-Ray",
+      "dataType": "date",
+      "units": "(date is not in future)",
+      "referenceRange": null,
+      "subType": "Radiology"
+    },
+    {
+      "id": 243,
+      "name": "Chest X-Ray Normal",
+      "abbr": "Chest X-Ray Normal",
+      "specimen": "X-Ray",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Radiology",
+      "options": [
+        "Present",
+        "Not present"
+      ]
+    },
+    {
+      "id": 244,
+      "name": "Chest X-Ray Infiltrate",
+      "abbr": "Chest X-Ray Infiltrate",
+      "specimen": "X-Ray",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Radiology",
+      "options": [
+        "Present",
+        "Not present"
+      ]
+    },
+    {
+      "id": 245,
+      "name": "Chest X-Ray Pleural effussion",
+      "abbr": "Chest X-Ray Pleural Effussion",
+      "specimen": "X-Ray",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Radiology",
+      "options": [
+        "Present",
+        "Not present"
+      ]
+    },
+    {
+      "id": 246,
+      "name": "Chest X-Ray Cavity",
+      "abbr": "Chest X-Ray Cavity",
+      "specimen": "X-Ray",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Radiology",
+      "options": [
+        "Present",
+        "Not present"
+      ]
+    },
+    {
+      "id": 247,
+      "name": "Chest X-Ray Pericard. effus.",
+      "abbr": "Chest X-Ray Pericard. Effus.",
+      "specimen": "X-Ray",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Radiology",
+      "options": [
+        "Present",
+        "Not present"
+      ]
+    },
+    {
+      "id": 248,
+      "name": "Chest X-Ray Miliary TB",
+      "abbr": "Chest X-Ray Miliary TB",
+      "specimen": "X-Ray",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Radiology",
+      "options": [
+        "Present",
+        "Not present"
+      ]
+    },
+    {
+      "id": 249,
+      "name": "Chest X-Ray Lymphadenopathy",
+      "abbr": "Chest X-Ray Lymphadenopathy",
+      "specimen": "X-Ray",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Radiology",
+      "options": [
+        "Present",
+        "Not present"
+      ]
+    },
+    {
+      "id": 251,
+      "name": "Chest X-Ray Normal - text",
+      "abbr": "Chest X-Ray Normal - text",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Radiology"
+    },
+    {
+      "id": 252,
+      "name": "Chest X-Ray Infiltrate - text",
+      "abbr": "Chest X-Ray Infiltrate - text",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Radiology"
+    },
+    {
+      "id": 253,
+      "name": "Chest X-Ray Pleural Effussion - text",
+      "abbr": "Chest X-Ray Pleural Effussion - text",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Radiology"
+    },
+    {
+      "id": 254,
+      "name": "Chest X-Ray Cavity - text",
+      "abbr": "Chest X-Ray Cavity - text",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Radiology"
+    },
+    {
+      "id": 255,
+      "name": "Chest X-Ray Pericard.effus - text",
+      "abbr": "Chest X-Ray Pericard. Effus - text",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Radiology"
+    },
+    {
+      "id": 256,
+      "name": "Chest X-Ray Miliary TB - text",
+      "abbr": "Chest X-Ray Miliary TB - text",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Radiology"
+    },
+    {
+      "id": 257,
+      "name": "Chest X-Ray Lymphadenopathy - text",
+      "abbr": "Chest X-Ray Lymphadenopathy - text",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Radiology"
+    },
+    {
+      "id": 258,
+      "name": "Chest X-Ray Other - text",
+      "abbr": "Chest X-Ray Other - text",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Radiology"
+    },
+    {
+      "id": 259,
+      "name": "X-Ray Other",
+      "abbr": "X-Ray Other text",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray other text",
+      "subType": "Radiology"
+    },
+    {
+      "id": 272,
+      "name": "Urine Mycology",
+      "abbr": "Urine Mycology",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Urine mycology enumerated test component",
+      "subType": "Urinalysis",
+      "options": [
+        "Yeast/hyphae",
+        "Other"
+      ]
+    },
+    {
+      "id": 274,
+      "name": "Urine sediment for ova and parasites",
+      "abbr": "Urine sediment O&P",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Urine sediment for O&P enumerated test component",
+      "subType": "Urinalysis",
+      "options": [
+        "S.haemotobium",
+        "Other"
+      ]
+    },
+    {
+      "id": 276,
+      "name": "Urine direct microscopy, Other specified",
+      "abbr": "Urine microscopy-Other",
+      "specimen": "Urine",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "Urine direct microscopy other test component",
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 277,
+      "name": "Urine direct microscopy",
+      "abbr": "Urine direct microscopy",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Urine direct microscopy enumerated test component",
+      "subType": "Urinalysis",
+      "options": [
+        "casts",
+        "S.haematobium",
+        "T.vaginalis",
+        "yeast",
+        "Other"
+      ]
+    },
+    {
+      "id": 279,
+      "name": "Urine culture-Other",
+      "abbr": "Urine culture, Other specified",
+      "specimen": "Urine",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "Urine culture other test component",
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 280,
+      "name": "Urine culture",
+      "abbr": "Urine culture",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Urine culture enumerated test component",
+      "subType": "Urinalysis",
+      "options": [
+        "T.vaginalis",
+        "Other"
+      ]
+    },
+    {
+      "id": 282,
+      "name": "Stool O&P Wet Mount Slide",
+      "abbr": "Stool O&P wet mount",
+      "specimen": "Stool",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Stool O&P wet mount slide enum test component",
+      "subType": "Microbiology",
+      "options": [
+        "G.lamblia",
+        "Other"
+      ]
+    },
+    {
+      "id": 283,
+      "name": "Stool O&P Sedimentation-Other, specify",
+      "abbr": "Stool O&P sediment-other",
+      "specimen": "Stool",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "Stool O&P sedimentation other test component",
+      "subType": "Microbiology"
+    },
+    {
+      "id": 284,
+      "name": "Stool O&P Microscopy with Concentration",
+      "abbr": "Stool O&P Micro Conc.",
+      "specimen": "Stool",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Stool O&P micro with concentration enum test component",
+      "subType": "Microbiology",
+      "options": [
+        "A.lumbricoides",
+        "B.coli",
+        "G.lamblia",
+        "Hookworm",
+        "S.stercolaris",
+        "S.mansoni",
+        "T.trichiura",
+        "Other"
+      ]
+    },
+    {
+      "id": 285,
+      "name": "Stool O&P Concentration-Other, specify",
+      "abbr": "Stool O&P Micro Conc.-other",
+      "specimen": "Stool",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "Stool O&P concentration other test component",
+      "subType": "Microbiology"
+    },
+    {
+      "id": 286,
+      "name": "Stool O&P Trichome Staining",
+      "abbr": "Stool O&P trichome stain",
+      "specimen": "Stool",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Stool O&P trichome stain enum test component",
+      "subType": "Microbiology",
+      "options": [
+        "G.lamblia",
+        "Other"
+      ]
+    },
+    {
+      "id": 287,
+      "name": "Stool O&P Trichome Staining-Other, specify",
+      "abbr": "Stool O&P trichome stain-other",
+      "specimen": "Stool",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "Stool O&P trichome stain other test component",
+      "subType": "Microbiology"
+    },
+    {
+      "id": 288,
+      "name": "Stool O&P Permanent smear-Other, specify",
+      "abbr": "Stool O&P smear-other",
+      "specimen": "Stool",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "Stool O&P permanent smear other test component",
+      "subType": "Microbiology"
+    },
+    {
+      "id": 289,
+      "name": "Stool O&P Immunology assay",
+      "abbr": "Stool O&P immuno assay",
+      "specimen": "Stool",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Stool O&P immunology assay enum test component",
+      "subType": "Microbiology",
+      "options": [
+        "G.lamblia",
+        "Other"
+      ]
+    },
+    {
+      "id": 290,
+      "name": "Stool O&P Immunology assay-Other, specify",
+      "abbr": "Stool O&P immuno assay-other",
+      "specimen": "Stool",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "Stool O&P immunology assay other test component",
+      "subType": "Microbiology"
+    },
+    {
+      "id": 292,
+      "name": "Chest X-Ray Cardiomegaly",
+      "abbr": "Chest X-Ray Cardiomegaly",
+      "specimen": "X-Ray",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Chest X-Ray cardiomegaly test component",
+      "subType": "Radiology",
+      "options": [
+        "Present",
+        "Not present"
+      ]
+    },
+    {
+      "id": 293,
+      "name": "Chest X-Ray Pulmonary Oedema",
+      "abbr": "Chest X-Ray Pulmonary oedema",
+      "specimen": "X-Ray",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Chest X-Ray pulmonary oedema test component",
+      "subType": "Radiology",
+      "options": [
+        "Present",
+        "Not present"
+      ]
+    },
+    {
+      "id": 294,
+      "name": "X-Ray Abdomen text",
+      "abbr": "X-Ray Abdomen",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray abdomen",
+      "subType": "Radiology"
+    },
+    {
+      "id": 295,
+      "name": "X-Ray Skull text",
+      "abbr": "X-Ray Skull",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray skull",
+      "subType": "Radiology"
+    },
+    {
+      "id": 296,
+      "name": "X-Ray Neck text",
+      "abbr": "X-Ray Neck",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray neck",
+      "subType": "Radiology"
+    },
+    {
+      "id": 297,
+      "name": "X-Ray Spine text",
+      "abbr": "X-Ray Spine",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray spine",
+      "subType": "Radiology"
+    },
+    {
+      "id": 298,
+      "name": "X-Ray Pelvis text",
+      "abbr": "X-Ray Pelvis",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray pelvis",
+      "subType": "Radiology"
+    },
+    {
+      "id": 299,
+      "name": "X-Ray Hip text",
+      "abbr": "X-Ray Hip",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray hip",
+      "subType": "Radiology"
+    },
+    {
+      "id": 300,
+      "name": "X-Ray Foot text",
+      "abbr": "X-Ray Foot",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray foot",
+      "subType": "Radiology"
+    },
+    {
+      "id": 301,
+      "name": "X-Ray Hand text",
+      "abbr": "X-Ray Hand",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray hand",
+      "subType": "Radiology"
+    },
+    {
+      "id": 302,
+      "name": "X-Ray Upper arm text",
+      "abbr": "X-Ray Upper arm",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray upper arm text",
+      "subType": "Radiology"
+    },
+    {
+      "id": 303,
+      "name": "X-Ray Forearm text",
+      "abbr": "X-Ray Forearm",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray forearm text",
+      "subType": "Radiology"
+    },
+    {
+      "id": 304,
+      "name": "X-Ray Upper leg text",
+      "abbr": "X-Ray Upper leg",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray upper leg text",
+      "subType": "Radiology"
+    },
+    {
+      "id": 305,
+      "name": "X-Ray Lower leg text",
+      "abbr": "X-Ray Lower leg",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray lower leg text",
+      "subType": "Radiology"
+    },
+    {
+      "id": 306,
+      "name": "X-Ray Ankle text",
+      "abbr": "X-Ray Ankle",
+      "specimen": "X-Ray",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": "X-Ray ankle text",
+      "subType": "Radiology"
+    },
+    {
+      "id": 307,
+      "name": "Casts - Cellular",
+      "abbr": "Casts cellular",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "0-1",
+        "2-4",
+        "5-10",
+        ">=10/lpf"
+      ]
+    },
+    {
+      "id": 308,
+      "name": "Casts - Fatty",
+      "abbr": "Casts fatty",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "0-1",
+        "2-4",
+        "5-10",
+        ">=10/lpf"
+      ]
+    },
+    {
+      "id": 309,
+      "name": "Casts - Granular-coarse",
+      "abbr": "Casts granular coarse",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "0-1",
+        "2-4",
+        "5-10",
+        ">=10/lpf"
+      ]
+    },
+    {
+      "id": 310,
+      "name": "Casts - Granular-fine",
+      "abbr": "Casts granular fine",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "0-1",
+        "2-4",
+        "5-10",
+        ">=10/lpf"
+      ]
+    },
+    {
+      "id": 311,
+      "name": "Casts - Waxy",
+      "abbr": "Casts waxy",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "0-1",
+        "2-4",
+        "5-10",
+        ">=10/lpf"
+      ]
+    },
+    {
+      "id": 312,
+      "name": "Wet Mount clue cells",
+      "abbr": "HVS micro - Clue cells",
+      "specimen": "HVS",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "id": 313,
+      "name": "HVS microscopy epithelial cells",
+      "abbr": "HVS micro - Epithelial cells",
+      "specimen": "HVS",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Nil",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10-14",
+        "15-24",
+        ">=25/hpf"
+      ]
+    },
+    {
+      "id": 314,
+      "name": "HVS microscopy RBCs",
+      "abbr": "HVS micro - RBCs",
+      "specimen": "HVS",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Nil",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10-14",
+        "15-24",
+        "25-34",
+        "35-50",
+        "Pack"
+      ]
+    },
+    {
+      "id": 315,
+      "name": "HVS direct microscopy",
+      "abbr": "HVS direct microscopy",
+      "specimen": "HVS",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "T.vaginalis",
+        "Yeast",
+        "Other"
+      ]
+    },
+    {
+      "id": 316,
+      "name": "HVS direct microscopy-other,specify",
+      "abbr": "HVS direct microscopy-Other",
+      "specimen": "HVS",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 317,
+      "name": "HVS gram stain-other, specify",
+      "abbr": "HVS gram stain-Other",
+      "specimen": "HVS",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 320,
+      "name": "HVS culture",
+      "abbr": "HVS culture",
+      "specimen": "HVS",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Gonococci",
+        "T.vaginalis",
+        "Yeast/hyphae",
+        "Other"
+      ]
+    },
+    {
+      "id": 321,
+      "name": "HVS culture-other, specify",
+      "abbr": "HVS culture-Other",
+      "specimen": "HVS",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 323,
+      "name": "Urethral smear culture",
+      "abbr": "Urethral smear culture",
+      "specimen": "Urethral smear",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Gonococci",
+        "Yeast/hyphae",
+        "Other"
+      ]
+    },
+    {
+      "id": 324,
+      "name": "Urethral smear culture-other, specify",
+      "abbr": "Urethral smear culture-Other",
+      "specimen": "Urethral smear",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 326,
+      "name": "Urethral smear gram stain",
+      "abbr": "Urethral smear GS",
+      "specimen": "Urethral smear",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Gonococci",
+        "Yeast/hyphae",
+        "Other"
+      ]
+    },
+    {
+      "id": 327,
+      "name": "Urethral smear gram stain-other, specify",
+      "abbr": "Urethral smear gram stain-Other",
+      "specimen": "Urethral smear",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 329,
+      "name": "Urine crystals-Drug-associated",
+      "abbr": "Urine crystals-Drug-associated",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Nil",
+        "Scanty",
+        "Moderate",
+        "Numerous"
+      ]
+    },
+    {
+      "id": 330,
+      "name": "Urine crystals-Struvite",
+      "abbr": "Urine crystals-Struvite",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Nil",
+        "Scanty",
+        "Moderate",
+        "Numerous"
+      ]
+    },
+    {
+      "id": 331,
+      "name": "Urine crystals-Calcium carbonate",
+      "abbr": "Urine crystals-Calcium carbonate",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Nil",
+        "Scanty",
+        "Moderate",
+        "Numerous"
+      ]
+    },
+    {
+      "id": 332,
+      "name": "Urine crystals-Amorphous",
+      "abbr": "Urine crystals-Amorphous",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Nil",
+        "Scanty",
+        "Moderate",
+        "Numerous"
+      ]
+    },
+    {
+      "id": 333,
+      "name": "Urine crystals-Calcium oxalate dihydrate",
+      "abbr": "Urine crystals-Calcium oxalate dihydrate",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Nil",
+        "Scanty",
+        "Moderate",
+        "Numerous"
+      ]
+    },
+    {
+      "id": 334,
+      "name": "Urine crystals-Calcium oxalate monohydrate",
+      "abbr": "Urine crystals-Calcium oxalate monohydrate",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Nil",
+        "Scanty",
+        "Moderate",
+        "Numerous"
+      ]
+    },
+    {
+      "id": 335,
+      "name": "Urine crystals-Ammonium biurate",
+      "abbr": "Urine crystals-Ammonium biurate",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Nil",
+        "Scanty",
+        "Moderate",
+        "Numerous"
+      ]
+    },
+    {
+      "id": 336,
+      "name": "Urine crystals-Cystine",
+      "abbr": "Urine crystals-Cystine",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Urinalysis",
+      "options": [
+        "Nil",
+        "Scanty",
+        "Moderate",
+        "Numerous"
+      ]
+    },
+    {
+      "id": 337,
+      "name": "Urine crystals-other, specify",
+      "abbr": "Urine crystals-Other",
+      "specimen": "Urine",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Urinalysis"
+    },
+    {
+      "id": 339,
+      "name": "Gram Positive-Rod morphology",
+      "abbr": "Gram positive-rod",
+      "specimen": "Multiple",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Not seen",
+        "Spore forming large uniform",
+        "Club-shaped and/or in palisades",
+        "Filamentous extensive branching",
+        "Filamentous minimal branching",
+        "Not specified"
+      ]
+    },
+    {
+      "id": 340,
+      "name": "Gram Positive-Cocci morphology",
+      "abbr": "Gram positive-cocci",
+      "specimen": "Multiple",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Not seen",
+        "Diplococci",
+        "Oval shape in chains",
+        "Round in clusters and tetrad",
+        "Not specified"
+      ]
+    },
+    {
+      "id": 341,
+      "name": "Gram Positive-Other, specify",
+      "abbr": "Gram positive-other",
+      "specimen": "Multiple",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 342,
+      "name": "Gram Negative-Rod morphology",
+      "abbr": "Gram negative-rod",
+      "specimen": "Multiple",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Not seen",
+        "Cocco-bacillary medium",
+        "Cocco-bacillary tiny",
+        "Pleomorphic coccobacillary & filimentous",
+        "Exaggerated pointed ends",
+        "Coiled & sphero-plastic",
+        "Curved comma-shaped",
+        "Uniformly bacillary",
+        "Not specified"
+      ]
+    },
+    {
+      "id": 343,
+      "name": "Gram Negative-Cocci morphology",
+      "abbr": "Gram negative-cocci",
+      "specimen": "Multiple",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Not seen",
+        "Not specified"
+      ]
+    },
+    {
+      "id": 344,
+      "name": "Gram Negative-Other, specify",
+      "abbr": "Gram negative-other",
+      "specimen": "Multiple",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 345,
+      "name": "Gram indeterminate-Spiral morphology",
+      "abbr": "Gram indeterminate-spiral",
+      "specimen": "Multiple",
+      "dataType": "free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Microbiology"
+    },
+    {
+      "id": 348,
+      "name": "Human Immunodeficiency Virus Alere Determine 1/2",
+      "abbr": "HIV1/2 Alere Determine",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Lab test rename. 20131118",
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 349,
+      "name": "Human Immunodeficiency Virus1 Bionor-Dual",
+      "abbr": "HIV1 Bionor Dual",
+      "specimen": "Serum, plasma, blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 350,
+      "name": "Human Immunodeficiency Virus2 Bionor-Dual",
+      "abbr": "HIV2 Bionor Dual",
+      "specimen": "Serum, plasma, blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 352,
+      "name": "HIV1 Western Blot-Dual",
+      "abbr": "HIV1 Western Blot Dual",
+      "specimen": "Serum, plasma, blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Reactive",
+        "Non-reactive",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 353,
+      "name": "HIV2 Western Blot-Dual",
+      "abbr": "HIV2 Western Blot Dual",
+      "specimen": "Serum, plasma, blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Reactive",
+        "Non-reactive",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 355,
+      "name": "HIV1 DNA PCR Roche - Dual",
+      "abbr": "HIV1 DNA PCR Dual",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Detectable",
+        "Not detected",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 356,
+      "name": "HIV2 DNA PCR Roche - Dual",
+      "abbr": "HIV2 DNA PCR Dual",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Detectable",
+        "Not detected",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 358,
+      "name": "HIV1 TNA Real Time PCR - Dual",
+      "abbr": "HIV1 TNA PCR Dual",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Detectable",
+        "Not detected",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 359,
+      "name": "HIV2 TNA Real Time PCR - Dual",
+      "abbr": "HIV2 TNA PCR Dual",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Detectable",
+        "Not detected",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 361,
+      "name": "HIV1 RNA PCR - Dual",
+      "abbr": "HIV1 RNA PCR Dual",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Detectable",
+        "Not detected",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 362,
+      "name": "HIV2 RNA PCR - Dual",
+      "abbr": "HIV2 RNA PCR Dual",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Detectable",
+        "Not detected",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 364,
+      "name": "HIV1 p24 Antigen - Dual",
+      "abbr": "HIV1 p24 Antigen Dual",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Detectable",
+        "Not detected",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 365,
+      "name": "HIV2 p24 Antigen - Dual",
+      "abbr": "HIV2 p24 Antigen Dual",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Detectable",
+        "Not detected",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 372,
+      "name": "TB Sensitivity to kanamycin (Km)",
+      "abbr": "TB Sens. kanamycin (Km)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 373,
+      "name": "TB Sensitivity to amikacin (Amk)",
+      "abbr": "TB Sens. amikacin (Amk)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 374,
+      "name": "TB Sensitivity to capreomycin (Cm)",
+      "abbr": "TB Sens. capreomycin (Cm)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 375,
+      "name": "TB Sensitivity to levofloxacin (Lfx)",
+      "abbr": "TB Sens. levofloxacin (Lfx)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 376,
+      "name": "TB Sensitivity to moxifloxacin (Mfx)",
+      "abbr": "TB Sens. moxifloxacin (Mfx)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 377,
+      "name": "TB Sensitivity to ofloxacin (Ofx)",
+      "abbr": "TB Sens. ofloxacin (Ofx)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 378,
+      "name": "TB Sensitivity to paraâ€“aminosalicylic acid (Pas)",
+      "abbr": "TB Sens. paraâ€“aminosalicylic acid (Pas)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 379,
+      "name": "TB Sensitivity to cycloserine (Dcs)",
+      "abbr": "TB Sens. cycloserine (Dcs)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 380,
+      "name": "TB Sensitivity to terizidone (Trd)",
+      "abbr": "TB Sens. terizidone (Trd)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 381,
+      "name": "TB Sensitivity to ethionamide (Eto)",
+      "abbr": "TB Sens. ethionamide (Eto)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 382,
+      "name": "TB Sensitivity to protionamide (Pto)",
+      "abbr": "TB Sens. protionamide (Pto))",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 383,
+      "name": "TB Sensitivity to clofazimine (Cfz)",
+      "abbr": "TB Sens. clofazimine (Cfz)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 384,
+      "name": "TB Sensitivity to linezolid (Lzd)",
+      "abbr": "TB Sens. linezolid (Lzd)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 385,
+      "name": "TB Sensitivity to amoxicillin/clavulanate (Amx/Civ)",
+      "abbr": "TB Sens. amoxicillin/clavulanate (Amx/Civ)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 386,
+      "name": "TB Sensitivity to thioacetazone (Thz)",
+      "abbr": "TB Sens. thioacetazone (Thz)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 387,
+      "name": "TB Sensitivity to imipenem/cilastatin (Ipm/Cin)",
+      "abbr": "TB Sens. imipenem/cilastatin (Ipm/Cin)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 388,
+      "name": "TB Sensitivity to high dose isoniazid (H/Inh)",
+      "abbr": "TB Sens. high dose isoniazid (H/Inh)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 389,
+      "name": "TB Sensitivity to clarithromycin (Clr)",
+      "abbr": "TB Sens. clarithromycin (Clr)",
+      "specimen": "Sputum, Gastric lavage, Biopsy",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": "Intermediate was added as a category",
+      "subType": "Microbiology",
+      "options": [
+        "Sensitive",
+        "Indeterminate",
+        "Resistant",
+        "Invalid",
+        "Error",
+        "Not Done"
+      ]
+    },
+    {
+      "id": 390,
+      "name": "MRI Thigh",
+      "abbr": "MRI Thigh",
+      "specimen": "MRI Thigh",
+      "dataType": "Free text",
+      "units": "Free text",
+      "referenceRange": null,
+      "subType": "Radiology"
+    },
+    {
+      "id": 397,
+      "name": "Line Probe Assay (LPA)",
+      "abbr": "Line Probe Assay (LPA)",
+      "specimen": "Sputum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "MTB Detected",
+        "MTB Not Detected",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 391,
+      "name": "Covid-19 Nasopharyngeal swab",
+      "abbr": "Nasal swab",
+      "specimen": "Swab",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 392,
+      "name": "Covid-19 Oropharyngeal swab",
+      "abbr": "Oral swab",
+      "specimen": "Swab",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 393,
+      "name": "Covid-19 Serum",
+      "abbr": "Covid-19Serum",
+      "specimen": "Serum",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 394,
+      "name": "Tuberculin Skin Test (TST)",
+      "abbr": "Tuberculin Skin Test  (TST)",
+      "specimen": "Skin",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 395,
+      "name": "Interferon Gamma Release Assays (IGRA)",
+      "abbr": "Interferon Gamma Release Assays (IGRA)",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 396,
+      "name": "Lipoarabinomannan Assay (LAM)",
+      "abbr": "Lipoarabinomannan Assay (LAM)",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Microbiology",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 398,
+      "name": "HIV Recency Test",
+      "abbr": "HIV Recency Test",
+      "specimen": "Serum, plasma, blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Positive",
+        "Negative",
+        "Indeterminate"
+      ]
+    },
+    {
+      "id": 399,
+      "name": "Echocardiogram",
+      "abbr": "ECHO",
+      "specimen": "Chest",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Radiology",
+      "options": [
+        "Normal",
+        "Abnormal"
+      ]
+    },
+    {
+      "id": 400,
+      "name": "HIV DNA PCR - Roche",
+      "abbr": "HIV DNA PCR",
+      "specimen": "Blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "subType": "Immuno/Sero",
+      "options": [
+        "Detectable",
+        "Not detected",
+        "Indeterminate"
+      ]
+    }
+  ]
+}

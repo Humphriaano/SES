@@ -1,0 +1,377 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum HIVStatus {
+  POSITIVE
+  NEGATIVE
+  UNKNOWN
+}
+
+enum EncounterStatus {
+  OPEN
+  CLOSED
+}
+
+enum BillingStatus {
+  PENDING
+  PAID
+  WAIVED
+}
+
+model User {
+  id              String    @id @default(uuid())
+  name            String
+  email           String    @unique
+  password        String
+  role            String?
+  status          String    @default("active")
+
+  // Profile
+  firstName       String?
+  surname         String?
+  dateOfBirth     DateTime?
+  sex             String?
+  designation     String?
+
+  // Contact
+  nrc             String?
+  hasNoNrc        Boolean   @default(false)
+  address         String?
+  countryCode     String?
+  cellphone       String?
+
+  // Auth
+  username        String?   @unique
+  rejectionReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  encounters              Encounter[]
+  orderedInvestigations   InvestigationOrder[] @relation("OrderedInvestigations")
+}
+
+model Patient {
+  id          String    @id @default(uuid())
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime
+  gender      Gender
+  phone       String?
+  address     String?
+  nationalId  String?   @unique
+  hivStatus   HIVStatus @default(UNKNOWN)
+  hivTestDate DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  encounters            Encounter[]
+  diagnoses             PatientDiagnosis[]
+  medications           Medication[]
+  vitals                Vital[]
+  labResults            LabResult[]
+  billingItems          BillingItem[]
+  queues                Queue[]
+  dispensings           Dispensing[]
+  investigationOrders   InvestigationOrder[]
+  queueEntries          QueueEntry[]
+}
+
+model Encounter {
+  id             String          @id @default(uuid())
+  patientId      String
+  clinicianId    String
+  status         EncounterStatus @default(OPEN)
+  chiefComplaint String?
+  hpi            String?
+  examination    String?
+  treatmentPlan  String?
+  investigations String?
+  notes          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  patient   Patient @relation(fields: [patientId], references: [id])
+  clinician User    @relation(fields: [clinicianId], references: [id])
+
+  diagnoses             EncounterDiagnosis[]
+  vitals                Vital[]
+  labOrders             LabOrder[]
+  prescriptions         Prescription[]
+  billingItems          BillingItem[]
+  investigationOrders   InvestigationOrder[]
+}
+
+model ICD11Code {
+  id          String  @id @default(uuid())
+  code        String  @unique
+  description String
+  category    String?
+
+  patientDiagnoses   PatientDiagnosis[]
+  encounterDiagnoses EncounterDiagnosis[]
+}
+
+model PatientDiagnosis {
+  id         String    @id @default(uuid())
+  patientId  String
+  icd11Id    String
+  notes      String?
+  resolvedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  patient Patient   @relation(fields: [patientId], references: [id])
+  icd11   ICD11Code @relation(fields: [icd11Id], references: [id])
+}
+
+model EncounterDiagnosis {
+  id          String  @id @default(uuid())
+  encounterId String
+  icd11Id     String
+  isPrimary   Boolean @default(false)
+  notes       String?
+
+  encounter Encounter @relation(fields: [encounterId], references: [id])
+  icd11     ICD11Code @relation(fields: [icd11Id], references: [id])
+}
+
+model Vital {
+  id                     String    @id @default(uuid())
+  patientId              String
+  encounterId            String?
+  bloodPressureSystolic  Int?
+  bloodPressureDiastolic Int?
+  heartRate              Int?
+  temperature            Float?
+  weight                 Float?
+  height                 Float?
+  oxygenSat              Float?
+  glucose                Float?
+  recordedAt             DateTime  @default(now())
+
+  patient   Patient    @relation(fields: [patientId], references: [id])
+  encounter Encounter? @relation(fields: [encounterId], references: [id])
+}
+
+model Medication {
+  id        String    @id @default(uuid())
+  patientId String
+  name      String
+  dosage    String?
+  frequency String?
+  route     String?
+  startDate DateTime
+  endDate   DateTime?
+  notes     String?
+  createdAt DateTime  @default(now())
+
+  patient       Patient        @relation(fields: [patientId], references: [id])
+  prescriptions Prescription[]
+}
+
+model Prescription {
+  id           String    @id @default(uuid())
+  encounterId  String
+  medicationId String
+  dispensed    Boolean   @default(false)
+  dispensedAt  DateTime?
+  createdAt    DateTime  @default(now())
+
+  encounter   Encounter    @relation(fields: [encounterId], references: [id])
+  medication  Medication   @relation(fields: [medicationId], references: [id])
+  dispensings Dispensing[]
+}
+
+model Dispensing {
+  id                 String    @id @default(uuid())
+  prescriptionId     String?
+  patientId          String
+  type               String    @default("direct")
+  dispensedDrug      String
+  dispensedDose      String?
+  dispensedFrequency String?
+  dispensedDuration  String?
+  dispensedBy        String
+  dispensedAt        DateTime  @default(now())
+  substitution       Json?
+  modifications      Json?
+  collectedAt        DateTime?
+  collectedBy        String?
+  createdAt          DateTime  @default(now())
+
+  prescription Prescription? @relation(fields: [prescriptionId], references: [id])
+  patient      Patient       @relation(fields: [patientId], references: [id])
+}
+
+model DrugInventory {
+  id        String   @id @default(uuid())
+  drugName  String   @unique
+  quantity  Int      @default(0)
+  unit      String?
+  updatedAt DateTime @updatedAt
+}
+
+model LabOrder {
+  id          String   @id @default(uuid())
+  encounterId String
+  testName    String
+  notes       String?
+  orderedAt   DateTime @default(now())
+  status      String   @default("pending")
+
+  encounter Encounter   @relation(fields: [encounterId], references: [id])
+  results   LabResult[]
+}
+
+model LabResult {
+  id             String   @id @default(uuid())
+  patientId      String
+  labOrderId     String?
+  testName       String
+  result         String
+  unit           String?
+  referenceRange String?
+  isAbnormal     Boolean  @default(false)
+  recordedAt     DateTime @default(now())
+
+  patient  Patient   @relation(fields: [patientId], references: [id])
+  labOrder LabOrder? @relation(fields: [labOrderId], references: [id])
+}
+
+enum QueueStatus {
+  WAITING
+  CALLED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ServicePoint {
+  REGISTRY
+  VITALS
+  CONSULTATION
+  PHARMACY
+  LAB
+  BILLING
+}
+
+model Queue {
+  id           String       @id @default(uuid())
+  patientId    String
+  servicePoint ServicePoint
+  status       QueueStatus  @default(WAITING)
+  priority     Int          @default(0)
+  notes        String?
+  addedAt      DateTime     @default(now())
+  calledAt     DateTime?
+  completedAt  DateTime?
+
+  patient Patient @relation(fields: [patientId], references: [id])
+}
+
+model BillingItem {
+  id          String        @id @default(uuid())
+  patientId   String
+  encounterId String?
+  description String
+  amount      Float
+  status      BillingStatus @default(PENDING)
+  paidAt      DateTime?
+  createdAt   DateTime      @default(now())
+
+  patient   Patient    @relation(fields: [patientId], references: [id])
+  encounter Encounter? @relation(fields: [encounterId], references: [id])
+}
+
+model InvestigationOrder {
+  id          String   @id @default(uuid())
+  patientId   String
+  encounterId String?
+  orderedById String
+  orderedAt   DateTime @default(now())
+
+  patient   Patient    @relation(fields: [patientId], references: [id])
+  encounter Encounter? @relation(fields: [encounterId], references: [id])
+  orderedBy User       @relation("OrderedInvestigations", fields: [orderedById], references: [id])
+  items     InvestigationOrderItem[]
+}
+
+model InvestigationOrderItem {
+  id                 String    @id @default(uuid())
+  orderId            String
+  type               String
+  catalogueId        String
+  name               String
+  specimen           String?
+  status             String    @default("Pending")
+  componentsJson     String?
+  sampleReceivedAt   DateTime?
+  sampleReceivedById String?
+
+  order   InvestigationOrder  @relation(fields: [orderId], references: [id])
+  results InvestigationResult[]
+}
+
+model InvestigationResult {
+  id           String   @id @default(uuid())
+  itemId       String
+  resultedById String
+  resultedAt   DateTime @default(now())
+  amendedById  String?
+  amendedAt    DateTime?
+  resultsJson  String
+
+  item InvestigationOrderItem @relation(fields: [itemId], references: [id])
+}
+
+// ── Facility Rooms & Queue Entries ────────────────────────────────────────────
+
+model FacilityRoom {
+  id        String      @id @default(uuid())
+  name      String      @unique
+  tag       String
+  active    Boolean     @default(true)
+  createdAt DateTime    @default(now())
+
+  entries     QueueEntry[]
+  preferences UserRoomPreference[]
+}
+
+model UserRoomPreference {
+  id        String   @id @default(uuid())
+  userId    String
+  roomId    String
+  pickCount Int      @default(1)
+  updatedAt DateTime @updatedAt
+
+  room FacilityRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roomId])
+}
+
+model QueueEntry {
+  id          String       @id @default(uuid())
+  queueNumber Int
+  patientId   String
+  patientName String
+  roomId      String
+  priority    String       @default("Normal")
+  status      String       @default("Waiting")
+  checkedInAt DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  patient Patient      @relation(fields: [patientId], references: [id])
+  room    FacilityRoom @relation(fields: [roomId], references: [id])
+}
