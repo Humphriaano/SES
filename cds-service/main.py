@@ -359,6 +359,13 @@ async def reports_chat(req: ReportsChatRequest):
     return ReportsChatResponse(answer=answer, responseType=response_type, data=render_data)
 
 
+from document_router import router as document_router
+app.include_router(document_router)
+
+from risk_router import router as risk_router
+app.include_router(risk_router)
+
+
 @app.get("/cds/health")
 async def health():
     # Check Ollama

@@ -1,4 +1,4 @@
-import { useEffect, useState, FormEvent } from 'react';
+﻿import { useEffect, useState, FormEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../api/client';
 import { usePatient } from '../context/PatientContext';
@@ -21,7 +21,7 @@ interface TriageRecord {
 }
 
 const PRIORITY_CONFIG = {
-  IMMEDIATE:   { label: 'Immediate',   color: '#dc2626', bg: '#fef2f2', border: '#fecaca', code: 'P1' },
+  IMMEDIATE:   { label: 'Immediate',   color: 'var(--accent)', bg: '#fef2f2', border: '#fecaca', code: 'P1' },
   URGENT:      { label: 'Urgent',      color: '#d97706', bg: '#fffbeb', border: '#fde68a', code: 'P2' },
   LESS_URGENT: { label: 'Less Urgent', color: '#2563eb', bg: '#eff6ff', border: '#bfdbfe', code: 'P3' },
   NON_URGENT:  { label: 'Non-Urgent',  color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0', code: 'P4' },
@@ -140,7 +140,7 @@ export default function TriagePage() {
           {/* Priority selector */}
           <div style={{ marginBottom: 18 }}>
             <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 8 }}>
-              Triage Priority <span style={{ color: '#c8102e' }}>*</span>
+              Triage Priority <span style={{ color: 'var(--accent)' }}>*</span>
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
               {(Object.keys(PRIORITY_CONFIG) as TriageRecord['priority'][]).map((p) => {
@@ -167,7 +167,7 @@ export default function TriagePage() {
           {/* Chief complaint */}
           <div style={{ marginBottom: 14 }}>
             <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>
-              Chief Complaint <span style={{ color: '#c8102e' }}>*</span>
+              Chief Complaint <span style={{ color: 'var(--accent)' }}>*</span>
             </label>
             <textarea
               required value={form.chiefComplaint} onChange={(e) => set('chiefComplaint', e.target.value)}

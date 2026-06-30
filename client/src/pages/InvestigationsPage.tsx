@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from 'react';
+﻿import { useEffect, useState, Fragment } from 'react';
 import { useParams } from 'react-router-dom';
 import { Plus, ChevronDown, ChevronRight, X, FlaskConical } from 'lucide-react';
 import api from '../api/client';
@@ -48,8 +48,8 @@ function statusBadge(status: string) {
 
 function resultColor(status: string): string {
   if (status === 'High' || status === 'Low' || status === 'Abnormal') return '#d97706';
-  if (status === 'Critical') return '#dc2626';
-  if (status === 'Positive') return '#dc2626';
+  if (status === 'Critical') return 'var(--accent)';
+  if (status === 'Positive') return 'var(--accent)';
   if (status === 'Normal' || status === 'Negative') return '#16a34a';
   return T.body;
 }

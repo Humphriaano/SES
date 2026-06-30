@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback, Fragment } from 'react';
+﻿import { useEffect, useState, useRef, useCallback, Fragment } from 'react';
 import { ChevronDown, ChevronRight, Package, Edit2, RefreshCw, Printer, User, Search, CheckCircle, AlertTriangle, X } from 'lucide-react';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
@@ -15,7 +15,7 @@ const C = {
   cardBorder:   '1px solid var(--border)',
   cardRadius:   12,
   divider:      '1px solid var(--border-light)',
-  red:          '#c0392b',
+  red:          'var(--accent)',
   redHover:     '#a93226',
   title:        'var(--text-heading)',
   body:         'var(--text-body2)',
@@ -110,7 +110,7 @@ type SimplePatient = { id: string; firstName: string; lastName: string; national
 
 function stockPill(qty: number) {
   const [bg, color] =
-    qty <= 0  ? ['#fef2f2', '#b91c1c'] :
+    qty <= 0  ? ['#fef2f2', '#1E40AF'] :
     qty < 10  ? ['#fffbeb', '#92400e'] :
                 ['#f0fdf4', '#166534'];
   return (
@@ -147,7 +147,7 @@ function printLabel(drug: string, dose: string, freq: string, patient: string, n
     <p><b>Patient:</b> ${patient}</p>
     <p><b>ID:</b> ${nationalId || '—'}</p>
     <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
-    <hr/><p style="font-size:10px;color:#666">SES Health — Keep out of reach of children</p>
+    <hr/><p style="font-size:10px;color:#666">Demo EHR — Keep out of reach of children</p>
     </body></html>`);
   win.document.close();
   win.print();

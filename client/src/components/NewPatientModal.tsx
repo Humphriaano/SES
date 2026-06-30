@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+﻿import { useState, FormEvent } from 'react';
 import api from '../api/client';
 import { Patient } from '../types';
 import { X, UserPlus } from 'lucide-react';
@@ -37,7 +37,7 @@ export default function NewPatientModal({ onClose, onCreated }: Props) {
       backdropFilter: 'blur(2px)',
     }}>
       <div style={{
-        background: 'var(--bg-card)', borderRadius: 16, width: '100%', maxWidth: 560,
+        background: 'var(--bg-card)', width: '100%', maxWidth: 560,
         boxShadow: '0 20px 60px rgba(0,0,0,0.18)', overflow: 'hidden',
       }}>
         {/* Header */}
@@ -47,10 +47,10 @@ export default function NewPatientModal({ onClose, onCreated }: Props) {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
-              width: 34, height: 34, borderRadius: 8, background: 'var(--badge-red-bg)',
+              width: 34, height: 34, background: 'var(--accent-soft)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
-              <UserPlus size={16} color="#c8102e" />
+              <UserPlus size={16} color="var(--accent)" />
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-heading)' }}>Register New Patient</div>
@@ -58,7 +58,7 @@ export default function NewPatientModal({ onClose, onCreated }: Props) {
             </div>
           </div>
           <button onClick={onClose} style={{
-            width: 30, height: 30, borderRadius: 7, border: '1px solid var(--border)',
+            width: 30, height: 30, border: '1px solid var(--border)',
             background: 'var(--bg-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center',
             cursor: 'pointer', color: 'var(--text-muted)',
           }}>
@@ -126,7 +126,7 @@ function FormField({ label, required, children, style }: {
   return (
     <div style={style}>
       <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-body)', marginBottom: 5 }}>
-        {label} {required && <span style={{ color: '#c8102e' }}>*</span>}
+        {label} {required && <span style={{ color: 'var(--accent)' }}>*</span>}
       </label>
       {children}
     </div>

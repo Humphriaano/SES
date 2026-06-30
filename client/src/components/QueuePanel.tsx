@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+﻿import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   X, RefreshCw, Play, Check, CornerDownRight, UserPlus, Search,
   Activity, Stethoscope, Pill, FlaskConical, Receipt, DoorOpen,
@@ -85,10 +85,10 @@ function sortEntries(entries: QueueEntry[]): QueueEntry[] {
 function CountBadge({ count, style }: { count: number; style?: React.CSSProperties }) {
   return (
     <span style={{
-      minWidth: 18, height: 18, borderRadius: 9, padding: '0 4px',
+      minWidth: 18, height: 18, padding: '0 4px',
       fontSize: 10, fontWeight: 800, lineHeight: '18px', textAlign: 'center',
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      background: count > 0 ? '#c8102e' : 'var(--bg-surface-2)',
+      background: count > 0 ? 'var(--accent)' : 'var(--bg-surface-2)',
       color: count > 0 ? '#fff' : 'var(--text-subtle)',
       flexShrink: 0,
       ...style,
@@ -116,8 +116,7 @@ function RoomCard({
       onClick={onClick}
       style={{
         width: '100%', height: isPreferred ? 76 : 64,
-        border: `1.5px solid ${active ? '#c8102e' : 'var(--border)'}`,
-        borderRadius: 10,
+        border: `1.5px solid ${active ? 'var(--accent)' : 'var(--border)'}`,
         background: active ? 'var(--chip-red-bg)' : 'var(--bg-card)',
         cursor: 'pointer', textAlign: 'left',
         padding: isPreferred ? '9px 10px' : '7px 9px',
@@ -134,14 +133,14 @@ function RoomCard({
 
       {/* Icon row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 5, paddingRight: 26 }}>
-        <Icon size={isPreferred ? 13 : 11} color={active ? '#c8102e' : 'var(--text-muted)'} />
+        <Icon size={isPreferred ? 13 : 11} color={active ? 'var(--accent)' : 'var(--text-muted)'} />
       </div>
 
       {/* Name + tag */}
       <div>
         <div style={{
           fontSize: isPreferred ? 12 : 11, fontWeight: 700, lineHeight: 1.25,
-          color: active ? '#c8102e' : 'var(--text-heading)',
+          color: active ? 'var(--accent)' : 'var(--text-heading)',
           overflow: 'hidden', display: '-webkit-box',
           WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
           paddingRight: 4,
@@ -206,16 +205,16 @@ function RoomSelector({
           onClick={() => selectRoom(null)}
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 5,
-            padding: '4px 10px', borderRadius: 20, fontSize: 12, fontWeight: 700,
-            border: `1.5px solid ${!selectedRoom ? '#c8102e' : 'var(--border)'}`,
-            background: !selectedRoom ? '#c8102e' : 'var(--bg-surface)',
+            padding: '4px 10px', fontSize: 12, fontWeight: 700,
+            border: `1.5px solid ${!selectedRoom ? 'var(--accent)' : 'var(--border)'}`,
+            background: !selectedRoom ? 'var(--accent)' : 'var(--bg-surface)',
             color: !selectedRoom ? '#fff' : 'var(--text-body)',
             cursor: 'pointer', flexShrink: 0,
           }}
         >
           All
           <span style={{
-            fontSize: 10, fontWeight: 800, padding: '1px 5px', borderRadius: 8,
+            fontSize: 10, fontWeight: 800, padding: '1px 5px',
             background: !selectedRoom ? 'rgba(255,255,255,0.25)' : 'var(--bg-surface-2)',
             color: !selectedRoom ? '#fff' : 'var(--text-subtle)',
           }}>
@@ -227,15 +226,15 @@ function RoomSelector({
         {selectedRoom && activeRoomData && (
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 5,
-            padding: '4px 6px 4px 10px', borderRadius: 20, fontSize: 12, fontWeight: 600,
-            background: '#c8102e', color: '#fff',
+            padding: '4px 6px 4px 10px', fontSize: 12, fontWeight: 600,
+            background: 'var(--accent)', color: '#fff',
             maxWidth: 180,
           }}>
             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
               {activeRoomData.name}
             </span>
             {activeRoomData.waitingCount > 0 && (
-              <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(255,255,255,0.25)', padding: '1px 5px', borderRadius: 8, flexShrink: 0 }}>
+              <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(255,255,255,0.25)', padding: '1px 5px', flexShrink: 0 }}>
                 {activeRoomData.waitingCount}
               </span>
             )}
@@ -283,11 +282,11 @@ function RoomSelector({
               width: '100%', boxSizing: 'border-box',
               padding: '6px 28px 6px 27px',
               border: '1px solid var(--border)',
-              borderRadius: 8, fontSize: 12.5, outline: 'none',
+               fontSize: 12.5, outline: 'none',
               background: 'var(--bg-surface)', color: 'var(--text-heading)',
               transition: 'border-color 0.15s',
             }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = '#c8102e')}
+            onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--accent)')}
             onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
           />
           {searchQuery && (
@@ -354,14 +353,13 @@ function EntryCard({
   return (
     <div style={{
       background: isDone ? 'var(--bg-surface)' : 'var(--bg-card)',
-      border: '1px solid var(--border)', borderRadius: 10,
-      padding: '10px 12px', marginBottom: 6,
+      border: '1px solid var(--border)',       padding: '10px 12px', marginBottom: 6,
       opacity: isDone ? 0.65 : 1, transition: 'opacity 0.15s',
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 3 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: '#c8102e', fontFamily: 'monospace' }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent)', fontFamily: 'monospace' }}>
               {queueNum(entry.queueNumber)}
             </span>
             <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-heading)', flex: 1 }}>
@@ -393,8 +391,7 @@ function EntryCard({
                 }}
                 style={{
                   width: '100%', padding: '5px 8px', fontSize: 12,
-                  border: '1px solid var(--border)', borderRadius: 6,
-                  background: 'var(--bg-input)', color: 'var(--text-heading)', outline: 'none',
+                  border: '1px solid var(--border)',                   background: 'var(--bg-input)', color: 'var(--text-heading)', outline: 'none',
                 }}
               >
                 <option value="" disabled>Move to room…</option>
@@ -414,7 +411,7 @@ function EntryCard({
                 title="Start — set as active patient"
                 style={{
                   height: 28, padding: '0 10px', borderRadius: 7, border: 'none',
-                  background: '#c8102e', cursor: 'pointer',
+                  background: 'var(--accent)', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', gap: 4,
                   color: '#fff', fontSize: 11, fontWeight: 700,
                 }}
@@ -426,8 +423,7 @@ function EntryCard({
                 onClick={() => onAdvance(entry.id, 'Done')}
                 title="Mark as Done"
                 style={{
-                  width: 28, height: 28, borderRadius: 7,
-                  border: '1px solid var(--border)', background: 'var(--bg-surface)',
+                  width: 28, height: 28,                   border: '1px solid var(--border)', background: 'var(--bg-surface)',
                   cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   color: 'var(--badge-green-text)',
                 }}
@@ -439,8 +435,7 @@ function EntryCard({
               onClick={() => setShowReroute(v => !v)}
               title="Move to another room"
               style={{
-                width: 28, height: 28, borderRadius: 7,
-                border: '1px solid var(--border)',
+                width: 28, height: 28,                 border: '1px solid var(--border)',
                 background: showReroute ? 'var(--bg-surface-2)' : 'var(--bg-surface)',
                 cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 color: 'var(--text-muted)',
@@ -510,7 +505,7 @@ function CheckinBar({ rooms, onCheckedIn }: { rooms: FacilityRoom[]; onCheckedIn
           </button>
         )}
         {results.length > 0 && !selected && (
-          <div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, marginBottom: 4, background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: 8, boxShadow: '0 -4px 16px rgba(0,0,0,0.12)', zIndex: 10, maxHeight: 180, overflowY: 'auto' }}>
+          <div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, marginBottom: 4, background: 'var(--bg-card)', border: '1px solid var(--border-input)',  boxShadow: '0 -4px 16px rgba(0,0,0,0.12)', zIndex: 10, maxHeight: 180, overflowY: 'auto' }}>
             {results.map(p => (
               <button key={p.id} onClick={() => pickPatient(p)} style={{ width: '100%', textAlign: 'left', padding: '8px 12px', background: 'none', border: 'none', borderBottom: '1px solid var(--border-light)', cursor: 'pointer', fontSize: 12.5 }}
                 onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-surface)')}
@@ -541,7 +536,7 @@ function CheckinBar({ rooms, onCheckedIn }: { rooms: FacilityRoom[]; onCheckedIn
           </div>
           {error && <div style={{ fontSize: 11.5, color: 'var(--badge-red-text)' }}>{error}</div>}
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={checkin} disabled={saving || !roomId} style={{ flex: 1, padding: '7px 0', borderRadius: 6, fontSize: 13, fontWeight: 700, border: 'none', cursor: saving || !roomId ? 'not-allowed' : 'pointer', background: saving || !roomId ? 'var(--border-input)' : '#c8102e', color: saving || !roomId ? 'var(--text-subtle)' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <button onClick={checkin} disabled={saving || !roomId} style={{ flex: 1, padding: '7px 0', borderRadius: 6, fontSize: 13, fontWeight: 700, border: 'none', cursor: saving || !roomId ? 'not-allowed' : 'pointer', background: saving || !roomId ? 'var(--border-input)' : 'var(--accent)', color: saving || !roomId ? 'var(--text-subtle)' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
               <UserPlus size={13} /> {saving ? 'Checking in…' : 'Check In'}
             </button>
             <button onClick={dismiss} style={{ padding: '7px 12px', borderRadius: 6, fontSize: 12, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text-muted)', cursor: 'pointer' }}>Cancel</button>
@@ -680,15 +675,15 @@ export default function QueuePanel({ open, onClose }: Props) {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-heading)' }}>Patient Queue</span>
-              <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 7px', borderRadius: 10, background: '#c8102e', color: '#fff' }}>
+              <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 7px', borderRadius: 10, background: 'var(--accent)', color: '#fff' }}>
                 {activeCount}
               </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <button onClick={() => { fetchRooms(); fetchEntries(selectedRoom); }} disabled={loading} style={{ padding: 5, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', borderRadius: 5, display: 'flex' }}>
+              <button onClick={() => { fetchRooms(); fetchEntries(selectedRoom); }} disabled={loading} style={{ padding: 5, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)',  display: 'flex' }}>
                 <RefreshCw size={13} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
               </button>
-              <button onClick={onClose} style={{ padding: 5, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', borderRadius: 5, display: 'flex' }}>
+              <button onClick={onClose} style={{ padding: 5, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)',  display: 'flex' }}>
                 <X size={15} />
               </button>
             </div>

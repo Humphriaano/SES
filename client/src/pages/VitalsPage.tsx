@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip,
@@ -64,8 +64,8 @@ function toApiPayload(form: FormState, encounterId?: string | null) {
 function TrendArrow({ history, dataKey, positiveDown = false }: { history: DisplayRecord[]; dataKey: keyof DisplayRecord; positiveDown?: boolean }) {
   const trend = getTrend(history, dataKey);
   let color = '#94a3b8';
-  if (trend === 'up')   color = positiveDown ? '#22c55e' : '#ef4444';
-  if (trend === 'down') color = positiveDown ? '#ef4444' : '#22c55e';
+  if (trend === 'up')   color = positiveDown ? '#22c55e' : '#0066FF';
+  if (trend === 'down') color = positiveDown ? '#0066FF' : '#22c55e';
   return <span style={{ fontSize: 13, fontWeight: 600, color, marginLeft: 4 }}>{trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→'}</span>;
 }
 
@@ -156,7 +156,7 @@ export default function VitalsPage() {
 
   if (error) {
     return (
-      <div style={{ margin: '20px 24px', padding: '14px 18px', background: 'var(--chip-red-bg)', border: '1px solid var(--chip-red-border)', borderRadius: 10, color: '#b91c1c', fontSize: 13 }}>
+      <div style={{ margin: '20px 24px', padding: '14px 18px', background: 'var(--chip-red-bg)', border: '1px solid var(--chip-red-border)', borderRadius: 10, color: '#1E40AF', fontSize: 13 }}>
         Failed to load vitals: {error}
       </div>
     );
@@ -178,7 +178,7 @@ export default function VitalsPage() {
             onClick={() => { setShowForm(v => !v); setSaved(false); }}
             style={{
               display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px',
-              background: showForm ? '#e2e8f0' : '#c0392b', color: showForm ? '#475569' : '#fff',
+              background: showForm ? '#e2e8f0' : 'var(--accent)', color: showForm ? '#475569' : '#fff',
               border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer',
             }}
           >
@@ -201,7 +201,7 @@ export default function VitalsPage() {
                 onClick={() => v.chartKey && setActiveChart(v.chartKey)}
                 style={{
                   background: 'var(--bg-card)', borderRadius: 10, padding: '14px 14px 12px',
-                  border: `1.5px solid ${activeChart === v.chartKey ? '#c0392b' : 'var(--border)'}`,
+                  border: `1.5px solid ${activeChart === v.chartKey ? 'var(--accent)' : 'var(--border)'}`,
                   cursor: v.chartKey ? 'pointer' : 'default',
                   boxShadow: activeChart === v.chartKey ? '0 0 0 3px rgba(192,57,43,0.1)' : '0 1px 3px var(--shadow-sm)',
                   transition: 'border-color 0.15s, box-shadow 0.15s, background-color 0.2s',
@@ -240,7 +240,7 @@ export default function VitalsPage() {
           {canRecord && (
             <button
               onClick={() => setShowForm(true)}
-              style={{ background: '#c0392b', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+              style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
             >
               + Record First Vitals
             </button>
@@ -252,7 +252,7 @@ export default function VitalsPage() {
       {showForm && (
         <div style={{ margin: '0 24px 16px', background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-input)', overflow: 'hidden' }}>
           <div style={{ background: 'var(--bg-nav)', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#c0392b', display: 'inline-block' }} />
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block' }} />
             <span style={{ color: '#f1f5f9', fontSize: 13, fontWeight: 600, letterSpacing: '0.3px' }}>NEW VITALS ENTRY</span>
           </div>
           <div style={{ padding: 20 }}>
@@ -318,7 +318,7 @@ export default function VitalsPage() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                style={{ padding: '8px 22px', borderRadius: 7, border: 'none', background: saving ? '#e2e8f0' : '#c0392b', color: saving ? '#94a3b8' : '#fff', fontSize: 13, fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer' }}
+                style={{ padding: '8px 22px', borderRadius: 7, border: 'none', background: saving ? '#e2e8f0' : 'var(--accent)', color: saving ? '#94a3b8' : '#fff', fontSize: 13, fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer' }}
               >
                 {saving ? 'Saving…' : 'Save Vitals'}
               </button>
@@ -366,7 +366,7 @@ export default function VitalsPage() {
                       <tr key={row.id} style={{ borderTop: '1px solid var(--border-light)', background: i === 0 ? 'var(--bg-surface)' : 'transparent' }}>
                         <td style={{ padding: '9px 10px', color: 'var(--text-body2)', whiteSpace: 'nowrap', fontWeight: i === 0 ? 600 : 400 }}>
                           {row.date}
-                          {i === 0 && <span style={{ marginLeft: 5, fontSize: 9, background: '#c0392b', color: '#fff', padding: '1px 5px', borderRadius: 3, fontWeight: 700 }}>NEW</span>}
+                          {i === 0 && <span style={{ marginLeft: 5, fontSize: 9, background: 'var(--accent)', color: '#fff', padding: '1px 5px', borderRadius: 3, fontWeight: 700 }}>NEW</span>}
                         </td>
                         <td style={{ padding: '9px 10px' }}>
                           <span style={{ color: bpSt.text, fontWeight: 600 }}>
@@ -404,8 +404,8 @@ export default function VitalsPage() {
                   onClick={() => setActiveChart(key)}
                   style={{
                     padding: '12px 12px 10px', border: 'none', background: 'transparent',
-                    borderBottom: `2px solid ${activeChart === key ? '#c0392b' : 'transparent'}`,
-                    color: activeChart === key ? '#c0392b' : 'var(--text-subtle)',
+                    borderBottom: `2px solid ${activeChart === key ? 'var(--accent)' : 'transparent'}`,
+                    color: activeChart === key ? 'var(--accent)' : 'var(--text-subtle)',
                     fontSize: 12, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
                     transition: 'color 0.15s',
                   }}

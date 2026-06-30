@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import api from '../../../api/client';
 import { DiagnosisBlockData, DiagnosisStatus } from '../../../types/consultation';
@@ -6,7 +6,7 @@ import { DiagnosisBlockData, DiagnosisStatus } from '../../../types/consultation
 const STATUS_CFG: Record<DiagnosisStatus, { bg: string; text: string; border: string; label: string }> = {
   SUSPECTED: { bg: 'var(--badge-amber-bg)', text: 'var(--badge-amber-text)', border: 'var(--badge-amber-text)', label: 'Suspected' },
   CONFIRMED: { bg: 'var(--badge-green-bg)', text: 'var(--badge-green-text)', border: 'var(--badge-green-text)', label: 'Confirmed' },
-  CHRONIC:   { bg: 'var(--badge-red-bg)',   text: 'var(--badge-red-text)',   border: 'var(--badge-red-text)',   label: 'Chronic'   },
+  CHRONIC:   { bg: 'var(--badge-blue-bg)',  text: 'var(--badge-blue-text)',  border: 'var(--badge-blue-text)',  label: 'Chronic'   },
   RESOLVED:  { bg: 'var(--badge-gray-bg)',  text: 'var(--badge-gray-text)',  border: 'var(--badge-gray-text)',  label: 'Resolved'  },
 };
 
@@ -79,23 +79,22 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
 
   return (
     <div style={{
-      borderLeft: '3px solid #B41720',
+      borderLeft: '3px solid var(--accent)',
       background: 'var(--bg-card)',
-      borderRadius: '0 10px 10px 0',
       padding: '10px 14px',
       margin: '4px 0',
       position: 'relative',
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: '#B41720', background: 'var(--badge-red-bg)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace', flexShrink: 0 }}>Dx</span>
+          <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--accent)', background: 'var(--accent-soft)', padding: '2px 7px', fontFamily: 'monospace', flexShrink: 0 }}>Dx</span>
           {data.icd11Code ? (
             <>
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#B41720', fontFamily: 'monospace' }}>{data.icd11Code}</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', fontFamily: 'monospace' }}>{data.icd11Code}</span>
               <span style={{ fontSize: 14, color: 'var(--text-heading)', fontWeight: 500 }}>{data.icd11Description}</span>
               {data.icd11Category && <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{data.icd11Category}</span>}
               {data.isPrimary && (
-                <span style={{ fontSize: 10, fontWeight: 700, background: '#B41720', color: '#fff', padding: '2px 7px', borderRadius: 4 }}>PRIMARY</span>
+                <span style={{ fontSize: 10, fontWeight: 700, background: 'var(--accent)', color: '#fff', padding: '2px 7px', borderRadius: 4 }}>PRIMARY</span>
               )}
             </>
           ) : (
@@ -111,7 +110,7 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
               style={{
                 fontSize: 11, fontWeight: 600,
                 background: sc.bg, color: sc.text, border: `1px solid ${sc.border}`,
-                borderRadius: 5, padding: '3px 9px', cursor: readOnly ? 'default' : 'pointer',
+                padding: '3px 9px', cursor: readOnly ? 'default' : 'pointer',
               }}
             >
               {sc.label}
@@ -154,7 +153,7 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
               }}
               style={{
                 width: '100%', padding: '7px 10px 7px 30px',
-                border: '1.5px solid #FCA5A5', borderRadius: 7,
+                border: '1.5px solid var(--accent-border)',
                 fontSize: 13, outline: 'none', background: 'var(--bg-input)',
                 color: 'var(--text-heading)', boxSizing: 'border-box',
               }}
@@ -163,7 +162,7 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
           {results.length > 0 && (
             <div style={{
               position: 'absolute', zIndex: 100, background: 'var(--bg-card)',
-              border: '1.5px solid var(--border-input)', borderRadius: 10,
+              border: '1.5px solid var(--border-input)',
               boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
               marginTop: 4, width: '100%', maxHeight: 220, overflowY: 'auto',
             }}>
@@ -176,10 +175,10 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
                     display: 'flex', alignItems: 'center', gap: 10,
                     background: 'none', border: 'none', borderBottom: '1px solid var(--border-light)', cursor: 'pointer',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--badge-red-bg)')}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--accent-soft)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                 >
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#B41720', background: 'var(--badge-red-bg)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace', flexShrink: 0 }}>{c.code}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent)', background: 'var(--accent-soft)', padding: '2px 7px', fontFamily: 'monospace', flexShrink: 0 }}>{c.code}</span>
                   <span style={{ fontSize: 13, color: 'var(--text-body)' }}>{c.description}</span>
                   {c.category && <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto', flexShrink: 0 }}>{c.category}</span>}
                 </button>

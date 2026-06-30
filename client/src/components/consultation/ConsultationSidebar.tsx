@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronRight, AlertTriangle, Activity, History, Pill, FlaskConical, HeartPulse, X } from 'lucide-react';
 import api from '../../api/client';
 import { Patient, Encounter, Medication, Vital } from '../../types';
@@ -27,12 +27,12 @@ function deserializeNodes(raw: string | undefined | null): CanvasNode[] {
   } catch { return []; }
 }
 
-// Abnormal color for the dark sidebar (caution=amber, warning/danger=orange/red)
+// Abnormal color for the dark sidebar — electric cyan scale for visibility
 function vitalColor(statusKey: string, value: number | null | undefined): string {
   const s = getStatus(statusKey, value);
-  if (s === 'danger')  return '#ef4444';
-  if (s === 'warning') return '#f97316';
-  if (s === 'caution') return '#eab308';
+  if (s === 'danger')  return '#00E5FF';
+  if (s === 'warning') return '#38BDF8';
+  if (s === 'caution') return '#60A5FA';
   return '#cbd5e1';
 }
 
@@ -46,7 +46,7 @@ function InvResultsPanel({ item, onClose }: { item: any; onClose: () => void }) 
 
   function rc(status: string): string {
     if (status === 'High' || status === 'Low' || status === 'Abnormal') return '#d97706';
-    if (status === 'Critical' || status === 'Positive') return '#dc2626';
+    if (status === 'Critical' || status === 'Positive') return 'var(--accent)';
     if (status === 'Normal' || status === 'Negative') return '#16a34a';
     return '#475569';
   }
@@ -221,6 +221,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
   const [patientDispensing, setPatientDispensing] = useState<Record<string, any>>({});
   const [invResultsPanel, setInvResultsPanel] = useState<any>(null);
   const [selectedRecentInv, setSelectedRecentInv] = useState<any>(null);
+  const [encDetails, setEncDetails] = useState<Record<string, { hpi?: string; examination?: string }>>({});
 
   useEffect(() => {
     api.get(`/patients/${patientId}/medications`).then(r => setMedications(r.data)).catch(() => {});
@@ -230,8 +231,13 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
         .sort((a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime());
       setVitalsHistory(mapped);
     }).catch(() => {});
-    api.get(`/investigations/orders?patientId=${patientId}&limit=3`)
-      .then(r => setRecentInvestigations(r.data.flatMap((o: any) => o.items)))
+    api.get(`/investigations/orders?patientId=${patientId}`)
+      .then(r => {
+        const STATUS_RANK: Record<string, number> = { Resulted: 0, Amended: 1, 'In Progress': 2, Pending: 3 };
+        const items: any[] = r.data.flatMap((o: any) => o.items ?? []);
+        items.sort((a, b) => (STATUS_RANK[a.status] ?? 9) - (STATUS_RANK[b.status] ?? 9));
+        setRecentInvestigations(items);
+      })
       .catch(() => {});
     api.get(`/patients/${patientId}/dispensing`)
       .then(r => {
@@ -266,6 +272,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
         ]);
         const { data } = encRes;
         setEncNotes(prev => ({ ...prev, [enc.id]: deserializeNodes(data.notes) }));
+        setEncDetails(prev => ({ ...prev, [enc.id]: { hpi: data.hpi ?? '', examination: data.examination ?? '' } }));
         if (Array.isArray(data.prescriptions) && data.prescriptions.length > 0) {
           setEncDbPrescriptions(prev => ({ ...prev, [enc.id]: data.prescriptions }));
         }
@@ -282,8 +289,8 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
   }
 
   function resultColor(status: string): string {
-    if (status === 'High' || status === 'Low' || status === 'Abnormal') return '#d97706';
-    if (status === 'Critical' || status === 'Positive') return '#dc2626';
+    if (status === 'High' || status === 'Low' || status === 'Abnormal') return '#38BDF8';
+    if (status === 'Critical' || status === 'Positive') return '#00E5FF';
     if (status === 'Normal' || status === 'Negative') return '#16a34a';
     return '#94a3b8';
   }
@@ -296,7 +303,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
     }
     if (dispense.dispensedDrug && dispense.dispensedDrug.toLowerCase() !== prescribedDrug.toLowerCase()) {
       return (
-        <span style={{ fontSize: 10, color: '#d97706', fontWeight: 500 }}>
+        <span style={{ fontSize: 10, color: '#60A5FA', fontWeight: 500 }}>
           Dispensed as {dispense.dispensedDrug}
         </span>
       );
@@ -319,7 +326,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
             {label}
           </span>
           {!!count && count > 0 && (
-            <span style={{ fontSize: 10, background: '#B41720', color: '#fff', borderRadius: 10, padding: '1px 5px', fontWeight: 700 }}>
+            <span style={{ fontSize: 10, background: '#2979FF', color: '#fff', borderRadius: 10, padding: '1px 5px', fontWeight: 700 }}>
               {count}
             </span>
           )}
@@ -335,13 +342,38 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
   }) {
     const color = displayValue !== null ? vitalColor(statusKey, rawValue) : '#374151';
     return (
-      <div style={{ minWidth: 0 }}>
+      <div style={{ minWidth: 0, borderLeft: '2px solid rgba(0,229,255,0.5)', paddingLeft: 6 }}>
         <div style={{ fontSize: 9, fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>
           {label}
         </div>
         <div style={{ fontSize: 13, fontWeight: 700, color, lineHeight: 1.2 }}>
           {displayValue ?? '—'}
         </div>
+      </div>
+    );
+  }
+
+  // ── Labelled sub-section inside an expanded encounter card ───────────────
+  function EncSummarySection({ label, children }: { label: string; children: React.ReactNode }) {
+    return (
+      <div style={{ marginBottom: 8 }}>
+        <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
+          {label}
+        </div>
+        {children}
+      </div>
+    );
+  }
+
+  // ── Section divider with centred hex pip ──────────────────────────────────
+  function HexDivider() {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', margin: '4px 0 8px' }}>
+        <div style={{ flex: 1, height: 1, background: '#2D3748' }} />
+        <svg width="8" height="8" viewBox="0 0 8 8" style={{ margin: '0 4px', flexShrink: 0 }}>
+          <polygon points="4,0 8,2 8,6 4,8 0,6 0,2" fill="#2D3748" />
+        </svg>
+        <div style={{ flex: 1, height: 1, background: '#2D3748' }} />
       </div>
     );
   }
@@ -371,7 +403,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
               {calcAge(patient.dateOfBirth)} yrs · {patient.gender} · {patient.nationalId ?? 'No NRC'}
             </div>
             {patient.hivStatus === 'POSITIVE' && (
-              <div style={{ marginTop: 6, fontSize: 11, fontWeight: 700, background: '#7F1D1D', color: '#FCA5A5', padding: '3px 8px', borderRadius: 5, display: 'inline-block' }}>
+              <div style={{ marginTop: 6, fontSize: 11, fontWeight: 700, background: 'var(--badge-blue-bg)', color: 'var(--badge-blue-text)', padding: '3px 8px', display: 'inline-block' }}>
                 HIV+
               </div>
             )}
@@ -380,26 +412,26 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
 
         {/* Allergies — only rendered when the patient has recorded allergies */}
         {patient?.allergies && patient.allergies.length > 0 && (
-          <div style={{ marginBottom: 12, background: '#3B1A1A', border: '1px solid #7F1D1D', borderRadius: 8, padding: '8px 10px' }}>
+          <div style={{ marginBottom: 12, background: 'var(--badge-blue-bg)', border: '1px solid var(--accent-border)', padding: '8px 10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-              <AlertTriangle size={11} color="#F87171" />
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#FCA5A5', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Allergies</span>
+              <AlertTriangle size={11} color="var(--accent)" />
+              <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--badge-blue-text)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Allergies</span>
             </div>
             {patient.allergies.map((a, i) => (
-              <p key={i} style={{ fontSize: 12, color: '#FCA5A5', margin: i < patient.allergies!.length - 1 ? '0 0 2px' : 0 }}>{a}</p>
+              <p key={i} style={{ fontSize: 12, color: 'var(--badge-blue-text)', margin: i < patient.allergies!.length - 1 ? '0 0 2px' : 0 }}>{a}</p>
             ))}
           </div>
         )}
 
         {/* Active Conditions */}
-        <div style={{ borderBottom: '1px solid #2D3748', paddingBottom: 8, marginBottom: 8 }}>
+        <div>
           <SectionHeader k="conditions" label="Active Conditions" Icon={Activity} count={activeConditions.length} />
           {open.conditions && (
             activeConditions.length > 0
               ? activeConditions.map(d => (
                 <div key={d.id} style={{ paddingLeft: 19, marginBottom: 7 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: '#B41720', fontFamily: 'monospace' }}>{d.icd11.code}</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: '#2979FF', fontFamily: 'monospace' }}>{d.icd11.code}</span>
                     <span style={{ fontSize: 12, color: '#cbd5e1' }}>{d.icd11.description}</span>
                   </div>
                   <div style={{ fontSize: 10, color: '#475569', marginTop: 1 }}>
@@ -409,11 +441,12 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
               ))
               : <p style={{ fontSize: 12, color: '#475569', paddingLeft: 19, margin: '0 0 4px' }}>None on record</p>
           )}
+          <HexDivider />
         </div>
 
         {/* Latest Vitals — only rendered if a reading exists */}
         {latestVital && (
-          <div style={{ borderBottom: '1px solid #2D3748', paddingBottom: 8, marginBottom: 8 }}>
+          <div>
             <SectionHeader k="vitals" label="Latest Vitals" Icon={HeartPulse} />
             {open.vitals && (
               <div style={{ paddingLeft: 4 }}>
@@ -469,28 +502,30 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                   />
                 </div>
 
-                {/* View Trends button */}
+                {/* View Trends button — horizontal hex clip */}
                 <button
                   onClick={() => setShowTrendsPanel(true)}
                   style={{
-                    width: '100%', padding: '5px 0',
-                    background: 'none', border: '1px solid #374151',
-                    borderRadius: 6, cursor: 'pointer',
+                    width: '100%', padding: '6px 0',
+                    background: 'rgba(45,55,72,0.7)', border: 'none',
+                    clipPath: 'polygon(8px 0%, calc(100% - 8px) 0%, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0% 50%)',
+                    cursor: 'pointer',
                     fontSize: 11, fontWeight: 600, color: '#64748b',
-                    letterSpacing: '0.02em', transition: 'border-color 0.15s, color 0.15s',
+                    letterSpacing: '0.02em', transition: 'background 0.15s, color 0.15s',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#475569'; e.currentTarget.style.color = '#94a3b8'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#374151'; e.currentTarget.style.color = '#64748b'; }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(71,85,105,0.7)'; e.currentTarget.style.color = '#94a3b8'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(45,55,72,0.7)'; e.currentTarget.style.color = '#64748b'; }}
                 >
                   View Trends
                 </button>
               </div>
             )}
+            <HexDivider />
           </div>
         )}
 
         {/* Previous Encounters */}
-        <div style={{ borderBottom: '1px solid #2D3748', paddingBottom: 8, marginBottom: 8 }}>
+        <div>
           <SectionHeader k="encounters" label="Previous Encounters" Icon={History} count={pastEncounters.length} />
           {open.encounters && (
             pastEncounters.length > 0
@@ -530,9 +565,147 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                         marginLeft: 10, marginTop: 6, marginBottom: 4,
                         borderLeft: '2px solid #374151', paddingLeft: 10,
                       }}>
-                        {/* Import button — shown once data has loaded */}
+                        {nodes == null ? (
+                          <p style={{ fontSize: 11, color: '#475569', fontStyle: 'italic', margin: '4px 0' }}>Loading…</p>
+                        ) : (
+                          <>
+                            {/* History — canvas free-text narrative (all text nodes, plus legacy hpi field) */}
+                            {(() => {
+                              const canvasTexts = nodes
+                                .filter(n => n.type === 'text' && (n as any).content?.trim())
+                                .map((n: any) => n.content as string);
+                              const hpi = encDetails[enc.id]?.hpi || '';
+                              const allLines = hpi ? [hpi, ...canvasTexts] : canvasTexts;
+                              if (allLines.length === 0) return null;
+                              return (
+                                <EncSummarySection label="History">
+                                  {allLines.map((text, i) => (
+                                    <p key={i} style={{ fontSize: 11, color: '#94a3b8', margin: '0 0 4px', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
+                                      {text}
+                                    </p>
+                                  ))}
+                                </EncSummarySection>
+                              );
+                            })()}
+
+                            {/* Examination */}
+                            {encDetails[enc.id]?.examination && (
+                              <EncSummarySection label="Examination">
+                                <p style={{ fontSize: 11, color: '#94a3b8', margin: 0, lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{encDetails[enc.id].examination}</p>
+                              </EncSummarySection>
+                            )}
+
+                            {/* Diagnoses — deduplicated by ICD code */}
+                            {enc.diagnoses && enc.diagnoses.length > 0 && (() => {
+                              const seen = new Set<string>();
+                              const unique = enc.diagnoses!.filter(d => {
+                                if (seen.has(d.icd11.code)) return false;
+                                seen.add(d.icd11.code);
+                                return true;
+                              });
+                              return (
+                                <EncSummarySection label="Diagnoses">
+                                  {unique.map(d => (
+                                    <div key={d.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 5, marginBottom: 4 }}>
+                                      <span style={{ fontSize: 9, fontWeight: 700, color: '#2979FF', background: 'rgba(41,121,255,0.1)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace', flexShrink: 0, marginTop: 1 }}>Dx</span>
+                                      <div style={{ minWidth: 0 }}>
+                                        <span style={{ fontSize: 10, fontWeight: 700, color: '#2979FF', fontFamily: 'monospace' }}>{d.icd11.code} </span>
+                                        <span style={{ fontSize: 11, color: '#94a3b8' }}>{d.icd11.description}</span>
+                                        {d.isPrimary && <span style={{ fontSize: 9, color: '#475569', marginLeft: 4 }}>(primary)</span>}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </EncSummarySection>
+                              );
+                            })()}
+
+                            {/* Vitals at time of encounter */}
+                            {enc.vitals && enc.vitals.length > 0 && (() => {
+                              const v = [...enc.vitals!].sort((a, b) => new Date(b.recordedAt).getTime() - new Date(a.recordedAt).getTime())[0];
+                              const bmi = v.weight && v.height ? (v.weight / Math.pow(v.height / 100, 2)).toFixed(1) : null;
+                              const pairs: [string, string][] = [];
+                              if (v.bloodPressureSystolic && v.bloodPressureDiastolic) pairs.push(['BP', `${v.bloodPressureSystolic}/${v.bloodPressureDiastolic} mmHg`]);
+                              if (v.heartRate) pairs.push(['HR', `${v.heartRate} bpm`]);
+                              if (v.temperature) pairs.push(['Temp', `${v.temperature} °C`]);
+                              if (v.oxygenSat) pairs.push(['SpO₂', `${v.oxygenSat}%`]);
+                              if (v.glucose) pairs.push(['Glucose', `${v.glucose} mmol/L`]);
+                              if (bmi) pairs.push(['BMI', bmi]);
+                              if (pairs.length === 0) return null;
+                              return (
+                                <EncSummarySection label="Vitals">
+                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px 8px' }}>
+                                    {pairs.map(([label, val]) => (
+                                      <div key={label} style={{ fontSize: 11 }}>
+                                        <span style={{ fontSize: 9, fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>{label} </span>
+                                        <span style={{ color: '#94a3b8' }}>{val}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </EncSummarySection>
+                              );
+                            })()}
+
+                            {/* Investigations ordered in this encounter */}
+                            {encInvestigations[enc.id]?.length > 0 && (
+                              <EncSummarySection label="Investigations">
+                                {encInvestigations[enc.id].map((item: any) => {
+                                  const sClr: Record<string, string> = {
+                                    Resulted: '#6ee7b7', Amended: '#fcd34d', 'In Progress': '#93c5fd', Pending: '#64748b',
+                                  };
+                                  const isResulted = item.status === 'Resulted' || item.status === 'Amended';
+                                  return (
+                                    <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
+                                      <span style={{ fontSize: 9, fontWeight: 700, color: '#00897B', background: '#CCFBF1', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace', flexShrink: 0 }}>Inv</span>
+                                      <span style={{ fontSize: 11, color: '#94a3b8', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</span>
+                                      <span style={{ fontSize: 9, fontWeight: 600, color: sClr[item.status] ?? '#64748b', flexShrink: 0 }}>{item.status}</span>
+                                      {isResulted && (
+                                        <button
+                                          onClick={() => setInvResultsPanel(item)}
+                                          style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 9, color: '#00897B', padding: 0, flexShrink: 0, fontFamily: 'inherit' }}
+                                        >
+                                          ↗
+                                        </button>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </EncSummarySection>
+                            )}
+
+                            {/* Prescriptions issued in this encounter */}
+                            {encDbPrescriptions[enc.id]?.length > 0 && (
+                              <EncSummarySection label="Prescriptions">
+                                {encDbPrescriptions[enc.id].map((rx: any) => (
+                                  <div key={rx.id} style={{ marginBottom: 4 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                                      <span style={{ fontSize: 9, fontWeight: 700, color: '#1565C0', background: '#DBEAFE', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace', flexShrink: 0 }}>Rx</span>
+                                      <span style={{ fontSize: 11, color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {[rx.medication?.name, rx.medication?.dosage, rx.medication?.frequency].filter(Boolean).join(' ')}
+                                      </span>
+                                    </div>
+                                    <div style={{ marginLeft: 37, marginTop: 1 }}>
+                                      {renderDispensingStatus(rx.id, rx.medication?.name ?? '')}
+                                    </div>
+                                  </div>
+                                ))}
+                              </EncSummarySection>
+                            )}
+
+                            {/* Nothing at all */}
+                            {!encDetails[enc.id]?.hpi &&
+                             !encDetails[enc.id]?.examination &&
+                             nodes.filter(n => n.type === 'text' && (n as any).content?.trim()).length === 0 &&
+                             (!enc.diagnoses || enc.diagnoses.length === 0) &&
+                             (!enc.vitals || enc.vitals.length === 0) &&
+                             !encInvestigations[enc.id]?.length && !encDbPrescriptions[enc.id]?.length && (
+                              <p style={{ fontSize: 11, color: '#475569', fontStyle: 'italic', margin: '4px 0' }}>No encounter details on record.</p>
+                            )}
+                          </>
+                        )}
+
+                        {/* Import button — at bottom, only on ConsultationPage */}
                         {nodes != null && onImportEncounter && (
-                          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 6 }}>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 6 }}>
                             <button
                               onClick={() => onImportEncounter(
                                 buildImportData(enc, nodes, encDbPrescriptions[enc.id] ?? [], encInvestigations[enc.id] ?? [])
@@ -552,139 +725,6 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                             </button>
                           </div>
                         )}
-                        {/* Note content — exact original 3-way ternary, unchanged */}
-                        {nodes == null ? (
-                          <p style={{ fontSize: 11, color: '#475569', fontStyle: 'italic' }}>Loading…</p>
-                        ) : nodes.length === 0 && !encDbPrescriptions[enc.id]?.length ? (
-                          <p style={{ fontSize: 11, color: '#475569', fontStyle: 'italic' }}>No note content saved.</p>
-                        ) : (
-                          <div style={{ fontSize: 12 }}>
-                            {nodes.map(node => {
-                              if (node.type === 'text' && node.content.trim()) {
-                                return (
-                                  <p key={node.id} style={{ color: '#94a3b8', whiteSpace: 'pre-wrap', margin: '0 0 6px', lineHeight: 1.5, fontSize: 12 }}>
-                                    {node.content}
-                                  </p>
-                                );
-                              }
-                              if (node.type === 'diagnosis' && node.data.icd11Code) {
-                                return (
-                                  <div key={node.id} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5, flexWrap: 'wrap' }}>
-                                    <span style={{ fontSize: 9, fontWeight: 700, color: '#B41720', background: '#FEE2E2', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Dx</span>
-                                    <span style={{ fontSize: 10, fontWeight: 700, color: '#B41720', fontFamily: 'monospace' }}>{node.data.icd11Code}</span>
-                                    <span style={{ fontSize: 11, color: '#94a3b8' }}>{node.data.icd11Description}</span>
-                                    <span style={{ fontSize: 10, color: '#64748b', marginLeft: 'auto' }}>{node.data.status}</span>
-                                  </div>
-                                );
-                              }
-                              if (node.type === 'investigation') {
-                                const dbItems = encInvestigations[enc.id] ?? [];
-                                return node.data.items.map((item: any) => {
-                                  const dbItem = dbItems.find((i: any) => i.name.toLowerCase() === item.name.toLowerCase());
-                                  const dbStatus: string | undefined = dbItem?.status;
-                                  const isPendingOrInProgress = !dbStatus || dbStatus === 'Pending' || dbStatus === 'In Progress';
-
-                                  if (isPendingOrInProgress) {
-                                    return (
-                                      <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
-                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#00897B', background: '#CCFBF1', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
-                                        <span style={{ fontSize: 11, color: '#94a3b8' }}>{item.name}</span>
-                                        <span style={{ fontSize: 10, color: '#64748b', marginLeft: 'auto' }}>{dbStatus ?? item.status}</span>
-                                      </div>
-                                    );
-                                  }
-
-                                  const latestResult = dbItem?.results?.[0];
-                                  let resultRows: any[] = [];
-                                  try { if (latestResult) resultRows = JSON.parse(latestResult.resultsJson); } catch {}
-                                  const isPanel = dbItem?.type === 'panel';
-
-                                  if (isPanel) {
-                                    return (
-                                      <div key={item.id} style={{ marginBottom: 5 }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                          <span style={{ fontSize: 9, fontWeight: 700, color: '#00897B', background: '#CCFBF1', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
-                                          <span style={{ fontSize: 11, color: '#94a3b8' }}>{item.name}</span>
-                                          <button
-                                            onClick={() => setInvResultsPanel(dbItem)}
-                                            style={{
-                                              marginLeft: 'auto', background: 'none', border: 'none',
-                                              cursor: 'pointer', fontSize: 10, color: '#00897B',
-                                              textDecoration: 'underline', padding: 0, fontFamily: 'inherit',
-                                            }}
-                                          >
-                                            View Results
-                                          </button>
-                                        </div>
-                                      </div>
-                                    );
-                                  }
-
-                                  const firstRow = resultRows[0];
-                                  return (
-                                    <div key={item.id} style={{ marginBottom: 5 }}>
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#00897B', background: '#CCFBF1', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
-                                        <span style={{ fontSize: 11, color: '#94a3b8' }}>{item.name}</span>
-                                      </div>
-                                      {firstRow && (
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 37, marginTop: 2 }}>
-                                          <span style={{ fontSize: 12, fontWeight: 700, color: resultColor(firstRow.status) }}>{firstRow.value}</span>
-                                          {firstRow.units && <span style={{ fontSize: 11, color: '#64748b' }}>{firstRow.units}</span>}
-                                          <span style={{ fontSize: 10, color: resultColor(firstRow.status) }}>{firstRow.status}</span>
-                                        </div>
-                                      )}
-                                    </div>
-                                  );
-                                });
-                              }
-                              if (node.type === 'prescription') {
-                                const dbRx = encDbPrescriptions[enc.id] ?? [];
-                                const canvasIds = new Set(node.data.items.map((i: any) => i.prescriptionId).filter(Boolean));
-                                const extraDbRx = dbRx.filter(rx => !canvasIds.has(rx.id));
-                                return [
-                                  ...node.data.items.map((item: any) => (
-                                    <div key={item.id} style={{ marginBottom: 5 }}>
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#1565C0', background: '#DBEAFE', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
-                                        <span style={{ fontSize: 11, color: '#94a3b8' }}>{item.drugName} {item.dose} {item.frequency}</span>
-                                      </div>
-                                      {item.prescriptionId && (
-                                        <div style={{ marginLeft: 37, marginTop: 2 }}>
-                                          {renderDispensingStatus(item.prescriptionId, item.drugName ?? '')}
-                                        </div>
-                                      )}
-                                    </div>
-                                  )),
-                                  ...extraDbRx.map((rx: any) => (
-                                    <div key={`db-${rx.id}`} style={{ marginBottom: 5 }}>
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#1565C0', background: '#DBEAFE', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
-                                        <span style={{ fontSize: 11, color: '#94a3b8' }}>{rx.medication?.name} {rx.medication?.dosage} {rx.medication?.frequency}</span>
-                                      </div>
-                                      <div style={{ marginLeft: 37, marginTop: 2 }}>
-                                        {renderDispensingStatus(rx.id, rx.medication?.name ?? '')}
-                                      </div>
-                                    </div>
-                                  )),
-                                ];
-                              }
-                              return null;
-                            })}
-                            {/* DB prescriptions for encounters with no canvas Rx blocks */}
-                            {!nodes.some(n => n.type === 'prescription') && (encDbPrescriptions[enc.id] ?? []).map((rx: any) => (
-                              <div key={`db-${rx.id}`} style={{ marginBottom: 5 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                  <span style={{ fontSize: 9, fontWeight: 700, color: '#1565C0', background: '#DBEAFE', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
-                                  <span style={{ fontSize: 11, color: '#94a3b8' }}>{rx.medication?.name} {rx.medication?.dosage} {rx.medication?.frequency}</span>
-                                </div>
-                                <div style={{ marginLeft: 37, marginTop: 2 }}>
-                                  {renderDispensingStatus(rx.id, rx.medication?.name ?? '')}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
                       </div>
                     )}
                   </div>
@@ -692,10 +732,11 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
               })
               : <p style={{ fontSize: 12, color: '#475569', paddingLeft: 19, margin: '0 0 4px' }}>No previous encounters</p>
           )}
+          <HexDivider />
         </div>
 
         {/* Active Prescriptions */}
-        <div style={{ borderBottom: '1px solid #2D3748', paddingBottom: 8, marginBottom: 8 }}>
+        <div>
           <SectionHeader k="prescriptions" label="Active Prescriptions" Icon={Pill} count={activeMeds.length} />
           {open.prescriptions && (
             activeMeds.length > 0
@@ -707,10 +748,11 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
               ))
               : <p style={{ fontSize: 12, color: '#475569', paddingLeft: 19, margin: '0 0 4px' }}>No active prescriptions</p>
           )}
+          <HexDivider />
         </div>
 
         {/* Recent Investigations (from V2 orders API — last 3 items) */}
-        <div style={{ borderBottom: '1px solid #2D3748', paddingBottom: 8, marginBottom: 8 }}>
+        <div>
           <SectionHeader k="recentInvestigations" label="Recent Investigations" Icon={FlaskConical} count={recentInvestigations.length} />
           {open.recentInvestigations && (
             recentInvestigations.length > 0
@@ -776,6 +818,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                 })
               : <p style={{ fontSize: 12, color: '#475569', paddingLeft: 19, margin: '0 0 4px' }}>None on record</p>
           )}
+          <HexDivider />
         </div>
 
         {/* Pending Investigations (from current canvas) */}
@@ -791,6 +834,25 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
               ))
               : <p style={{ fontSize: 12, color: '#475569', paddingLeft: 19, margin: '0 0 4px' }}>None pending</p>
           )}
+        </div>
+
+        {/* Ghost hex watermark — decorative, bottom-right of sidebar */}
+        <div style={{ position: 'relative', height: 80, overflow: 'hidden', marginTop: 8, pointerEvents: 'none' }}>
+          <svg
+            width="140" height="120"
+            viewBox="0 0 140 120"
+            fill="none"
+            style={{ position: 'absolute', bottom: -24, right: -24 }}
+          >
+            <polygon
+              points="35,2 105,2 140,60 105,118 35,118 0,60"
+              stroke="#FFFFFF" strokeWidth="1.5" fill="none" opacity="0.04"
+            />
+            <polygon
+              points="47,16 93,16 116,60 93,104 47,104 24,60"
+              stroke="#FFFFFF" strokeWidth="1" fill="none" opacity="0.04"
+            />
+          </svg>
         </div>
       </div>
 

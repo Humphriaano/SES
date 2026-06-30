@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+﻿import { useEffect, useRef, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Save, CheckCircle, Plus, FileText, ChevronDown, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useWindowSize } from '../hooks/useWindowSize';
@@ -299,7 +299,7 @@ export default function ConsultationPage() {
               onChange={e => setEncounterType(e.target.value as EncounterType)}
               style={{
                 appearance: 'none', background: 'var(--bg-surface)', border: '1.5px solid var(--border-input)',
-                borderRadius: 8, padding: '5px 28px 5px 12px', fontSize: 12.5,
+                 padding: '5px 28px 5px 12px', fontSize: 12.5,
                 color: 'var(--text-body)', fontWeight: 600, cursor: 'pointer', outline: 'none',
               }}
             >
@@ -319,7 +319,7 @@ export default function ConsultationPage() {
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 6,
                   background: 'var(--bg-surface)', color: 'var(--text-body)', border: '1.5px solid var(--border-input)',
-                  borderRadius: 8, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
+                   padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
                 }}
               >
                 <Save size={13} /> {saving ? 'Saving…' : 'Save Draft'}
@@ -328,18 +328,19 @@ export default function ConsultationPage() {
                 onClick={finaliseNote}
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 6,
-                  background: 'var(--bg-nav)', color: '#fff', border: 'none',
-                  borderRadius: 8, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
+                  background: 'var(--accent)', color: '#fff', border: 'none',
+                  padding: '7px 18px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                  letterSpacing: '0.02em',
                 }}
               >
-                <CheckCircle size={13} /> Finalise Note
+                <CheckCircle size={14} /> Finalise Note
               </button>
             </>
           )}
           {current?.status === 'CLOSED' && (
             <button
               onClick={() => setShowFinalNote(true)}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--badge-green-bg)', color: 'var(--badge-green-text)', border: '1.5px solid var(--badge-green-text)', borderRadius: 8, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--badge-green-bg)', color: 'var(--badge-green-text)', border: '1.5px solid var(--badge-green-text)',  padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
             >
               <FileText size={13} /> View Note
             </button>
@@ -347,7 +348,7 @@ export default function ConsultationPage() {
           {(!current || current.status === 'CLOSED') && (
             <button
               onClick={startEncounter}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#B41720', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#2979FF', color: '#fff', border: 'none',  padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
             >
               <Plus size={13} /> New Encounter
             </button>
@@ -375,13 +376,23 @@ export default function ConsultationPage() {
               {current ? (
                 <>
                   {current.status === 'CLOSED' && (
-                    <div style={{ background: 'var(--badge-amber-bg)', border: '1px solid var(--badge-amber-text)', borderRadius: 10, padding: '10px 16px', fontSize: 13, color: 'var(--badge-amber-text)', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ background: 'var(--badge-amber-bg)', border: '1px solid var(--badge-amber-text)',  padding: '10px 16px', fontSize: 13, color: 'var(--badge-amber-text)', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span>⚠</span> This encounter has been finalised. Open a new encounter to continue documenting.
                     </div>
                   )}
                   <div style={{ display: 'flex', gap: 0, maxWidth: 860 }}>
                     {/* Note canvas */}
-                    <div style={{ flex: 1, background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border)', padding: isMobile ? '16px 16px' : '28px 32px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)', minHeight: isMobile ? 320 : 560 }}>
+                    <div style={{ flex: 1, background: 'var(--bg-card)',  border: '1px solid var(--border)', padding: isMobile ? '16px 16px' : '28px 32px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)', minHeight: isMobile ? 320 : 560, position: 'relative' }}>
+                      {/* Hex corner accent frames — purely decorative */}
+                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ position: 'absolute', top: 6, left: 6, pointerEvents: 'none' }}>
+                        <path d="M 14,2 L 3,2 L 0,10" stroke="var(--border)" strokeWidth="1.5" strokeLinecap="square" opacity="0.45"/>
+                      </svg>
+                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ position: 'absolute', top: 6, right: 6, pointerEvents: 'none' }}>
+                        <path d="M 4,2 L 15,2 L 18,10" stroke="var(--border)" strokeWidth="1.5" strokeLinecap="square" opacity="0.45"/>
+                      </svg>
+                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ position: 'absolute', bottom: 6, right: 6, pointerEvents: 'none' }}>
+                        <path d="M 18,8 L 15,16 L 4,16" stroke="var(--border)" strokeWidth="1.5" strokeLinecap="square" opacity="0.45"/>
+                      </svg>
                       {(() => {
                         const importedNodes = nodes.filter(n => n.type === 'imported') as Extract<CanvasNode, { type: 'imported' }>[];
                         const regularNodes = nodes.filter(n => n.type !== 'imported');
@@ -484,14 +495,14 @@ export default function ConsultationPage() {
                 </>
               ) : (
                 <div style={{ maxWidth: 480, margin: '80px auto', textAlign: 'center' }}>
-                  <div style={{ width: 56, height: 56, borderRadius: 14, background: 'var(--badge-red-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                    <FileText size={24} color="#B41720" />
+                  <div style={{ width: 56, height: 56, background: 'var(--accent-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                    <FileText size={24} color="var(--accent)" />
                   </div>
                   <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-heading)', marginBottom: 8 }}>No active encounter</p>
                   <p style={{ fontSize: 14, color: 'var(--text-subtle)', marginBottom: 24 }}>Start a new encounter to begin documenting this visit.</p>
                   <button
                     onClick={startEncounter}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#B41720', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#2979FF', color: '#fff', border: 'none',  padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
                   >
                     <Plus size={16} /> Start New Encounter
                   </button>
@@ -587,7 +598,7 @@ function FinalNoteView({ patient, encounter, nodes, encounterType, onBack }: {
         </button>
         <button
           onClick={() => window.print()}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--bg-surface)', color: 'var(--text-body)', border: '1.5px solid var(--border-input)', borderRadius: 8, padding: '6px 14px', fontSize: 12.5, cursor: 'pointer' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--bg-surface)', color: 'var(--text-body)', border: '1.5px solid var(--border-input)',  padding: '6px 14px', fontSize: 12.5, cursor: 'pointer' }}
         >
           Print / Export PDF
         </button>
@@ -596,7 +607,7 @@ function FinalNoteView({ patient, encounter, nodes, encounterType, onBack }: {
       <div id="print-area">
 
       {/* Header */}
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '20px 24px', marginBottom: 16 }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)',  padding: '20px 24px', marginBottom: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-heading)' }}>
@@ -622,7 +633,7 @@ function FinalNoteView({ patient, encounter, nodes, encounterType, onBack }: {
       </div>
 
       {/* Note body */}
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '28px 32px', marginBottom: 16 }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)',  padding: '28px 32px', marginBottom: 16 }}>
         <h3 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 20 }}>Consultation Note</h3>
         {nodes.map(node => {
           if (node.type === 'text' && node.content) {
@@ -653,7 +664,7 @@ function FinalNoteView({ patient, encounter, nodes, encounterType, onBack }: {
         <SummaryCard title="Diagnoses">
           {dxBlocks.map(b => (
             <div key={b.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', borderBottom: '1px solid var(--border-light)' }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#B41720', fontFamily: 'monospace' }}>{b.data.icd11Code}</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#2979FF', fontFamily: 'monospace' }}>{b.data.icd11Code}</span>
               <span style={{ fontSize: 13, color: 'var(--text-body)' }}>{b.data.icd11Description}</span>
               <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 600, color: 'var(--text-muted)' }}>{b.data.status}</span>
             </div>
@@ -690,7 +701,7 @@ function FinalNoteView({ patient, encounter, nodes, encounterType, onBack }: {
 
 function SummaryCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, padding: '16px 20px', marginBottom: 12 }}>
+    <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)',  padding: '16px 20px', marginBottom: 12 }}>
       <h4 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 12px' }}>{title}</h4>
       {children}
     </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { RefreshCw, Sparkles } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -140,7 +140,7 @@ export default function InsightPanel({ title, question, renderAs }: Props) {
                   <XAxis dataKey={bd.xKey} tick={{ fontSize: 10 }} angle={-30} textAnchor="end" height={48} />
                   <YAxis tick={{ fontSize: 10 }} />
                   <Tooltip />
-                  <Bar dataKey={bd.yKey} fill="#C8102E" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey={bd.yKey} fill="var(--accent)" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             );

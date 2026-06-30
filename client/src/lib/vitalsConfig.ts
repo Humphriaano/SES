@@ -4,9 +4,9 @@ import { Vital } from '../types';
 
 export interface DisplayRecord {
   id: string;
-  recordedAt: string; // raw ISO string from API — always safe to pass to new Date()
-  date: string;       // "02 May, 09:00" — used as chart x-axis label
-  dateTime: string;   // full locale string — used in history table
+  recordedAt: string;
+  date: string;
+  dateTime: string;
   systolic: number | null;
   diastolic: number | null;
   hr: number | null;
@@ -59,11 +59,11 @@ export const STATUS: Record<StatusKey, {
   bg: string; border: string; text: string;
   badge: string; badgeText: string; dot: string; label: string;
 }> = {
-  normal:  { bg: '#f0fdf4', border: '#bbf7d0', text: '#15803d', badge: '#dcfce7', badgeText: '#166534', dot: '#22c55e', label: 'Normal'   },
-  caution: { bg: '#fefce8', border: '#fef08a', text: '#a16207', badge: '#fef9c3', badgeText: '#854d0e', dot: '#eab308', label: 'Elevated' },
-  warning: { bg: '#fff7ed', border: '#fed7aa', text: '#c2410c', badge: '#ffedd5', badgeText: '#9a3412', dot: '#f97316', label: 'High'     },
-  danger:  { bg: '#fef2f2', border: '#fecaca', text: '#b91c1c', badge: '#fee2e2', badgeText: '#991b1b', dot: '#ef4444', label: 'Critical' },
-  neutral: { bg: '#f8fafc', border: '#e2e8f0', text: '#475569', badge: '#f1f5f9', badgeText: '#475569', dot: '#94a3b8', label: '—'        },
+  normal:  { bg: '#f0fdf4', border: '#bbf7d0', text: '#15803d', badge: '#dcfce7', badgeText: '#166534', dot: '#22c55e',  label: 'Normal'   },
+  caution: { bg: '#EFF6FF', border: '#BFDBFE', text: '#1D4ED8', badge: '#DBEAFE', badgeText: '#1E40AF', dot: '#60A5FA',  label: 'Elevated' },
+  warning: { bg: '#EFF6FF', border: '#93C5FD', text: '#1D4ED8', badge: '#BFDBFE', badgeText: '#1E40AF', dot: '#2563EB',  label: 'High'     },
+  danger:  { bg: '#EFF6FF', border: '#2563EB', text: '#1E40AF', badge: '#DBEAFE', badgeText: '#1E3A8A', dot: '#0066FF',  label: 'Critical' },
+  neutral: { bg: '#f8fafc', border: '#e2e8f0', text: '#475569', badge: '#f1f5f9', badgeText: '#475569', dot: '#94a3b8',  label: '—'        },
 };
 
 // ── Chart config ──────────────────────────────────────────────────────────────
@@ -77,11 +77,11 @@ export const CHART_CONFIGS: Record<ChartKey, {
   unit: string;
   refs: { y: number; color: string; dash: string }[];
 }> = {
-  bp:      { label: 'Blood Pressure', keys: ['systolic', 'diastolic'], colors: ['#c0392b', '#e67e22'], unit: 'mmHg',   refs: [{ y: 130, color: '#f97316', dash: '4 2' }, { y: 140, color: '#ef4444', dash: '4 2' }] },
-  hr:      { label: 'Heart Rate',     keys: ['hr'],                    colors: ['#8b5cf6'],            unit: 'bpm',    refs: [{ y: 60,  color: '#94a3b8', dash: '3 3' }, { y: 100, color: '#f97316', dash: '4 2' }] },
-  temp:    { label: 'Temperature',    keys: ['temp'],                   colors: ['#ef4444'],            unit: '°C',     refs: [{ y: 37.2, color: '#f97316', dash: '4 2' }, { y: 37.5, color: '#ef4444', dash: '4 2' }] },
-  spo2:    { label: 'SpO₂',           keys: ['spo2'],                   colors: ['#3b82f6'],            unit: '%',      refs: [{ y: 95,  color: '#f97316', dash: '4 2' }] },
-  glucose: { label: 'Glucose',        keys: ['glucose'],                colors: ['#10b981'],            unit: 'mmol/L', refs: [{ y: 3.9, color: '#94a3b8', dash: '3 3' }, { y: 7.8, color: '#f97316', dash: '4 2' }] },
+  bp:      { label: 'Blood Pressure', keys: ['systolic', 'diastolic'], colors: ['#0066FF', '#00B4D8'], unit: 'mmHg',   refs: [{ y: 130, color: '#60A5FA', dash: '4 2' }, { y: 140, color: '#2563EB', dash: '4 2' }] },
+  hr:      { label: 'Heart Rate',     keys: ['hr'],                    colors: ['#8b5cf6'],            unit: 'bpm',    refs: [{ y: 60,  color: '#94a3b8', dash: '3 3' }, { y: 100, color: '#60A5FA', dash: '4 2' }] },
+  temp:    { label: 'Temperature',    keys: ['temp'],                   colors: ['#0EA5E9'],            unit: '°C',     refs: [{ y: 37.2, color: '#60A5FA', dash: '4 2' }, { y: 37.5, color: '#2563EB', dash: '4 2' }] },
+  spo2:    { label: 'SpO₂',           keys: ['spo2'],                   colors: ['#3b82f6'],            unit: '%',      refs: [{ y: 95,  color: '#60A5FA', dash: '4 2' }] },
+  glucose: { label: 'Glucose',        keys: ['glucose'],                colors: ['#10b981'],            unit: 'mmol/L', refs: [{ y: 3.9, color: '#94a3b8', dash: '3 3' }, { y: 7.8, color: '#60A5FA', dash: '4 2' }] },
 };
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
@@ -100,8 +100,8 @@ export function bmiLabel(bmi: number | null): { text: string; color: string } | 
   if (!bmi) return null;
   if (bmi < 18.5) return { text: 'Underweight', color: '#3b82f6' };
   if (bmi < 25)   return { text: 'Normal',      color: '#22c55e' };
-  if (bmi < 30)   return { text: 'Overweight',  color: '#f97316' };
-  return                  { text: 'Obese',       color: '#ef4444' };
+  if (bmi < 30)   return { text: 'Overweight',  color: '#0EA5E9' };
+  return                  { text: 'Obese',       color: '#2563EB' };
 }
 
 export function calcBmi(weight?: number | null, height?: number | null): number | null {

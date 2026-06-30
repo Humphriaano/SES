@@ -5,8 +5,14 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
+    host: '0.0.0.0',
+    port: 5174,
+    allowedHosts: true,
     proxy: {
-      '/api': 'http://localhost:5000',
+      // Document endpoints served by FastAPI (port 8000) — must be before /api
+      '/api/documents': 'http://localhost:8000',
+      // All other /api calls go to Express (port 5001)
+      '/api': 'http://localhost:5001',
     },
   },
 });

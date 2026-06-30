@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, FormEvent } from 'react';
+﻿import { useState, useRef, useEffect, FormEvent } from 'react';
 import { Send, Trash2, Bot, Download, Printer } from 'lucide-react';
 import {
   BarChart, Bar, LineChart, Line,
@@ -32,11 +32,11 @@ interface Message {
   data?: TableData | ChartData | null;
 }
 
-const CHART_COLORS = ['#C8102E', '#f97316', '#3b82f6', '#10b981', '#8b5cf6'];
+const CHART_COLORS = ['var(--accent)', '#f97316', '#3b82f6', '#10b981', '#8b5cf6'];
 
 // ── PDF helpers ─────────────────────────────────────────────────────────────
 
-function buildPdf(messages: Message[], exportTitle = 'SES EHR — AI Analytics Report'): jsPDF {
+function buildPdf(messages: Message[], exportTitle = 'Demo EHR — AI Analytics Report'): jsPDF {
   const doc = new jsPDF();
   const pageW = doc.internal.pageSize.getWidth();
   const margin = 14;
@@ -48,7 +48,7 @@ function buildPdf(messages: Message[], exportTitle = 'SES EHR — AI Analytics R
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text('SES EHR · Specialty Emergency Services', margin, 9);
+  doc.text('Demo EHR', margin, 9);
 
   // Title block
   doc.setTextColor(15, 23, 42);
@@ -151,7 +151,7 @@ function buildPdf(messages: Message[], exportTitle = 'SES EHR — AI Analytics R
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(148, 163, 184);
-    doc.text(`SES EHR AI Analytics Report · Page ${i} of ${pages}`, margin, 290);
+    doc.text(`Demo EHR AI Analytics Report · Page ${i} of ${pages}`, margin, 290);
   }
 
   return doc;
@@ -159,11 +159,11 @@ function buildPdf(messages: Message[], exportTitle = 'SES EHR — AI Analytics R
 
 function exportFullConversation(messages: Message[]) {
   const doc = buildPdf(messages);
-  doc.save(`ses-ai-analytics-${new Date().toISOString().split('T')[0]}.pdf`);
+  doc.save(`demo-ai-analytics-${new Date().toISOString().split('T')[0]}.pdf`);
 }
 
 function exportSingleResponse(msg: Message) {
-  const doc = buildPdf([msg], 'SES EHR — AI Response Export');
+  const doc = buildPdf([msg], 'Demo EHR — AI Response Export');
   doc.save(`ses-ai-response-${Date.now()}.pdf`);
 }
 
@@ -229,7 +229,7 @@ function MsgChart({ data }: { data: ChartData }) {
           <XAxis type="number" tick={{ fontSize: 10 }} />
           <YAxis dataKey={data.xKey} type="category" tick={{ fontSize: 10 }} width={90} />
           <Tooltip />
-          <Bar dataKey={data.yKey ?? 'value'} fill="#C8102E" radius={[0, 3, 3, 0]} />
+          <Bar dataKey={data.yKey ?? 'value'} fill="var(--accent)" radius={[0, 3, 3, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -321,7 +321,7 @@ export default function ReportsAIPanel() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--badge-red-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Bot size={16} color="#C8102E" />
+            <Bot size={16} color="var(--accent)" />
           </div>
           <div>
             <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-heading)' }}>AI Analytics Assistant</div>
@@ -338,7 +338,7 @@ export default function ReportsAIPanel() {
                 cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4,
                 fontSize: 11, padding: '4px 9px',
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#C8102E'; e.currentTarget.style.color = '#C8102E'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
             >
               <Download size={12} /> Export PDF
@@ -368,10 +368,10 @@ export default function ReportsAIPanel() {
             {STARTERS.map((s) => (
               <button key={s} onClick={() => sendMessage(s)} style={{
                 background: 'var(--badge-red-bg)', border: '1px solid var(--badge-red-bg)', borderRadius: 20,
-                padding: '7px 14px', fontSize: 12, color: '#C8102E', fontWeight: 500,
+                padding: '7px 14px', fontSize: 12, color: 'var(--accent)', fontWeight: 500,
                 cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.15s',
               }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#C8102E'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--badge-red-bg)'; }}
               >
                 {s}
@@ -389,7 +389,7 @@ export default function ReportsAIPanel() {
           >
             <div style={{
               maxWidth: '90%', position: 'relative',
-              background: msg.role === 'user' ? '#C8102E' : 'var(--bg-surface-2)',
+              background: msg.role === 'user' ? 'var(--accent)' : 'var(--bg-surface-2)',
               color: msg.role === 'user' ? '#fff' : 'var(--text-heading)',
               borderRadius: msg.role === 'user' ? '12px 12px 3px 12px' : '12px 12px 12px 3px',
               padding: '10px 13px', fontSize: 13, lineHeight: 1.55,
@@ -446,14 +446,14 @@ export default function ReportsAIPanel() {
               background: loading ? 'var(--bg-surface)' : 'var(--bg-input)', color: 'var(--text-heading)',
               transition: 'border-color 0.15s', fontFamily: 'inherit',
             }}
-            onFocus={(e) => (e.target.style.borderColor = '#C8102E')}
+            onFocus={(e) => (e.target.style.borderColor = 'var(--accent)')}
             onBlur={(e) => (e.target.style.borderColor = 'var(--border-input)')}
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
             style={{
-              background: loading || !input.trim() ? 'var(--border-input)' : '#C8102E',
+              background: loading || !input.trim() ? 'var(--border-input)' : 'var(--accent)',
               border: 'none', borderRadius: 8, padding: '9px 12px',
               cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',

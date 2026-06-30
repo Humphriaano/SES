@@ -30,6 +30,7 @@ import { getActiveRooms, getAllRooms, createRoom, updateRoom, deleteRoom } from 
 import { getEntries, checkin, updateStatus, rerouteEntry, startEntry } from '../controllers/queue.entry.controller';
 import { recordPreference, getPreferences } from '../controllers/user.room.preference.controller';
 import { populationDiagnoses, populationVitals, populationMedications, populationInvestigations, populationPatients, populationKpis } from '../controllers/reports.controller';
+import { getRiskPrediction } from '../controllers/risk.controller';
 import { authenticate } from '../middleware/auth';
 
 const router = Router();
@@ -120,6 +121,9 @@ router.patch('/queue/:entryId/start', authenticate, startEntry);
 
 // Patient queue lookup
 router.get('/patients/:patientId/queue', authenticate, getPatientQueue);
+
+// Risk prediction — assembles patient feature vector and forwards to FastAPI CDS service
+router.get('/patients/:patientId/risk-predict', authenticate, getRiskPrediction);
 
 // Reports — population analytics (aggregate only, called internally by CDS service)
 router.get('/reports/population/kpis', populationKpis);

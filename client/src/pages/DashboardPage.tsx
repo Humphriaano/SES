@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/client';
 import { Patient } from '../types';
 import { usePatient } from '../context/PatientContext';
 import { useWindowSize } from '../hooks/useWindowSize';
+import { useTheme } from '../context/ThemeContext';
 import {
   Search, UserPlus, Users, DoorOpen,
   X, ChevronRight, Clock, UserCheck, Loader2,
@@ -22,6 +23,7 @@ export default function DashboardPage() {
   const [showDropdown, setShowDropdown] = useState(false);
   const { setActivePatient, setActiveEncounterId } = usePatient();
   const { isMobile } = useWindowSize();
+  const { isDark } = useTheme();
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -85,14 +87,14 @@ export default function DashboardPage() {
     <div style={{ minHeight: '100vh', background: 'var(--bg-page)' }}>
       {/* Hero search area */}
       <div style={{
-        background: 'linear-gradient(135deg, #1a1f2e 0%, #2d1a1a 100%)',
+        background: 'var(--bg-page)',
         padding: isMobile ? '28px 16px 56px' : '48px 24px 80px',
         textAlign: 'center',
       }}>
-        <h1 style={{ fontSize: 26, fontWeight: 800, color: '#fff', marginBottom: 6, letterSpacing: '-0.3px' }}>
-          SES — Chronic Disease Management
+        <h1 style={{ fontSize: 26, fontWeight: 800, color: 'var(--text-heading)', marginBottom: 6, letterSpacing: '-0.3px' }}>
+          Demo EHR
         </h1>
-        <p style={{ fontSize: 14, color: '#94a3b8', marginBottom: 32 }}>
+        <p style={{ fontSize: 14, color: 'var(--text-subtle)', marginBottom: 32 }}>
           Search for a patient or register a new client below
         </p>
 
@@ -100,9 +102,9 @@ export default function DashboardPage() {
         <div ref={searchRef} style={{ position: 'relative', maxWidth: 580, margin: '0 auto' }}>
           <div style={{
             display: 'flex', alignItems: 'center',
-            background: 'var(--bg-card)', borderRadius: 14,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
-            border: '2px solid transparent',
+            background: 'var(--bg-card)',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+            border: '1px solid var(--border)',
             transition: 'border-color 0.15s, background-color 0.2s',
           }}>
             {searching
@@ -129,7 +131,7 @@ export default function DashboardPage() {
           </div>
 
           {query.length > 0 && query.length < 3 && (
-            <p style={{ color: '#94a3b8', fontSize: 12, marginTop: 8 }}>
+            <p style={{ color: 'var(--text-subtle)', fontSize: 12, marginTop: 8 }}>
               Type {3 - query.length} more character{3 - query.length !== 1 ? 's' : ''} to search…
             </p>
           )}
@@ -179,7 +181,7 @@ export default function DashboardPage() {
                           <span>{calcAge(p.dateOfBirth)} yrs · {p.gender}</span>
                         </div>
                       </div>
-                      <ChevronRight size={16} color="#c8102e" />
+                      <ChevronRight size={16} color="var(--accent)" />
                     </button>
                   ))}
                 </>
@@ -206,13 +208,14 @@ export default function DashboardPage() {
             onClick={() => setShowRegisterForm(true)}
             style={{
               marginTop: 20, display: 'inline-flex', alignItems: 'center', gap: 7,
-              background: 'rgba(255,255,255,0.1)', color: '#e2e8f0',
-              border: '1px solid rgba(255,255,255,0.2)', borderRadius: 9,
+              background: 'transparent',
+              color: isDark ? 'var(--accent)' : '#000000',
+              border: isDark ? '1px solid var(--accent)' : '1px solid #000000',
               padding: '9px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-              transition: 'background 0.15s',
+              transition: 'background 0.15s, opacity 0.15s',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.18)')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
+            onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.75'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
           >
             <UserPlus size={14} /> Register New Client
           </button>
@@ -222,7 +225,7 @@ export default function DashboardPage() {
       {/* Service Point cards — grouped by tag */}
       <div style={{ maxWidth: 960, margin: isMobile ? '-32px auto 0' : '-40px auto 0', padding: isMobile ? '0 14px 32px' : '0 24px 40px' }}>
         {rooms.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 24px', background: 'var(--bg-card)', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.08)', border: '1px dashed var(--border)' }}>
+          <div style={{ textAlign: 'center', padding: '40px 24px', background: 'var(--bg-card)', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', border: '1px dashed var(--border)' }}>
             <DoorOpen size={32} color="var(--text-subtle)" style={{ marginBottom: 12 }} />
             <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-heading)', marginBottom: 6 }}>No service points configured</div>
             <div style={{ fontSize: 13, color: 'var(--text-subtle)' }}>Go to Admin → Rooms to set up your facility's service points.</div>
@@ -253,14 +256,14 @@ export default function DashboardPage() {
                       onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.1)')}
                       onMouseLeave={e => (e.currentTarget.style.boxShadow = '')}>
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
-                        <div style={{ width: 38, height: 38, borderRadius: 10, background: 'var(--chip-red-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <DoorOpen size={18} color="#c8102e" />
+                        <div style={{ width: 38, height: 38, background: 'var(--accent-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <DoorOpen size={18} color="var(--accent)" />
                         </div>
                         <div style={{
                           minWidth: 34, height: 34, borderRadius: 9, padding: '0 8px',
-                          background: room.waitingCount > 0 ? '#c8102e' : 'var(--bg-surface-2)',
+                          background: room.waitingCount > 0 ? 'var(--accent)' : 'var(--bg-surface-2)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          boxShadow: room.waitingCount > 0 ? '0 2px 8px rgba(200,16,46,0.35)' : 'none',
+                          boxShadow: room.waitingCount > 0 ? '0 2px 8px var(--accent-shadow)' : 'none',
                         }}>
                           <span style={{ fontSize: 18, fontWeight: 800, color: room.waitingCount > 0 ? '#fff' : 'var(--text-subtle)', lineHeight: 1 }}>
                             {room.waitingCount}
@@ -338,18 +341,18 @@ function RegisterModal({ initialName, onClose, onCreated }: {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       zIndex: 50, backdropFilter: 'blur(3px)',
     }}>
-      <div style={{ background: 'var(--bg-card)', borderRadius: 16, width: '100%', maxWidth: 'min(520px, calc(100vw - 24px))', boxShadow: '0 20px 60px rgba(0,0,0,0.2)', overflow: 'hidden', margin: '0 12px' }}>
+      <div style={{ background: 'var(--bg-card)', width: '100%', maxWidth: 'min(520px, calc(100vw - 24px))', boxShadow: '0 20px 60px rgba(0,0,0,0.2)', overflow: 'hidden', margin: '0 12px', border: '1px solid var(--border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 22px', borderBottom: '1px solid var(--border-light)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--chip-red-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <UserCheck size={16} color="#c8102e" />
+            <div style={{ width: 34, height: 34, background: 'var(--accent-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <UserCheck size={16} color="var(--accent)" />
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-heading)' }}>Register New Client</div>
               <div style={{ fontSize: 11.5, color: 'var(--text-subtle)' }}>All fields marked * are required</div>
             </div>
           </div>
-          <button onClick={onClose} style={{ width: 30, height: 30, borderRadius: 7, border: '1px solid var(--border)', background: 'var(--bg-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)' }}>
+          <button onClick={onClose} style={{ width: 30, height: 30, border: '1px solid var(--border)', background: 'var(--bg-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)' }}>
             <X size={14} />
           </button>
         </div>

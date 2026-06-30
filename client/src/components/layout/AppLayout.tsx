@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import TopNav from './TopNav';
 import SidePanel from './SidePanel';
@@ -35,10 +35,10 @@ export default function AppLayout() {
           top: '50%',
           transform: 'translateY(-50%)',
           zIndex: 46,
-          background: queueOpen ? '#c8102e' : 'var(--bg-nav)',
+          background: queueOpen ? 'var(--accent)' : 'var(--bg-nav)',
           color: '#fff',
           border: 'none',
-          borderRadius: '0 8px 8px 0',
+          borderRadius: 0,
           padding: isMobile ? '16px 9px' : '14px 7px',
           cursor: 'pointer',
           display: 'flex',

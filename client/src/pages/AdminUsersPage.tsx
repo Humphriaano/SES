@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import api from '../api/client';
 import {
   Users, Clock, CheckCircle, XCircle, RefreshCw,
@@ -117,8 +117,8 @@ function ApproveFlow({ userId, onDone, onCancel }: { userId: string; onDone: () 
               onClick={() => toggle(r.value)}
               style={{
                 padding: '5px 14px', borderRadius: 20, fontSize: 12.5, fontWeight: 600,
-                cursor: 'pointer', border: `1px solid ${on ? '#c8102e' : 'var(--border-input)'}`,
-                background: on ? '#c8102e' : 'var(--bg-surface)',
+                cursor: 'pointer', border: `1px solid ${on ? 'var(--accent)' : 'var(--border-input)'}`,
+                background: on ? 'var(--accent)' : 'var(--bg-surface)',
                 color: on ? '#fff' : 'var(--text-body)',
                 transition: 'background 0.12s, color 0.12s, border-color 0.12s',
               }}
@@ -194,7 +194,7 @@ function RejectFlow({ userId, onDone }: { userId: string; onDone: () => void }) 
           onClick={confirm}
           disabled={loading}
           style={{
-            height: 30, padding: '0 14px', background: '#dc2626', color: '#fff',
+            height: 30, padding: '0 14px', background: 'var(--accent)', color: '#fff',
             border: 'none', borderRadius: 6, fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
           }}
         >
@@ -454,7 +454,7 @@ function RoomsTab() {
                 )}
               </div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', paddingBottom: 0, marginTop: 20 }}>
-                <button onClick={createRoom} disabled={saving || !newName.trim() || !newTag.trim()} style={{ height: 34, padding: '0 16px', background: newName.trim() && newTag.trim() ? '#c8102e' : 'var(--border-input)', color: newName.trim() && newTag.trim() ? '#fff' : 'var(--text-subtle)', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: newName.trim() && newTag.trim() ? 'pointer' : 'not-allowed' }}>
+                <button onClick={createRoom} disabled={saving || !newName.trim() || !newTag.trim()} style={{ height: 34, padding: '0 16px', background: newName.trim() && newTag.trim() ? 'var(--accent)' : 'var(--border-input)', color: newName.trim() && newTag.trim() ? '#fff' : 'var(--text-subtle)', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: newName.trim() && newTag.trim() ? 'pointer' : 'not-allowed' }}>
                   {saving ? 'Saving…' : 'Save Room'}
                 </button>
                 <button onClick={() => { setAdding(false); setNewName(''); setNewTag(''); setTagInput(''); }} style={{ height: 34, padding: '0 12px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 6, fontSize: 13, cursor: 'pointer', color: 'var(--text-muted)' }}>Cancel</button>
@@ -462,7 +462,7 @@ function RoomsTab() {
             </div>
           </div>
         ) : (
-          <button onClick={() => setAdding(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, height: 34, padding: '0 16px', background: '#c8102e', color: '#fff', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={() => setAdding(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, height: 34, padding: '0 16px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
             <Plus size={14} /> Add Room
           </button>
         )}
@@ -643,8 +643,8 @@ export default function AdminUsersPage() {
             style={{
               display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px',
               background: 'none', border: 'none', cursor: 'pointer', fontSize: 13.5, fontWeight: 600,
-              color: tab === t.key ? '#c8102e' : 'var(--text-muted)',
-              borderBottom: `2px solid ${tab === t.key ? '#c8102e' : 'transparent'}`,
+              color: tab === t.key ? 'var(--accent)' : 'var(--text-muted)',
+              borderBottom: `2px solid ${tab === t.key ? 'var(--accent)' : 'transparent'}`,
               marginBottom: -1, transition: 'color 0.15s',
             }}
           >
@@ -654,7 +654,7 @@ export default function AdminUsersPage() {
               <span style={{
                 fontSize: 11, fontWeight: 700, padding: '1px 7px', borderRadius: 20,
                 background: tab === t.key ? 'var(--badge-red-bg)' : 'var(--badge-gray-bg)',
-                color: tab === t.key ? '#c8102e' : 'var(--text-muted)',
+                color: tab === t.key ? 'var(--accent)' : 'var(--text-muted)',
               }}>
                 {t.count}
               </span>

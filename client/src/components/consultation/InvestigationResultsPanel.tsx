@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { X, ChevronDown, ChevronRight } from 'lucide-react';
 import api from '../../api/client';
 
@@ -6,7 +6,7 @@ import api from '../../api/client';
 function statusColor(status: string): string {
   if (status === 'High' || status === 'Abnormal') return '#d97706';
   if (status === 'Low') return '#2563eb';
-  if (status === 'Critical' || status === 'Positive') return '#dc2626';
+  if (status === 'Critical' || status === 'Positive') return 'var(--accent)';
   if (status === 'Normal' || status === 'Negative') return '#16a34a';
   return '#475569';
 }

@@ -1,4 +1,4 @@
-import { X, History } from 'lucide-react';
+﻿import { X, History } from 'lucide-react';
 import { ImportedBlockData } from '../../../types/consultation';
 
 // Section label conventions for pre-block text nodes (SOAP order)
@@ -22,7 +22,7 @@ function SectionLabel({ text }: { text: string }) {
 }
 
 function Divider() {
-  return <div style={{ height: 1, background: '#e2e8f0', margin: '12px 0' }} />;
+  return <div style={{ height: 1, background: 'var(--border)', margin: '12px 0' }} />;
 }
 
 export default function ImportedBlock({ data, onRemove }: Props) {
@@ -65,11 +65,11 @@ export default function ImportedBlock({ data, onRemove }: Props) {
           {data.diagnoses.map((d, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
               <span style={{
-                fontSize: 9, fontWeight: 700, color: '#B41720', background: '#FEE2E2',
+                fontSize: 9, fontWeight: 700, color: '#2979FF', background: 'var(--accent-soft)',
                 padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace', flexShrink: 0,
               }}>Dx</span>
               <span style={{
-                fontSize: 11, fontWeight: 700, color: '#B41720',
+                fontSize: 11, fontWeight: 700, color: '#2979FF',
                 fontFamily: 'monospace', flexShrink: 0,
               }}>{d.code}</span>
               <span style={{
@@ -77,7 +77,7 @@ export default function ImportedBlock({ data, onRemove }: Props) {
               }}>{d.description}</span>
               <span style={{
                 fontSize: 10, color: '#64748b', fontWeight: 600,
-                background: '#f1f5f9', padding: '1px 6px', borderRadius: 3, flexShrink: 0,
+                background: 'var(--badge-gray-bg)', padding: '1px 6px', flexShrink: 0,
               }}>{d.status}</span>
             </div>
           ))}
@@ -131,16 +131,15 @@ export default function ImportedBlock({ data, onRemove }: Props) {
   return (
     <div style={{
       marginBottom: 16,
-      borderRadius: 10,
-      border: '1px solid #bfcfe0',
+      border: '1px solid var(--border)',
       overflow: 'hidden',
     }}>
       {/* Header bar */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '8px 16px',
-        background: '#dce8f5',
-        borderBottom: '1px solid #bfcfe0',
+        background: 'var(--accent-soft)',
+        borderBottom: '1px solid var(--accent-border)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
           <History size={13} color="#475569" />
@@ -153,7 +152,7 @@ export default function ImportedBlock({ data, onRemove }: Props) {
           title="Remove imported block"
           style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            color: '#94a3b8', padding: '2px 4px', borderRadius: 4,
+            color: '#94a3b8', padding: '2px 4px',
             display: 'flex', alignItems: 'center',
             transition: 'color 0.12s',
           }}

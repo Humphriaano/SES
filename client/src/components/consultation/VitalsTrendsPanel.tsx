@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { X } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip,
@@ -100,8 +100,8 @@ export default function VitalsTrendsPanel({ open, patientName, history, onClose 
             onClick={() => setActiveTab(key)}
             style={{
               padding: '10px 12px 8px', border: 'none', background: 'transparent',
-              borderBottom: `2px solid ${activeTab === key ? '#c0392b' : 'transparent'}`,
-              color: activeTab === key ? '#c0392b' : 'var(--text-muted)',
+              borderBottom: `2px solid ${activeTab === key ? 'var(--accent)' : 'transparent'}`,
+              color: activeTab === key ? 'var(--accent)' : 'var(--text-muted)',
               fontSize: 12, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
               transition: 'color 0.15s',
             }}

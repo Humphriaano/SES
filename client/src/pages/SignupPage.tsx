@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef, useCallback, FormEvent } from 'react';
+﻿import { useState, useEffect, useRef, useCallback, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/client';
 import {
-  HeartPulse, Mail, Lock, Eye, EyeOff, User, Phone,
+  Mail, Lock, Eye, EyeOff, User, Phone,
   MapPin, ChevronDown, Check, X, AlertCircle, CheckCircle,
 } from 'lucide-react';
+import EyeLogo from '../components/EyeLogo';
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -202,7 +203,7 @@ function SearchableSelect({
                 onMouseEnter={e => { if (value !== opt) e.currentTarget.style.background = 'var(--bg-surface)'; }}
                 onMouseLeave={e => { if (value !== opt) e.currentTarget.style.background = 'transparent'; }}
               >
-                {value === opt && <Check size={13} color="#c8102e" style={{ flexShrink: 0 }} />}
+                {value === opt && <Check size={13} color="var(--accent)" style={{ flexShrink: 0 }} />}
                 {opt}
               </button>
             ))}
@@ -446,34 +447,22 @@ export default function SignupPage() {
   // ── Layout shell ─────────────────────────────────────────────────────────────
 
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex',
-      background: 'linear-gradient(135deg, #1a1f2e 0%, #2d1b1b 50%, #1a1f2e 100%)',
-    }}>
-      {/* Left branding panel */}
+    <div style={{ minHeight: '100vh', display: 'flex' }}>
+      {/* Left branding panel — always AMOLED black */}
       <div style={{
         flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        alignItems: 'center', padding: 48, color: '#fff',
+        alignItems: 'center', padding: 48, color: '#fff', background: '#05050A',
       }}>
-        <div style={{
-          width: 64, height: 64, borderRadius: 16, background: '#c8102e',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 8px 24px rgba(200,16,46,0.4)', marginBottom: 24,
-        }}>
-          <HeartPulse size={32} color="#fff" />
-        </div>
-        <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.5px', marginBottom: 8 }}>SES EHR</h1>
-        <p style={{ fontSize: 14, color: '#94a3b8', textAlign: 'center', maxWidth: 280, lineHeight: 1.6 }}>
-          Specialty Emergency Services<br />Chronic Disease Management System
-        </p>
-        <div style={{ marginTop: 48, display: 'flex', flexDirection: 'column', gap: 16, width: '100%', maxWidth: 280 }}>
+        <EyeLogo width={140} color="#FFFFFF" style={{ marginBottom: 20 }} />
+        <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.3px', marginBottom: 28, color: '#FFFFFF' }}>Demo EHR</h1>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%', maxWidth: 280 }}>
           {[
             { label: 'Longitudinal patient care', desc: 'Track disease progression over time' },
             { label: 'Integrated workflows', desc: 'Labs, pharmacy, billing in one place' },
             { label: 'ICD-11 coded diagnoses', desc: 'Structured clinical documentation' },
           ].map(f => (
             <div key={f.label} style={{ display: 'flex', gap: 12 }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#c8102e', flexShrink: 0, marginTop: 5 }} />
+              <div style={{ width: 2, background: 'var(--accent)', flexShrink: 0, alignSelf: 'stretch' }} />
               <div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#e2e8f0' }}>{f.label}</div>
                 <div style={{ fontSize: 12, color: '#64748b', marginTop: 1 }}>{f.desc}</div>
@@ -510,7 +499,7 @@ export default function SignupPage() {
                 to="/login"
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 6,
-                  padding: '10px 24px', background: '#c8102e', color: '#fff',
+                  padding: '10px 24px', background: 'var(--accent)', color: '#fff',
                   borderRadius: 8, fontSize: 13.5, fontWeight: 600, textDecoration: 'none',
                 }}
               >
@@ -624,7 +613,7 @@ export default function SignupPage() {
                         set('hasNoNrc', e.target.checked);
                         if (e.target.checked) set('nrc', '');
                       }}
-                      style={{ width: 14, height: 14, accentColor: '#c8102e' }}
+                      style={{ width: 14, height: 14, accentColor: 'var(--accent)' }}
                     />
                     <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>I do not have an NRC</span>
                   </label>
@@ -775,7 +764,7 @@ export default function SignupPage() {
                   disabled={loading || usernameStatus === 'taken' || usernameStatus === 'checking'}
                   style={{
                     width: '100%', height: 42, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    gap: 8, background: loading ? 'var(--border-input)' : '#c8102e', color: loading ? 'var(--text-subtle)' : '#fff',
+                    gap: 8, background: loading ? 'var(--border-input)' : 'var(--accent)', color: loading ? 'var(--text-subtle)' : '#fff',
                     border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer',
                     marginTop: 4, transition: 'background 0.15s',
                   }}
@@ -785,7 +774,7 @@ export default function SignupPage() {
 
                 <div style={{ textAlign: 'center' }}>
                   <span style={{ fontSize: 12.5, color: 'var(--text-subtle)' }}>Already have an account? </span>
-                  <Link to="/login" style={{ fontSize: 12.5, color: '#c8102e', fontWeight: 600, textDecoration: 'none' }}>
+                  <Link to="/login" style={{ fontSize: 12.5, color: 'var(--accent)', fontWeight: 600, textDecoration: 'none' }}>
                     Sign in here
                   </Link>
                 </div>
