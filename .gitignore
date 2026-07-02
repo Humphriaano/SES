@@ -29,5 +29,9 @@ server/node_modules/
 # Test coverage
 coverage/
 
+# Python
+__pycache__/
+*.pyc
+
 # Generated patient/document uploads
 cds-service/documents/
