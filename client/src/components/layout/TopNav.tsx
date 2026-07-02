@@ -4,7 +4,7 @@ import { usePatient } from '../../context/PatientContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useWindowSize } from '../../hooks/useWindowSize';
 import {
-  Stethoscope, Activity, Pill, FlaskConical, BarChart2, Receipt,
+  Stethoscope, Activity, Pill, FlaskConical, BarChart2, Receipt, FolderOpen,
   LogOut, ChevronRight, UserCircle, HeartPulse, Shield, Moon, Sun,
 } from 'lucide-react';
 
@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { label: 'Investigations', path: 'investigations', icon: FlaskConical },
   { label: 'Reports',        path: 'reports',        icon: BarChart2 },
   { label: 'Billing',        path: 'billing',        icon: Receipt },
+  { label: 'Documents',      path: 'documents',      icon: FolderOpen },
 ];
 
 export default function TopNav() {

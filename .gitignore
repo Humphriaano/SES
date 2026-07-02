@@ -28,3 +28,10 @@ server/node_modules/
 
 # Test coverage
 coverage/
+
+# Python
+__pycache__/
+*.pyc
+
+# Uploaded documents (runtime data, not source)
+cds-service/documents/

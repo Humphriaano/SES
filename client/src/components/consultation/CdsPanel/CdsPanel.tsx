@@ -2,16 +2,17 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Brain, ChevronDown, ChevronUp,
   AlertTriangle, CheckCircle, Clock, Zap,
-  BookOpen, FlaskConical, RefreshCw,
+  BookOpen, FlaskConical, RefreshCw, Activity,
 } from 'lucide-react';
 import api from '../../../api/client';
 import { Patient, Vital, Medication } from '../../../types';
 import { CanvasNode } from '../../../types/consultation';
-import { calcBmi } from '../../../lib/vitalsConfig';
 
-const CDS_URL         = 'http://localhost:8000/cds/suggest';
+const CDS_URL          = 'http://localhost:8000/cds/suggest';
 const DEFAULT_QUESTION = 'What are the guideline-based recommendations for this patient?';
-const DEBOUNCE_MS     = 1500;
+const DEBOUNCE_MS      = 1500;
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 interface Recommendation {
   action: string;
@@ -32,17 +33,59 @@ interface CdsResponse {
   direct_suggestion?: string;
 }
 
+interface ShapFactor {
+  feature: string;
+  value: number | null;
+  impact: number;
+  direction: 'increases_risk' | 'decreases_risk';
+  comment: string;
+}
+
+interface ConditionRisk {
+  probability: number;
+  risk_level: 'low' | 'moderate' | 'high' | 'very high';
+  top_factors: ShapFactor[];
+  summary: string;
+}
+
+interface RiskPredictions {
+  hypertension:   ConditionRisk;
+  cardiovascular: ConditionRisk;
+  diabetes:       ConditionRisk;
+  ckd:            ConditionRisk;
+}
+
 interface Props {
   patientId: string;
   patient: Patient | null;
   nodes: CanvasNode[];
 }
 
+// ── Constants ─────────────────────────────────────────────────────────────────
+
 const URGENCY_STYLE: Record<string, { bg: string; border: string; color: string; icon: any; label: string }> = {
   routine:   { bg: 'var(--badge-green-bg)', border: 'var(--border)', color: 'var(--badge-green-text)', icon: CheckCircle, label: 'Routine'   },
   urgent:    { bg: 'var(--badge-amber-bg)', border: 'var(--border)', color: 'var(--badge-amber-text)', icon: Clock,       label: 'Urgent'    },
   emergency: { bg: 'var(--badge-red-bg)',   border: 'var(--border)', color: 'var(--badge-red-text)',   icon: Zap,         label: 'Emergency' },
 };
+
+const RISK_STYLE: Record<string, { bg: string; text: string; dot: string; label: string }> = {
+  'low':       { bg: 'var(--badge-green-bg)', text: 'var(--badge-green-text)', dot: '#22c55e', label: 'Low'       },
+  'moderate':  { bg: 'var(--badge-amber-bg)', text: 'var(--badge-amber-text)', dot: '#eab308', label: 'Moderate'  },
+  'high':      { bg: '#fff7ed',               text: '#c2410c',                 dot: '#f97316', label: 'High'      },
+  'very high': { bg: 'var(--badge-red-bg)',   text: 'var(--badge-red-text)',   dot: '#ef4444', label: 'Very High' },
+};
+
+const CONDITION_LABELS: Record<string, string> = {
+  hypertension:   'Hypertension',
+  cardiovascular: 'Cardiovascular',
+  diabetes:       'Diabetes',
+  ckd:            'CKD',
+};
+
+const CONDITION_ORDER = ['hypertension', 'cardiovascular', 'diabetes', 'ckd'] as const;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function calcAge(dob: string): number {
   const birth = new Date(dob);
@@ -76,23 +119,33 @@ function extractPrescriptionKey(nodes: CanvasNode[]): string {
   );
 }
 
+// ── Main component ────────────────────────────────────────────────────────────
+
 export default function CdsPanel({ patientId, patient, nodes }: Props) {
-  const [collapsed, setCollapsed]   = useState(false);
-  const [loading, setLoading]       = useState(false);
-  const [response, setResponse]     = useState<CdsResponse | null>(null);
-  const [serviceError, setError]    = useState<string | null>(null);
+  // Existing CDS state
+  const [collapsed, setCollapsed]     = useState(false);
+  const [loading, setLoading]         = useState(false);
+  const [response, setResponse]       = useState<CdsResponse | null>(null);
+  const [serviceError, setError]      = useState<string | null>(null);
   const [latestVital, setLatestVital] = useState<(Vital & { bmi?: number | null }) | null>(null);
   const [medications, setMedications] = useState<Medication[]>([]);
-  const [dataReady, setDataReady]   = useState(false);
+  const [dataReady, setDataReady]     = useState(false);
 
-  const patientRef     = useRef(patient);
-  const nodesRef       = useRef(nodes);
-  const vitalRef       = useRef(latestVital);
-  const medsRef        = useRef(medications);
-  patientRef.current   = patient;
-  nodesRef.current     = nodes;
-  vitalRef.current     = latestVital;
-  medsRef.current      = medications;
+  // Risk section state
+  const [riskCollapsed, setRiskCollapsed]           = useState(false);
+  const [riskData, setRiskData]                     = useState<RiskPredictions | null>(null);
+  const [riskLoading, setRiskLoading]               = useState(false);
+  const [riskError, setRiskError]                   = useState<string | null>(null);
+  const [expandedConditions, setExpandedConditions] = useState<Set<string>>(new Set());
+
+  const patientRef   = useRef(patient);
+  const nodesRef     = useRef(nodes);
+  const vitalRef     = useRef(latestVital);
+  const medsRef      = useRef(medications);
+  patientRef.current = patient;
+  nodesRef.current   = nodes;
+  vitalRef.current   = latestVital;
+  medsRef.current    = medications;
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef    = useRef<AbortController | null>(null);
@@ -103,6 +156,7 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
     return () => { isMounted.current = false; };
   }, []);
 
+  // Load vitals + medications (used by the guideline CDS call)
   useEffect(() => {
     let loaded = 0;
     const onLoaded = () => { if (++loaded === 2) setDataReady(true); };
@@ -123,17 +177,34 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
     return () => { setDataReady(false); };
   }, [patientId]);
 
+  // ── Risk prediction fetch ──────────────────────────────────────────────────
+  const fetchRisk = useCallback(async () => {
+    if (!isMounted.current) return;
+    setRiskLoading(true);
+    setRiskError(null);
+    try {
+      const { data } = await api.get(`/patients/${patientId}/risk-predict`);
+      if (isMounted.current) setRiskData(data.predictions as RiskPredictions);
+    } catch (err: any) {
+      if (isMounted.current)
+        setRiskError(err?.response?.data?.error ?? 'Risk prediction service unavailable');
+    } finally {
+      if (isMounted.current) setRiskLoading(false);
+    }
+  }, [patientId]);
+
+  // Fetch risk on mount / patientId change
+  useEffect(() => { fetchRisk(); }, [fetchRisk]);
+
+  // ── Guideline CDS fetch ────────────────────────────────────────────────────
   const fetchSuggestion = useCallback(async (signal: AbortSignal) => {
-    const p   = patientRef.current;
-    const v   = vitalRef.current;
-    const ns  = nodesRef.current;
-    const ms  = medsRef.current;
+    const p  = patientRef.current;
+    const v  = vitalRef.current;
+    const ns = nodesRef.current;
+    const ms = medsRef.current;
     if (!p) return;
 
-    if (isMounted.current) {
-      setLoading(true);
-      setError(null);
-    }
+    if (isMounted.current) { setLoading(true); setError(null); }
 
     const payload = {
       question: DEFAULT_QUESTION,
@@ -184,10 +255,8 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
   const trigger = useCallback((immediate = false) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (abortRef.current)    abortRef.current.abort();
-
     abortRef.current = new AbortController();
     const signal = abortRef.current.signal;
-
     if (immediate) {
       fetchSuggestion(signal);
     } else {
@@ -195,23 +264,23 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
     }
   }, [fetchSuggestion]);
 
-  const diagnosisKey    = JSON.stringify(
-    (patient?.diagnoses ?? []).filter(d => !d.resolvedAt).map(d => d.id).sort()
-  );
+  // Refresh button triggers both pipelines
+  function handleRefresh() {
+    trigger(true);
+    fetchRisk();
+  }
+
+  const diagnosisKey    = JSON.stringify((patient?.diagnoses ?? []).filter(d => !d.resolvedAt).map(d => d.id).sort());
   const vitalKey        = latestVital?.id ?? null;
   const prescriptionKey = extractPrescriptionKey(nodes);
 
   const triggeredOnce = useRef(false);
   useEffect(() => {
     if (!dataReady || !patient) return;
-
     const isFirst = !triggeredOnce.current;
     triggeredOnce.current = true;
     trigger(isFirst);
-
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataReady, diagnosisKey, vitalKey, prescriptionKey]);
 
@@ -221,6 +290,16 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
       if (abortRef.current)    abortRef.current.abort();
     };
   }, []);
+
+  function toggleCondition(key: string) {
+    setExpandedConditions(prev => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div style={{
@@ -237,7 +316,7 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
         }
       `}</style>
 
-      {/* Header — always dark (matches nav bar) */}
+      {/* ── Panel header ───────────────────────────────────────────────────── */}
       <div style={{
         width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '12px 20px', background: 'var(--bg-nav)',
@@ -265,17 +344,19 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
         </button>
 
         <button
-          onClick={e => { e.stopPropagation(); trigger(true); }}
-          disabled={loading}
+          onClick={e => { e.stopPropagation(); handleRefresh(); }}
+          disabled={loading || riskLoading}
           title="Re-run CDS analysis"
           style={{
-            background: 'none', border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
-            color: loading ? '#374151' : '#64748b', padding: '2px 4px', marginLeft: 8,
+            background: 'none', border: 'none',
+            cursor: (loading || riskLoading) ? 'not-allowed' : 'pointer',
+            color: (loading || riskLoading) ? '#374151' : '#64748b',
+            padding: '2px 4px', marginLeft: 8,
             display: 'flex', alignItems: 'center', borderRadius: 4,
             transition: 'color 0.15s',
           }}
-          onMouseEnter={e => { if (!loading) e.currentTarget.style.color = '#94a3b8'; }}
-          onMouseLeave={e => { e.currentTarget.style.color = loading ? '#374151' : '#64748b'; }}
+          onMouseEnter={e => { if (!loading && !riskLoading) e.currentTarget.style.color = '#94a3b8'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = (loading || riskLoading) ? '#374151' : '#64748b'; }}
         >
           <RefreshCw size={13} />
         </button>
@@ -284,24 +365,179 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
       {!collapsed && (
         <div style={{ padding: '16px 20px 20px' }}>
 
-          {/* Service error */}
+          {/* ── Chronic Disease Risk ────────────────────────────────────────── */}
+          <div style={{ marginBottom: 14, border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
+
+            {/* Risk section header */}
+            <button
+              onClick={() => setRiskCollapsed(v => !v)}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '10px 14px', background: 'var(--bg-nav)', border: 'none', cursor: 'pointer',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                <Activity size={13} color="#c0392b" />
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Chronic Disease Risk
+                </span>
+                {riskLoading && (
+                  <span style={{
+                    width: 6, height: 6, borderRadius: '50%', background: '#c0392b',
+                    display: 'inline-block',
+                    animation: 'cds-pulse 1.4s ease-in-out infinite',
+                  }} />
+                )}
+              </div>
+              {riskCollapsed
+                ? <ChevronDown size={13} color="#64748b" />
+                : <ChevronUp   size={13} color="#64748b" />
+              }
+            </button>
+
+            {!riskCollapsed && (
+              <div>
+                {/* Error state */}
+                {riskError && !riskLoading && (
+                  <div style={{ padding: '10px 14px', fontSize: 12, color: 'var(--badge-red-text)', background: 'var(--badge-red-bg)', borderTop: '1px solid var(--border)' }}>
+                    {riskError}
+                  </div>
+                )}
+
+                {/* Loading skeleton */}
+                {riskLoading && !riskData && (
+                  <div style={{ padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: 7, borderTop: '1px solid var(--border)' }}>
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} style={{ height: 34, borderRadius: 6, background: 'var(--bg-surface)', opacity: 0.5 }} />
+                    ))}
+                  </div>
+                )}
+
+                {/* Condition rows */}
+                {riskData && (
+                  <div style={{ opacity: riskLoading ? 0.5 : 1, transition: 'opacity 0.2s' }}>
+                    {CONDITION_ORDER.map(key => {
+                      const cond = riskData[key];
+                      if (!cond) return null;
+                      const rs         = RISK_STYLE[cond.risk_level] ?? RISK_STYLE['low'];
+                      const isExpanded = expandedConditions.has(key);
+                      const pct        = Math.round(cond.probability * 100);
+
+                      return (
+                        <div key={key} style={{ borderTop: '1px solid var(--border)' }}>
+                          {/* Condition summary row */}
+                          <button
+                            onClick={() => toggleCondition(key)}
+                            style={{
+                              width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+                              padding: '10px 14px', background: 'none', border: 'none',
+                              cursor: 'pointer', textAlign: 'left', transition: 'background 0.12s',
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-surface)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
+                          >
+                            {/* Risk dot indicator */}
+                            <span style={{ width: 8, height: 8, borderRadius: '50%', background: rs.dot, flexShrink: 0 }} />
+
+                            {/* Condition name */}
+                            <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-heading)', flex: 1 }}>
+                              {CONDITION_LABELS[key]}
+                            </span>
+
+                            {/* Percentage */}
+                            <span style={{ fontSize: 12, fontWeight: 700, color: rs.text, minWidth: 30, textAlign: 'right' }}>
+                              {pct}%
+                            </span>
+
+                            {/* Risk level badge */}
+                            <span style={{
+                              fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
+                              background: rs.bg, color: rs.text, flexShrink: 0,
+                            }}>
+                              {rs.label}
+                            </span>
+
+                            {/* Expand chevron */}
+                            {isExpanded
+                              ? <ChevronUp   size={12} color="var(--text-subtle)" style={{ flexShrink: 0 }} />
+                              : <ChevronDown size={12} color="var(--text-subtle)" style={{ flexShrink: 0 }} />
+                            }
+                          </button>
+
+                          {/* Expanded detail: summary + SHAP factors */}
+                          {isExpanded && (
+                            <div style={{ padding: '0 14px 12px', borderTop: '1px solid var(--border-light)' }}>
+                              <p style={{ fontSize: 12, color: 'var(--text-body2)', lineHeight: 1.55, margin: '10px 0', fontStyle: 'italic' }}>
+                                {cond.summary}
+                              </p>
+
+                              {cond.top_factors.length > 0 && (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                  <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>
+                                    Key Factors
+                                  </div>
+                                  {cond.top_factors.map((f, i) => {
+                                    const isRisk = f.direction === 'increases_risk';
+                                    return (
+                                      <div key={i} style={{
+                                        display: 'flex', alignItems: 'flex-start', gap: 8,
+                                        padding: '7px 10px', borderRadius: 7,
+                                        background: isRisk ? 'var(--badge-red-bg)' : 'var(--badge-green-bg)',
+                                      }}>
+                                        <span style={{
+                                          fontSize: 11, fontWeight: 700, flexShrink: 0, marginTop: 1,
+                                          color: isRisk ? 'var(--badge-red-text)' : 'var(--badge-green-text)',
+                                        }}>
+                                          {isRisk ? '↑' : '↓'}
+                                        </span>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                          <span style={{ fontSize: 12, color: 'var(--text-body)', lineHeight: 1.4 }}>
+                                            {f.comment}
+                                          </span>
+                                          <span style={{ fontSize: 10, color: 'var(--text-subtle)', marginLeft: 6 }}>
+                                            ({f.impact > 0 ? '+' : ''}{f.impact.toFixed(2)})
+                                          </span>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Empty state */}
+                {!riskLoading && !riskData && !riskError && (
+                  <div style={{ padding: '12px 14px', fontSize: 12, color: 'var(--text-muted)', borderTop: '1px solid var(--border)' }}>
+                    Awaiting patient data…
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ── Guideline CDS content ───────────────────────────────────────── */}
+
           {serviceError && (
             <div style={{ padding: '12px 16px', background: 'var(--badge-red-bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--badge-red-text)', fontSize: 13, marginBottom: 12 }}>
               <strong>CDS service error:</strong> {serviceError}
             </div>
           )}
 
-          {/* No response yet + not loading */}
           {!response && !loading && !serviceError && (
             <div style={{ padding: '14px 16px', background: 'var(--bg-surface)', borderRadius: 8, border: '1px solid var(--border)', color: 'var(--text-muted)', fontSize: 13 }}>
               Waiting for patient data…
             </div>
           )}
 
-          {/* Response */}
           {response && (
             <div style={{ opacity: loading ? 0.5 : 1, transition: 'opacity 0.2s' }}>
-              {/* Low confidence warning */}
+
               {response.low_confidence && (
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '10px 14px', background: 'var(--badge-amber-bg)', border: '1px solid var(--border)', borderRadius: 8, marginBottom: 12 }}>
                   <AlertTriangle size={14} color="var(--badge-amber-text)" style={{ flexShrink: 0, marginTop: 1 }} />
@@ -311,7 +547,6 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
                 </div>
               )}
 
-              {/* Summary — always dark card, matches the CDS "AI" brand */}
               {response.summary && (
                 <div style={{ padding: '12px 16px', background: 'var(--bg-nav)', borderRadius: 8, marginBottom: 12 }}>
                   <p style={{ fontSize: 13, color: '#e2e8f0', lineHeight: 1.6, margin: 0 }}>
@@ -321,7 +556,6 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
                 </div>
               )}
 
-              {/* Warnings */}
               {response.warnings.length > 0 && (
                 <div style={{ marginBottom: 12 }}>
                   {response.warnings.map((w, i) => (
@@ -333,14 +567,13 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
                 </div>
               )}
 
-              {/* Recommendations */}
               {response.recommendations.length > 0 && (
                 <div style={{ marginBottom: 12 }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
                     Recommendations
                   </div>
                   {response.recommendations.map((rec, i) => {
-                    const u = URGENCY_STYLE[rec.urgency] ?? URGENCY_STYLE.routine;
+                    const u     = URGENCY_STYLE[rec.urgency] ?? URGENCY_STYLE.routine;
                     const UIcon = u.icon;
                     return (
                       <div key={i} style={{ background: u.bg, border: `1px solid ${u.border}`, borderRadius: 9, padding: '12px 16px', marginBottom: 8 }}>
@@ -364,7 +597,6 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
                 </div>
               )}
 
-              {/* Investigations suggested */}
               {response.investigations_suggested.length > 0 && (
                 <div style={{ marginBottom: 12, padding: '10px 14px', background: 'var(--badge-green-bg)', border: '1px solid var(--border)', borderRadius: 8 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
@@ -381,7 +613,6 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
                 </div>
               )}
 
-              {/* Sources */}
               {response.retrieved_sources.length > 0 && (
                 <div style={{ marginBottom: 10 }}>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, marginBottom: 4 }}>Sources</div>
@@ -394,7 +625,6 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
                 </div>
               )}
 
-              {/* Differential diagnosis (AI) — keeps purple identity */}
               {response.direct_suggestion && (
                 <div style={{ marginBottom: 12, padding: '12px 14px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8 }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: '#7c3aed', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
@@ -409,7 +639,6 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
                 </div>
               )}
 
-              {/* Disclaimer */}
               <div style={{ padding: '8px 12px', background: 'var(--bg-surface)', borderRadius: 7, borderLeft: '3px solid var(--border)' }}>
                 <p style={{ fontSize: 10.5, color: 'var(--text-muted)', margin: 0, lineHeight: 1.5, fontStyle: 'italic' }}>
                   {response.disclaimer}
