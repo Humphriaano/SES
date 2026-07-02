@@ -28,3 +28,6 @@ server/node_modules/
 
 # Test coverage
 coverage/
+
+# Generated patient/document uploads
+cds-service/documents/
