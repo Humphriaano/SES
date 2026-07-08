@@ -2,10 +2,10 @@ import { CheckCircle, X } from 'lucide-react';
 import { PMHBlockData, DiagnosisStatus } from '../../../types/consultation';
 
 const STATUS_CFG: Record<DiagnosisStatus, { bg: string; color: string; label: string }> = {
-  SUSPECTED: { bg: 'var(--badge-amber-bg)', color: 'var(--badge-amber-text)', label: 'Suspected' },
-  CONFIRMED: { bg: 'var(--badge-green-bg)', color: 'var(--badge-green-text)', label: 'Confirmed' },
-  CHRONIC:   { bg: 'var(--badge-red-bg)',   color: 'var(--badge-red-text)',   label: 'Chronic'   },
-  RESOLVED:  { bg: 'var(--badge-gray-bg)',  color: 'var(--badge-gray-text)',  label: 'Resolved'  },
+  SUSPECTED: { bg: 'var(--badge-amber-bg)',    color: 'var(--badge-amber-text)',    label: 'Suspected' },
+  CONFIRMED: { bg: 'var(--badge-blue-bg)',     color: 'var(--badge-blue-text)',     label: 'Confirmed' },
+  CHRONIC:   { bg: 'var(--badge-charcoal-bg)', color: 'var(--badge-charcoal-text)', label: 'Chronic'   },
+  RESOLVED:  { bg: 'var(--badge-green-bg)',    color: 'var(--badge-green-text)',    label: 'Resolved'  },
 };
 
 interface Props {
@@ -24,7 +24,7 @@ export default function PMHBlock({ data, onChange, onRemove, onResolve, readOnly
 
   return (
     <div style={{
-      borderLeft: '3px solid #3A6B8A',
+      borderLeft: '3px solid var(--ses-blue-deep)',
       background: 'var(--bg-card)',
       borderRadius: '0 10px 10px 0',
       padding: '10px 14px',
@@ -32,7 +32,7 @@ export default function PMHBlock({ data, onChange, onRemove, onResolve, readOnly
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: '#3A6B8A', background: 'var(--badge-blue-bg)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace' }}>PMH</span>
+          <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ses-blue-deep)', background: 'var(--ses-blue-tint)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace' }}>PMH</span>
           <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-heading)' }}>Past Medical History</span>
         </div>
         {!readOnly && (
@@ -58,7 +58,7 @@ export default function PMHBlock({ data, onChange, onRemove, onResolve, readOnly
                   opacity: entry.status === 'RESOLVED' ? 0.55 : 1,
                 }}
               >
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#3A6B8A', fontFamily: 'monospace', flexShrink: 0 }}>{entry.icd11Code}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ses-blue-deep)', fontFamily: 'monospace', flexShrink: 0 }}>{entry.icd11Code}</span>
                 <span style={{ flex: 1, fontSize: 13, color: 'var(--text-body)' }}>{entry.icd11Description}</span>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>
                   {new Date(entry.dateFirstConfirmed).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}
@@ -70,7 +70,7 @@ export default function PMHBlock({ data, onChange, onRemove, onResolve, readOnly
                   <button
                     onClick={() => resolve(entry.id)}
                     title="Mark as resolved"
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#16a34a', flexShrink: 0, padding: 2 }}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--clinical-normal)', flexShrink: 0, padding: 2 }}
                   >
                     <CheckCircle size={14} />
                   </button>

@@ -18,12 +18,29 @@ export interface Patient {
   hivTestDate?: string;
   allergies?: string[];
   createdAt: string;
+  email?: string;
+  preferredName?: string;
+  portalEnabled: boolean;
+  emailOptedIn: boolean;
+  portalLastSeenAt?: string;
   diagnoses?: PatientDiagnosis[];
   medications?: Medication[];
   vitals?: Vital[];
   labResults?: LabResult[];
   encounters?: Encounter[];
   billingItems?: BillingItem[];
+  appointments?: Appointment[];
+}
+
+export interface Appointment {
+  id: string;
+  patientId: string;
+  clinicianName?: string;
+  clinicName: string;
+  scheduledAt: string;
+  status: 'SCHEDULED' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+  confirmedAt?: string;
+  confirmedVia?: 'EMAIL' | 'PORTAL';
 }
 
 export interface ICD11Code {

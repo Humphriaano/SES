@@ -347,7 +347,7 @@ export default function ConsultationPage() {
           {(!current || current.status === 'CLOSED') && (
             <button
               onClick={startEncounter}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#B41720', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--ses-red)', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
             >
               <Plus size={13} /> New Encounter
             </button>
@@ -484,14 +484,14 @@ export default function ConsultationPage() {
                 </>
               ) : (
                 <div style={{ maxWidth: 480, margin: '80px auto', textAlign: 'center' }}>
-                  <div style={{ width: 56, height: 56, borderRadius: 14, background: 'var(--badge-red-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                    <FileText size={24} color="#B41720" />
+                  <div style={{ width: 56, height: 56, borderRadius: 14, background: 'var(--ses-blue-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                    <FileText size={24} color="var(--ses-blue-deep)" />
                   </div>
                   <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-heading)', marginBottom: 8 }}>No active encounter</p>
                   <p style={{ fontSize: 14, color: 'var(--text-subtle)', marginBottom: 24 }}>Start a new encounter to begin documenting this visit.</p>
                   <button
                     onClick={startEncounter}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#B41720', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--ses-red)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
                   >
                     <Plus size={16} /> Start New Encounter
                   </button>
@@ -653,7 +653,7 @@ function FinalNoteView({ patient, encounter, nodes, encounterType, onBack }: {
         <SummaryCard title="Diagnoses">
           {dxBlocks.map(b => (
             <div key={b.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', borderBottom: '1px solid var(--border-light)' }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#B41720', fontFamily: 'monospace' }}>{b.data.icd11Code}</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ses-blue-deep)', fontFamily: 'monospace' }}>{b.data.icd11Code}</span>
               <span style={{ fontSize: 13, color: 'var(--text-body)' }}>{b.data.icd11Description}</span>
               <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 600, color: 'var(--text-muted)' }}>{b.data.status}</span>
             </div>

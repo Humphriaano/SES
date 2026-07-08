@@ -5,7 +5,7 @@ import {
   BookOpen, FlaskConical, RefreshCw, Activity,
 } from 'lucide-react';
 import api from '../../../api/client';
-import { Patient, Vital, Medication } from '../../../types';
+import { Patient, Vital } from '../../../types';
 import { CanvasNode } from '../../../types/consultation';
 
 const CDS_URL          = 'http://localhost:8000/cds/suggest';
@@ -70,10 +70,10 @@ const URGENCY_STYLE: Record<string, { bg: string; border: string; color: string;
 };
 
 const RISK_STYLE: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  'low':       { bg: 'var(--badge-green-bg)', text: 'var(--badge-green-text)', dot: '#22c55e', label: 'Low'       },
-  'moderate':  { bg: 'var(--badge-amber-bg)', text: 'var(--badge-amber-text)', dot: '#eab308', label: 'Moderate'  },
-  'high':      { bg: '#fff7ed',               text: '#c2410c',                 dot: '#f97316', label: 'High'      },
-  'very high': { bg: 'var(--badge-red-bg)',   text: 'var(--badge-red-text)',   dot: '#ef4444', label: 'Very High' },
+  'low':       { bg: 'var(--badge-green-bg)',    text: 'var(--badge-green-text)',    dot: 'var(--clinical-normal)',   label: 'Low'       },
+  'moderate':  { bg: 'var(--badge-amber-bg)',    text: 'var(--badge-amber-text)',    dot: 'var(--clinical-caution)',  label: 'Moderate'  },
+  'high':      { bg: 'var(--clinical-abnormal-bg)', text: 'var(--clinical-abnormal)', dot: 'var(--clinical-abnormal)', label: 'High'      },
+  'very high': { bg: 'var(--clinical-critical-bg)', text: 'var(--clinical-critical)', dot: 'var(--clinical-critical)', label: 'Very High' },
 };
 
 const CONDITION_LABELS: Record<string, string> = {
@@ -86,14 +86,6 @@ const CONDITION_LABELS: Record<string, string> = {
 const CONDITION_ORDER = ['hypertension', 'cardiovascular', 'diabetes', 'ckd'] as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-function calcAge(dob: string): number {
-  const birth = new Date(dob);
-  const today = new Date();
-  let age = today.getFullYear() - birth.getFullYear();
-  if (today < new Date(today.getFullYear(), birth.getMonth(), birth.getDate())) age--;
-  return age;
-}
 
 function extractEncounterNotes(nodes: CanvasNode[]): string {
   return nodes
@@ -119,6 +111,43 @@ function extractPrescriptionKey(nodes: CanvasNode[]): string {
   );
 }
 
+// Canvas data sent to the server-side payload builder — unsaved diagnoses/
+// prescriptions/notes that may not be committed to the DB yet. The backend
+// merges these with the full committed record.
+function extractCanvasDiagnoses(nodes: CanvasNode[]): { icd_code: string; label: string; status: string }[] {
+  return nodes
+    .filter(n => n.type === 'diagnosis')
+    .map(n => (n as any).data)
+    .filter((d: any) => d.icd11Code)
+    .map((d: any) => ({ icd_code: d.icd11Code, label: d.icd11Description, status: d.status }));
+}
+
+function extractCanvasMedications(nodes: CanvasNode[]): string[] {
+  return nodes
+    .filter(n => n.type === 'prescription')
+    .flatMap(n => ((n as any).data.items as any[]).map(
+      (i: any) => `${i.drugName}${i.dose ? ` ${i.dose}` : ''}${i.frequency ? ` ${i.frequency}` : ''}`,
+    ));
+}
+
+// ── Session cache ─────────────────────────────────────────────────────────────
+// Module-level (survives unmount/remount within the SPA session; a page
+// refresh legitimately starts cold). Keyed by the full input signature —
+// patientId first, so an entry can never be served for a different patient.
+// Only successful responses are cached; errors always retry on next mount.
+
+interface CdsCacheEntry {
+  cds: CdsResponse | null;
+  risk: RiskPredictions | null;
+}
+
+const cdsSessionCache = new Map<string, CdsCacheEntry>();
+
+function cacheWrite(sig: string, patch: Partial<CdsCacheEntry>): void {
+  const entry = cdsSessionCache.get(sig) ?? { cds: null, risk: null };
+  cdsSessionCache.set(sig, { ...entry, ...patch });
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function CdsPanel({ patientId, patient, nodes }: Props) {
@@ -128,7 +157,7 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
   const [response, setResponse]       = useState<CdsResponse | null>(null);
   const [serviceError, setError]      = useState<string | null>(null);
   const [latestVital, setLatestVital] = useState<(Vital & { bmi?: number | null }) | null>(null);
-  const [medications, setMedications] = useState<Medication[]>([]);
+  const [sigExtras, setSigExtras]     = useState<{ latestResultedInvestigation: string | null; latestDispense: string | null } | null>(null);
   const [dataReady, setDataReady]     = useState(false);
 
   // Risk section state
@@ -140,23 +169,24 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
 
   const patientRef   = useRef(patient);
   const nodesRef     = useRef(nodes);
-  const vitalRef     = useRef(latestVital);
-  const medsRef      = useRef(medications);
   patientRef.current = patient;
   nodesRef.current   = nodes;
-  vitalRef.current   = latestVital;
-  medsRef.current    = medications;
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef    = useRef<AbortController | null>(null);
   const isMounted   = useRef(true);
+  const signatureRef = useRef<string | null>(null);
 
   useEffect(() => {
     isMounted.current = true;
     return () => { isMounted.current = false; };
   }, []);
 
-  // Load vitals + medications (used by the guideline CDS call)
+  // Load the cheap signature inputs: latest vital (for vitalKey) and the
+  // latest resulted-investigation / dispense timestamps. These small Express
+  // lookups run on every mount — they're what lets a remount detect that a
+  // new lab result or dispense arrived and invalidate the cached CDS run.
+  // The expensive AI/ML pipelines below are the ones the cache short-circuits.
   useEffect(() => {
     let loaded = 0;
     const onLoaded = () => { if (++loaded === 2) setDataReady(true); };
@@ -169,9 +199,9 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
       .catch(() => {})
       .finally(onLoaded);
 
-    api.get(`/patients/${patientId}/medications`)
-      .then(r => setMedications(r.data))
-      .catch(() => {})
+    api.get(`/patients/${patientId}/cds-signature`)
+      .then(r => setSigExtras(r.data))
+      .catch(() => setSigExtras({ latestResultedInvestigation: null, latestDispense: null }))
       .finally(onLoaded);
 
     return () => { setDataReady(false); };
@@ -184,7 +214,10 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
     setRiskError(null);
     try {
       const { data } = await api.get(`/patients/${patientId}/risk-predict`);
-      if (isMounted.current) setRiskData(data.predictions as RiskPredictions);
+      if (isMounted.current) {
+        setRiskData(data.predictions as RiskPredictions);
+        if (signatureRef.current) cacheWrite(signatureRef.current, { risk: data.predictions as RiskPredictions });
+      }
     } catch (err: any) {
       if (isMounted.current)
         setRiskError(err?.response?.data?.error ?? 'Risk prediction service unavailable');
@@ -193,49 +226,40 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
     }
   }, [patientId]);
 
-  // Fetch risk on mount / patientId change
-  useEffect(() => { fetchRisk(); }, [fetchRisk]);
-
   // ── Guideline CDS fetch ────────────────────────────────────────────────────
   const fetchSuggestion = useCallback(async (signal: AbortSignal) => {
     const p  = patientRef.current;
-    const v  = vitalRef.current;
     const ns = nodesRef.current;
-    const ms = medsRef.current;
     if (!p) return;
 
     if (isMounted.current) { setLoading(true); setError(null); }
 
-    const payload = {
-      question: DEFAULT_QUESTION,
-      patient: {
-        age: calcAge(p.dateOfBirth),
-        sex: p.gender,
-        patient_id: p.id,
-        active_diagnoses: (p.diagnoses ?? [])
-          .filter(d => !d.resolvedAt)
-          .map(d => ({ icd_code: d.icd11.code, label: d.icd11.description })),
-        current_medications: ms
-          .filter(m => !m.endDate || new Date(m.endDate) >= new Date())
-          .map(m => `${m.name}${m.dosage ? ` ${m.dosage}` : ''}`),
-        allergies: p.allergies ?? [],
-        latest_vitals: v ? {
-          bp_systolic:   v.bloodPressureSystolic  ?? null,
-          bp_diastolic:  v.bloodPressureDiastolic ?? null,
-          heart_rate:    v.heartRate              ?? null,
-          temperature_c: v.temperature            ?? null,
-          spo2_pct:      v.oxygenSat              ?? null,
-        } : null,
-        pending_investigations: extractPendingInvestigations(ns),
-        encounter_notes: extractEncounterNotes(ns),
-      },
-    };
+    // Captured before the awaits so results are cached under the inputs they
+    // were generated from, even if the canvas changes while in flight.
+    const sig = signatureRef.current;
 
     try {
+      // 1. Server-side payload assembly: Express merges the full committed
+      //    record (investigation results, PMH, vitals history, dispensing)
+      //    with the unsaved canvas data sent here.
+      const { data: patientPayload } = await api.post(
+        `/patients/${p.id}/cds-payload`,
+        {
+          canvas: {
+            diagnoses: extractCanvasDiagnoses(ns),
+            medications: extractCanvasMedications(ns),
+            pending_investigations: extractPendingInvestigations(ns),
+            encounter_notes: extractEncounterNotes(ns),
+          },
+        },
+        { signal },
+      );
+
+      // 2. Guideline CDS call with the enriched payload.
       const res = await fetch(CDS_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ question: DEFAULT_QUESTION, patient: patientPayload }),
         signal,
       });
       if (!res.ok) {
@@ -243,9 +267,12 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
         throw new Error(err.detail ?? `HTTP ${res.status}`);
       }
       const data = await res.json();
-      if (isMounted.current) setResponse(data);
+      if (isMounted.current) {
+        setResponse(data);
+        if (sig) cacheWrite(sig, { cds: data });
+      }
     } catch (err: any) {
-      if (err.name === 'AbortError') return;
+      if (err.name === 'AbortError' || err.name === 'CanceledError') return;
       if (isMounted.current) setError(err.message ?? 'CDS service unreachable. Make sure it is running on port 8000.');
     } finally {
       if (isMounted.current) setLoading(false);
@@ -264,7 +291,8 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
     }
   }, [fetchSuggestion]);
 
-  // Refresh button triggers both pipelines
+  // Refresh button bypasses the cache: force both pipelines immediately;
+  // their success handlers overwrite the cached entry for this signature.
   function handleRefresh() {
     trigger(true);
     fetchRisk();
@@ -274,15 +302,44 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
   const vitalKey        = latestVital?.id ?? null;
   const prescriptionKey = extractPrescriptionKey(nodes);
 
+  // Full cache signature. patientId comes first — strict per-patient
+  // isolation; an entry can never match across patients.
+  const signature = JSON.stringify([
+    patientId, diagnosisKey, vitalKey, prescriptionKey,
+    sigExtras?.latestResultedInvestigation ?? null,
+    sigExtras?.latestDispense ?? null,
+  ]);
+  signatureRef.current = dataReady && patient ? signature : null;
+
   const triggeredOnce = useRef(false);
   useEffect(() => {
     if (!dataReady || !patient) return;
     const isFirst = !triggeredOnce.current;
     triggeredOnce.current = true;
-    trigger(isFirst);
+
+    const cached = cdsSessionCache.get(signature);
+
+    // Cache hit: render instantly, no pipeline calls, no loading flash.
+    if (cached?.cds) {
+      setResponse(cached.cds);
+      setError(null);
+      setLoading(false);
+    }
+    if (cached?.risk) {
+      setRiskData(cached.risk);
+      setRiskError(null);
+    }
+
+    // Cache miss (whole entry or a missing half): run what's needed.
+    // Mid-session signature changes (new diagnosis/prescription/vital) keep
+    // the existing behaviour — only the debounced CDS call refires; risk
+    // refetches only on first mount for this panel instance (or via Refresh).
+    if (!cached?.cds) trigger(isFirst);
+    if (!cached?.risk && isFirst) fetchRisk();
+
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataReady, diagnosisKey, vitalKey, prescriptionKey]);
+  }, [dataReady, signature]);
 
   useEffect(() => {
     return () => {
@@ -325,14 +382,14 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
           onClick={() => setCollapsed(v => !v)}
           style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left' }}
         >
-          <Brain size={15} color="#c0392b" />
+          <Brain size={15} color="var(--ses-red)" />
           <span style={{ fontSize: 13, fontWeight: 700, color: '#f1f5f9', letterSpacing: '0.02em' }}>
             Clinical Decision Support
           </span>
           <span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>AI · Guideline-based</span>
           {loading && (
             <span style={{
-              width: 7, height: 7, borderRadius: '50%', background: '#c0392b',
+              width: 7, height: 7, borderRadius: '50%', background: 'var(--ses-red)',
               display: 'inline-block', marginLeft: 2,
               animation: 'cds-pulse 1.4s ease-in-out infinite',
             }} />
@@ -377,13 +434,13 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                <Activity size={13} color="#c0392b" />
+                <Activity size={13} color="var(--ses-red)" />
                 <span style={{ fontSize: 11, fontWeight: 700, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Chronic Disease Risk
                 </span>
                 {riskLoading && (
                   <span style={{
-                    width: 6, height: 6, borderRadius: '50%', background: '#c0392b',
+                    width: 6, height: 6, borderRadius: '50%', background: 'var(--ses-red)',
                     display: 'inline-block',
                     animation: 'cds-pulse 1.4s ease-in-out infinite',
                   }} />
@@ -600,12 +657,12 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
               {response.investigations_suggested.length > 0 && (
                 <div style={{ marginBottom: 12, padding: '10px 14px', background: 'var(--badge-green-bg)', border: '1px solid var(--border)', borderRadius: 8 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                    <FlaskConical size={12} color="#0f766e" />
-                    <span style={{ fontSize: 11, fontWeight: 700, color: '#0f766e', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Suggested Investigations</span>
+                    <FlaskConical size={12} color="var(--ses-blue-deep)" />
+                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ses-blue-deep)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Suggested Investigations</span>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {response.investigations_suggested.map((inv, i) => (
-                      <span key={i} style={{ fontSize: 12, background: '#ccfbf1', color: '#0f766e', padding: '2px 10px', borderRadius: 20, fontWeight: 500 }}>
+                      <span key={i} style={{ fontSize: 12, background: 'var(--ses-blue-tint)', color: 'var(--ses-blue-deep)', padding: '2px 10px', borderRadius: 20, fontWeight: 500 }}>
                         {inv}
                       </span>
                     ))}

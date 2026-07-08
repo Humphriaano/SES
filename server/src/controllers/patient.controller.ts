@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
+import { requestMagicLink } from '../services/portalAuth.service';
+
+const PORTAL_URL = process.env['PORTAL_URL'] ?? 'http://localhost:5174';
 
 export async function listPatients(req: Request, res: Response): Promise<void> {
   const { search } = req.query as { search?: string };
@@ -34,6 +37,7 @@ export async function getPatient(req: Request, res: Response): Promise<void> {
         include: { clinician: { select: { id: true, name: true } }, diagnoses: { include: { icd11: true } } },
       },
       billingItems: { orderBy: { createdAt: 'desc' } },
+      appointments: { orderBy: { scheduledAt: 'desc' } },
     },
   });
   if (!patient) { res.status(404).json({ error: 'Patient not found' }); return; }
@@ -44,6 +48,7 @@ export async function createPatient(req: Request, res: Response): Promise<void> 
   const data = req.body as {
     firstName: string; lastName: string; dateOfBirth: string; gender: string;
     phone?: string; address?: string; nationalId?: string; hivStatus?: string; hivTestDate?: string;
+    email?: string;
   };
   const patient = await prisma.patient.create({
     data: {
@@ -56,6 +61,7 @@ export async function createPatient(req: Request, res: Response): Promise<void> 
       nationalId: data.nationalId,
       hivStatus: (data.hivStatus as any) ?? 'UNKNOWN',
       hivTestDate: data.hivTestDate ? new Date(data.hivTestDate) : undefined,
+      email: data.email || undefined,
     },
   });
   res.status(201).json(patient);
@@ -80,6 +86,7 @@ export async function updatePatient(req: Request, res: Response): Promise<void> 
   const data = req.body as Partial<{
     firstName: string; lastName: string; phone: string; address: string;
     hivStatus: string; hivTestDate: string;
+    email: string; preferredName: string; portalEnabled: boolean;
   }>;
   const patient = await prisma.patient.update({
     where: { id },
@@ -89,4 +96,19 @@ export async function updatePatient(req: Request, res: Response): Promise<void> 
     },
   });
   res.json(patient);
+}
+
+// Requires an email on file; enables portal access if it wasn't already, then
+// sends the same branded magic-link email the portal login screen uses.
+export async function sendPortalInvitation(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const patient = await prisma.patient.findUnique({ where: { id } });
+  if (!patient) { res.status(404).json({ error: 'Patient not found' }); return; }
+  if (!patient.email) { res.status(400).json({ error: 'This patient has no email on file' }); return; }
+
+  if (!patient.portalEnabled) {
+    await prisma.patient.update({ where: { id }, data: { portalEnabled: true } });
+  }
+  await requestMagicLink(patient.email, 'invitation', { portalUrl: PORTAL_URL });
+  res.json({ message: 'Invitation sent', portalEnabled: true });
 }

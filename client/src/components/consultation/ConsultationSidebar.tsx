@@ -27,12 +27,14 @@ function deserializeNodes(raw: string | undefined | null): CanvasNode[] {
   } catch { return []; }
 }
 
-// Abnormal color for the dark sidebar (caution=amber, warning/danger=orange/red)
+// This sidebar is always-dark regardless of app theme, so it uses literal
+// dark-bg-appropriate colors mapped to the clinical tiers rather than the
+// theme-swapping CSS vars (caution=amber, abnormal=orange-red, critical=red).
 function vitalColor(statusKey: string, value: number | null | undefined): string {
   const s = getStatus(statusKey, value);
-  if (s === 'danger')  return '#ef4444';
-  if (s === 'warning') return '#f97316';
-  if (s === 'caution') return '#eab308';
+  if (s === 'danger')  return '#fca5a5'; // clinical-critical
+  if (s === 'warning') return '#f4835a'; // clinical-abnormal
+  if (s === 'caution') return '#fbbf24'; // clinical-caution
   return '#cbd5e1';
 }
 
@@ -45,9 +47,9 @@ function InvResultsPanel({ item, onClose }: { item: any; onClose: () => void }) 
   }
 
   function rc(status: string): string {
-    if (status === 'High' || status === 'Low' || status === 'Abnormal') return '#d97706';
-    if (status === 'Critical' || status === 'Positive') return '#dc2626';
-    if (status === 'Normal' || status === 'Negative') return '#16a34a';
+    if (status === 'High' || status === 'Low' || status === 'Abnormal') return '#fbbf24'; // clinical-caution
+    if (status === 'Critical' || status === 'Positive') return '#fca5a5'; // clinical-critical
+    if (status === 'Normal' || status === 'Negative') return '#4ade80'; // clinical-normal
     return '#475569';
   }
 
@@ -282,9 +284,9 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
   }
 
   function resultColor(status: string): string {
-    if (status === 'High' || status === 'Low' || status === 'Abnormal') return '#d97706';
-    if (status === 'Critical' || status === 'Positive') return '#dc2626';
-    if (status === 'Normal' || status === 'Negative') return '#16a34a';
+    if (status === 'High' || status === 'Low' || status === 'Abnormal') return '#fbbf24'; // clinical-caution
+    if (status === 'Critical' || status === 'Positive') return '#fca5a5'; // clinical-critical
+    if (status === 'Normal' || status === 'Negative') return '#4ade80'; // clinical-normal
     return '#94a3b8';
   }
 
@@ -296,12 +298,12 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
     }
     if (dispense.dispensedDrug && dispense.dispensedDrug.toLowerCase() !== prescribedDrug.toLowerCase()) {
       return (
-        <span style={{ fontSize: 10, color: '#d97706', fontWeight: 500 }}>
+        <span style={{ fontSize: 10, color: '#fbbf24', fontWeight: 500 }}>
           Dispensed as {dispense.dispensedDrug}
         </span>
       );
     }
-    return <span style={{ fontSize: 10, color: '#16a34a', fontWeight: 500 }}>Dispensed</span>;
+    return <span style={{ fontSize: 10, color: '#4ade80', fontWeight: 500 }}>Dispensed</span>;
   }
 
   function SectionHeader({ k, label, Icon, count }: { k: string; label: string; Icon: any; count?: number }) {
@@ -319,7 +321,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
             {label}
           </span>
           {!!count && count > 0 && (
-            <span style={{ fontSize: 10, background: '#B41720', color: '#fff', borderRadius: 10, padding: '1px 5px', fontWeight: 700 }}>
+            <span style={{ fontSize: 10, background: '#1e3a5f', color: '#93c5fd', borderRadius: 10, padding: '1px 5px', fontWeight: 700 }}>
               {count}
             </span>
           )}
@@ -399,7 +401,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
               ? activeConditions.map(d => (
                 <div key={d.id} style={{ paddingLeft: 19, marginBottom: 7 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: '#B41720', fontFamily: 'monospace' }}>{d.icd11.code}</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: '#93c5fd', fontFamily: 'monospace' }}>{d.icd11.code}</span>
                     <span style={{ fontSize: 12, color: '#cbd5e1' }}>{d.icd11.description}</span>
                   </div>
                   <div style={{ fontSize: 10, color: '#475569', marginTop: 1 }}>
@@ -570,8 +572,8 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                               if (node.type === 'diagnosis' && node.data.icd11Code) {
                                 return (
                                   <div key={node.id} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5, flexWrap: 'wrap' }}>
-                                    <span style={{ fontSize: 9, fontWeight: 700, color: '#B41720', background: '#FEE2E2', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Dx</span>
-                                    <span style={{ fontSize: 10, fontWeight: 700, color: '#B41720', fontFamily: 'monospace' }}>{node.data.icd11Code}</span>
+                                    <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Dx</span>
+                                    <span style={{ fontSize: 10, fontWeight: 700, color: '#93c5fd', fontFamily: 'monospace' }}>{node.data.icd11Code}</span>
                                     <span style={{ fontSize: 11, color: '#94a3b8' }}>{node.data.icd11Description}</span>
                                     <span style={{ fontSize: 10, color: '#64748b', marginLeft: 'auto' }}>{node.data.status}</span>
                                   </div>
@@ -587,7 +589,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                                   if (isPendingOrInProgress) {
                                     return (
                                       <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
-                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#00897B', background: '#CCFBF1', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
+                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
                                         <span style={{ fontSize: 11, color: '#94a3b8' }}>{item.name}</span>
                                         <span style={{ fontSize: 10, color: '#64748b', marginLeft: 'auto' }}>{dbStatus ?? item.status}</span>
                                       </div>
@@ -603,13 +605,13 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                                     return (
                                       <div key={item.id} style={{ marginBottom: 5 }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                          <span style={{ fontSize: 9, fontWeight: 700, color: '#00897B', background: '#CCFBF1', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
+                                          <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
                                           <span style={{ fontSize: 11, color: '#94a3b8' }}>{item.name}</span>
                                           <button
                                             onClick={() => setInvResultsPanel(dbItem)}
                                             style={{
                                               marginLeft: 'auto', background: 'none', border: 'none',
-                                              cursor: 'pointer', fontSize: 10, color: '#00897B',
+                                              cursor: 'pointer', fontSize: 10, color: '#93c5fd',
                                               textDecoration: 'underline', padding: 0, fontFamily: 'inherit',
                                             }}
                                           >
@@ -624,7 +626,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                                   return (
                                     <div key={item.id} style={{ marginBottom: 5 }}>
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#00897B', background: '#CCFBF1', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
+                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
                                         <span style={{ fontSize: 11, color: '#94a3b8' }}>{item.name}</span>
                                       </div>
                                       {firstRow && (
@@ -646,7 +648,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                                   ...node.data.items.map((item: any) => (
                                     <div key={item.id} style={{ marginBottom: 5 }}>
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#1565C0', background: '#DBEAFE', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
+                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
                                         <span style={{ fontSize: 11, color: '#94a3b8' }}>{item.drugName} {item.dose} {item.frequency}</span>
                                       </div>
                                       {item.prescriptionId && (
@@ -659,7 +661,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                                   ...extraDbRx.map((rx: any) => (
                                     <div key={`db-${rx.id}`} style={{ marginBottom: 5 }}>
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#1565C0', background: '#DBEAFE', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
+                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
                                         <span style={{ fontSize: 11, color: '#94a3b8' }}>{rx.medication?.name} {rx.medication?.dosage} {rx.medication?.frequency}</span>
                                       </div>
                                       <div style={{ marginLeft: 37, marginTop: 2 }}>
@@ -675,7 +677,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                             {!nodes.some(n => n.type === 'prescription') && (encDbPrescriptions[enc.id] ?? []).map((rx: any) => (
                               <div key={`db-${rx.id}`} style={{ marginBottom: 5 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                  <span style={{ fontSize: 9, fontWeight: 700, color: '#1565C0', background: '#DBEAFE', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
+                                  <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
                                   <span style={{ fontSize: 11, color: '#94a3b8' }}>{rx.medication?.name} {rx.medication?.dosage} {rx.medication?.frequency}</span>
                                 </div>
                                 <div style={{ marginLeft: 37, marginTop: 2 }}>

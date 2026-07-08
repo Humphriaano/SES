@@ -85,7 +85,7 @@ export default function DashboardPage() {
     <div style={{ minHeight: '100vh', background: 'var(--bg-page)' }}>
       {/* Hero search area */}
       <div style={{
-        background: 'linear-gradient(135deg, #1a1f2e 0%, #2d1a1a 100%)',
+        background: 'linear-gradient(135deg, #252B2D 0%, #3D1F1F 100%)',
         padding: isMobile ? '28px 16px 56px' : '48px 24px 80px',
         textAlign: 'center',
       }}>
@@ -157,7 +157,7 @@ export default function DashboardPage() {
                         background: 'none', border: 'none', borderBottom: '1px solid var(--border-light)',
                         cursor: 'pointer', transition: 'background 0.1s', color: 'inherit',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--chip-red-bg)')}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-surface)')}
                       onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                     >
                       <div style={{
@@ -179,7 +179,7 @@ export default function DashboardPage() {
                           <span>{calcAge(p.dateOfBirth)} yrs · {p.gender}</span>
                         </div>
                       </div>
-                      <ChevronRight size={16} color="#c8102e" />
+                      <ChevronRight size={16} color="var(--ses-red)" />
                     </button>
                   ))}
                 </>
@@ -253,14 +253,14 @@ export default function DashboardPage() {
                       onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.1)')}
                       onMouseLeave={e => (e.currentTarget.style.boxShadow = '')}>
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
-                        <div style={{ width: 38, height: 38, borderRadius: 10, background: 'var(--chip-red-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <DoorOpen size={18} color="#c8102e" />
+                        <div style={{ width: 38, height: 38, borderRadius: 10, background: 'var(--ses-red-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <DoorOpen size={18} color="var(--ses-red)" />
                         </div>
                         <div style={{
                           minWidth: 34, height: 34, borderRadius: 9, padding: '0 8px',
-                          background: room.waitingCount > 0 ? '#c8102e' : 'var(--bg-surface-2)',
+                          background: room.waitingCount > 0 ? 'var(--ses-red)' : 'var(--bg-surface-2)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          boxShadow: room.waitingCount > 0 ? '0 2px 8px rgba(200,16,46,0.35)' : 'none',
+                          boxShadow: room.waitingCount > 0 ? '0 2px 8px rgba(215,29,36,0.35)' : 'none',
                         }}>
                           <span style={{ fontSize: 18, fontWeight: 800, color: room.waitingCount > 0 ? '#fff' : 'var(--text-subtle)', lineHeight: 1 }}>
                             {room.waitingCount}
@@ -315,14 +315,22 @@ function RegisterModal({ initialName, onClose, onCreated }: {
     firstName: parts[0] ?? '',
     lastName: parts.slice(1).join(' '),
     nationalId: '', phone: '', dateOfBirth: '',
-    gender: 'MALE', address: '',
+    gender: 'MALE', address: '', email: '',
   });
   const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState<string | undefined>(undefined);
 
   function set(f: string, v: string) { setForm((p) => ({ ...p, [f]: v })); }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      setEmailError('Invalid email address');
+      return;
+    }
+    setEmailError(undefined);
+
     setLoading(true);
     try {
       const { data } = await api.post('/patients', { ...form, hivStatus: 'UNKNOWN' });
@@ -341,8 +349,8 @@ function RegisterModal({ initialName, onClose, onCreated }: {
       <div style={{ background: 'var(--bg-card)', borderRadius: 16, width: '100%', maxWidth: 'min(520px, calc(100vw - 24px))', boxShadow: '0 20px 60px rgba(0,0,0,0.2)', overflow: 'hidden', margin: '0 12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 22px', borderBottom: '1px solid var(--border-light)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--chip-red-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <UserCheck size={16} color="#c8102e" />
+            <div style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--ses-red-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <UserCheck size={16} color="var(--ses-red)" />
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-heading)' }}>Register New Client</div>
@@ -354,7 +362,7 @@ function RegisterModal({ initialName, onClose, onCreated }: {
           </button>
         </div>
 
-        <form onSubmit={submit} style={{ padding: '20px 22px' }}>
+        <form onSubmit={submit} noValidate style={{ padding: '20px 22px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 480 ? '1fr' : '1fr 1fr', gap: 13 }}>
             <RField label="First Name *">
               <input required className="field-input" value={form.firstName} onChange={(e) => set('firstName', e.target.value)} placeholder="e.g. John" />
@@ -362,11 +370,22 @@ function RegisterModal({ initialName, onClose, onCreated }: {
             <RField label="Surname *">
               <input required className="field-input" value={form.lastName} onChange={(e) => set('lastName', e.target.value)} placeholder="e.g. Banda" />
             </RField>
-            <RField label="NRC Number">
-              <input className="field-input" value={form.nationalId} onChange={(e) => set('nationalId', e.target.value)} placeholder="123456/78/9" />
-            </RField>
             <RField label="Cell Phone">
               <input className="field-input" value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+260 9X XXX XXXX" />
+            </RField>
+            <RField label="Email">
+              <input
+                type="email"
+                className="field-input"
+                value={form.email}
+                onChange={(e) => { set('email', e.target.value); if (emailError) setEmailError(undefined); }}
+                placeholder="For check-ins and portal access"
+                style={emailError ? { border: '1.5px solid var(--badge-red-text)' } : undefined}
+              />
+              {emailError && <p style={{ fontSize: 11.5, color: 'var(--badge-red-text)', marginTop: 4 }}>{emailError}</p>}
+            </RField>
+            <RField label="NRC Number">
+              <input className="field-input" value={form.nationalId} onChange={(e) => set('nationalId', e.target.value)} placeholder="123456/78/9" />
             </RField>
             <RField label="Date of Birth *">
               <input required type="date" className="field-input" value={form.dateOfBirth} onChange={(e) => set('dateOfBirth', e.target.value)} />

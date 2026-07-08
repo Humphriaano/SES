@@ -4,10 +4,10 @@ import api from '../../api/client';
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 function statusColor(status: string): string {
-  if (status === 'High' || status === 'Abnormal') return '#d97706';
-  if (status === 'Low') return '#2563eb';
-  if (status === 'Critical' || status === 'Positive') return '#dc2626';
-  if (status === 'Normal' || status === 'Negative') return '#16a34a';
+  if (status === 'High' || status === 'Abnormal') return 'var(--badge-amber-text)';
+  if (status === 'Low') return 'var(--badge-blue-text)';
+  if (status === 'Critical' || status === 'Positive') return 'var(--clinical-critical)';
+  if (status === 'Normal' || status === 'Negative') return 'var(--badge-green-text)';
   return '#475569';
 }
 

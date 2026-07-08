@@ -188,7 +188,7 @@ function ItemForm({ onAdd, onCancel, patientId, encounterId }: {
           }}
           disabled={!canAdd}
           style={{
-            background: canAdd ? '#1565C0' : 'var(--border-input)',
+            background: canAdd ? 'var(--ses-red)' : 'var(--border-input)',
             color: canAdd ? '#fff' : 'var(--text-subtle)',
             border: 'none', borderRadius: 6, padding: '6px 14px',
             fontSize: 12, fontWeight: 600, cursor: canAdd ? 'pointer' : 'not-allowed',
@@ -215,7 +215,7 @@ export default function PrescriptionBlock({ data, onChange, onRemove, readOnly, 
 
   return (
     <div style={{
-      borderLeft: '3px solid #1565C0',
+      borderLeft: '3px solid var(--ses-blue-deep)',
       background: 'var(--bg-card)',
       borderRadius: '0 10px 10px 0',
       padding: '10px 14px',
@@ -223,7 +223,7 @@ export default function PrescriptionBlock({ data, onChange, onRemove, readOnly, 
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: data.items.length > 0 ? 8 : 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: '#1565C0', background: 'var(--badge-blue-bg)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace' }}>Rx</span>
+          <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ses-blue-deep)', background: 'var(--ses-blue-tint)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace' }}>Rx</span>
           <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-heading)' }}>Prescription</span>
         </div>
         {!readOnly && (

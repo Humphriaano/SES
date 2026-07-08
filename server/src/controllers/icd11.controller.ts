@@ -104,29 +104,55 @@ export async function searchICD11(req: Request, res: Response): Promise<void> {
   res.json(codes);
 }
 
+// Local fallback catalogue used whenever the WHO ICD-11 API isn't reachable
+// (no WHO_ICD11_CLIENT_ID/SECRET configured, or the API call fails) — see
+// whoSearch() above. Kept broad enough to cover common outpatient/ED
+// presentations so search stays usable without live WHO credentials.
+const commonCodes = [
+  { code: '1C62.Z', description: 'HIV disease, unspecified', category: 'Infectious diseases' },
+  { code: 'BA80',   description: 'Essential hypertension', category: 'Cardiovascular' },
+  { code: '5A11',   description: 'Type 2 diabetes mellitus', category: 'Endocrine' },
+  { code: '5A10',   description: 'Type 1 diabetes mellitus', category: 'Endocrine' },
+  { code: 'BA41',   description: 'Heart failure, unspecified', category: 'Cardiovascular' },
+  { code: 'CB41',   description: 'Asthma', category: 'Respiratory' },
+  { code: 'DB94.Z', description: 'Chronic kidney disease, unspecified stage', category: 'Renal' },
+  { code: 'DC10',   description: 'Peptic ulcer disease', category: 'Gastrointestinal' },
+  { code: 'FA24.Z', description: 'Rheumatoid arthritis, unspecified', category: 'Musculoskeletal' },
+  { code: '6A70',   description: 'Depression, single episode', category: 'Mental health' },
+  { code: '8A00.0', description: 'Ischaemic stroke, unspecified', category: 'Neurological' },
+  { code: 'BA81',   description: 'Secondary hypertension', category: 'Cardiovascular' },
+  { code: '5A20',   description: 'Obesity', category: 'Endocrine' },
+  { code: 'KB21',   description: 'Malaria due to Plasmodium falciparum', category: 'Infectious diseases' },
+  { code: '1B10',   description: 'Pulmonary tuberculosis', category: 'Infectious diseases' },
+  { code: 'DB93',   description: 'Chronic hepatitis B', category: 'Hepatic' },
+  { code: 'DB94',   description: 'Chronic hepatitis C', category: 'Hepatic' },
+  { code: '5A71',   description: 'Hypothyroidism', category: 'Endocrine' },
+  { code: 'BA90',   description: 'Atrial fibrillation', category: 'Cardiovascular' },
+  { code: 'CB00',   description: 'COPD', category: 'Respiratory' },
+  { code: 'CA07',   description: 'Acute upper respiratory tract infection, unspecified', category: 'Respiratory' },
+  { code: 'CA40.Z', description: 'Pneumonia, unspecified', category: 'Respiratory' },
+  { code: 'CA03',   description: 'Acute bronchitis', category: 'Respiratory' },
+  { code: 'AB30',   description: 'Otitis media, unspecified', category: 'Ear/Mastoid' },
+  { code: '9A60.Z', description: 'Conjunctivitis, unspecified', category: 'Visual system' },
+  { code: 'GC08.0', description: 'Urinary tract infection, site not specified', category: 'Genitourinary' },
+  { code: '1A00',   description: 'Cholera', category: 'Infectious diseases' },
+  { code: '1A07',   description: 'Typhoid fever', category: 'Infectious diseases' },
+  { code: 'DD91.0', description: 'Acute gastroenteritis, unspecified', category: 'Gastrointestinal' },
+  { code: 'DA92',   description: 'Gastro-oesophageal reflux disease', category: 'Gastrointestinal' },
+  { code: '3A00',   description: 'Iron deficiency anaemia', category: 'Blood/Immune' },
+  { code: '3A70.0', description: 'Sickle cell disorder, unspecified', category: 'Blood/Immune' },
+  { code: '8A80.Z', description: 'Migraine, unspecified', category: 'Neurological' },
+  { code: '8B10',   description: 'Epilepsy', category: 'Neurological' },
+  { code: 'FA00.Z', description: 'Osteoarthritis, unspecified', category: 'Musculoskeletal' },
+  { code: 'ME84.2', description: 'Low back pain', category: 'Musculoskeletal' },
+  { code: 'EK90',   description: 'Cellulitis, unspecified', category: 'Skin' },
+  { code: '6B00',   description: 'Generalised anxiety disorder', category: 'Mental health' },
+  { code: '1A91',   description: 'Gonococcal infection, unspecified', category: 'Sexual health' },
+  { code: '1A65.1', description: 'Syphilis, unspecified stage', category: 'Sexual health' },
+  { code: '5C80.Z', description: 'Disorder of lipoprotein metabolism, unspecified', category: 'Endocrine' },
+];
+
 export async function seedICD11(req: Request, res: Response): Promise<void> {
-  const commonCodes = [
-    { code: '1C62.Z', description: 'HIV disease, unspecified', category: 'Infectious diseases' },
-    { code: 'BA80',   description: 'Essential hypertension', category: 'Cardiovascular' },
-    { code: '5A11',   description: 'Type 2 diabetes mellitus', category: 'Endocrine' },
-    { code: '5A10',   description: 'Type 1 diabetes mellitus', category: 'Endocrine' },
-    { code: 'BA41',   description: 'Heart failure, unspecified', category: 'Cardiovascular' },
-    { code: 'CB41',   description: 'Asthma', category: 'Respiratory' },
-    { code: 'DB94.Z', description: 'Chronic kidney disease, unspecified stage', category: 'Renal' },
-    { code: 'DC10',   description: 'Peptic ulcer disease', category: 'Gastrointestinal' },
-    { code: 'FA24.Z', description: 'Rheumatoid arthritis, unspecified', category: 'Musculoskeletal' },
-    { code: '6A70',   description: 'Depression, single episode', category: 'Mental health' },
-    { code: '8A00.0', description: 'Ischaemic stroke, unspecified', category: 'Neurological' },
-    { code: 'BA81',   description: 'Secondary hypertension', category: 'Cardiovascular' },
-    { code: '5A20',   description: 'Obesity', category: 'Endocrine' },
-    { code: 'KB21',   description: 'Malaria due to Plasmodium falciparum', category: 'Infectious diseases' },
-    { code: '1B10',   description: 'Pulmonary tuberculosis', category: 'Infectious diseases' },
-    { code: 'DB93',   description: 'Chronic hepatitis B', category: 'Hepatic' },
-    { code: 'DB94',   description: 'Chronic hepatitis C', category: 'Hepatic' },
-    { code: '5A71',   description: 'Hypothyroidism', category: 'Endocrine' },
-    { code: 'BA90',   description: 'Atrial fibrillation', category: 'Cardiovascular' },
-    { code: 'CB00',   description: 'COPD', category: 'Respiratory' },
-  ];
   await prisma.iCD11Code.createMany({ data: commonCodes, skipDuplicates: true });
   res.json({ message: `Seeded ${commonCodes.length} ICD-11 codes` });
 }

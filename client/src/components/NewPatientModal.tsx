@@ -11,9 +11,10 @@ interface Props {
 export default function NewPatientModal({ onClose, onCreated }: Props) {
   const [form, setForm] = useState({
     firstName: '', lastName: '', dateOfBirth: '', gender: 'MALE',
-    phone: '', address: '', nationalId: '', hivStatus: 'UNKNOWN', hivTestDate: '',
+    phone: '', address: '', nationalId: '', hivStatus: 'UNKNOWN', hivTestDate: '', email: '',
   });
   const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState<string | undefined>(undefined);
 
   function set(field: string, value: string) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -21,6 +22,13 @@ export default function NewPatientModal({ onClose, onCreated }: Props) {
 
   async function submit(e: FormEvent) {
     e.preventDefault();
+
+    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      setEmailError('Invalid email address');
+      return;
+    }
+    setEmailError(undefined);
+
     setLoading(true);
     try {
       const { data } = await api.post('/patients', form);
@@ -50,7 +58,7 @@ export default function NewPatientModal({ onClose, onCreated }: Props) {
               width: 34, height: 34, borderRadius: 8, background: 'var(--badge-red-bg)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
-              <UserPlus size={16} color="#c8102e" />
+              <UserPlus size={16} color="var(--ses-red)" />
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-heading)' }}>Register New Patient</div>
@@ -67,7 +75,7 @@ export default function NewPatientModal({ onClose, onCreated }: Props) {
         </div>
 
         {/* Form */}
-        <form onSubmit={submit} style={{ padding: '20px 24px' }}>
+        <form onSubmit={submit} noValidate style={{ padding: '20px 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             <FormField label="First Name" required>
               <input className="field-input" required value={form.firstName} onChange={(e) => set('firstName', e.target.value)} placeholder="e.g. John" />
@@ -87,6 +95,17 @@ export default function NewPatientModal({ onClose, onCreated }: Props) {
             </FormField>
             <FormField label="Phone Number">
               <input className="field-input" value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+260 9X XXX XXXX" />
+            </FormField>
+            <FormField label="Email">
+              <input
+                type="email"
+                className="field-input"
+                value={form.email}
+                onChange={(e) => { set('email', e.target.value); if (emailError) setEmailError(undefined); }}
+                placeholder="For check-ins and portal access"
+                style={emailError ? { border: '1.5px solid var(--badge-red-text)' } : undefined}
+              />
+              {emailError && <p style={{ fontSize: 11.5, color: 'var(--badge-red-text)', marginTop: 4 }}>{emailError}</p>}
             </FormField>
             <FormField label="National ID">
               <input className="field-input" value={form.nationalId} onChange={(e) => set('nationalId', e.target.value)} placeholder="NRC number" />
@@ -126,7 +145,7 @@ function FormField({ label, required, children, style }: {
   return (
     <div style={style}>
       <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-body)', marginBottom: 5 }}>
-        {label} {required && <span style={{ color: '#c8102e' }}>*</span>}
+        {label} {required && <span style={{ color: 'var(--ses-red)' }}>*</span>}
       </label>
       {children}
     </div>

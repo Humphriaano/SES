@@ -9,15 +9,17 @@ import toast from 'react-hot-toast';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-interface LabResult   { test_name: string; value: string; unit: string; flag: string; }
-interface Diagnosis   { text: string; }
+interface LabResult   { test_name: string; value: string; unit: string; flag: string; reference_range?: string; }
+interface PendingInvestigation { test_name: string; status: string; notes?: string; }
+interface Diagnosis   { diagnosis: string; category?: string; }
 interface Medication  { name: string; dose: string; frequency: string; }
 interface Vital       { parameter: string; value: string; unit: string; date: string; }
 
 interface ExtractionResult {
   document_type:  string;
   lab_results:    LabResult[];
-  diagnoses:      string[];
+  pending_investigations: PendingInvestigation[];
+  diagnoses:      Diagnosis[];
   medications:    Medication[];
   vitals:         Vital[];
   other_notes:    string;
@@ -66,6 +68,12 @@ function mapVital(v: Vital): Record<string, number | undefined> {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+function parseDocDate(s: string | undefined): Date | null {
+  if (!s || !s.trim()) return null;
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleString('en-GB', {
     day: 'numeric', month: 'short', year: 'numeric',
@@ -75,9 +83,9 @@ function fmtDate(iso: string) {
 
 function flagColor(flag: string) {
   const f = flag.toLowerCase();
-  if (f === 'high' || f === 'critical') return '#dc2626';
-  if (f === 'low')  return '#d97706';
-  if (f === 'normal') return '#16a34a';
+  if (f === 'high' || f === 'critical') return 'var(--clinical-critical)';
+  if (f === 'low')  return 'var(--clinical-caution)';
+  if (f === 'normal') return 'var(--clinical-normal)';
   return 'var(--text-subtle)';
 }
 
@@ -121,7 +129,7 @@ function Section({
                   type="checkbox"
                   checked={checked[key] ?? true}
                   onChange={() => onToggle(key)}
-                  style={{ marginTop: 2, accentColor: '#c8102e', width: 15, height: 15, flexShrink: 0 }}
+                  style={{ marginTop: 2, accentColor: 'var(--ses-red)', width: 15, height: 15, flexShrink: 0 }}
                 />
                 <span style={{ fontSize: 13, color: 'var(--text-heading)', flex: 1 }}>
                   {children(item, idx)}
@@ -151,6 +159,7 @@ function ConfirmModal({
   const [checked, setChecked] = useState<CheckedMap>(() => {
     const map: CheckedMap = {};
     data.lab_results.forEach((_, i)  => { map[`lab_${i}`]   = true; });
+    data.pending_investigations.forEach((_, i) => { map[`pinv_${i}`] = true; });
     data.diagnoses.forEach((_, i)    => { map[`dx_${i}`]     = true; });
     data.medications.forEach((_, i)  => { map[`med_${i}`]    = true; });
     data.vitals.forEach((_, i)       => { map[`vital_${i}`]  = true; });
@@ -181,39 +190,83 @@ function ConfirmModal({
         extracted_json: JSON.stringify(data),
       });
 
-      // 2. Save checked lab results
-      const labSaves = data.lab_results
-        .filter((_, i) => checked[`lab_${i}`])
-        .map(lr => api.post(`/patients/${patientId}/lab-results`, {
-          testName:    lr.test_name,
-          result:      lr.value,
-          unit:        lr.unit || null,
-          isAbnormal:  lr.flag.toLowerCase() !== 'normal' && lr.flag !== '',
-        }));
+      // Each save below is tracked independently so one category failing
+      // doesn't hide whether the others succeeded.
+      const tasks: { label: string; promise: Promise<unknown> }[] = [];
 
-      // 3. Save checked medications
-      const medSaves = data.medications
+      // 2. Investigations (resulted + pending) + diagnoses + narrative notes go
+      // through one write-back endpoint that targets the tables their views
+      // actually read from.
+      const checkedLabResults = data.lab_results.filter((_, i) => checked[`lab_${i}`]);
+      const checkedPendingInv = data.pending_investigations.filter((_, i) => checked[`pinv_${i}`]);
+      const checkedDiagnoses  = data.diagnoses.filter((_, i) => checked[`dx_${i}`]);
+      const checkedNotes      = checked['notes_0'] ? data.other_notes : '';
+
+      if (checkedLabResults.length > 0 || checkedPendingInv.length > 0 || checkedDiagnoses.length > 0 || checkedNotes) {
+        tasks.push({
+          label: 'Investigations/diagnoses/notes',
+          promise: api.post(`/patients/${patientId}/documents/import`, {
+            filename: data._filename,
+            labResults: checkedLabResults.map(lr => ({
+              testName: lr.test_name, value: lr.value, unit: lr.unit || null,
+              referenceRange: lr.reference_range || null, flag: lr.flag || null,
+            })),
+            pendingInvestigations: checkedPendingInv.map(pi => ({
+              testName: pi.test_name, status: pi.status || 'Pending', notes: pi.notes || null,
+            })),
+            diagnoses: checkedDiagnoses.map(d => ({ text: d.diagnosis, category: d.category || null })),
+            otherNotes: checkedNotes,
+          }),
+        });
+      }
+
+      // 3. Save checked medications (unchanged — already working)
+      data.medications
         .filter((_, i) => checked[`med_${i}`])
-        .map(m => api.post(`/patients/${patientId}/medications`, {
-          name:      m.name,
-          dosage:    m.dose || null,
-          frequency: m.frequency || null,
-          route:     null,
-          startDate: new Date().toISOString(),
+        .forEach(m => tasks.push({
+          label: `Medication "${m.name}"`,
+          promise: api.post(`/patients/${patientId}/medications`, {
+            name:      m.name,
+            dosage:    m.dose || null,
+            frequency: m.frequency || null,
+            route:     null,
+            startDate: new Date().toISOString(),
+          }),
         }));
 
-      // 4. Save checked vitals — merge all into one vitals record
+      // 4. Save checked vitals — merge all into one vitals record. Use the
+      // document's own date if one was extracted for any checked vital,
+      // otherwise fall back to the upload time and flag which was used.
       const checkedVitals = data.vitals.filter((_, i) => checked[`vital_${i}`]);
-      const vitalPayload: Record<string, number | undefined> = {};
+      const vitalPayload: Record<string, number | string | undefined> = {};
       checkedVitals.forEach(v => Object.assign(vitalPayload, mapVital(v)));
       const hasVitals = Object.keys(vitalPayload).some(k => vitalPayload[k] !== undefined);
-      const vitalSave = hasVitals
-        ? [api.post(`/patients/${patientId}/vitals`, vitalPayload)]
-        : [];
+      let vitalsDateSource: 'document' | 'upload' = 'upload';
+      if (hasVitals) {
+        const docDates = checkedVitals.map(v => parseDocDate(v.date)).filter((d): d is Date => d !== null);
+        if (docDates.length > 0) {
+          vitalPayload.recordedAt = docDates.reduce((a, b) => (a < b ? a : b)).toISOString();
+          vitalsDateSource = 'document';
+        }
+        tasks.push({ label: 'Vitals', promise: api.post(`/patients/${patientId}/vitals`, vitalPayload) });
+      }
 
-      await Promise.allSettled([...labSaves, ...medSaves, ...vitalSave]);
+      const settled = await Promise.allSettled(tasks.map(t => t.promise));
+      const failed = settled
+        .map((s, i) => ({ s, label: tasks[i].label }))
+        .filter((x): x is { s: PromiseRejectedResult; label: string } => x.s.status === 'rejected');
 
-      toast.success('Document data saved successfully');
+      if (tasks.length === 0) {
+        toast('Nothing selected to save', { icon: 'ℹ️' });
+      } else if (failed.length === 0) {
+        const vitalsNote = hasVitals && vitalsDateSource === 'upload' ? ' (vitals dated using upload time — no date found in document)' : '';
+        toast.success(`Saved ${tasks.length} of ${tasks.length} categories${vitalsNote}`);
+      } else {
+        failed.forEach(f => toast.error(`${f.label} failed to save`));
+        const okCount = tasks.length - failed.length;
+        if (okCount > 0) toast.success(`${okCount} of ${tasks.length} categories saved`);
+      }
+
       onSave();
     } catch (err: any) {
       toast.error(err?.response?.data?.error ?? 'Save failed');
@@ -262,7 +315,7 @@ function ConfirmModal({
 
         {/* Select all / none */}
         <div style={{ padding: '10px 22px', background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-light)', display: 'flex', gap: 10 }}>
-          <button onClick={() => toggleAll(true)} style={{ fontSize: 12, color: '#c8102e', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
+          <button onClick={() => toggleAll(true)} style={{ fontSize: 12, color: 'var(--ses-red)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
             Select all
           </button>
           <span style={{ color: 'var(--text-subtle)' }}>·</span>
@@ -291,6 +344,25 @@ function ConfirmModal({
                       [{lr.flag}]
                     </span>
                   )}
+                  {lr.reference_range && (
+                    <span style={{ marginLeft: 8, fontSize: 11, color: 'var(--text-subtle)' }}>
+                      Ref: {lr.reference_range}
+                    </span>
+                  )}
+                </span>
+              );
+            }}
+          </Section>
+
+          {/* Pending Investigations — ordered/requested, not yet resulted */}
+          <Section title="Pending Investigations" items={data.pending_investigations} sectionKey="pinv" checked={checked} onToggle={toggle}>
+            {(item) => {
+              const pi = item as PendingInvestigation;
+              return (
+                <span>
+                  <strong>{pi.test_name}</strong>{' '}
+                  <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--badge-blue-text)' }}>[{pi.status || 'Pending'}]</span>
+                  {pi.notes && <span style={{ color: 'var(--text-subtle)' }}> — {pi.notes}</span>}
                 </span>
               );
             }}
@@ -298,7 +370,19 @@ function ConfirmModal({
 
           {/* Diagnoses */}
           <Section title="Diagnoses" items={data.diagnoses} sectionKey="dx" checked={checked} onToggle={toggle}>
-            {(item) => <span>{item as string}</span>}
+            {(item) => {
+              const d = item as Diagnosis;
+              return (
+                <span>
+                  <strong>{d.diagnosis}</strong>
+                  {d.category && (
+                    <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 600, color: 'var(--text-subtle)' }}>
+                      ({d.category})
+                    </span>
+                  )}
+                </span>
+              );
+            }}
           </Section>
 
           {/* Medications */}
@@ -341,7 +425,7 @@ function ConfirmModal({
                   type="checkbox"
                   checked={checked['notes_0'] ?? true}
                   onChange={() => toggle('notes_0')}
-                  style={{ marginTop: 2, accentColor: '#c8102e', width: 15, height: 15, flexShrink: 0 }}
+                  style={{ marginTop: 2, accentColor: 'var(--ses-red)', width: 15, height: 15, flexShrink: 0 }}
                 />
                 <span style={{ fontSize: 13, color: 'var(--text-heading)', whiteSpace: 'pre-wrap' }}>
                   {data.other_notes}
@@ -354,7 +438,7 @@ function ConfirmModal({
           {data.diagnoses.length > 0 && (
             <div style={{ padding: '8px 12px', background: 'var(--badge-amber-bg)', border: '1px solid var(--badge-amber-text)', borderRadius: 7, fontSize: 12, color: 'var(--badge-amber-text)', display: 'flex', gap: 7, alignItems: 'flex-start' }}>
               <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
-              Diagnoses are saved as document notes. To add them to Past Medical History with ICD-11 codes, use the Diagnosis block in Consultation.
+              Diagnoses are matched to an ICD-11 code (or added as a new code if no match is found) and added to Past Medical History, marked as imported from this document.
             </div>
           )}
         </div>
@@ -421,7 +505,7 @@ function DocumentsList({ patientId, refreshKey }: { patientId: string; refreshKe
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
               <td style={{ padding: '12px 16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <FileText size={14} color="#c8102e" />
+                  <FileText size={14} color="var(--ses-red)" />
                   <span style={{ fontWeight: 500, color: 'var(--text-heading)' }}>{doc.filename}</span>
                 </div>
               </td>
@@ -443,9 +527,9 @@ function DocumentsList({ patientId, refreshKey }: { patientId: string; refreshKe
                   rel="noreferrer"
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 5,
-                    fontSize: 12, fontWeight: 600, color: '#c8102e',
+                    fontSize: 12, fontWeight: 600, color: 'var(--ses-red)',
                     textDecoration: 'none', padding: '4px 10px',
-                    border: '1px solid var(--chip-red-border)', borderRadius: 6,
+                    border: '1px solid rgba(215,29,36,0.3)', borderRadius: 6,
                   }}
                 >
                   <Eye size={12} /> View
@@ -552,25 +636,25 @@ export default function DocumentsPage() {
         onDrop={handleDrop}
         onClick={() => !uploading && fileInputRef.current?.click()}
         style={{
-          border: `2px dashed ${dragOver ? '#c8102e' : 'var(--border)'}`,
+          border: `2px dashed ${dragOver ? 'var(--ses-blue-deep)' : 'var(--border)'}`,
           borderRadius: 12,
           padding: '32px 24px',
           textAlign: 'center',
           marginBottom: 28,
           cursor: uploading ? 'default' : 'pointer',
-          background: dragOver ? 'var(--chip-red-bg)' : 'var(--bg-surface)',
+          background: dragOver ? 'var(--ses-blue-tint)' : 'var(--bg-surface)',
           transition: 'border-color 0.15s, background 0.15s',
         }}
       >
         {uploading ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-            <Loader2 size={32} color="#c8102e" style={{ animation: 'spin 1s linear infinite' }} />
+            <Loader2 size={32} color="var(--ses-red)" style={{ animation: 'spin 1s linear infinite' }} />
             <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-heading)' }}>AI is reading document…</div>
-            <div style={{ fontSize: 13, color: 'var(--text-subtle)' }}>Extracting clinical data with Llama 3.2</div>
+            <div style={{ fontSize: 13, color: 'var(--text-subtle)' }}>Extracting clinical data with Qwen 3</div>
           </div>
         ) : (
           <>
-            <Upload size={28} color={dragOver ? '#c8102e' : 'var(--text-subtle)'} style={{ marginBottom: 10, opacity: dragOver ? 1 : 0.5 }} />
+            <Upload size={28} color={dragOver ? 'var(--ses-blue-deep)' : 'var(--text-subtle)'} style={{ marginBottom: 10, opacity: dragOver ? 1 : 0.5 }} />
             <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-heading)', marginBottom: 4 }}>
               Drop a file here or click to browse
             </div>

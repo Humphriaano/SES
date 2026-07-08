@@ -117,8 +117,8 @@ function ApproveFlow({ userId, onDone, onCancel }: { userId: string; onDone: () 
               onClick={() => toggle(r.value)}
               style={{
                 padding: '5px 14px', borderRadius: 20, fontSize: 12.5, fontWeight: 600,
-                cursor: 'pointer', border: `1px solid ${on ? '#c8102e' : 'var(--border-input)'}`,
-                background: on ? '#c8102e' : 'var(--bg-surface)',
+                cursor: 'pointer', border: `1px solid ${on ? 'var(--ses-blue-deep)' : 'var(--border-input)'}`,
+                background: on ? 'var(--ses-blue-deep)' : 'var(--bg-surface)',
                 color: on ? '#fff' : 'var(--text-body)',
                 transition: 'background 0.12s, color 0.12s, border-color 0.12s',
               }}
@@ -134,7 +134,7 @@ function ApproveFlow({ userId, onDone, onCancel }: { userId: string; onDone: () 
           disabled={loading || selected.length === 0}
           style={{
             height: 32, padding: '0 18px',
-            background: selected.length === 0 ? 'var(--border-input)' : '#16a34a',
+            background: selected.length === 0 ? 'var(--border-input)' : 'var(--ses-red)',
             color: selected.length === 0 ? 'var(--text-subtle)' : '#fff',
             border: 'none', borderRadius: 6, fontSize: 12.5, fontWeight: 600,
             cursor: selected.length === 0 ? 'not-allowed' : 'pointer',
@@ -194,8 +194,8 @@ function RejectFlow({ userId, onDone }: { userId: string; onDone: () => void }) 
           onClick={confirm}
           disabled={loading}
           style={{
-            height: 30, padding: '0 14px', background: '#dc2626', color: '#fff',
-            border: 'none', borderRadius: 6, fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
+            height: 30, padding: '0 14px', background: 'transparent', color: 'var(--ses-red)',
+            border: '1.5px solid var(--ses-red)', borderRadius: 6, fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
           }}
         >
           {loading ? '…' : 'Confirm Rejection'}
@@ -240,7 +240,7 @@ function PendingRow({ user, onRefresh }: { user: AdminUser; onRefresh: () => voi
               onClick={() => setMode('approve')}
               style={{
                 display: 'flex', alignItems: 'center', gap: 5, height: 32, padding: '0 14px',
-                background: '#16a34a', color: '#fff', border: 'none', borderRadius: 6,
+                background: 'var(--ses-red)', color: '#fff', border: 'none', borderRadius: 6,
                 fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
               }}
             >
@@ -454,7 +454,7 @@ function RoomsTab() {
                 )}
               </div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', paddingBottom: 0, marginTop: 20 }}>
-                <button onClick={createRoom} disabled={saving || !newName.trim() || !newTag.trim()} style={{ height: 34, padding: '0 16px', background: newName.trim() && newTag.trim() ? '#c8102e' : 'var(--border-input)', color: newName.trim() && newTag.trim() ? '#fff' : 'var(--text-subtle)', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: newName.trim() && newTag.trim() ? 'pointer' : 'not-allowed' }}>
+                <button onClick={createRoom} disabled={saving || !newName.trim() || !newTag.trim()} style={{ height: 34, padding: '0 16px', background: newName.trim() && newTag.trim() ? 'var(--ses-red)' : 'var(--border-input)', color: newName.trim() && newTag.trim() ? '#fff' : 'var(--text-subtle)', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: newName.trim() && newTag.trim() ? 'pointer' : 'not-allowed' }}>
                   {saving ? 'Saving…' : 'Save Room'}
                 </button>
                 <button onClick={() => { setAdding(false); setNewName(''); setNewTag(''); setTagInput(''); }} style={{ height: 34, padding: '0 12px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 6, fontSize: 13, cursor: 'pointer', color: 'var(--text-muted)' }}>Cancel</button>
@@ -462,7 +462,7 @@ function RoomsTab() {
             </div>
           </div>
         ) : (
-          <button onClick={() => setAdding(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, height: 34, padding: '0 16px', background: '#c8102e', color: '#fff', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+          <button onClick={() => setAdding(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, height: 34, padding: '0 16px', background: 'var(--ses-red)', color: '#fff', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
             <Plus size={14} /> Add Room
           </button>
         )}
@@ -503,7 +503,7 @@ function RoomsTab() {
                       <td style={{ padding: '8px 16px' }} />
                       <td style={{ padding: '8px 16px' }}>
                         <div style={{ display: 'flex', gap: 6 }}>
-                          <button onClick={() => saveEdit(room.id)} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: 4, height: 28, padding: '0 10px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                          <button onClick={() => saveEdit(room.id)} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: 4, height: 28, padding: '0 10px', background: 'var(--ses-red)', color: '#fff', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
                             <Check size={11} /> Save
                           </button>
                           <button onClick={() => setEditId(null)} style={{ height: 28, padding: '0 10px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 6, fontSize: 12, cursor: 'pointer', color: 'var(--text-muted)' }}>Cancel</button>
@@ -522,7 +522,7 @@ function RoomsTab() {
                       <td style={{ padding: '12px 16px' }}>
                         <button onClick={() => toggleActive(room)} title={room.active ? 'Deactivate room' : 'Activate room'} style={{
                           width: 36, height: 20, borderRadius: 10, border: 'none', cursor: 'pointer', transition: 'background 0.2s',
-                          background: room.active ? '#16a34a' : 'var(--border-input)', position: 'relative',
+                          background: room.active ? 'var(--clinical-normal)' : 'var(--border-input)', position: 'relative',
                         }}>
                           <span style={{ position: 'absolute', top: 2, left: room.active ? 18 : 2, width: 16, height: 16, borderRadius: '50%', background: '#fff', transition: 'left 0.2s', display: 'block' }} />
                         </button>
@@ -595,7 +595,7 @@ export default function AdminUsersPage() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{
-            width: 40, height: 40, borderRadius: 10, background: '#1e3a5f',
+            width: 40, height: 40, borderRadius: 10, background: 'var(--ses-blue-deep)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <Shield size={20} color="#fff" />
@@ -643,8 +643,8 @@ export default function AdminUsersPage() {
             style={{
               display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px',
               background: 'none', border: 'none', cursor: 'pointer', fontSize: 13.5, fontWeight: 600,
-              color: tab === t.key ? '#c8102e' : 'var(--text-muted)',
-              borderBottom: `2px solid ${tab === t.key ? '#c8102e' : 'transparent'}`,
+              color: tab === t.key ? 'var(--ses-blue-deep)' : 'var(--text-muted)',
+              borderBottom: `2px solid ${tab === t.key ? 'var(--ses-blue-deep)' : 'transparent'}`,
               marginBottom: -1, transition: 'color 0.15s',
             }}
           >
@@ -654,7 +654,7 @@ export default function AdminUsersPage() {
               <span style={{
                 fontSize: 11, fontWeight: 700, padding: '1px 7px', borderRadius: 20,
                 background: tab === t.key ? 'var(--badge-red-bg)' : 'var(--badge-gray-bg)',
-                color: tab === t.key ? '#c8102e' : 'var(--text-muted)',
+                color: tab === t.key ? 'var(--ses-blue-deep)' : 'var(--text-muted)',
               }}>
                 {t.count}
               </span>
@@ -673,7 +673,7 @@ export default function AdminUsersPage() {
               textAlign: 'center', padding: '48px 24px',
               background: 'var(--bg-surface)', borderRadius: 12, border: '1px dashed var(--border)',
             }}>
-              <CheckCircle size={32} color="#16a34a" style={{ marginBottom: 12 }} />
+              <CheckCircle size={32} color="var(--clinical-normal)" style={{ marginBottom: 12 }} />
               <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-heading)', marginBottom: 6 }}>
                 No pending approvals
               </div>

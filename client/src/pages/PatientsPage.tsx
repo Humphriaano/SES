@@ -168,7 +168,7 @@ export default function PatientsPage() {
                   <td style={{ padding: '13px 16px', textAlign: 'right' }}>
                     <div style={{
                       display: 'inline-flex', alignItems: 'center', gap: 4,
-                      fontSize: 12, color: '#c8102e', fontWeight: 600,
+                      fontSize: 12, color: 'var(--ses-red)', fontWeight: 600,
                     }}>
                       Open <ChevronRight size={13} />
                     </div>

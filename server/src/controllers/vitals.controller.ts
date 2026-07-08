@@ -27,8 +27,12 @@ export async function createVital(req: Request, res: Response): Promise<void> {
     bloodPressureSystolic?: number; bloodPressureDiastolic?: number;
     heartRate?: number; temperature?: number; weight?: number;
     height?: number; oxygenSat?: number; glucose?: number;
+    recordedAt?: string;
   };
-  const vital = await prisma.vital.create({ data: { patientId, ...body } });
+  const { recordedAt, ...rest } = body;
+  const vital = await prisma.vital.create({
+    data: { patientId, ...rest, recordedAt: recordedAt ? new Date(recordedAt) : undefined },
+  });
   res.status(201).json({
     ...vital,
     bmi: calcBmi(vital.weight, vital.height),

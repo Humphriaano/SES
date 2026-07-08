@@ -59,14 +59,16 @@ export const STATUS: Record<StatusKey, {
   bg: string; border: string; text: string;
   badge: string; badgeText: string; dot: string; label: string;
 }> = {
-  normal:  { bg: '#f0fdf4', border: '#bbf7d0', text: '#15803d', badge: '#dcfce7', badgeText: '#166534', dot: '#22c55e', label: 'Normal'   },
-  caution: { bg: '#fefce8', border: '#fef08a', text: '#a16207', badge: '#fef9c3', badgeText: '#854d0e', dot: '#eab308', label: 'Elevated' },
-  warning: { bg: '#fff7ed', border: '#fed7aa', text: '#c2410c', badge: '#ffedd5', badgeText: '#9a3412', dot: '#f97316', label: 'High'     },
-  danger:  { bg: '#fef2f2', border: '#fecaca', text: '#b91c1c', badge: '#fee2e2', badgeText: '#991b1b', dot: '#ef4444', label: 'Critical' },
+  normal:  { bg: 'var(--clinical-normal-bg)',   border: '#bbf7d0', text: 'var(--clinical-normal)',   badge: 'var(--clinical-normal-bg)',   badgeText: 'var(--clinical-normal)',   dot: 'var(--clinical-normal)',   label: 'Normal'   },
+  caution: { bg: 'var(--clinical-caution-bg)',  border: '#fef08a', text: 'var(--clinical-caution)',  badge: 'var(--clinical-caution-bg)',  badgeText: 'var(--clinical-caution)',  dot: 'var(--clinical-caution)',  label: 'Elevated' },
+  warning: { bg: 'var(--clinical-abnormal-bg)', border: '#fed7aa', text: 'var(--clinical-abnormal)', badge: 'var(--clinical-abnormal-bg)', badgeText: 'var(--clinical-abnormal)', dot: 'var(--clinical-abnormal)', label: 'High'     },
+  danger:  { bg: 'var(--clinical-critical-bg)', border: '#fecaca', text: 'var(--clinical-critical)', badge: 'var(--clinical-critical-bg)', badgeText: 'var(--clinical-critical)', dot: 'var(--clinical-critical)', label: 'Critical' },
   neutral: { bg: '#f8fafc', border: '#e2e8f0', text: '#475569', badge: '#f1f5f9', badgeText: '#475569', dot: '#94a3b8', label: '—'        },
 };
 
 // ── Chart config ──────────────────────────────────────────────────────────────
+// Series colors are blue (never brand red — a red line would misread as a
+// danger signal). Reference/threshold lines use the clinical tiers.
 
 export type ChartKey = 'bp' | 'hr' | 'temp' | 'spo2' | 'glucose';
 
@@ -77,11 +79,11 @@ export const CHART_CONFIGS: Record<ChartKey, {
   unit: string;
   refs: { y: number; color: string; dash: string }[];
 }> = {
-  bp:      { label: 'Blood Pressure', keys: ['systolic', 'diastolic'], colors: ['#c0392b', '#e67e22'], unit: 'mmHg',   refs: [{ y: 130, color: '#f97316', dash: '4 2' }, { y: 140, color: '#ef4444', dash: '4 2' }] },
-  hr:      { label: 'Heart Rate',     keys: ['hr'],                    colors: ['#8b5cf6'],            unit: 'bpm',    refs: [{ y: 60,  color: '#94a3b8', dash: '3 3' }, { y: 100, color: '#f97316', dash: '4 2' }] },
-  temp:    { label: 'Temperature',    keys: ['temp'],                   colors: ['#ef4444'],            unit: '°C',     refs: [{ y: 37.2, color: '#f97316', dash: '4 2' }, { y: 37.5, color: '#ef4444', dash: '4 2' }] },
-  spo2:    { label: 'SpO₂',           keys: ['spo2'],                   colors: ['#3b82f6'],            unit: '%',      refs: [{ y: 95,  color: '#f97316', dash: '4 2' }] },
-  glucose: { label: 'Glucose',        keys: ['glucose'],                colors: ['#10b981'],            unit: 'mmol/L', refs: [{ y: 3.9, color: '#94a3b8', dash: '3 3' }, { y: 7.8, color: '#f97316', dash: '4 2' }] },
+  bp:      { label: 'Blood Pressure', keys: ['systolic', 'diastolic'], colors: ['var(--ses-blue-deep)', 'var(--ses-blue)'], unit: 'mmHg',   refs: [{ y: 130, color: 'var(--clinical-caution)', dash: '4 2' }, { y: 140, color: 'var(--clinical-abnormal)', dash: '4 2' }] },
+  hr:      { label: 'Heart Rate',     keys: ['hr'],                    colors: ['var(--ses-blue-deep)'],            unit: 'bpm',    refs: [{ y: 60,  color: '#94a3b8', dash: '3 3' }, { y: 100, color: 'var(--clinical-abnormal)', dash: '4 2' }] },
+  temp:    { label: 'Temperature',    keys: ['temp'],                   colors: ['var(--ses-blue-deep)'],            unit: '°C',     refs: [{ y: 37.2, color: 'var(--clinical-caution)', dash: '4 2' }, { y: 37.5, color: 'var(--clinical-abnormal)', dash: '4 2' }] },
+  spo2:    { label: 'SpO₂',           keys: ['spo2'],                   colors: ['var(--ses-blue-deep)'],            unit: '%',      refs: [{ y: 95,  color: 'var(--clinical-abnormal)', dash: '4 2' }] },
+  glucose: { label: 'Glucose',        keys: ['glucose'],                colors: ['var(--ses-blue-deep)'],            unit: 'mmol/L', refs: [{ y: 3.9, color: '#94a3b8', dash: '3 3' }, { y: 7.8, color: 'var(--clinical-abnormal)', dash: '4 2' }] },
 };
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
@@ -98,10 +100,10 @@ export function getTrend(history: DisplayRecord[], key: keyof DisplayRecord): 'u
 
 export function bmiLabel(bmi: number | null): { text: string; color: string } | null {
   if (!bmi) return null;
-  if (bmi < 18.5) return { text: 'Underweight', color: '#3b82f6' };
-  if (bmi < 25)   return { text: 'Normal',      color: '#22c55e' };
-  if (bmi < 30)   return { text: 'Overweight',  color: '#f97316' };
-  return                  { text: 'Obese',       color: '#ef4444' };
+  if (bmi < 18.5) return { text: 'Underweight', color: 'var(--ses-blue-deep)' };
+  if (bmi < 25)   return { text: 'Normal',      color: 'var(--clinical-normal)' };
+  if (bmi < 30)   return { text: 'Overweight',  color: 'var(--clinical-caution)' };
+  return                  { text: 'Obese',       color: 'var(--clinical-abnormal)' };
 }
 
 export function calcBmi(weight?: number | null, height?: number | null): number | null {

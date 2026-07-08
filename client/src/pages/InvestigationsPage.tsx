@@ -27,7 +27,7 @@ const T = {
   title: 'var(--text-heading)',
   body: 'var(--text-body2)',
   muted: 'var(--text-muted)',
-  teal: '#00897B',
+  teal: 'var(--ses-red)',
   font: "'Segoe UI', system-ui, sans-serif",
 };
 
@@ -47,10 +47,10 @@ function statusBadge(status: string) {
 }
 
 function resultColor(status: string): string {
-  if (status === 'High' || status === 'Low' || status === 'Abnormal') return '#d97706';
-  if (status === 'Critical') return '#dc2626';
-  if (status === 'Positive') return '#dc2626';
-  if (status === 'Normal' || status === 'Negative') return '#16a34a';
+  if (status === 'High' || status === 'Low' || status === 'Abnormal') return 'var(--clinical-abnormal)';
+  if (status === 'Critical') return 'var(--clinical-critical)';
+  if (status === 'Positive') return 'var(--clinical-critical)';
+  if (status === 'Normal' || status === 'Negative') return 'var(--clinical-normal)';
   return T.body;
 }
 
@@ -97,7 +97,7 @@ function OrderBasket({ basket, setBasket }: {
                 background: 'var(--badge-green-bg)', border: '1px solid var(--border)',
                 borderRadius: 7, padding: '6px 10px', marginBottom: 5,
               }}>
-                <span style={{ fontSize: 9, fontWeight: 700, background: isPanel ? '#0d9488' : '#0891b2', color: '#fff', borderRadius: 3, padding: '1px 5px' }}>
+                <span style={{ fontSize: 9, fontWeight: 700, background: isPanel ? 'var(--ses-blue-deep)' : 'var(--ses-blue)', color: '#fff', borderRadius: 3, padding: '1px 5px' }}>
                   {isPanel ? 'Panel' : 'Test'}
                 </span>
                 <span style={{ flex: 1, fontSize: 13, color: 'var(--text-heading)', fontWeight: 500 }}>
@@ -152,7 +152,7 @@ function OrderBasket({ basket, setBasket }: {
                   onMouseEnter={e => { if (!inBasket) e.currentTarget.style.background = 'var(--bg-surface)'; }}
                   onMouseLeave={e => { if (!inBasket) e.currentTarget.style.background = 'none'; }}
                 >
-                  <span style={{ fontSize: 9, fontWeight: 700, background: isPanel ? '#0d9488' : '#0891b2', color: '#fff', borderRadius: 3, padding: '1px 5px', whiteSpace: 'nowrap' }}>
+                  <span style={{ fontSize: 9, fontWeight: 700, background: isPanel ? 'var(--ses-blue-deep)' : 'var(--ses-blue)', color: '#fff', borderRadius: 3, padding: '1px 5px', whiteSpace: 'nowrap' }}>
                     {isPanel ? 'Panel' : 'Test'}
                   </span>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -423,7 +423,7 @@ function InlineResultsForm({ item, isAmend, colSpan, onClose, onSaved }: {
             disabled={saving}
             style={{
               padding: '6px 16px', border: 'none', borderRadius: 6,
-              background: isAmend ? '#d97706' : T.teal,
+              background: isAmend ? 'var(--clinical-caution)' : T.teal,
               color: '#fff', fontSize: 12, fontWeight: 600,
               cursor: saving ? 'not-allowed' : 'pointer', fontFamily: T.font,
             }}

@@ -25,6 +25,13 @@ class PatientContext(BaseModel):
     latest_vitals: Optional[LatestVitals] = None
     pending_investigations: list[str] = []
     encounter_notes: str = ""
+    # Full-record sections assembled server-side by Express (terse one-line-
+    # per-item strings, already budget-trimmed there). All optional so older
+    # callers that omit them keep working.
+    investigation_results: list[str] = []
+    past_medical_history: list[str] = []
+    vitals_history: list[str] = []
+    dispensing_history: list[str] = []
 
 
 class CdsRequest(BaseModel):

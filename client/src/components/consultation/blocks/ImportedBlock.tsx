@@ -65,11 +65,11 @@ export default function ImportedBlock({ data, onRemove }: Props) {
           {data.diagnoses.map((d, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
               <span style={{
-                fontSize: 9, fontWeight: 700, color: '#B41720', background: '#FEE2E2',
+                fontSize: 9, fontWeight: 700, color: 'var(--ses-blue-deep)', background: 'var(--ses-blue-tint)',
                 padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace', flexShrink: 0,
               }}>Dx</span>
               <span style={{
-                fontSize: 11, fontWeight: 700, color: '#B41720',
+                fontSize: 11, fontWeight: 700, color: 'var(--ses-blue-deep)',
                 fontFamily: 'monospace', flexShrink: 0,
               }}>{d.code}</span>
               <span style={{

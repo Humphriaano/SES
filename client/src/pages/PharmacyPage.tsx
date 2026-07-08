@@ -15,8 +15,8 @@ const C = {
   cardBorder:   '1px solid var(--border)',
   cardRadius:   12,
   divider:      '1px solid var(--border-light)',
-  red:          '#c0392b',
-  redHover:     '#a93226',
+  red:          'var(--ses-red)',
+  redHover:     'var(--ses-red-dark)',
   title:        'var(--text-heading)',
   body:         'var(--text-body2)',
   muted:        'var(--text-muted)',
@@ -110,9 +110,9 @@ type SimplePatient = { id: string; firstName: string; lastName: string; national
 
 function stockPill(qty: number) {
   const [bg, color] =
-    qty <= 0  ? ['#fef2f2', '#b91c1c'] :
-    qty < 10  ? ['#fffbeb', '#92400e'] :
-                ['#f0fdf4', '#166534'];
+    qty <= 0  ? ['var(--clinical-abnormal-bg)', 'var(--clinical-abnormal)'] :
+    qty < 10  ? ['var(--clinical-caution-bg)', 'var(--clinical-caution)'] :
+                ['var(--clinical-normal-bg)', 'var(--clinical-normal)'];
   return (
     <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: bg, color }}>
       {qty} {qty <= 0 ? '— out of stock' : 'in stock'}
@@ -484,8 +484,8 @@ function DispensingCard({ record, onCollect, canAct }: {
         <div style={{ display: 'flex', gap: 6, flexShrink: 0, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
           {typePill(record.type)}
           {record.collectedAt
-            ? <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 10, background: '#f0fdf4', color: '#166534' }}>Collected</span>
-            : <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 10, background: '#fffbeb', color: '#92400e' }}>Pending</span>}
+            ? <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 10, background: 'var(--clinical-normal-bg)', color: 'var(--clinical-normal)' }}>Collected</span>
+            : <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 10, background: 'var(--clinical-caution-bg)', color: 'var(--clinical-caution)' }}>Pending</span>}
         </div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 4, marginBottom: 6 }}>
@@ -1021,7 +1021,7 @@ export default function PharmacyPage() {
     return (
       <div style={{ background: C.pageBg, minHeight: '100%', fontFamily: C.font, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center', padding: 40 }}>
-          <AlertTriangle size={32} color="#f59e0b" style={{ marginBottom: 12 }} />
+          <AlertTriangle size={32} color="var(--clinical-caution)" style={{ marginBottom: 12 }} />
           <p style={{ fontSize: 14, color: C.body }}>You do not have access to the Pharmacy module.</p>
         </div>
       </div>

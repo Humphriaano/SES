@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     allowedHosts: true,
+    fs: { allow: ['..'] }, // theme/ses-tokens.css lives one level up, shared with patient-portal
     proxy: {
       // Document endpoints served by FastAPI (port 8000) — must be before /api
       '/api/documents': 'http://localhost:8000',

@@ -4,10 +4,10 @@ import api from '../../../api/client';
 import { DiagnosisBlockData, DiagnosisStatus } from '../../../types/consultation';
 
 const STATUS_CFG: Record<DiagnosisStatus, { bg: string; text: string; border: string; label: string }> = {
-  SUSPECTED: { bg: 'var(--badge-amber-bg)', text: 'var(--badge-amber-text)', border: 'var(--badge-amber-text)', label: 'Suspected' },
-  CONFIRMED: { bg: 'var(--badge-green-bg)', text: 'var(--badge-green-text)', border: 'var(--badge-green-text)', label: 'Confirmed' },
-  CHRONIC:   { bg: 'var(--badge-red-bg)',   text: 'var(--badge-red-text)',   border: 'var(--badge-red-text)',   label: 'Chronic'   },
-  RESOLVED:  { bg: 'var(--badge-gray-bg)',  text: 'var(--badge-gray-text)',  border: 'var(--badge-gray-text)',  label: 'Resolved'  },
+  SUSPECTED: { bg: 'var(--badge-amber-bg)',    text: 'var(--badge-amber-text)',    border: 'var(--badge-amber-text)',    label: 'Suspected' },
+  CONFIRMED: { bg: 'var(--badge-blue-bg)',     text: 'var(--badge-blue-text)',     border: 'var(--badge-blue-text)',     label: 'Confirmed' },
+  CHRONIC:   { bg: 'var(--badge-charcoal-bg)', text: 'var(--badge-charcoal-text)', border: 'var(--badge-charcoal-text)', label: 'Chronic'   },
+  RESOLVED:  { bg: 'var(--badge-green-bg)',    text: 'var(--badge-green-text)',    border: 'var(--badge-green-text)',    label: 'Resolved'  },
 };
 
 const NEXT: Record<DiagnosisStatus, DiagnosisStatus> = {
@@ -79,7 +79,7 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
 
   return (
     <div style={{
-      borderLeft: '3px solid #B41720',
+      borderLeft: '3px solid var(--ses-blue-deep)',
       background: 'var(--bg-card)',
       borderRadius: '0 10px 10px 0',
       padding: '10px 14px',
@@ -88,14 +88,14 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: '#B41720', background: 'var(--badge-red-bg)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace', flexShrink: 0 }}>Dx</span>
+          <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ses-blue-deep)', background: 'var(--ses-blue-tint)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace', flexShrink: 0 }}>Dx</span>
           {data.icd11Code ? (
             <>
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#B41720', fontFamily: 'monospace' }}>{data.icd11Code}</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ses-blue-deep)', fontFamily: 'monospace' }}>{data.icd11Code}</span>
               <span style={{ fontSize: 14, color: 'var(--text-heading)', fontWeight: 500 }}>{data.icd11Description}</span>
               {data.icd11Category && <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{data.icd11Category}</span>}
               {data.isPrimary && (
-                <span style={{ fontSize: 10, fontWeight: 700, background: '#B41720', color: '#fff', padding: '2px 7px', borderRadius: 4 }}>PRIMARY</span>
+                <span style={{ fontSize: 10, fontWeight: 700, background: 'var(--ses-blue-deep)', color: '#fff', padding: '2px 7px', borderRadius: 4 }}>PRIMARY</span>
               )}
             </>
           ) : (
@@ -154,7 +154,7 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
               }}
               style={{
                 width: '100%', padding: '7px 10px 7px 30px',
-                border: '1.5px solid #FCA5A5', borderRadius: 7,
+                border: '1.5px solid #BEDAEA', borderRadius: 7,
                 fontSize: 13, outline: 'none', background: 'var(--bg-input)',
                 color: 'var(--text-heading)', boxSizing: 'border-box',
               }}
@@ -176,10 +176,10 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
                     display: 'flex', alignItems: 'center', gap: 10,
                     background: 'none', border: 'none', borderBottom: '1px solid var(--border-light)', cursor: 'pointer',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--badge-red-bg)')}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--ses-blue-tint)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                 >
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#B41720', background: 'var(--badge-red-bg)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace', flexShrink: 0 }}>{c.code}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ses-blue-deep)', background: 'var(--ses-blue-tint)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace', flexShrink: 0 }}>{c.code}</span>
                   <span style={{ fontSize: 13, color: 'var(--text-body)' }}>{c.description}</span>
                   {c.category && <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto', flexShrink: 0 }}>{c.category}</span>}
                 </button>

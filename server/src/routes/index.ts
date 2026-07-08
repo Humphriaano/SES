@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { register, login, checkUsername, getRoles, listUsers, updateUser } from '../controllers/auth.controller';
-import { listPatients, getPatient, createPatient, updatePatient, resolveDiagnosis } from '../controllers/patient.controller';
+import { listPatients, getPatient, createPatient, updatePatient, resolveDiagnosis, sendPortalInvitation } from '../controllers/patient.controller';
 import {
   listEncounters, getEncounter, createEncounter, updateEncounter,
   addDiagnosis, closeEncounter,
@@ -25,12 +25,14 @@ import {
 } from '../controllers/investigationsV2.controller';
 import { getBillingItems, createBillingItem, updateBillingStatus, getPatientBalance } from '../controllers/billing.controller';
 import { searchICD11, seedICD11 } from '../controllers/icd11.controller';
+import { importDocumentData } from '../controllers/documentImport.controller';
 import { getPatientQueue } from '../controllers/queue.controller';
 import { getActiveRooms, getAllRooms, createRoom, updateRoom, deleteRoom } from '../controllers/facility.room.controller';
 import { getEntries, checkin, updateStatus, rerouteEntry, startEntry } from '../controllers/queue.entry.controller';
 import { recordPreference, getPreferences } from '../controllers/user.room.preference.controller';
 import { populationDiagnoses, populationVitals, populationMedications, populationInvestigations, populationPatients, populationKpis } from '../controllers/reports.controller';
 import { getRiskPrediction } from '../controllers/risk.controller';
+import { buildCdsPayload, getCdsSignature } from '../controllers/cdsContext.controller';
 import { authenticate } from '../middleware/auth';
 
 const router = Router();
@@ -53,6 +55,7 @@ router.post('/patients', authenticate, createPatient);
 router.get('/patients/:id', authenticate, getPatient);
 router.patch('/patients/:id', authenticate, updatePatient);
 router.patch('/patients/:patientId/diagnoses/:diagnosisId/resolve', authenticate, resolveDiagnosis);
+router.post('/patients/:id/portal-invite', authenticate, sendPortalInvitation);
 
 // Encounters
 router.get('/patients/:patientId/encounters', authenticate, listEncounters);
@@ -80,6 +83,9 @@ router.post('/dispensing', authenticate, createDispensing);
 router.get('/dispensing', authenticate, getDispensing);
 router.patch('/dispensing/:id', authenticate, updateDispensing);
 router.get('/patients/:patientId/dispensing', authenticate, getPatientDispensing);
+
+// Document AI-extraction write-back (investigations + diagnoses + narrative notes)
+router.post('/patients/:patientId/documents/import', authenticate, importDocumentData);
 
 // Investigations (legacy)
 router.get('/encounters/:encounterId/lab-orders', authenticate, getLabOrders);
@@ -124,6 +130,10 @@ router.get('/patients/:patientId/queue', authenticate, getPatientQueue);
 
 // Risk prediction — assembles patient feature vector and forwards to FastAPI CDS service
 router.get('/patients/:patientId/risk-predict', authenticate, getRiskPrediction);
+
+// Guideline CDS — server-side payload assembly (full committed record + canvas merge)
+router.post('/patients/:patientId/cds-payload', authenticate, buildCdsPayload);
+router.get('/patients/:patientId/cds-signature', authenticate, getCdsSignature);
 
 // Reports — population analytics (aggregate only, called internally by CDS service)
 router.get('/reports/population/kpis', populationKpis);

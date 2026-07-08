@@ -41,11 +41,11 @@ function KpiCard({
       padding: '14px 16px', flex: 1, minWidth: 0,
       boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
     }}>
-      <div style={{ color: '#C8102E', marginBottom: 6 }}>{icon}</div>
+      <div style={{ color: 'var(--ses-red)', marginBottom: 6 }}>{icon}</div>
       {loading ? (
         <div style={{ height: 28, width: 48, borderRadius: 6, background: 'var(--bg-surface-2)', marginBottom: 6 }} />
       ) : (
-        <div style={{ fontSize: 26, fontWeight: 800, color: '#C8102E', lineHeight: 1, marginBottom: 4 }}>{value}</div>
+        <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--ses-red)', lineHeight: 1, marginBottom: 4 }}>{value}</div>
       )}
       <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-body)' }}>{label}</div>
       {subtitle && (

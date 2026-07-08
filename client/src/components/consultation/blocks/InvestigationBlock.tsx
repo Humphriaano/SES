@@ -126,7 +126,7 @@ export default function InvestigationBlock({
 
   return (
     <div style={{
-      borderLeft: '3px solid #00897B',
+      borderLeft: '3px solid var(--ses-blue-deep)',
       background: 'var(--bg-card)',
       borderRadius: '0 10px 10px 0',
       padding: '10px 14px',
@@ -140,8 +140,8 @@ export default function InvestigationBlock({
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{
-            fontSize: 10, fontWeight: 700, color: '#00897B',
-            background: 'var(--badge-green-bg)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace',
+            fontSize: 10, fontWeight: 700, color: 'var(--ses-blue-deep)',
+            background: 'var(--ses-blue-tint)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace',
           }}>Inv</span>
           <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-heading)' }}>Investigations</span>
         </div>
@@ -162,13 +162,13 @@ export default function InvestigationBlock({
           background: 'var(--bg-surface)', border: '1px solid var(--border)',
           borderRadius: 7, padding: '6px 10px', marginBottom: 5,
         }}>
-          <FlaskConical size={12} color="#00897B" />
+          <FlaskConical size={12} color="var(--ses-blue-deep)" />
           <span style={{ flex: 1, fontSize: 13, color: 'var(--text-heading)' }}>{item.name}</span>
           <span style={{
             fontSize: 11, fontWeight: 600,
-            background: item.status === 'RESULTED' ? '#DCFCE7' : '#FEF9C3',
-            color: item.status === 'RESULTED' ? '#14532D' : '#713F12',
-            border: `1px solid ${item.status === 'RESULTED' ? '#86EFAC' : '#FDE047'}`,
+            background: item.status === 'RESULTED' ? 'var(--badge-green-bg)' : 'var(--badge-amber-bg)',
+            color: item.status === 'RESULTED' ? 'var(--badge-green-text)' : 'var(--badge-amber-text)',
+            border: `1px solid ${item.status === 'RESULTED' ? 'var(--badge-green-text)' : 'var(--badge-amber-text)'}`,
             borderRadius: 5, padding: '2px 8px',
           }}>
             {item.status === 'RESULTED' ? '✓ Resulted' : 'Pending'}
@@ -187,7 +187,7 @@ export default function InvestigationBlock({
       {/* Basket */}
       {!readOnly && basket.length > 0 && (
         <div style={{ marginBottom: 8 }}>
-          <div style={{ fontSize: 10, fontWeight: 600, color: '#00897B', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+          <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--ses-blue-deep)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             Basket ({basket.length})
           </div>
           {basket.map(b => {
@@ -197,12 +197,12 @@ export default function InvestigationBlock({
             return (
               <div key={b.key} style={{
                 display: 'flex', alignItems: 'center', gap: 8,
-                background: 'var(--badge-green-bg)', border: '1px solid var(--border)',
+                background: 'var(--ses-blue-tint)', border: '1px solid var(--border)',
                 borderRadius: 6, padding: '5px 10px', marginBottom: 4,
               }}>
                 <span style={{
                   fontSize: 9, fontWeight: 700,
-                  background: isPanel ? '#0d9488' : '#0891b2',
+                  background: isPanel ? 'var(--ses-blue-deep)' : 'var(--ses-blue)',
                   color: '#fff', borderRadius: 3, padding: '1px 5px',
                 }}>
                   {isPanel ? 'Panel' : 'Test'}
@@ -211,12 +211,12 @@ export default function InvestigationBlock({
                   {isPanel ? panel!.panelName : single!.name}
                 </span>
                 {isPanel && (
-                  <span style={{ fontSize: 11, color: '#0f766e' }}>
+                  <span style={{ fontSize: 11, color: 'var(--ses-blue-deep)' }}>
                     {panel!.specimen} · {panel!.components.length} tests
                   </span>
                 )}
                 {!isPanel && single!.specimen && (
-                  <span style={{ fontSize: 11, color: '#0f766e' }}>{single!.specimen}</span>
+                  <span style={{ fontSize: 11, color: 'var(--ses-blue-deep)' }}>{single!.specimen}</span>
                 )}
                 <button
                   onClick={() => removeFromBasket(b.key)}
@@ -278,7 +278,7 @@ export default function InvestigationBlock({
                     onMouseDown={() => !inBasket && addToBasket(result)}
                     style={{
                       width: '100%', textAlign: 'left', padding: '8px 12px',
-                      background: inBasket ? 'var(--badge-green-bg)' : 'none',
+                      background: inBasket ? 'var(--ses-blue-tint)' : 'none',
                       border: 'none', borderBottom: '1px solid var(--border-light)',
                       fontSize: 13, cursor: inBasket ? 'default' : 'pointer',
                       display: 'flex', alignItems: 'center', gap: 8,
@@ -288,7 +288,7 @@ export default function InvestigationBlock({
                   >
                     <span style={{
                       fontSize: 9, fontWeight: 700,
-                      background: isPanel ? '#0d9488' : '#0891b2',
+                      background: isPanel ? 'var(--ses-blue-deep)' : 'var(--ses-blue)',
                       color: '#fff', borderRadius: 3, padding: '1px 5px', whiteSpace: 'nowrap',
                     }}>
                       {isPanel ? 'Panel' : 'Test'}
@@ -310,7 +310,7 @@ export default function InvestigationBlock({
                           : single!.specimen || ''}
                       </div>
                     </div>
-                    {inBasket && <span style={{ fontSize: 10, color: '#00897B' }}>Added</span>}
+                    {inBasket && <span style={{ fontSize: 10, color: 'var(--ses-blue-deep)' }}>Added</span>}
                   </button>
                 );
               })}
@@ -325,7 +325,7 @@ export default function InvestigationBlock({
               style={{
                 marginTop: 8,
                 width: '100%',
-                background: submitting ? 'var(--text-subtle)' : '#00897B',
+                background: submitting ? 'var(--text-subtle)' : 'var(--ses-red)',
                 color: '#fff',
                 border: 'none',
                 borderRadius: 6,

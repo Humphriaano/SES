@@ -28,7 +28,7 @@ export default function LoginPage() {
   return (
     <div style={{
       minHeight: '100vh', display: 'flex',
-      background: 'linear-gradient(135deg, #1a1f2e 0%, #2d1b1b 50%, #1a1f2e 100%)',
+      background: 'linear-gradient(135deg, #252B2D 0%, #3D1F1F 50%, #252B2D 100%)',
     }}>
       {/* Left branding panel */}
       <div style={{
@@ -36,9 +36,9 @@ export default function LoginPage() {
         alignItems: 'center', padding: 48, color: '#fff',
       }}>
         <div style={{
-          width: 64, height: 64, borderRadius: 16, background: '#c8102e',
+          width: 64, height: 64, borderRadius: 16, background: 'var(--ses-red)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 8px 24px rgba(200,16,46,0.4)', marginBottom: 24,
+          boxShadow: '0 8px 24px rgba(215,29,36,0.4)', marginBottom: 24,
         }}>
           <HeartPulse size={32} color="#fff" />
         </div>
@@ -55,7 +55,7 @@ export default function LoginPage() {
           ].map((f) => (
             <div key={f.label} style={{ display: 'flex', gap: 12 }}>
               <div style={{
-                width: 8, height: 8, borderRadius: '50%', background: '#c8102e',
+                width: 8, height: 8, borderRadius: '50%', background: 'var(--ses-red)',
                 flexShrink: 0, marginTop: 5,
               }} />
               <div>
@@ -136,7 +136,7 @@ export default function LoginPage() {
 
           <div style={{ textAlign: 'center', paddingTop: 4 }}>
             <span style={{ fontSize: 12.5, color: 'var(--text-subtle)' }}>Don't have an account? </span>
-            <Link to="/signup" style={{ fontSize: 12.5, color: '#c8102e', fontWeight: 600, textDecoration: 'none' }}>
+            <Link to="/signup" style={{ fontSize: 12.5, color: 'var(--ses-red)', fontWeight: 600, textDecoration: 'none' }}>
               Sign up here
             </Link>
           </div>

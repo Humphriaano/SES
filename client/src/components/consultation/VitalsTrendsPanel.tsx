@@ -18,7 +18,7 @@ interface Props {
 function PanelTooltip({ active, payload, label, unit }: { active?: boolean; payload?: any[]; label?: string; unit: string }) {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: '#1e293b', borderRadius: 8, padding: '8px 12px', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
+    <div style={{ background: 'var(--ses-charcoal)', borderRadius: 8, padding: '8px 12px', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
       <p style={{ color: '#64748b', fontSize: 10, margin: '0 0 2px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
         Recorded
       </p>
@@ -38,8 +38,8 @@ export default function VitalsTrendsPanel({ open, patientName, history, onClose 
 
   const trend = getTrend(history, config.keys[0]);
   const trendDisplay =
-    trend === 'up'   ? { text: 'Trending up ↑',   color: '#f97316' } :
-    trend === 'down' ? { text: 'Trending down ↓', color: '#22c55e' } :
+    trend === 'up'   ? { text: 'Trending up ↑',   color: 'var(--clinical-abnormal)' } :
+    trend === 'down' ? { text: 'Trending down ↓', color: 'var(--clinical-normal)' } :
                        { text: 'Stable →',         color: '#94a3b8' };
 
   const latest = history[history.length - 1] ?? null;
@@ -100,8 +100,8 @@ export default function VitalsTrendsPanel({ open, patientName, history, onClose 
             onClick={() => setActiveTab(key)}
             style={{
               padding: '10px 12px 8px', border: 'none', background: 'transparent',
-              borderBottom: `2px solid ${activeTab === key ? '#c0392b' : 'transparent'}`,
-              color: activeTab === key ? '#c0392b' : 'var(--text-muted)',
+              borderBottom: `2px solid ${activeTab === key ? 'var(--ses-blue-deep)' : 'transparent'}`,
+              color: activeTab === key ? 'var(--ses-blue-deep)' : 'var(--text-muted)',
               fontSize: 12, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
               transition: 'color 0.15s',
             }}

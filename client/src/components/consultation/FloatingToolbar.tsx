@@ -1,10 +1,13 @@
 import { BlockType } from '../../types/consultation';
 
+// All four block types share one neutral identity with a thin blue accent —
+// block type is distinguished by label/icon, not by a per-type brand color,
+// so it never competes visually with brand-red primary actions.
 const TOOLS: { type: BlockType; label: string; color: string; bg: string; title: string }[] = [
-  { type: 'diagnosis',    label: 'Dx',  color: '#B41720', bg: '#FEE2E2', title: 'Diagnosis (ICD-11)' },
-  { type: 'investigation',label: 'Inv', color: '#00897B', bg: '#CCFBF1', title: 'Investigations'     },
-  { type: 'prescription', label: 'Rx',  color: '#1565C0', bg: '#DBEAFE', title: 'Prescription'       },
-  { type: 'pmh',          label: 'PMH', color: '#3A6B8A', bg: '#E0F2FE', title: 'Past Medical History'},
+  { type: 'diagnosis',    label: 'Dx',  color: 'var(--ses-blue-deep)', bg: 'var(--ses-blue-tint)', title: 'Diagnosis (ICD-11)' },
+  { type: 'investigation',label: 'Inv', color: 'var(--ses-blue-deep)', bg: 'var(--ses-blue-tint)', title: 'Investigations'     },
+  { type: 'prescription', label: 'Rx',  color: 'var(--ses-blue-deep)', bg: 'var(--ses-blue-tint)', title: 'Prescription'       },
+  { type: 'pmh',          label: 'PMH', color: 'var(--ses-blue-deep)', bg: 'var(--ses-blue-tint)', title: 'Past Medical History'},
 ];
 
 interface Props {

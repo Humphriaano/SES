@@ -16,19 +16,27 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "@sendgrid/mail": "^8.1.6",
     "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
     "jsonwebtoken": "^9.0.3",
-    "prisma": "^5.22.0"
+    "node-cron": "^4.5.0",
+    "prisma": "^5.22.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.6.0",
+    "@types/node-cron": "^3.0.11",
+    "@types/web-push": "^3.6.4",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",

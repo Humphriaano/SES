@@ -80,6 +80,24 @@ def build_patient_summary(patient: PatientContext) -> str:
     if patient.pending_investigations:
         lines.append(f"PENDING INVESTIGATIONS: {', '.join(patient.pending_investigations)}")
 
+    # Full-record sections (assembled and budget-trimmed server-side; one line
+    # per item, newest first). Abnormal results carry an [ABNORMAL] marker.
+    if patient.investigation_results:
+        lines.append("INVESTIGATION RESULTS (most recent first):")
+        lines.extend(f"  {r}" for r in patient.investigation_results)
+
+    if patient.past_medical_history:
+        lines.append("PAST MEDICAL HISTORY:")
+        lines.extend(f"  {p}" for p in patient.past_medical_history)
+
+    if patient.vitals_history:
+        lines.append("VITALS TREND (most recent first):")
+        lines.extend(f"  {v}" for v in patient.vitals_history)
+
+    if patient.dispensing_history:
+        lines.append("DISPENSING HISTORY (last 6 months — drugs actually dispensed, distinct from current prescriptions):")
+        lines.extend(f"  {d}" for d in patient.dispensing_history)
+
     if patient.encounter_notes:
         lines.append(f"ENCOUNTER NOTES: {patient.encounter_notes}")
 

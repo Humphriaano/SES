@@ -202,7 +202,7 @@ function SearchableSelect({
                 onMouseEnter={e => { if (value !== opt) e.currentTarget.style.background = 'var(--bg-surface)'; }}
                 onMouseLeave={e => { if (value !== opt) e.currentTarget.style.background = 'transparent'; }}
               >
-                {value === opt && <Check size={13} color="#c8102e" style={{ flexShrink: 0 }} />}
+                {value === opt && <Check size={13} color="var(--ses-red)" style={{ flexShrink: 0 }} />}
                 {opt}
               </button>
             ))}
@@ -448,7 +448,7 @@ export default function SignupPage() {
   return (
     <div style={{
       minHeight: '100vh', display: 'flex',
-      background: 'linear-gradient(135deg, #1a1f2e 0%, #2d1b1b 50%, #1a1f2e 100%)',
+      background: 'linear-gradient(135deg, #252B2D 0%, #3D1F1F 50%, #252B2D 100%)',
     }}>
       {/* Left branding panel */}
       <div style={{
@@ -456,9 +456,9 @@ export default function SignupPage() {
         alignItems: 'center', padding: 48, color: '#fff',
       }}>
         <div style={{
-          width: 64, height: 64, borderRadius: 16, background: '#c8102e',
+          width: 64, height: 64, borderRadius: 16, background: 'var(--ses-red)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 8px 24px rgba(200,16,46,0.4)', marginBottom: 24,
+          boxShadow: '0 8px 24px rgba(215,29,36,0.4)', marginBottom: 24,
         }}>
           <HeartPulse size={32} color="#fff" />
         </div>
@@ -473,7 +473,7 @@ export default function SignupPage() {
             { label: 'ICD-11 coded diagnoses', desc: 'Structured clinical documentation' },
           ].map(f => (
             <div key={f.label} style={{ display: 'flex', gap: 12 }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#c8102e', flexShrink: 0, marginTop: 5 }} />
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--ses-red)', flexShrink: 0, marginTop: 5 }} />
               <div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#e2e8f0' }}>{f.label}</div>
                 <div style={{ fontSize: 12, color: '#64748b', marginTop: 1 }}>{f.desc}</div>
@@ -510,7 +510,7 @@ export default function SignupPage() {
                 to="/login"
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 6,
-                  padding: '10px 24px', background: '#c8102e', color: '#fff',
+                  padding: '10px 24px', background: 'var(--ses-red)', color: '#fff',
                   borderRadius: 8, fontSize: 13.5, fontWeight: 600, textDecoration: 'none',
                 }}
               >
@@ -624,7 +624,7 @@ export default function SignupPage() {
                         set('hasNoNrc', e.target.checked);
                         if (e.target.checked) set('nrc', '');
                       }}
-                      style={{ width: 14, height: 14, accentColor: '#c8102e' }}
+                      style={{ width: 14, height: 14, accentColor: 'var(--ses-red)' }}
                     />
                     <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>I do not have an NRC</span>
                   </label>
@@ -775,7 +775,7 @@ export default function SignupPage() {
                   disabled={loading || usernameStatus === 'taken' || usernameStatus === 'checking'}
                   style={{
                     width: '100%', height: 42, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    gap: 8, background: loading ? 'var(--border-input)' : '#c8102e', color: loading ? 'var(--text-subtle)' : '#fff',
+                    gap: 8, background: loading ? 'var(--border-input)' : 'var(--ses-red)', color: loading ? 'var(--text-subtle)' : '#fff',
                     border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer',
                     marginTop: 4, transition: 'background 0.15s',
                   }}
@@ -785,7 +785,7 @@ export default function SignupPage() {
 
                 <div style={{ textAlign: 'center' }}>
                   <span style={{ fontSize: 12.5, color: 'var(--text-subtle)' }}>Already have an account? </span>
-                  <Link to="/login" style={{ fontSize: 12.5, color: '#c8102e', fontWeight: 600, textDecoration: 'none' }}>
+                  <Link to="/login" style={{ fontSize: 12.5, color: 'var(--ses-red)', fontWeight: 600, textDecoration: 'none' }}>
                     Sign in here
                   </Link>
                 </div>

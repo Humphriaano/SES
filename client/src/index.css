@@ -1,34 +1,41 @@
 @import "tailwindcss";
+@import "../../theme/ses-tokens.css";
 
 /* ── CSS Design Tokens ─────────────────────────────────────────────── */
 :root {
-  --bg-page:         #f0f2f5;
-  --bg-card:         #ffffff;
+  --bg-page:         var(--ses-bg-subtle);
+  --bg-card:         var(--ses-bg);
   --bg-surface:      #f8fafc;
   --bg-surface-2:    #f1f5f9;
   --bg-input:        #f8fafc;
-  --bg-nav:          #1a1f2e;
-  --bg-topbar:       #ffffff;
+  --bg-nav:          var(--ses-charcoal);
+  --bg-topbar:       var(--ses-bg);
   --border:          #e8ecf0;
   --border-input:    #e2e8f0;
   --border-light:    #f1f5f9;
-  --text-heading:    #0f172a;
-  --text-heading-alt:#1a1f2e;
+  --text-heading:    var(--ses-text);
+  --text-heading-alt:var(--ses-text);
   --text-body:       #374151;
   --text-body2:      #475569;
-  --text-muted:      #64748b;
+  --text-muted:      var(--ses-text-muted);
   --text-subtle:     #94a3b8;
   --text-faint:      #cbd5e1;
   --shadow-sm:       rgba(0,0,0,0.04);
   --shadow-md:       rgba(0,0,0,0.06);
-  --chip-red-bg:     #fef2f2;
-  --chip-red-border: #fecaca;
-  --chip-red-text:   #991b1b;
-  --badge-red-bg:    #fef2f2; --badge-red-text:   #dc2626;
-  --badge-green-bg:  #f0fdf4; --badge-green-text:  #16a34a;
+  /* Generic red/alert chip — error banners and misc alert surfaces. Kept in
+     the clinical family (not brand red) since most consumers are error/danger
+     states. Call sites that want brand identity (e.g. the register modal
+     icon badge) or informational blue (e.g. diagnosis/session chips) use
+     --ses-red-tint / --ses-blue-tint directly instead of this token. */
+  --chip-red-bg:     var(--clinical-abnormal-bg);
+  --chip-red-border: #F6C9B8;
+  --chip-red-text:   var(--clinical-abnormal);
+  --badge-red-bg:    var(--clinical-abnormal-bg); --badge-red-text:   var(--clinical-abnormal);
+  --badge-green-bg:  var(--clinical-normal-bg);   --badge-green-text: var(--clinical-normal);
   --badge-gray-bg:   #f1f5f9; --badge-gray-text:   #64748b;
-  --badge-amber-bg:  #fffbeb; --badge-amber-text:  #d97706;
-  --badge-blue-bg:   #eff6ff; --badge-blue-text:   #2563eb;
+  --badge-amber-bg:  var(--clinical-caution-bg);  --badge-amber-text: var(--clinical-caution);
+  --badge-blue-bg:   var(--ses-blue-tint);        --badge-blue-text:  var(--ses-blue-deep);
+  --badge-charcoal-bg: #ECECEC; --badge-charcoal-text: var(--ses-charcoal);
   --modal-overlay:   rgba(15,23,42,0.5);
 }
 
@@ -52,14 +59,15 @@
   --text-faint:      #484f58;
   --shadow-sm:       rgba(0,0,0,0.3);
   --shadow-md:       rgba(0,0,0,0.4);
-  --chip-red-bg:     #2d1f1f;
-  --chip-red-border: #7f1d1d;
-  --chip-red-text:   #fca5a5;
-  --badge-red-bg:    #2d1515;  --badge-red-text:   #f87171;
+  --chip-red-bg:     #3a1f12;
+  --chip-red-border: #5c2f1c;
+  --chip-red-text:   #f4835a;
+  --badge-red-bg:    #3a1f12;  --badge-red-text:   #f4835a;
   --badge-green-bg:  #0d2818;  --badge-green-text:  #4ade80;
   --badge-gray-bg:   #21262d;  --badge-gray-text:   #8b949e;
   --badge-amber-bg:  #2d1f06;  --badge-amber-text:  #fbbf24;
   --badge-blue-bg:   #0d1f3c;  --badge-blue-text:   #60a5fa;
+  --badge-charcoal-bg: #21262d; --badge-charcoal-text: #c9d1d9;
   --modal-overlay:   rgba(0,0,0,0.7);
 }
 
@@ -104,8 +112,8 @@ body {
   outline: none;
 }
 .field-input:focus {
-  border-color: #c8102e;
-  box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.08);
+  border-color: var(--ses-red);
+  box-shadow: 0 0 0 3px var(--ses-red-tint);
 }
 .field-input:disabled {
   background: var(--bg-surface);
@@ -151,7 +159,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #c8102e;
+  background: var(--ses-red);
   color: #fff;
   font-size: 13px;
   font-weight: 600;
@@ -161,7 +169,7 @@ body {
   cursor: pointer;
   transition: background 0.15s, box-shadow 0.15s;
 }
-.btn-primary:hover { background: #a80d25; box-shadow: 0 2px 8px rgba(200,16,46,0.25); }
+.btn-primary:hover { background: var(--ses-red-dark); box-shadow: 0 2px 8px rgba(215,29,36,0.25); }
 .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .btn-secondary {

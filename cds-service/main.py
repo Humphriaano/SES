@@ -25,9 +25,8 @@ from models.schemas import CdsRequest, CdsResponse, Recommendation
 from rag.retriever import retrieve, doc_count, filter_chunks_by_age
 from rag.prompt import build_query, build_prompt, build_direct_prompt
 from rag.ingest import ingest as run_ingest
+from config import LLM_MODEL, OLLAMA_URL
 
-LLM_MODEL   = "llama3.2"
-OLLAMA_URL  = "http://localhost:11434"
 TEMPERATURE = 0.1
 
 _ollama = ollama.Client(host=OLLAMA_URL)
@@ -47,6 +46,11 @@ app.add_middleware(
 # ── helpers ───────────────────────────────────────────────────────────────────
 
 def extract_json(text: str) -> dict:
+    # Qwen 3 thinking blocks must go before brace-hunting — thinking prose can
+    # contain stray '{' that would corrupt the outermost-object search. We also
+    # pass think=False on every chat call; this is the belt-and-braces layer.
+    text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
+    text = re.sub(r'^.*?</think>', '', text, flags=re.DOTALL)  # unclosed/partial variant
     # Remove markdown fences
     text = re.sub(r'```json|```', '', text).strip()
     # Find outermost JSON object
@@ -55,7 +59,7 @@ def extract_json(text: str) -> dict:
     if start == -1 or end == -1:
         raise ValueError(f"No JSON object found. Raw text: {text[:200]}")
     text = text[start:end+1]
-    # Fix common llama3.2 issues - trailing commas
+    # Fix common small-model issues - trailing commas
     text = re.sub(r',\s*}', '}', text)
     text = re.sub(r',\s*]', ']', text)
     # Strip outer single quotes wrapping JSON strings e.g. '"value"' → "value"
@@ -102,6 +106,19 @@ def parse_llm_response(raw: str, low_confidence: bool, retrieved_sources: list[s
 
 @app.post("/cds/suggest", response_model=CdsResponse)
 async def suggest(req: CdsRequest):
+    # Compact payload trace — one line per request so new record data
+    # (e.g. a fresh lab result) is verifiable in the service logs.
+    p = req.patient
+    print(
+        f"[cds] patient={p.patient_id} age={p.age} sex={p.sex} "
+        f"dx={len(p.active_diagnoses)} meds={len(p.current_medications)} "
+        f"inv_results={len(p.investigation_results)} pmh={len(p.past_medical_history)} "
+        f"vitals_hist={len(p.vitals_history)} dispensing={len(p.dispensing_history)}",
+        flush=True,
+    )
+    if p.investigation_results:
+        print(f"[cds]   latest result: {p.investigation_results[0]}", flush=True)
+
     # 1. Build retrieval query (sync — fast)
     query = build_query(req.patient, req.question)
 
@@ -111,7 +128,7 @@ async def suggest(req: CdsRequest):
         chunks = filter_chunks_by_age(retrieved["chunks"], req.patient.age)
         messages = build_prompt(req.patient, req.question, chunks, retrieved["low_confidence"])
         resp = await asyncio.to_thread(
-            lambda: _ollama.chat(model=LLM_MODEL, messages=messages, options={"temperature": TEMPERATURE})
+            lambda: _ollama.chat(model=LLM_MODEL, messages=messages, think=False, options={"temperature": TEMPERATURE})
         )
         return resp.message.content, retrieved["low_confidence"], retrieved["sources"]
 
@@ -120,7 +137,7 @@ async def suggest(req: CdsRequest):
         try:
             messages = build_direct_prompt(req.patient)
             resp = await asyncio.to_thread(
-                lambda: _ollama.chat(model=LLM_MODEL, messages=messages, options={"temperature": 0.3})
+                lambda: _ollama.chat(model=LLM_MODEL, messages=messages, think=False, options={"temperature": 0.3})
             )
             return resp.message.content
         except Exception:
@@ -317,7 +334,7 @@ async def reports_chat(req: ReportsChatRequest):
     # 3. Call Ollama
     try:
         resp = await asyncio.to_thread(
-            lambda: _ollama.chat(model=LLM_MODEL, messages=messages, options={"temperature": 0.1})
+            lambda: _ollama.chat(model=LLM_MODEL, messages=messages, think=False, options={"temperature": 0.1})
         )
         raw = resp.message.content
     except Exception as e:

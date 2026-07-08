@@ -45,12 +45,20 @@ export default function TopNav() {
         height: 52,
         gap: 8,
       }}>
-        {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 7 : 10, flexShrink: 0 }}>
+        {/* Logo — links to patient search; uses router navigation so any
+            future unsaved-changes guard on consultation applies here too */}
+        <Link
+          to="/patients"
+          title="Go to patient search"
+          style={{
+            display: 'flex', alignItems: 'center', gap: isMobile ? 7 : 10, flexShrink: 0,
+            textDecoration: 'none', cursor: 'pointer',
+          }}
+        >
           <div style={{
-            width: 32, height: 32, borderRadius: 8, background: '#c8102e',
+            width: 32, height: 32, borderRadius: 8, background: 'var(--ses-red)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 2px 6px rgba(200,16,46,0.3)', flexShrink: 0,
+            boxShadow: '0 2px 6px rgba(215,29,36,0.3)', flexShrink: 0,
           }}>
             <HeartPulse size={16} color="#fff" />
           </div>
@@ -63,28 +71,28 @@ export default function TopNav() {
           {isMobile && (
             <span style={{ fontWeight: 800, fontSize: 14, color: 'var(--text-heading-alt)', letterSpacing: '-0.3px' }}>SES EHR</span>
           )}
-        </div>
+        </Link>
 
         {/* Patient breadcrumb — centre on desktop, shown on mobile as icon-only chip */}
         {activePatient && (
           <div style={{
             display: 'flex', alignItems: 'center', gap: isMobile ? 4 : 6,
-            background: 'var(--chip-red-bg)', border: '1px solid var(--chip-red-border)',
+            background: 'var(--ses-blue-tint)', border: '1px solid #BEDAEA',
             borderRadius: 8, padding: isMobile ? '4px 8px' : '5px 12px',
             overflow: 'hidden', maxWidth: isMobile ? 140 : 280,
             flexShrink: 1,
           }}>
-            <UserCircle size={14} color="#c8102e" style={{ flexShrink: 0 }} />
+            <UserCircle size={14} color="var(--ses-blue-deep)" style={{ flexShrink: 0 }} />
             <span style={{
-              fontSize: isMobile ? 11 : 12, fontWeight: 600, color: 'var(--chip-red-text)',
+              fontSize: isMobile ? 11 : 12, fontWeight: 600, color: 'var(--ses-blue-deep)',
               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}>
               {activePatient.firstName} {activePatient.lastName}
             </span>
             {!isMobile && (
               <>
-                <ChevronRight size={12} color="#f87171" style={{ flexShrink: 0 }} />
-                <span style={{ fontSize: 11, color: '#dc2626', flexShrink: 0 }}>Active Session</span>
+                <ChevronRight size={12} color="var(--ses-blue-deep)" style={{ flexShrink: 0, opacity: 0.6 }} />
+                <span style={{ fontSize: 11, color: 'var(--ses-blue-deep)', flexShrink: 0 }}>Active Session</span>
               </>
             )}
           </div>
@@ -117,7 +125,7 @@ export default function TopNav() {
             border: '1px solid var(--border)',
           }}>
             <div style={{
-              width: 26, height: 26, borderRadius: '50%', background: '#c8102e',
+              width: 26, height: 26, borderRadius: '50%', background: 'var(--ses-red)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 10, fontWeight: 700, color: '#fff', flexShrink: 0,
             }}>
@@ -139,7 +147,7 @@ export default function TopNav() {
               style={{
                 display: 'flex', alignItems: 'center', gap: 5,
                 padding: isMobile ? '6px 8px' : '6px 12px',
-                background: '#1e3a5f', color: '#93c5fd', border: 'none',
+                background: 'var(--ses-blue-deep)', color: '#fff', border: 'none',
                 borderRadius: 8, fontSize: 12.5, fontWeight: 600,
                 textDecoration: 'none', cursor: 'pointer',
               }}
@@ -184,8 +192,8 @@ export default function TopNav() {
                 fontSize: isMobile ? 11.5 : 12.5,
                 fontWeight: 600,
                 color: isActive ? '#fff' : disabled ? '#4b5563' : '#9ca3af',
-                borderBottom: isActive ? '2px solid #c8102e' : '2px solid transparent',
-                background: isActive ? 'rgba(200,16,46,0.12)' : 'transparent',
+                borderBottom: isActive ? '2px solid var(--ses-red)' : '2px solid transparent',
+                background: isActive ? 'rgba(215,29,36,0.12)' : 'transparent',
                 cursor: disabled ? 'not-allowed' : 'pointer',
                 textDecoration: 'none',
                 transition: 'all 0.15s',

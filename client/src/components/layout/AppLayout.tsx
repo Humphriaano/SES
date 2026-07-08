@@ -35,7 +35,7 @@ export default function AppLayout() {
           top: '50%',
           transform: 'translateY(-50%)',
           zIndex: 46,
-          background: queueOpen ? '#c8102e' : 'var(--bg-nav)',
+          background: queueOpen ? 'var(--ses-red)' : 'var(--bg-nav)',
           color: '#fff',
           border: 'none',
           borderRadius: '0 8px 8px 0',

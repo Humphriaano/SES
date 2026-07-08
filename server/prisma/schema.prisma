@@ -77,6 +77,13 @@ model Patient {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
+  // Patient portal
+  email             String?
+  preferredName     String?
+  portalEnabled     Boolean   @default(false)
+  emailOptedIn      Boolean   @default(true)
+  portalLastSeenAt  DateTime?
+
   encounters            Encounter[]
   diagnoses             PatientDiagnosis[]
   medications           Medication[]
@@ -87,6 +94,11 @@ model Patient {
   dispensings           Dispensing[]
   investigationOrders   InvestigationOrder[]
   queueEntries          QueueEntry[]
+  appointments          Appointment[]
+  portalSessions        PortalSession[]
+  magicLinkTokens       MagicLinkToken[]
+  pushSubscriptions     PushSubscription[]
+  checkInEmails         PatientCheckInEmail[]
 }
 
 model Encounter {
@@ -374,4 +386,132 @@ model QueueEntry {
 
   patient Patient      @relation(fields: [patientId], references: [id])
   room    FacilityRoom @relation(fields: [roomId], references: [id])
+}
+
+// ── Patient Portal ────────────────────────────────────────────────────────────
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum ConfirmationChannel {
+  EMAIL
+  PORTAL
+}
+
+model Appointment {
+  id             String               @id @default(uuid())
+  patientId      String
+  clinicianName  String?
+  clinicName     String               @default("SES Clinic")
+  scheduledAt    DateTime
+  status         AppointmentStatus    @default(SCHEDULED)
+  confirmedAt    DateTime?
+  confirmedVia   ConfirmationChannel?
+  reminderSentAt DateTime?
+  notes          String?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  patient Patient @relation(fields: [patientId], references: [id])
+
+  @@index([patientId, scheduledAt])
+}
+
+// Single-use portal sign-in tokens (magic links). Raw token is emailed; only
+// its SHA-256 hash is stored.
+model MagicLinkToken {
+  id        String    @id @default(uuid())
+  patientId String
+  tokenHash String    @unique
+  purpose   String    @default("login") // login | invitation
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  patient Patient @relation(fields: [patientId], references: [id])
+}
+
+// Server-side portal sessions. Cookie carries the raw session token; only its
+// SHA-256 hash is stored. 30-day sliding expiry.
+model PortalSession {
+  id         String    @id @default(uuid())
+  patientId  String
+  tokenHash  String    @unique
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime
+  lastSeenAt DateTime  @default(now())
+  userAgent  String?
+  revokedAt  DateTime?
+
+  patient Patient @relation(fields: [patientId], references: [id])
+
+  @@index([patientId])
+}
+
+model AuthAuditLog {
+  id        String   @id @default(uuid())
+  patientId String?
+  email     String?
+  event     String // LINK_REQUESTED | LINK_SENT | LOGIN_SUCCESS | LOGIN_FAILED | LOGOUT
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([patientId, createdAt])
+}
+
+// Endpoint-level access audit: which patient fetched what, when.
+model PortalAccessLog {
+  id        String   @id @default(uuid())
+  patientId String
+  method    String
+  endpoint  String
+  createdAt DateTime @default(now())
+
+  @@index([patientId, createdAt])
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  patientId String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  patient Patient @relation(fields: [patientId], references: [id])
+
+  @@index([patientId])
+}
+
+// Plain-language education content matched to conditions (tips + myth-busters),
+// shared by the monthly check-in email and the portal Conditions screen.
+model ConditionContent {
+  id               String @id @default(uuid())
+  conditionKey     String @unique // e.g. "hypertension"
+  icdPrefixes      String // comma-separated ICD-11 code prefixes to match
+  matchTerms       String // comma-separated diagnosis-description terms to match
+  plainName        String
+  plainDescription String
+  tips             Json // string[]
+  mythBusters      Json // { myth: string; truth: string }[]
+}
+
+// Log of monthly check-in emails with the full data snapshot used to render
+// them, so past check-ins can be re-viewed in the portal.
+model PatientCheckInEmail {
+  id           String   @id @default(uuid())
+  patientId    String
+  subject      String
+  dataSnapshot Json
+  sentAt       DateTime @default(now())
+
+  patient Patient @relation(fields: [patientId], references: [id])
+
+  @@index([patientId, sentAt])
 }

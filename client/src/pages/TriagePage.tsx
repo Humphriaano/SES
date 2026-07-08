@@ -21,10 +21,10 @@ interface TriageRecord {
 }
 
 const PRIORITY_CONFIG = {
-  IMMEDIATE:   { label: 'Immediate',   color: '#dc2626', bg: '#fef2f2', border: '#fecaca', code: 'P1' },
-  URGENT:      { label: 'Urgent',      color: '#d97706', bg: '#fffbeb', border: '#fde68a', code: 'P2' },
-  LESS_URGENT: { label: 'Less Urgent', color: '#2563eb', bg: '#eff6ff', border: '#bfdbfe', code: 'P3' },
-  NON_URGENT:  { label: 'Non-Urgent',  color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0', code: 'P4' },
+  IMMEDIATE:   { label: 'Immediate',   color: 'var(--clinical-critical)', bg: 'var(--clinical-critical-bg)', border: '#F6C9B8', code: 'P1' },
+  URGENT:      { label: 'Urgent',      color: 'var(--clinical-abnormal)', bg: 'var(--clinical-abnormal-bg)', border: '#F6C9B8', code: 'P2' },
+  LESS_URGENT: { label: 'Less Urgent', color: 'var(--clinical-caution)',  bg: 'var(--clinical-caution-bg)',  border: '#fde68a', code: 'P3' },
+  NON_URGENT:  { label: 'Non-Urgent',  color: 'var(--clinical-normal)',   bg: 'var(--clinical-normal-bg)',   border: '#bbf7d0', code: 'P4' },
 };
 
 export default function TriagePage() {
@@ -119,11 +119,11 @@ export default function TriagePage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 34, height: 34, borderRadius: 9, background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <ClipboardCheck size={16} color="#d97706" />
+          <div style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--clinical-caution-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <ClipboardCheck size={16} color="var(--clinical-caution)" />
           </div>
           <div>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1a1f2e' }}>Triage</h2>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--ses-text)' }}>Triage</h2>
             <p style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 1 }}>Initial patient assessment and priority assignment</p>
           </div>
         </div>
@@ -135,12 +135,12 @@ export default function TriagePage() {
       {/* Triage form */}
       {showForm && (
         <form onSubmit={submit} className="card" style={{ padding: '20px 22px', marginBottom: 18 }}>
-          <h3 style={{ fontSize: 13.5, fontWeight: 700, color: '#1a1f2e', marginBottom: 16 }}>Triage Assessment</h3>
+          <h3 style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ses-text)', marginBottom: 16 }}>Triage Assessment</h3>
 
           {/* Priority selector */}
           <div style={{ marginBottom: 18 }}>
             <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 8 }}>
-              Triage Priority <span style={{ color: '#c8102e' }}>*</span>
+              Triage Priority <span style={{ color: 'var(--ses-red)' }}>*</span>
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
               {(Object.keys(PRIORITY_CONFIG) as TriageRecord['priority'][]).map((p) => {
@@ -167,7 +167,7 @@ export default function TriagePage() {
           {/* Chief complaint */}
           <div style={{ marginBottom: 14 }}>
             <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>
-              Chief Complaint <span style={{ color: '#c8102e' }}>*</span>
+              Chief Complaint <span style={{ color: 'var(--ses-red)' }}>*</span>
             </label>
             <textarea
               required value={form.chiefComplaint} onChange={(e) => set('chiefComplaint', e.target.value)}
@@ -236,7 +236,7 @@ export default function TriagePage() {
                       background: p.bg, border: `1px solid ${p.border}`,
                       padding: '3px 10px', borderRadius: 7,
                     }}>{p.code} — {p.label}</span>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#1a1f2e' }}>{rec.chiefComplaint}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ses-text)' }}>{rec.chiefComplaint}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: '#94a3b8' }}>
                     <Clock size={11} /> {new Date(rec.createdAt).toLocaleString()}
@@ -277,7 +277,7 @@ function VChip({ label, value, unit }: { label: string; value: string; unit: str
   return (
     <div style={{ background: '#f8fafc', border: '1px solid #e8ecf0', borderRadius: 7, padding: '5px 10px', display: 'flex', gap: 6, alignItems: 'center' }}>
       <span style={{ fontSize: 11, fontWeight: 600, color: '#64748b' }}>{label}</span>
-      <span style={{ fontSize: 13, fontWeight: 700, color: '#1a1f2e' }}>{value}</span>
+      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ses-text)' }}>{value}</span>
       <span style={{ fontSize: 11, color: '#94a3b8' }}>{unit}</span>
     </div>
   );

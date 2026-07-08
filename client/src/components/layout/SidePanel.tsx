@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { usePatient } from '../../context/PatientContext';
 import { Patient } from '../../types';
 import api from '../../api/client';
-import { Activity, Pill, TestTube, Heart, ChevronLeft, ChevronRight, Shield } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { Activity, Pill, TestTube, Heart, ChevronLeft, ChevronRight, Shield, Smartphone, Send, CalendarCheck } from 'lucide-react';
 
 function HIVBadge({ status }: { status: string }) {
   const map: Record<string, { bg: string; color: string; label: string }> = {
@@ -28,11 +29,40 @@ export default function SidePanel() {
   const { activePatient } = usePatient();
   const [patient, setPatient] = useState<Patient | null>(null);
   const [collapsed, setCollapsed] = useState(false);
+  const [togglingPortal, setTogglingPortal] = useState(false);
+  const [sendingInvite, setSendingInvite] = useState(false);
 
   useEffect(() => {
     if (!activePatient) return;
     api.get(`/patients/${activePatient.id}`).then((r) => setPatient(r.data));
   }, [activePatient?.id]);
+
+  async function togglePortalAccess() {
+    if (!patient) return;
+    setTogglingPortal(true);
+    try {
+      const { data } = await api.patch(`/patients/${patient.id}`, { portalEnabled: !patient.portalEnabled });
+      setPatient((p) => (p ? { ...p, portalEnabled: data.portalEnabled } : p));
+    } catch {
+      toast.error("Couldn't update portal access");
+    } finally {
+      setTogglingPortal(false);
+    }
+  }
+
+  async function sendPortalInvitation() {
+    if (!patient) return;
+    setSendingInvite(true);
+    try {
+      await api.post(`/patients/${patient.id}/portal-invite`);
+      setPatient((p) => (p ? { ...p, portalEnabled: true } : p));
+      toast.success('Portal invitation sent');
+    } catch (err: any) {
+      toast.error(err?.response?.data?.error ?? "Couldn't send invitation");
+    } finally {
+      setSendingInvite(false);
+    }
+  }
 
   if (!activePatient) return null;
 
@@ -107,6 +137,49 @@ export default function SidePanel() {
             </div>
           </div>
 
+          {/* Portal access */}
+          <Section icon={Smartphone} label="Portal Access">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+              <span style={{
+                fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 20,
+                background: patient.portalEnabled ? 'var(--badge-green-bg)' : 'var(--bg-surface)',
+                color: patient.portalEnabled ? 'var(--badge-green-text)' : 'var(--text-muted)',
+              }}>
+                {patient.portalEnabled ? 'Enabled' : 'Disabled'}
+              </span>
+              <button
+                onClick={togglePortalAccess}
+                disabled={togglingPortal}
+                style={{
+                  fontSize: 10.5, fontWeight: 600, background: 'none', border: '1px solid var(--border)',
+                  borderRadius: 6, padding: '3px 8px', cursor: 'pointer', color: 'var(--text-body)',
+                }}
+              >
+                {patient.portalEnabled ? 'Disable' : 'Enable'}
+              </button>
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--text-subtle)', marginBottom: 8 }}>
+              {patient.portalLastSeenAt
+                ? `Last seen ${new Date(patient.portalLastSeenAt).toLocaleDateString()}`
+                : patient.portalEnabled ? 'Never logged in' : 'Not yet invited'}
+            </div>
+            <button
+              onClick={sendPortalInvitation}
+              disabled={sendingInvite || !patient.email}
+              title={!patient.email ? 'Add an email address to send a portal invitation' : undefined}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6, width: '100%', justifyContent: 'center',
+                fontSize: 11.5, fontWeight: 600, padding: '6px 10px', borderRadius: 7,
+                background: patient.email ? 'var(--ses-red-tint)' : 'var(--bg-surface)',
+                color: patient.email ? 'var(--ses-red)' : 'var(--text-muted)',
+                border: 'none', cursor: patient.email ? 'pointer' : 'not-allowed',
+              }}
+            >
+              <Send size={11} />
+              {sendingInvite ? 'Sending…' : 'Send Portal Invitation'}
+            </button>
+          </Section>
+
           {/* HIV */}
           <Section icon={Shield} label="HIV Status">
             <HIVBadge status={patient.hivStatus} />
@@ -135,13 +208,43 @@ export default function SidePanel() {
             </Section>
           )}
 
+          {/* Appointments */}
+          {(patient.appointments?.length ?? 0) > 0 && (
+            <Section icon={CalendarCheck} label="Appointments">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {patient.appointments?.slice(0, 5).map((a) => (
+                  <div key={a.id} style={{
+                    padding: '6px 8px', background: 'var(--bg-surface)', borderRadius: 7,
+                    border: '1px solid var(--border)',
+                  }}>
+                    <div style={{ fontSize: 11.5, color: 'var(--text-body)' }}>
+                      {new Date(a.scheduledAt).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false })}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 3 }}>
+                      <span style={{
+                        fontSize: 10, fontWeight: 600, padding: '1px 6px', borderRadius: 10,
+                        background: a.status === 'CONFIRMED' || a.status === 'COMPLETED' ? 'var(--badge-green-bg)' : 'var(--bg-card)',
+                        color: a.status === 'CONFIRMED' || a.status === 'COMPLETED' ? 'var(--badge-green-text)' : 'var(--text-muted)',
+                      }}>{a.status}</span>
+                      {a.confirmedVia && (
+                        <span style={{ fontSize: 10, color: 'var(--text-subtle)' }}>
+                          via {a.confirmedVia === 'PORTAL' ? 'portal' : 'email link'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Section>
+          )}
+
           {/* Active diagnoses */}
           {activeDiagnoses.length > 0 && (
             <Section icon={Heart} label="Active Diagnoses">
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {activeDiagnoses.map((d) => (
                   <div key={d.id} style={{
-                    background: 'var(--chip-red-bg)', border: '1px solid var(--chip-red-border)',
+                    background: 'var(--ses-blue-tint)', border: '1px solid #BEDAEA',
                     borderRadius: 7, padding: '5px 8px',
                   }}>
                     <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--badge-red-text)', letterSpacing: '0.03em' }}>{d.icd11.code}</div>

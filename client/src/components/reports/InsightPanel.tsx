@@ -4,10 +4,9 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
 } from 'recharts';
+import { CHART_PALETTE } from '../../lib/chartPalette';
 
 const CDS_BASE = 'http://localhost:8000';
-
-const PIE_COLORS = ['#94a3b8', '#3b82f6', '#10b981', '#f97316'];
 
 interface TableData { headers: string[]; rows: Record<string, string | number>[]; }
 interface ChartData { chartType?: string; xKey: string; yKey?: string; rows: Record<string, any>[]; }
@@ -140,7 +139,7 @@ export default function InsightPanel({ title, question, renderAs }: Props) {
                   <XAxis dataKey={bd.xKey} tick={{ fontSize: 10 }} angle={-30} textAnchor="end" height={48} />
                   <YAxis tick={{ fontSize: 10 }} />
                   <Tooltip />
-                  <Bar dataKey={bd.yKey} fill="#C8102E" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey={bd.yKey} fill={CHART_PALETTE[0]} radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             );
@@ -186,7 +185,7 @@ export default function InsightPanel({ title, question, renderAs }: Props) {
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie data={pd} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" label={({ name, value }) => `${name}: ${value}`} labelLine={false}>
-                    {pd.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+                    {pd.map((_, i) => <Cell key={i} fill={CHART_PALETTE[i % CHART_PALETTE.length]} />)}
                   </Pie>
                   <Tooltip />
                   <Legend wrapperStyle={{ fontSize: 11 }} />

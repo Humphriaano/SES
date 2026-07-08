@@ -1,0 +1,36 @@
+/*
+ * SES brand design tokens — single source of truth.
+ * Imported by the staff clinical app (client/) and the patient portal
+ * (patient-portal/). The check-in email template and any server-rendered
+ * pages consume the same hex values directly (inlined at render time),
+ * documented in server/src/lib/emailTemplates.ts and
+ * server/src/lib/checkInEmailTemplate.ts — keep those in sync with this file.
+ *
+ * A palette change should only ever require editing this file.
+ */
+:root {
+  --ses-red:          #D71D24;
+  --ses-red-dark:     #B4181E;
+  --ses-red-tint:     #FBE8E9;
+  --ses-charcoal:     #252B2D;
+  --ses-blue:         #246FA8;
+  --ses-blue-deep:    #206497;
+  --ses-blue-tint:    #E8F1F7;
+  --ses-text:         #333333;
+  --ses-text-muted:   #6B7075;
+  --ses-bg:           #FFFFFF;
+  --ses-bg-subtle:    #F7F8F9;
+
+  /* Clinical semantic tokens — for data only, never brand-interactive.
+     --clinical-abnormal is deliberately red-orange (not --ses-red) so a
+     brand-red button and an abnormal vitals chip are never confusable
+     side by side on the same card. */
+  --clinical-normal:      #16A34A;
+  --clinical-normal-bg:   #F0FDF4;
+  --clinical-caution:     #D97706;
+  --clinical-caution-bg:  #FFFBEB;
+  --clinical-abnormal:    #E0451F;
+  --clinical-abnormal-bg: #FDECE5;
+  --clinical-critical:    #9A1B1B;
+  --clinical-critical-bg: #FDEEEE;
+}
