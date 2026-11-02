@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { Patient } from '../types';
+import { addRecent } from '../lib/recentPatients';
 
 interface PatientContextType {
   activePatient: Patient | null;
@@ -11,8 +12,13 @@ interface PatientContextType {
 const PatientContext = createContext<PatientContextType | null>(null);
 
 export function PatientProvider({ children }: { children: ReactNode }) {
-  const [activePatient, setActivePatient] = useState<Patient | null>(null);
+  const [activePatient, setActivePatientState] = useState<Patient | null>(null);
   const [activeEncounterId, setActiveEncounterId] = useState<string | null>(null);
+
+  function setActivePatient(p: Patient | null) {
+    setActivePatientState(p);
+    if (p) addRecent(p);
+  }
 
   return (
     <PatientContext.Provider value={{ activePatient, setActivePatient, activeEncounterId, setActiveEncounterId }}>

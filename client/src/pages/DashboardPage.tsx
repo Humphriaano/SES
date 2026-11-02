@@ -1,424 +1,414 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useVisiblePolling } from '../hooks/useVisiblePolling';
+import { sortQueue, priorityLabel, priorityStyle, useQueueChanged, notifyQueueChanged, arrivedAt, waitMinutes, formatWait, useNow, queueNo } from '../lib/queue';
+import AssignRoomModal, { QueueEntryInfo } from '../components/AssignRoomModal';
+import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/client';
 import { Patient } from '../types';
+import { useAuth } from '../context/AuthContext';
 import { usePatient } from '../context/PatientContext';
-import { useWindowSize } from '../hooks/useWindowSize';
-import {
-  Search, UserPlus, Users, DoorOpen,
-  X, ChevronRight, Clock, UserCheck, Loader2,
-} from 'lucide-react';
-import toast from 'react-hot-toast';
+import { getRecent, RecentPatient } from '../lib/recentPatients';
+import { UserPlus, UserCheck, ArrowRightLeft, Check, X, Play } from 'lucide-react';
+import { useServicePoint } from '../context/ServicePointContext';
+import RegisterModal from '../components/RegisterModal';
 
 interface FacilityRoom { id: string; name: string; tag: string; active: boolean; waitingCount: number; }
+interface QueueEntry {
+  id: string; queueNumber: number; patientId: string; patientName: string; roomId: string;
+  room: FacilityRoom; priority: string; status: string; checkedInAt: string; startedAt?: string | null;
+  startedBy?: { id: string; name: string } | null;
+  patient?: Patient;
+}
+interface Summary { waiting: number; inProgress: number; done: number; urgent: number; emergency: number }
+
+type Filter = 'all' | 'Waiting' | 'In Progress' | 'Done';
+const FILTERS: { id: Filter; label: string }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'Waiting', label: 'Waiting' },
+  { id: 'In Progress', label: 'With clinician' },
+  { id: 'Done', label: 'Done' },
+];
+
+const STATUS_STYLE: Record<string, { label: string; color: string; bg: string }> = {
+  Waiting:       { label: 'Waiting',        color: 'var(--ws-amber)', bg: 'var(--ws-amber-bg)' },
+  'In Progress': { label: 'With clinician', color: 'var(--ws-blue)',  bg: 'var(--ws-blue-bg)' },
+  Done:          { label: 'Done',           color: 'var(--ws-green)', bg: 'var(--ws-green-bg)' },
+};
+
+function age(dob?: string) {
+  return dob ? Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 3600 * 1000)) : null;
+}
+
 
 export default function DashboardPage() {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Patient[]>([]);
-  const [searched, setSearched] = useState(false);
-  const [searching, setSearching] = useState(false);
-  const [rooms, setRooms] = useState<FacilityRoom[]>([]);
-  const [showRegisterForm, setShowRegisterForm] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
+  const { user } = useAuth();
   const { setActivePatient, setActiveEncounterId } = usePatient();
-  const { isMobile } = useWindowSize();
   const navigate = useNavigate();
-  const searchRef = useRef<HTMLDivElement>(null);
+  const sp = useServicePoint();
+  const [entries, setEntries] = useState<QueueEntry[]>([]);
+  const [summary, setSummary] = useState<Summary>({ waiting: 0, inProgress: 0, done: 0, urgent: 0, emergency: 0 });
+  const [filter, setFilter] = useState<Filter>('all');
+  const [scope, setScope] = useState<'mine' | 'all'>('mine');
+  const [recent] = useState<RecentPatient[]>(getRecent);
+  const [registering, setRegistering] = useState(false);
+  const [reassign, setReassign] = useState<QueueEntry | null>(null);
+  const [removing, setRemoving] = useState<string | null>(null);   // entry awaiting remove confirmation
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [calling, setCalling] = useState(false);
+  const now = useNow();
+  const isAdmin = !!user?.role?.includes('admin');
+  const canAct = (user?.role ?? '').split(',').some((r) => ['admin', 'clinician', 'nurse', 'receptionist'].includes(r.trim()));
 
-  useEffect(() => {
-    loadRooms();
-    const interval = setInterval(loadRooms, 15000);
-    return () => clearInterval(interval);
-  }, []);
+  // Your own room by default; "All rooms" for a charge nurse or reception overview.
+  const scopeRoom = scope === 'mine' ? sp.room : null;
+  const scopeRoomId = scopeRoom?.id;
 
-  useEffect(() => {
-    if (query.length < 3) {
-      setResults([]);
-      setSearched(false);
-      setShowDropdown(false);
-      return;
-    }
-    const timer = setTimeout(async () => {
-      setSearching(true);
-      try {
-        const { data } = await api.get('/patients', { params: { search: query } });
-        setResults(data);
-        setSearched(true);
-        setShowDropdown(true);
-      } finally {
-        setSearching(false);
-      }
-    }, 350);
-    return () => clearTimeout(timer);
-  }, [query]);
-
-  useEffect(() => {
-    function handler(e: MouseEvent) {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setShowDropdown(false);
-      }
-    }
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  async function loadRooms() {
+  // Only the rows on screen are fetched: this room (or all), active (or seen) — never the whole day's register.
+  const loadQueue = useCallback(async () => {
     try {
-      const { data } = await api.get('/queue/rooms');
-      setRooms(data);
-    } catch {}
-  }
+      const roomParams = scopeRoomId ? { roomId: scopeRoomId } : {};
+      const [list, sum] = await Promise.all([
+        api.get('/queue', { params: { status: filter === 'Done' ? 'done' : 'active', limit: 300, ...roomParams } }),
+        api.get('/queue/summary', { params: roomParams }),
+      ]);
+      setEntries(sortQueue(list.data));
+      setSummary(sum.data);
+    } catch { /* keep last data; the API client already told the user */ }
+  }, [filter, scopeRoomId]);
+
+  const first = useRef(true);
+  useEffect(() => { if (first.current) { first.current = false; return; } loadQueue(); }, [loadQueue]);
+  useVisiblePolling(loadQueue, 30000);
+  useQueueChanged(loadQueue); // a patient assigned from any page appears here immediately
 
   function openPatient(p: Patient) {
     setActivePatient(p);
     setActiveEncounterId(null);
-    setQuery('');
-    setShowDropdown(false);
     navigate(`/patient/${p.id}/vitals`);
   }
 
-  function calcAge(dob: string) {
-    return Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 3600 * 1000));
+  async function openPatientById(id: string) {
+    try {
+      const { data } = await api.get(`/patients/${id}`);
+      openPatient(data);
+    } catch {
+      navigate('/patients');
+    }
   }
 
+  // Opening a patient from the queue starts their visit, which stops the waiting clock.
+  // `take` = pull a patient queued in another room into mine (they walked into my room instead).
+  async function attend(e: QueueEntry, take = false) {
+    const elsewhere = !!sp.room && e.roomId !== sp.room.id;
+    // Clicking a name in someone else's queue just opens the chart; moving them is the explicit "Attend here".
+    if (elsewhere && !take) { if (e.patient) openPatient(e.patient); else openPatientById(e.patientId); return; }
+    if (e.status === 'Waiting' && canAct) {
+      try {
+        await api.patch(`/queue/${e.id}/start`, take && sp.room ? { roomId: sp.room.id } : {});
+        if (take && sp.room) toast.success(`${e.patientName} moved from ${e.room.name} to ${sp.room.name}`);
+        notifyQueueChanged();
+      }
+      catch (err: any) {
+        // Someone else already took this patient — don't open them for a second person.
+        if (err?.response?.status === 409) { toast.error(err.response.data?.error ?? 'This patient was just taken.'); loadQueue(); return; }
+      }
+    }
+    if (e.patient) openPatient(e.patient); else openPatientById(e.patientId);
+  }
+
+  async function callNext() {
+    if (!sp.room || calling) return;
+    setCalling(true);
+    try {
+      const { data } = await api.post(`/queue/rooms/${sp.room.id}/next`);
+      toast.success(`Now seeing ${data.patientName}`);
+      notifyQueueChanged();
+      openPatient(data.patient);
+    } catch (err: any) {
+      if (err?.response) toast.error(err.response.data?.error ?? 'Could not call the next patient');
+    } finally { setCalling(false); }
+  }
+
+  async function setStatus(e: QueueEntry, status: 'Done' | 'Removed') {
+    setBusyId(e.id);
+    try {
+      await api.patch(`/queue/${e.id}/status`, { status });
+      toast.success(status === 'Done' ? `${e.patientName} marked as seen` : `${e.patientName} removed from the queue`);
+      setRemoving(null);
+      notifyQueueChanged();
+    } catch { /* the API client already explained what went wrong */ }
+    finally { setBusyId(null); }
+  }
+
+  // Counts come from the server so they stay right even when the list is capped.
+  const count = (f: Filter) => f === 'all' ? summary.waiting + summary.inProgress
+    : f === 'Waiting' ? summary.waiting : f === 'In Progress' ? summary.inProgress : summary.done;
+  const shown = filter === 'all' ? entries : entries.filter((e) => e.status === filter);
+  const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const waiting = summary.waiting;
+  const urgent = summary.urgent + summary.emergency;
+
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-page)' }}>
-      {/* Hero search area */}
-      <div style={{
-        background: 'linear-gradient(135deg, #252B2D 0%, #3D1F1F 100%)',
-        padding: isMobile ? '28px 16px 56px' : '48px 24px 80px',
-        textAlign: 'center',
-      }}>
-        <h1 style={{ fontSize: 26, fontWeight: 800, color: '#fff', marginBottom: 6, letterSpacing: '-0.3px' }}>
-          SES — Chronic Disease Management
-        </h1>
-        <p style={{ fontSize: 14, color: '#94a3b8', marginBottom: 32 }}>
-          Search for a patient or register a new client below
-        </p>
+    <div className="ws">
+      <img src="/ses-mark.svg" alt="" aria-hidden="true" className="ws-tree" />
 
-        {/* Search bar */}
-        <div ref={searchRef} style={{ position: 'relative', maxWidth: 580, margin: '0 auto' }}>
-          <div style={{
-            display: 'flex', alignItems: 'center',
-            background: 'var(--bg-card)', borderRadius: 14,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
-            border: '2px solid transparent',
-            transition: 'border-color 0.15s, background-color 0.2s',
-          }}>
-            {searching
-              ? <Loader2 size={18} style={{ margin: '0 14px', color: 'var(--text-subtle)', flexShrink: 0, animation: 'spin 1s linear infinite' }} />
-              : <Search size={18} style={{ margin: '0 14px', color: 'var(--text-subtle)', flexShrink: 0 }} />
-            }
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name, NRC number, or cell phone…"
-              style={{
-                flex: 1, border: 'none', outline: 'none', padding: '15px 0',
-                fontSize: 15, color: 'var(--text-heading)', background: 'transparent',
-              }}
-              autoFocus
-            />
-            {query && (
-              <button onClick={() => { setQuery(''); setResults([]); setSearched(false); setShowDropdown(false); }}
-                style={{ padding: '0 14px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-subtle)' }}>
-                <X size={16} />
-              </button>
-            )}
-          </div>
+      <div className="ws-titlerow">
+        <div>
+          <h1 className="ws-h1">Today</h1>
+          <p className="ws-muted" style={{ fontSize: 13 }}>{today} · Chronic Disease Management</p>
+        </div>
+        <button type="button" className="btn-primary" onClick={() => setRegistering(true)}>
+          <UserPlus size={15} /> Register client
+        </button>
+      </div>
 
-          {query.length > 0 && query.length < 3 && (
-            <p style={{ color: '#94a3b8', fontSize: 12, marginTop: 8 }}>
-              Type {3 - query.length} more character{3 - query.length !== 1 ? 's' : ''} to search…
-            </p>
-          )}
-
-          {/* Dropdown results */}
-          {showDropdown && (
-            <div style={{
-              position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0,
-              background: 'var(--bg-card)', borderRadius: 12, boxShadow: '0 12px 40px rgba(0,0,0,0.18)',
-              border: '1px solid var(--border)', overflow: 'hidden', zIndex: 50,
-              maxHeight: 360, overflowY: 'auto',
-            }}>
-              {results.length > 0 ? (
-                <>
-                  <div style={{ padding: '8px 14px', background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-light)' }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                      {results.length} patient{results.length !== 1 ? 's' : ''} found
-                    </span>
-                  </div>
-                  {results.map((p) => (
-                    <button key={p.id} onClick={() => openPatient(p)}
-                      style={{
-                        width: '100%', textAlign: 'left', padding: '12px 16px',
-                        display: 'flex', alignItems: 'center', gap: 12,
-                        background: 'none', border: 'none', borderBottom: '1px solid var(--border-light)',
-                        cursor: 'pointer', transition: 'background 0.1s', color: 'inherit',
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-surface)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
-                    >
-                      <div style={{
-                        width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
-                        background: `hsl(${(p.firstName.charCodeAt(0) * 13) % 360}, 55%, 88%)`,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 13, fontWeight: 700,
-                        color: `hsl(${(p.firstName.charCodeAt(0) * 13) % 360}, 55%, 36%)`,
-                      }}>
-                        {p.firstName.charAt(0)}{p.lastName.charAt(0)}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-heading)' }}>
-                          {p.firstName} {p.lastName}
-                        </div>
-                        <div style={{ fontSize: 12, color: 'var(--text-subtle)', marginTop: 2, display: 'flex', gap: 12 }}>
-                          {p.nationalId && <span>NRC: {p.nationalId}</span>}
-                          {p.phone && <span>{p.phone}</span>}
-                          <span>{calcAge(p.dateOfBirth)} yrs · {p.gender}</span>
-                        </div>
-                      </div>
-                      <ChevronRight size={16} color="var(--ses-red)" />
-                    </button>
-                  ))}
-                </>
-              ) : searched && (
-                <div style={{ padding: '24px 20px', textAlign: 'center' }}>
-                  <p style={{ fontWeight: 600, color: 'var(--text-body)', marginBottom: 4 }}>No patient found</p>
-                  <p style={{ fontSize: 13, color: 'var(--text-subtle)', marginBottom: 16 }}>
-                    No results for "{query}" — would you like to register a new client?
-                  </p>
-                  <button
-                    onClick={() => { setShowDropdown(false); setShowRegisterForm(true); }}
-                    className="btn-primary" style={{ margin: '0 auto' }}
-                  >
-                    <UserPlus size={14} /> Register New Client
+      <div className="ws-grid">
+        <section className="ws-card" aria-labelledby="ws-q" style={{ overflow: 'hidden' }}>
+          <div className="ws-cardhead">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+              <h2 id="ws-q" className="ws-h2">Queue</h2>
+              <div role="tablist" aria-label="Filter queue" style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                {FILTERS.map((f) => (
+                  <button key={f.id} role="tab" type="button" aria-selected={filter === f.id}
+                    className={`ws-tab${filter === f.id ? ' on' : ''}`} onClick={() => setFilter(f.id)}>
+                    {f.label} · {count(f.id)}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              {sp.room && (
+                <div role="group" aria-label="Which rooms to show" className="ws-seg">
+                  <button type="button" aria-pressed={scope === 'mine'} className={scope === 'mine' ? 'on' : ''} onClick={() => setScope('mine')}>
+                    {sp.room.name}
+                  </button>
+                  <button type="button" aria-pressed={scope === 'all'} className={scope === 'all' ? 'on' : ''} onClick={() => setScope('all')}>
+                    All rooms
                   </button>
                 </div>
               )}
+              {sp.room && canAct && scope === 'mine' && (
+                <button type="button" className="ws-next" onClick={callNext} disabled={calling}
+                  title="Takes the patient who is first in line in your room (emergencies first)">
+                  <Play size={13} /> {calling ? 'Calling…' : 'Call next patient'}
+                </button>
+              )}
+            </div>
+          </div>
+
+          {!sp.room && (
+            <div className="ws-nudge">
+              You are viewing every room. Choose your <strong>service point</strong> (top bar) to see only your room’s patients and call the next one.
             </div>
           )}
-        </div>
 
-        {!showDropdown && (
-          <button
-            onClick={() => setShowRegisterForm(true)}
-            style={{
-              marginTop: 20, display: 'inline-flex', alignItems: 'center', gap: 7,
-              background: 'rgba(255,255,255,0.1)', color: '#e2e8f0',
-              border: '1px solid rgba(255,255,255,0.2)', borderRadius: 9,
-              padding: '9px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-              transition: 'background 0.15s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.18)')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
-          >
-            <UserPlus size={14} /> Register New Client
-          </button>
-        )}
-      </div>
-
-      {/* Service Point cards — grouped by tag */}
-      <div style={{ maxWidth: 960, margin: isMobile ? '-32px auto 0' : '-40px auto 0', padding: isMobile ? '0 14px 32px' : '0 24px 40px' }}>
-        {rooms.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 24px', background: 'var(--bg-card)', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.08)', border: '1px dashed var(--border)' }}>
-            <DoorOpen size={32} color="var(--text-subtle)" style={{ marginBottom: 12 }} />
-            <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-heading)', marginBottom: 6 }}>No service points configured</div>
-            <div style={{ fontSize: 13, color: 'var(--text-subtle)' }}>Go to Admin → Rooms to set up your facility's service points.</div>
-          </div>
-        ) : (
-          <>
-            {/* Group rooms by tag */}
-            {Object.entries(
-              rooms.reduce<Record<string, FacilityRoom[]>>((acc, r) => {
-                (acc[r.tag] = acc[r.tag] ?? []).push(r);
-                return acc;
-              }, {})
-            ).sort(([a], [b]) => a.localeCompare(b)).map(([tag, tagRooms], tagIdx) => (
-              <div key={tag} style={{ marginBottom: 28 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <h2 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
-                    {tag}
-                  </h2>
-                  {tagIdx === 0 && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--text-subtle)' }}>
-                      <Clock size={12} /> Live · updates every 15s
-                    </div>
-                  )}
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(200px, 1fr))', gap: isMobile ? 10 : 14 }}>
-                  {tagRooms.map(room => (
-                    <div key={room.id} className="card" style={{ padding: '18px 20px', cursor: 'default', transition: 'box-shadow 0.15s' }}
-                      onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.1)')}
-                      onMouseLeave={e => (e.currentTarget.style.boxShadow = '')}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
-                        <div style={{ width: 38, height: 38, borderRadius: 10, background: 'var(--ses-red-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <DoorOpen size={18} color="var(--ses-red)" />
-                        </div>
-                        <div style={{
-                          minWidth: 34, height: 34, borderRadius: 9, padding: '0 8px',
-                          background: room.waitingCount > 0 ? 'var(--ses-red)' : 'var(--bg-surface-2)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          boxShadow: room.waitingCount > 0 ? '0 2px 8px rgba(215,29,36,0.35)' : 'none',
-                        }}>
-                          <span style={{ fontSize: 18, fontWeight: 800, color: room.waitingCount > 0 ? '#fff' : 'var(--text-subtle)', lineHeight: 1 }}>
-                            {room.waitingCount}
-                          </span>
-                        </div>
-                      </div>
-                      <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-heading)', marginBottom: 3 }}>{room.name}</div>
-                      <div style={{ fontSize: 12, color: 'var(--text-subtle)' }}>
-                        {room.waitingCount === 0 ? 'No patients waiting' : `${room.waitingCount} patient${room.waitingCount !== 1 ? 's' : ''} waiting`}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+          <div style={{ overflowX: 'auto' }}>
+            <div style={{ minWidth: 760 }}>
+              <div className="ws-cols ws-thead">
+                <span>No.</span><span>Patient</span><span>Age/Sex</span><span>NRC</span>
+                <span>Arrived</span><span>Wait</span><span>Service point</span><span>Status</span><span className="sr-only">Actions</span>
               </div>
-            ))}
-          </>
-        )}
+              {shown.length === 0 ? (
+                <div style={{ padding: '72px 18px 80px', textAlign: 'center' }}>
+                  <p style={{ fontSize: 15, fontWeight: 600, marginBottom: 6, color: 'var(--text-heading)' }}>
+                    {count('all') + summary.done === 0 ? (scopeRoom ? `No one is waiting in ${scopeRoom.name}` : 'No one checked in yet')
+                      : filter === 'all' ? 'The queue is clear' : 'No patients in this view'}
+                  </p>
+                  <p className="ws-muted">
+                    {count('all') + summary.done === 0
+                      ? 'Search for a patient above and use “Assign to room” to add them to the queue.'
+                      : filter === 'all' ? 'Everyone here has been seen. Seen patients are under the Done tab.' : 'Try another filter.'}
+                  </p>
+                </div>
+              ) : shown.map((e) => {
+                const s = STATUS_STYLE[e.status] ?? STATUS_STYLE.Waiting;
+                const a = age(e.patient?.dateOfBirth);
+                const wait = waitMinutes(e, now);
+                const long = e.status === 'Waiting' && (wait ?? 0) >= 30;
+                const done = e.status === 'Done';
+                const busy = busyId === e.id;
+                return (
+                  <div key={e.id} className={`ws-cols ws-row${done ? ' ws-done' : ''}`}>
+                    <span style={{ fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{queueNo(e.queueNumber)}</span>
+                    <button type="button" className="ws-open" onClick={() => attend(e)} title={done ? 'Open patient'
+                      : sp.room && e.roomId !== sp.room.id ? `Open chart — queued in ${e.room.name}. Use “Attend here” to take them into your room.`
+                      : 'Open patient and start the visit'}>
+                      {e.patientName}
+                      <span className="ws-pill" style={{
+                        marginLeft: 8,
+                        color: e.priority === 'Emergency' ? '#fff' : priorityStyle(e.priority).color,
+                        background: e.priority === 'Emergency' ? '#C41E25' : priorityStyle(e.priority).bg,
+                      }}>{priorityLabel(e.priority)}</span>
+                    </button>
+                    <span>{a ?? '—'}{e.patient?.gender ? ` / ${e.patient.gender.charAt(0)}` : ''}</span>
+                    <span className="ws-muted">{e.patient?.nationalId ?? '—'}</span>
+                    <span className="ws-num2">{arrivedAt(e.checkedInAt)}</span>
+                    <span className="ws-num2" style={long ? { color: 'var(--ws-amber)', fontWeight: 700 } : undefined} title={long ? 'Waiting over 30 minutes' : undefined}>
+                      {formatWait(wait)}
+                    </span>
+                    <span>{e.room?.name ?? '—'}</span>
+                    <span><span className="ws-pill" style={{ color: s.color, background: s.bg }} title={e.startedBy ? `Seen by ${e.startedBy.name}` : undefined}>
+                      {e.status === 'In Progress' && e.startedBy ? e.startedBy.name.split(' ')[0] : s.label}
+                    </span></span>
+                    <span className="ws-acts">
+                      {done ? null : removing === e.id ? (
+                        <>
+                          <button type="button" className="ws-act ws-act-bad" onClick={() => setStatus(e, 'Removed')} disabled={busy}>{busy ? '…' : 'Remove'}</button>
+                          <button type="button" className="ws-act" onClick={() => setRemoving(null)} disabled={busy}>Keep</button>
+                        </>
+                      ) : (
+                        <>
+                          {sp.room && canAct && e.status === 'Waiting' && e.roomId !== sp.room.id && (
+                            <button type="button" className="ws-ic ws-ic-go" title={`Attend here — take into ${sp.room.name}`} aria-label={`Attend ${e.patientName} in ${sp.room.name}`} onClick={() => attend(e, true)} disabled={busy}><Play size={14} /></button>
+                          )}
+                          <button type="button" className="ws-ic" title="Mark as seen" aria-label={`Mark ${e.patientName} as seen`} onClick={() => setStatus(e, 'Done')} disabled={busy}><Check size={15} /></button>
+                          <button type="button" className="ws-ic" title="Re-assign to another room" aria-label={`Re-assign ${e.patientName}`} onClick={() => setReassign(e)} disabled={busy}><ArrowRightLeft size={15} /></button>
+                          <button type="button" className="ws-ic ws-ic-bad" title="Remove from queue" aria-label={`Remove ${e.patientName} from the queue`} onClick={() => setRemoving(e.id)} disabled={busy}><X size={15} /></button>
+                        </>
+                      )}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
-        <div style={{ textAlign: 'center', marginTop: 8 }}>
-          <button onClick={() => navigate('/patients')} className="btn-ghost" style={{ fontSize: 13 }}>
-            <Users size={14} /> View all patients
-          </button>
-        </div>
+        <aside style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <section className="ws-card" aria-labelledby="ws-att">
+            <h2 id="ws-att" className="ws-h2 ws-cardhead" style={{ fontSize: 15 }}>Needs attention</h2>
+            <div className="ws-attn">
+              <span>Patients waiting</span>
+              <span className="ws-num" style={{ color: waiting ? 'var(--ws-amber)' : undefined }}>{waiting}</span>
+            </div>
+            <div className="ws-attn">
+              <span>Urgent / emergency in queue</span>
+              <span className="ws-num" style={{ color: urgent ? '#E5484D' : undefined }}>{urgent}</span>
+            </div>
+            <div className="ws-attn" style={{ borderBottom: 0 }}>
+              <span>Seen today</span>
+              <span className="ws-num">{summary.done}</span>
+            </div>
+          </section>
+
+          <section className="ws-card ws-pad" aria-labelledby="ws-rec">
+            <h2 id="ws-rec" className="ws-h2" style={{ fontSize: 15, marginBottom: 8 }}>Recent patients</h2>
+            {recent.length === 0 ? (
+              <p className="ws-muted" style={{ lineHeight: 1.5, marginBottom: 10 }}>Patients you open will appear here.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', marginBottom: 10 }}>
+                {recent.map((r) => (
+                  <button key={r.id} type="button" className="ws-recent" onClick={() => openPatientById(r.id)}>
+                    <UserCheck size={14} color="var(--text-muted)" />
+                    <span style={{ flex: 1, fontWeight: 600 }}>{r.firstName} {r.lastName}</span>
+                    {r.nationalId && <span className="ws-muted" style={{ fontSize: 12 }}>{r.nationalId}</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+            <Link to="/patients" style={{ fontSize: 13 }}>View all patients</Link>
+          </section>
+
+          <section className="ws-card ws-pad" aria-labelledby="ws-sp">
+            <h2 id="ws-sp" className="ws-h2" style={{ fontSize: 15, marginBottom: 8 }}>Service points</h2>
+            {sp.rooms.length === 0 ? (
+              <p className="ws-muted" style={{ lineHeight: 1.5, marginBottom: 10 }}>None set up yet. Add rooms so patients can be routed.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginBottom: 10 }}>
+                {sp.rooms.map((r) => {
+                  const mine = sp.room?.id === r.id;
+                  return (
+                    <button key={r.id} type="button" className={`ws-recent${mine ? ' ws-mine' : ''}`}
+                      onClick={() => { sp.setRoomId(r.id); setScope('mine'); }}
+                      title={mine ? 'Your service point' : 'Work in this room'}>
+                      <span style={{ flex: 1, fontWeight: mine ? 700 : 500 }}>{r.name}{mine && <span className="ws-youhere"> · you</span>}</span>
+                      <span className="ws-muted" style={{ fontVariantNumeric: 'tabular-nums', fontSize: 13 }}>{r.waitingCount} waiting</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+            {isAdmin && <Link to="/admin/users" style={{ fontSize: 13 }}>Set up in Admin</Link>}
+          </section>
+        </aside>
       </div>
 
-      {showRegisterForm && (
+      {reassign && (
+        <AssignRoomModal
+          patientId={reassign.patientId}
+          patientName={reassign.patientName}
+          current={{ ...reassign, position: null, ahead: 0 } as QueueEntryInfo}
+          onClose={() => setReassign(null)}
+          onDone={() => setReassign(null)}
+          onRemoved={() => setReassign(null)}
+        />
+      )}
+
+      {registering && (
         <RegisterModal
-          initialName={query}
-          onClose={() => setShowRegisterForm(false)}
-          onCreated={(p) => {
-            toast.success(`${p.firstName} ${p.lastName} registered`);
-            setShowRegisterForm(false);
-            openPatient(p);
-          }}
+          onClose={() => setRegistering(false)}
+          onCreated={(p) => { setRegistering(false); openPatient(p); }}
         />
       )}
 
       <style>{`
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .ws { position: relative; padding: 24px 24px 40px; max-width: 1600px; margin: 0 auto; font-size: 14px; color: var(--text-body); }
+        .ws a { color: var(--ws-link); font-weight: 600; text-decoration: none; }
+        .ws a:hover { text-decoration: underline; }
+        .ws-tree { position: absolute; right: 24px; top: 6px; width: 92px; opacity: var(--ws-tree-op); filter: var(--ws-tree); pointer-events: none; }
+        .ws-titlerow { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px; padding-right: 116px; min-height: 48px; }
+        .ws-h1 { margin: 0 0 4px; font-weight: 700; font-size: 22px; letter-spacing: -0.2px; color: var(--text-heading); }
+        .ws-h2 { margin: 0; font-family: var(--font-heading); font-size: 16px; font-weight: 700; color: var(--text-heading); }
+        .ws-muted { color: var(--text-muted); }
+        .ws-num { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); }
+        .ws-grid { position: relative; display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: 20px; }
+        .ws-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
+        .ws-pad { padding: 14px 18px 16px; }
+        .ws-cardhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 18px; border-bottom: 1px solid var(--border-light); }
+        .ws-tab { height: 30px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .ws-tab:hover { background: var(--ws-chip); }
+        .ws-tab.on { background: var(--ws-chip-on); color: var(--ws-chip-on-text); }
+        .ws-cols { display: grid; grid-template-columns: 56px 2fr 80px 1.2fr 70px 70px 1.2fr 1.1fr 146px; gap: 12px; align-items: center; }
+        .ws-thead { padding: 10px 18px; background: var(--ws-head); border-bottom: 1px solid var(--border-light);
+          font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-subtle); }
+        .ws-num2 { font-variant-numeric: tabular-nums; }
+        .ws-seg { display: inline-flex; padding: 3px; gap: 2px; border: 1px solid var(--border); border-radius: 10px; background: var(--ws-head); }
+        .ws-seg button { height: 28px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .ws-seg button.on { background: var(--ws-chip-on); color: var(--ws-chip-on-text); }
+        .ws-next { height: 34px; padding: 0 14px; border: 0; border-radius: 10px; background: #C41E25; color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+          display: inline-flex; align-items: center; gap: 8px; transition: filter .15s; }
+        .ws-next:hover:not(:disabled) { filter: brightness(1.06); }
+        .ws-next:disabled { opacity: .6; cursor: wait; }
+        .ws-nudge { padding: 10px 18px; background: var(--ws-blue-bg); color: var(--text-heading); font-size: 13px; border-bottom: 1px solid var(--border-light); }
+        .ws-mine { background: var(--ws-chip); }
+        .ws-youhere { color: var(--ws-link); font-weight: 600; font-size: 12px; }
+        .ws-done { opacity: .6; }
+        .ws-open { border: 0; background: none; padding: 0; font: inherit; font-weight: 600; color: var(--text-heading); text-align: left; cursor: pointer; min-width: 0; }
+        .ws-open:hover { text-decoration: underline; text-decoration-color: var(--ws-link); text-underline-offset: 3px; }
+        .ws-acts { display: flex; justify-content: flex-end; gap: 4px; }
+        .ws-ic { width: 30px; height: 30px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--text-muted); cursor: pointer;
+          display: inline-flex; align-items: center; justify-content: center; transition: background .15s, color .15s, border-color .15s; }
+        .ws-ic:hover:not(:disabled) { background: var(--bg-card); border-color: var(--border); color: var(--text-heading); }
+        .ws-ic-go { color: #fff; background: #C41E25; border-color: #C41E25; }
+        .ws-ic-go:hover:not(:disabled) { background: #C41E25; color: #fff; border-color: #C41E25; filter: brightness(1.08); }
+        .ws-ic-bad:hover:not(:disabled) { color: var(--st-bad); border-color: var(--st-bad); }
+        .ws-ic:disabled, .ws-act:disabled { opacity: .5; cursor: wait; }
+        .ws-act { height: 28px; padding: 0 10px; border: 1px solid var(--btn2-line); border-radius: 8px; background: transparent; color: var(--text-heading); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .ws-act-bad { color: var(--st-bad); border-color: var(--st-bad); }
+        .ws-row { width: 100%; padding: 12px 18px; border: 0; border-bottom: 1px solid var(--border-light); background: none; font: inherit; color: var(--text-body); text-align: left; cursor: pointer; }
+        .ws-row:hover { background: var(--ws-chip); }
+        .ws-pill { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 11px; font-size: 11.5px; font-weight: 700; }
+        .ws-attn { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; color: var(--text-heading); font-weight: 500; border-bottom: 1px solid var(--border-light); }
+        .ws-recent { display: flex; align-items: center; gap: 8px; padding: 7px 6px; margin: 0 -6px; border: 0; border-radius: 8px; background: none; font: inherit; color: var(--text-heading); text-align: left; cursor: pointer; }
+        .ws-recent:hover { background: var(--ws-chip); }
+        @media (max-width: 1100px) { .ws-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 700px) {
+          .ws { padding: 16px 14px 32px; }
+          .ws-titlerow { flex-direction: column; align-items: flex-start; padding-right: 0; }
+          .ws-tree { display: none; }
+        }
       `}</style>
-    </div>
-  );
-}
-
-function RegisterModal({ initialName, onClose, onCreated }: {
-  initialName: string;
-  onClose: () => void;
-  onCreated: (p: Patient) => void;
-}) {
-  const parts = initialName.trim().split(' ');
-  const [form, setForm] = useState({
-    firstName: parts[0] ?? '',
-    lastName: parts.slice(1).join(' '),
-    nationalId: '', phone: '', dateOfBirth: '',
-    gender: 'MALE', address: '', email: '',
-  });
-  const [loading, setLoading] = useState(false);
-  const [emailError, setEmailError] = useState<string | undefined>(undefined);
-
-  function set(f: string, v: string) { setForm((p) => ({ ...p, [f]: v })); }
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-
-    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-      setEmailError('Invalid email address');
-      return;
-    }
-    setEmailError(undefined);
-
-    setLoading(true);
-    try {
-      const { data } = await api.post('/patients', { ...form, hivStatus: 'UNKNOWN' });
-      onCreated(data);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'var(--modal-overlay)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      zIndex: 50, backdropFilter: 'blur(3px)',
-    }}>
-      <div style={{ background: 'var(--bg-card)', borderRadius: 16, width: '100%', maxWidth: 'min(520px, calc(100vw - 24px))', boxShadow: '0 20px 60px rgba(0,0,0,0.2)', overflow: 'hidden', margin: '0 12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 22px', borderBottom: '1px solid var(--border-light)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--ses-red-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <UserCheck size={16} color="var(--ses-red)" />
-            </div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-heading)' }}>Register New Client</div>
-              <div style={{ fontSize: 11.5, color: 'var(--text-subtle)' }}>All fields marked * are required</div>
-            </div>
-          </div>
-          <button onClick={onClose} style={{ width: 30, height: 30, borderRadius: 7, border: '1px solid var(--border)', background: 'var(--bg-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)' }}>
-            <X size={14} />
-          </button>
-        </div>
-
-        <form onSubmit={submit} noValidate style={{ padding: '20px 22px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 480 ? '1fr' : '1fr 1fr', gap: 13 }}>
-            <RField label="First Name *">
-              <input required className="field-input" value={form.firstName} onChange={(e) => set('firstName', e.target.value)} placeholder="e.g. John" />
-            </RField>
-            <RField label="Surname *">
-              <input required className="field-input" value={form.lastName} onChange={(e) => set('lastName', e.target.value)} placeholder="e.g. Banda" />
-            </RField>
-            <RField label="Cell Phone">
-              <input className="field-input" value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+260 9X XXX XXXX" />
-            </RField>
-            <RField label="Email">
-              <input
-                type="email"
-                className="field-input"
-                value={form.email}
-                onChange={(e) => { set('email', e.target.value); if (emailError) setEmailError(undefined); }}
-                placeholder="For check-ins and portal access"
-                style={emailError ? { border: '1.5px solid var(--badge-red-text)' } : undefined}
-              />
-              {emailError && <p style={{ fontSize: 11.5, color: 'var(--badge-red-text)', marginTop: 4 }}>{emailError}</p>}
-            </RField>
-            <RField label="NRC Number">
-              <input className="field-input" value={form.nationalId} onChange={(e) => set('nationalId', e.target.value)} placeholder="123456/78/9" />
-            </RField>
-            <RField label="Date of Birth *">
-              <input required type="date" className="field-input" value={form.dateOfBirth} onChange={(e) => set('dateOfBirth', e.target.value)} />
-            </RField>
-            <RField label="Gender *">
-              <select required className="field-input" value={form.gender} onChange={(e) => set('gender', e.target.value)}>
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
-                <option value="OTHER">Other</option>
-              </select>
-            </RField>
-            <RField label="Address" style={{ gridColumn: '1 / -1' }}>
-              <input className="field-input" value={form.address} onChange={(e) => set('address', e.target.value)} placeholder="Physical address (optional)" />
-            </RField>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--border-light)' }}>
-            <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
-            <button type="submit" disabled={loading} className="btn-primary">
-              <UserPlus size={14} /> {loading ? 'Registering…' : 'Register & Open Profile'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-function RField({ label, children, style }: { label: string; children: React.ReactNode; style?: React.CSSProperties }) {
-  return (
-    <div style={style}>
-      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-body)', marginBottom: 5 }}>{label}</label>
-      {children}
     </div>
   );
 }

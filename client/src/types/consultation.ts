@@ -18,6 +18,7 @@ export interface InvestigationItem {
   catalogCode?: string;
   catalogueType?: 'panel' | 'single';
   status: 'PENDING' | 'RESULTED';
+  orderItemId?: string;   // the real lab order item this entry tracks, once it has been ordered
   resultText?: string;
   resultDate?: string;
 }
@@ -48,6 +49,7 @@ export interface PMHEntry {
   icd11Code: string;
   icd11Description: string;
   dateFirstConfirmed: string;
+  diagnosedYear?: number;   // set when the year first diagnosed is known
   status: DiagnosisStatus;
 }
 

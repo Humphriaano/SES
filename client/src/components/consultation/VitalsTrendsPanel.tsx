@@ -19,10 +19,10 @@ function PanelTooltip({ active, payload, label, unit }: { active?: boolean; payl
   if (!active || !payload?.length) return null;
   return (
     <div style={{ background: 'var(--ses-charcoal)', borderRadius: 8, padding: '8px 12px', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
-      <p style={{ color: '#64748b', fontSize: 10, margin: '0 0 2px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+      <p style={{ color: 'var(--text-muted)', fontSize: 10, margin: '0 0 2px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
         Recorded
       </p>
-      <p style={{ color: '#f1f5f9', fontSize: 12, fontWeight: 600, margin: '0 0 6px' }}>{label}</p>
+      <p style={{ color: 'var(--text-heading)', fontSize: 12, fontWeight: 600, margin: '0 0 6px' }}>{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} style={{ color: p.color, fontSize: 13, fontWeight: 600, margin: 0 }}>
           {p.name}: {p.value} {unit}
@@ -40,7 +40,7 @@ export default function VitalsTrendsPanel({ open, patientName, history, onClose 
   const trendDisplay =
     trend === 'up'   ? { text: 'Trending up ↑',   color: 'var(--clinical-abnormal)' } :
     trend === 'down' ? { text: 'Trending down ↓', color: 'var(--clinical-normal)' } :
-                       { text: 'Stable →',         color: '#94a3b8' };
+                       { text: 'Stable →',         color: 'var(--text-subtle)' };
 
   const latest = history[history.length - 1] ?? null;
 
@@ -141,7 +141,7 @@ export default function VitalsTrendsPanel({ open, patientName, history, onClose 
                 <LineChart data={history} margin={{ top: 5, right: 10, bottom: 10, left: -15 }}>
                   <XAxis
                     dataKey="date"
-                    tick={{ fontSize: 9, fill: '#94a3b8' }}
+                    tick={{ fontSize: 9, fill: 'var(--text-subtle)' }}
                     axisLine={false}
                     tickLine={false}
                     angle={-35}
@@ -149,7 +149,7 @@ export default function VitalsTrendsPanel({ open, patientName, history, onClose 
                     height={50}
                     interval={0}
                   />
-                  <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: 'var(--text-subtle)' }} axisLine={false} tickLine={false} />
                   <Tooltip content={<PanelTooltip unit={config.unit} />} />
                   {config.refs.map((r, i) => (
                     <ReferenceLine key={i} y={r.y} stroke={r.color} strokeDasharray={r.dash} strokeWidth={1} />

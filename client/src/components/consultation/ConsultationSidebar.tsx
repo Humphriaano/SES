@@ -4,6 +4,7 @@ import api from '../../api/client';
 import { Patient, Encounter, Medication, Vital } from '../../types';
 import { CanvasNode, ImportedBlockData, ImportedDiagnosis } from '../../types/consultation';
 import { DisplayRecord, toDisplay, getStatus, calcBmi } from '../../lib/vitalsConfig';
+import { parseRows, flagFor } from '../../lib/investigations';
 import DiagnosisBlock from './blocks/DiagnosisBlock';
 import InvestigationBlock from './blocks/InvestigationBlock';
 import PrescriptionBlock from './blocks/PrescriptionBlock';
@@ -32,109 +33,140 @@ function deserializeNodes(raw: string | undefined | null): CanvasNode[] {
 // theme-swapping CSS vars (caution=amber, abnormal=orange-red, critical=red).
 function vitalColor(statusKey: string, value: number | null | undefined): string {
   const s = getStatus(statusKey, value);
-  if (s === 'danger')  return '#fca5a5'; // clinical-critical
-  if (s === 'warning') return '#f4835a'; // clinical-abnormal
-  if (s === 'caution') return '#fbbf24'; // clinical-caution
-  return '#cbd5e1';
+  if (s === 'danger')  return 'var(--st-bad)'; // clinical-critical
+  if (s === 'warning') return 'var(--st-warn)'; // clinical-abnormal
+  if (s === 'caution') return 'var(--st-warn)'; // clinical-caution
+  return 'var(--text-body)';
 }
 
-// ── Investigation Results slide-out panel ─────────────────────────────────────
-function InvResultsPanel({ item, onClose }: { item: any; onClose: () => void }) {
-  const open = !!item;
-  let resultRows: any[] = [];
-  if (item?.results?.[0]) {
-    try { resultRows = JSON.parse(item.results[0].resultsJson); } catch {}
-  }
+// ── Investigation result slide-out ────────────────────────────────────────────
+// Opens from the right over a dimmed page: the test, its specimen and result time, the values with
+// reference ranges and flags, and how earlier results of the same test compared.
+const fmtWhen = (iso: string) =>
+  new Date(iso).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-  function rc(status: string): string {
-    if (status === 'High' || status === 'Low' || status === 'Abnormal') return '#fbbf24'; // clinical-caution
-    if (status === 'Critical' || status === 'Positive') return '#fca5a5'; // clinical-critical
-    if (status === 'Normal' || status === 'Negative') return '#4ade80'; // clinical-normal
-    return '#475569';
-  }
+function FlagTag({ status }: { status?: string }) {
+  const f = flagFor(status);
+  if (f.level === 'normal') return <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--st-ok)' }}>{status === 'Negative' ? 'Negative' : 'Normal'}</span>;
+  if (!f.text) return <span style={{ color: 'var(--text-subtle)' }}>—</span>;
+  return (
+    <span style={{
+      display: 'inline-block', padding: '1px 8px', borderRadius: 999, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap',
+      color: f.level === 'critical' ? 'var(--st-bad)' : 'var(--st-warn)',
+      background: f.level === 'critical' ? 'var(--st-bad-bg)' : 'var(--st-warn-bg)',
+    }}>{f.text}</span>
+  );
+}
+
+function InvResultsPanel({ item, patientId, onClose }: { item: any; patientId: string; onClose: () => void }) {
+  const open = !!item;
+  const latest = item?.results?.[0];
+  const rows = parseRows(latest?.resultsJson);
+  const [history, setHistory] = useState<any[] | null>(null);
+
+  useEffect(() => {
+    if (!item?.name || !patientId) { setHistory(null); return; }
+    let live = true;
+    setHistory(null);
+    api.get('/investigations/results', { params: { patientId, testName: item.name } })
+      .then(r => { if (live) setHistory((r.data as any[]).filter(h => h.id !== item.id)); })
+      .catch(() => { if (live) setHistory([]); });
+    return () => { live = false; };
+  }, [item?.id, item?.name, patientId]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
+
+  const th: React.CSSProperties = { textAlign: 'left', padding: '9px 12px', fontSize: 11, fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-subtle)' };
+  const td: React.CSSProperties = { padding: '12px' };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 96,
-        right: 0,
-        width: 480,
-        height: 'calc(100vh - 96px)',
-        background: 'var(--bg-card)',
-        borderLeft: '1px solid var(--border)',
-        boxShadow: '-6px 0 32px rgba(0,0,0,0.12)',
-        zIndex: 41,
-        display: 'flex',
-        flexDirection: 'column',
-        transform: open ? 'translateX(0)' : 'translateX(100%)',
-        transition: 'transform 0.25s ease',
-      }}
-    >
-      <div style={{
-        padding: '16px 20px 12px',
-        borderBottom: '1px solid var(--border-light)',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        flexShrink: 0,
-      }}>
-        <div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-heading)' }}>Investigation Results</div>
-          {item && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{item.name}</div>}
-        </div>
-        <button
-          onClick={onClose}
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            color: 'var(--text-muted)', padding: 6, borderRadius: 6,
-            display: 'flex', alignItems: 'center', transition: 'background 0.15s',
-          }}
-          onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-surface)')}
-          onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-        >
-          <X size={16} />
-        </button>
-      </div>
-
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 20px' }}>
-        {resultRows.length === 0 ? (
-          <div style={{ color: 'var(--text-muted)', fontSize: 13, fontStyle: 'italic' }}>No results recorded.</div>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                {['Component', 'Result', 'Units', 'Ref Range', 'Status'].map(h => (
-                  <th key={h} style={{
-                    textAlign: 'left', padding: '6px 10px',
-                    fontSize: 10, fontWeight: 600, color: 'var(--text-body2)', textTransform: 'uppercase',
-                  }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {resultRows.map((r: any, i: number) => (
-                <tr key={i} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                  <td style={{ padding: '8px 10px', color: 'var(--text-heading)', fontWeight: 500 }}>{r.componentName}</td>
-                  <td style={{ padding: '8px 10px', fontWeight: 700, color: rc(r.status) }}>{r.value || '—'}</td>
-                  <td style={{ padding: '8px 10px', color: 'var(--text-body2)' }}>{r.units ?? '—'}</td>
-                  <td style={{ padding: '8px 10px', color: 'var(--text-body2)', fontSize: 12 }}>{r.referenceRange ?? '—'}</td>
-                  <td style={{ padding: '8px 10px' }}>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: rc(r.status) }}>{r.status}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-        {item?.results?.[0] && (
-          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 12 }}>
-            {item.results[0].amendedAt
-              ? `Amended ${new Date(item.results[0].amendedAt).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`
-              : `Resulted ${new Date(item.results[0].resultedAt).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`
-            }
+    <>
+      {open && <div onClick={onClose} aria-hidden="true" style={{ position: 'fixed', inset: 0, zIndex: 59, background: 'rgba(10,12,14,.45)' }} />}
+      <aside
+        role="dialog" aria-modal="true" aria-labelledby="rs-t" aria-hidden={!open}
+        style={{
+          position: 'fixed', right: 0, top: 0, height: '100vh', width: 'min(560px, 100vw)', zIndex: 60,
+          background: 'var(--bg-card)', borderLeft: '1px solid var(--border)', boxShadow: '-16px 0 40px rgba(0,0,0,.25)',
+          color: 'var(--text-body)', fontSize: 14, display: 'flex', flexDirection: 'column',
+          transform: open ? 'translateX(0)' : 'translateX(105%)', visibility: open ? 'visible' : 'hidden', transition: 'transform .25s ease',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', padding: '18px 16px 16px 24px', borderBottom: '1px solid var(--border-light)', flexShrink: 0 }}>
+          <div>
+            <h2 id="rs-t" style={{ margin: '0 0 4px', fontFamily: 'var(--font-heading)', fontSize: 18, fontWeight: 700, color: 'var(--text-heading)' }}>{item?.name}</h2>
+            <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>
+              {[item?.specimen, latest ? `${latest.amendedAt ? 'amended' : 'resulted'} ${fmtWhen(latest.amendedAt ?? latest.resultedAt)}` : 'no result yet'].filter(Boolean).join(' · ')}
+            </p>
           </div>
-        )}
-      </div>
-    </div>
+          <button type="button" onClick={onClose} aria-label="Close result"
+            style={{ width: 32, height: 32, border: 0, borderRadius: 8, background: 'transparent', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+            <X size={18} />
+          </button>
+        </div>
+
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
+          <h3 style={{ margin: '0 0 10px', fontSize: 11, fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-subtle)' }}>Result</h3>
+          {rows.length === 0 ? (
+            <p style={{ margin: 0, color: 'var(--text-muted)' }}>No result has been recorded for this test yet.</p>
+          ) : (
+            <div style={{ border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: 'var(--ws-head)' }}>
+                    <th style={th}>Test</th><th style={th}>Result</th><th style={th}>Units</th><th style={th}>Ref range</th><th style={th}>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((r, i) => {
+                    const f = flagFor(r.status);
+                    return (
+                      <tr key={r.componentId ?? i} style={{ borderTop: '1px solid var(--border-light)' }}>
+                        <td style={{ ...td, fontWeight: 600, color: 'var(--text-heading)' }}>{r.componentName}</td>
+                        <td style={{ ...td, fontWeight: 700, color: f.level === 'critical' ? 'var(--st-bad)' : f.level === 'abnormal' ? 'var(--st-warn)' : 'var(--text-heading)' }}>{r.value || '—'}</td>
+                        <td style={{ ...td, color: r.units ? 'var(--text-body)' : 'var(--text-subtle)' }}>{r.units || '—'}</td>
+                        <td style={{ ...td, color: r.referenceRange ? 'var(--text-body)' : 'var(--text-subtle)', fontSize: 13 }}>{r.referenceRange || '—'}</td>
+                        <td style={td}><FlagTag status={r.status} /></td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <h3 style={{ margin: '24px 0 8px', fontSize: 11, fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-subtle)' }}>Result history</h3>
+          {history === null ? (
+            <p style={{ margin: 0, color: 'var(--text-muted)' }}>Loading…</p>
+          ) : history.length === 0 ? (
+            <p style={{ margin: 0, color: 'var(--text-muted)' }}>No previous results for this test.</p>
+          ) : (
+            <div style={{ border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
+              {history.map((h, i) => {
+                const hr = parseRows(h.results?.[0]?.resultsJson);
+                const when = h.results?.[0] ? fmtWhen(h.results[0].amendedAt ?? h.results[0].resultedAt) : '';
+                return (
+                  <div key={h.id} style={{ padding: '12px', borderTop: i ? '1px solid var(--border-light)' : 0 }}>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>{when}</div>
+                    {hr.length === 0 ? <span style={{ color: 'var(--text-subtle)' }}>No values recorded</span> : hr.map((r, j) => (
+                      <div key={r.componentId ?? j} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '2px 0' }}>
+                        <span style={{ flex: 1, color: 'var(--text-body)' }}>{r.componentName}</span>
+                        <span style={{ fontWeight: 700, color: 'var(--text-heading)' }}>{r.value || '—'} {r.units}</span>
+                        <FlagTag status={r.status} />
+                      </div>
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </aside>
+    </>
   );
 }
 
@@ -284,26 +316,26 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
   }
 
   function resultColor(status: string): string {
-    if (status === 'High' || status === 'Low' || status === 'Abnormal') return '#fbbf24'; // clinical-caution
-    if (status === 'Critical' || status === 'Positive') return '#fca5a5'; // clinical-critical
-    if (status === 'Normal' || status === 'Negative') return '#4ade80'; // clinical-normal
-    return '#94a3b8';
+    if (status === 'High' || status === 'Low' || status === 'Abnormal') return 'var(--st-warn)'; // clinical-caution
+    if (status === 'Critical' || status === 'Positive') return 'var(--st-bad)'; // clinical-critical
+    if (status === 'Normal' || status === 'Negative') return 'var(--st-ok)'; // clinical-normal
+    return 'var(--text-muted)';
   }
 
   function renderDispensingStatus(prescriptionId: string | undefined, prescribedDrug: string) {
     if (!prescriptionId) return null;
     const dispense = patientDispensing[prescriptionId];
     if (!dispense) {
-      return <span style={{ fontSize: 10, color: '#64748b' }}>Not dispensed</span>;
+      return <span style={{ fontSize: 10, color: 'var(--text-subtle)' }}>Not dispensed</span>;
     }
     if (dispense.dispensedDrug && dispense.dispensedDrug.toLowerCase() !== prescribedDrug.toLowerCase()) {
       return (
-        <span style={{ fontSize: 10, color: '#fbbf24', fontWeight: 500 }}>
+        <span style={{ fontSize: 10, color: 'var(--st-warn)', fontWeight: 500 }}>
           Dispensed as {dispense.dispensedDrug}
         </span>
       );
     }
-    return <span style={{ fontSize: 10, color: '#4ade80', fontWeight: 500 }}>Dispensed</span>;
+    return <span style={{ fontSize: 10, color: 'var(--st-ok)', fontWeight: 500 }}>Dispensed</span>;
   }
 
   function SectionHeader({ k, label, Icon, count }: { k: string; label: string; Icon: any; count?: number }) {
@@ -316,17 +348,17 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          <Icon size={12} color="#64748b" />
-          <span style={{ fontSize: 10.5, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+          <Icon size={12} color="var(--text-subtle)" />
+          <span style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             {label}
           </span>
           {!!count && count > 0 && (
-            <span style={{ fontSize: 10, background: '#1e3a5f', color: '#93c5fd', borderRadius: 10, padding: '1px 5px', fontWeight: 700 }}>
+            <span style={{ fontSize: 10, background: 'var(--ws-blue-bg)', color: 'var(--ws-link)', borderRadius: 10, padding: '1px 5px', fontWeight: 700 }}>
               {count}
             </span>
           )}
         </div>
-        {open[k] ? <ChevronDown size={11} color="#475569" /> : <ChevronRight size={11} color="#475569" />}
+        {open[k] ? <ChevronDown size={11} color="var(--text-subtle)" /> : <ChevronRight size={11} color="var(--text-subtle)" />}
       </button>
     );
   }
@@ -335,10 +367,10 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
   function VitalCell({ label, displayValue, statusKey, rawValue }: {
     label: string; displayValue: string | null; statusKey: string; rawValue: number | null | undefined;
   }) {
-    const color = displayValue !== null ? vitalColor(statusKey, rawValue) : '#374151';
+    const color = displayValue !== null ? vitalColor(statusKey, rawValue) : 'var(--border)';
     return (
       <div style={{ minWidth: 0 }}>
-        <div style={{ fontSize: 9, fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>
+        <div style={{ fontSize: 9, fontWeight: 600, color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>
           {label}
         </div>
         <div style={{ fontSize: 13, fontWeight: 700, color, lineHeight: 1.2 }}>
@@ -353,74 +385,58 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
   return (
     <>
       <div style={{
-        width: 264, flexShrink: 0,
-        background: '#252A2D',
+        width: '100%', minWidth: 0,
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        borderRadius: 14,
         overflowY: 'auto',
         padding: '14px 14px',
-        borderRight: '1px solid #2D3748',
         position: 'sticky',
-        top: 0,
+        top: 12,
         alignSelf: 'flex-start',
-        maxHeight: 'calc(100vh - 112px)',
+        maxHeight: 'calc(100vh - 140px)',
       }}>
-        {/* Patient header */}
-        {patient && (
-          <div style={{ marginBottom: 14, paddingBottom: 12, borderBottom: '1px solid #2D3748' }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#f1f5f9' }}>
-              {patient.firstName} {patient.lastName}
-            </div>
-            <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>
-              {calcAge(patient.dateOfBirth)} yrs · {patient.gender} · {patient.nationalId ?? 'No NRC'}
-            </div>
-            {patient.hivStatus === 'POSITIVE' && (
-              <div style={{ marginTop: 6, fontSize: 11, fontWeight: 700, background: '#7F1D1D', color: '#FCA5A5', padding: '3px 8px', borderRadius: 5, display: 'inline-block' }}>
-                HIV+
-              </div>
-            )}
-          </div>
-        )}
-
         {/* Allergies — only rendered when the patient has recorded allergies */}
         {patient?.allergies && patient.allergies.length > 0 && (
-          <div style={{ marginBottom: 12, background: '#3B1A1A', border: '1px solid #7F1D1D', borderRadius: 8, padding: '8px 10px' }}>
+          <div style={{ marginBottom: 12, background: 'var(--st-bad-bg)', border: '1px solid var(--st-bad-bg)', borderRadius: 8, padding: '8px 10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-              <AlertTriangle size={11} color="#F87171" />
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#FCA5A5', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Allergies</span>
+              <AlertTriangle size={11} color="var(--st-bad)" />
+              <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--st-bad)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Allergies</span>
             </div>
             {patient.allergies.map((a, i) => (
-              <p key={i} style={{ fontSize: 12, color: '#FCA5A5', margin: i < patient.allergies!.length - 1 ? '0 0 2px' : 0 }}>{a}</p>
+              <p key={i} style={{ fontSize: 12, color: 'var(--st-bad)', margin: i < patient.allergies!.length - 1 ? '0 0 2px' : 0 }}>{a}</p>
             ))}
           </div>
         )}
 
         {/* Active Conditions */}
-        <div style={{ borderBottom: '1px solid #2D3748', paddingBottom: 8, marginBottom: 8 }}>
+        <div style={{ borderBottom: '1px solid var(--border-light)', paddingBottom: 8, marginBottom: 8 }}>
           <SectionHeader k="conditions" label="Active Conditions" Icon={Activity} count={activeConditions.length} />
           {open.conditions && (
             activeConditions.length > 0
               ? activeConditions.map(d => (
                 <div key={d.id} style={{ paddingLeft: 19, marginBottom: 7 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: '#93c5fd', fontFamily: 'monospace' }}>{d.icd11.code}</span>
-                    <span style={{ fontSize: 12, color: '#cbd5e1' }}>{d.icd11.description}</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ws-link)', fontFamily: 'monospace' }}>{d.icd11.code}</span>
+                    <span style={{ fontSize: 12, color: 'var(--text-body)' }}>{d.icd11.description}</span>
                   </div>
-                  <div style={{ fontSize: 10, color: '#475569', marginTop: 1 }}>
+                  <div style={{ fontSize: 10, color: 'var(--text-subtle)', marginTop: 1 }}>
                     {new Date(d.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </div>
                 </div>
               ))
-              : <p style={{ fontSize: 12, color: '#475569', paddingLeft: 19, margin: '0 0 4px' }}>None on record</p>
+              : <p style={{ fontSize: 12, color: 'var(--text-subtle)', paddingLeft: 19, margin: '0 0 4px' }}>None on record</p>
           )}
         </div>
 
         {/* Latest Vitals — only rendered if a reading exists */}
         {latestVital && (
-          <div style={{ borderBottom: '1px solid #2D3748', paddingBottom: 8, marginBottom: 8 }}>
+          <div style={{ borderBottom: '1px solid var(--border-light)', paddingBottom: 8, marginBottom: 8 }}>
             <SectionHeader k="vitals" label="Latest Vitals" Icon={HeartPulse} />
             {open.vitals && (
               <div style={{ paddingLeft: 4 }}>
                 {/* Timestamp */}
-                <div style={{ fontSize: 10, color: '#475569', marginBottom: 8 }}>
+                <div style={{ fontSize: 10, color: 'var(--text-subtle)', marginBottom: 8 }}>
                   {new Date(latestVital.recordedAt).toLocaleString('en-GB', {
                     day: 'numeric', month: 'short', year: 'numeric',
                     hour: '2-digit', minute: '2-digit', hour12: false,
@@ -476,13 +492,13 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                   onClick={() => setShowTrendsPanel(true)}
                   style={{
                     width: '100%', padding: '5px 0',
-                    background: 'none', border: '1px solid #374151',
+                    background: 'none', border: '1px solid var(--border)',
                     borderRadius: 6, cursor: 'pointer',
-                    fontSize: 11, fontWeight: 600, color: '#64748b',
+                    fontSize: 11, fontWeight: 600, color: 'var(--text-subtle)',
                     letterSpacing: '0.02em', transition: 'border-color 0.15s, color 0.15s',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#475569'; e.currentTarget.style.color = '#94a3b8'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#374151'; e.currentTarget.style.color = '#64748b'; }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-subtle)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-subtle)'; }}
                 >
                   View Trends
                 </button>
@@ -492,7 +508,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
         )}
 
         {/* Previous Encounters */}
-        <div style={{ borderBottom: '1px solid #2D3748', paddingBottom: 8, marginBottom: 8 }}>
+        <div style={{ borderBottom: '1px solid var(--border-light)', paddingBottom: 8, marginBottom: 8 }}>
           <SectionHeader k="encounters" label="Previous Encounters" Icon={History} count={pastEncounters.length} />
           {open.encounters && (
             pastEncounters.length > 0
@@ -504,33 +520,33 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                     <button
                       onClick={() => toggleEncounter(enc)}
                       style={{
-                        width: '100%', textAlign: 'left', background: isExpanded ? '#1E2427' : 'none',
+                        width: '100%', textAlign: 'left', background: isExpanded ? 'var(--ws-chip)' : 'none',
                         border: 'none', cursor: 'pointer', borderRadius: 6, padding: '6px 8px 6px 19px',
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ fontSize: 12, color: '#cbd5e1', fontWeight: 500 }}>
+                        <div style={{ fontSize: 12, color: 'var(--text-body)', fontWeight: 500 }}>
                           {new Date(enc.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </div>
                         {isExpanded
-                          ? <ChevronDown size={10} color="#64748b" />
-                          : <ChevronRight size={10} color="#64748b" />
+                          ? <ChevronDown size={10} color="var(--text-subtle)" />
+                          : <ChevronRight size={10} color="var(--text-subtle)" />
                         }
                       </div>
                       {enc.chiefComplaint && (
-                        <div style={{ fontSize: 11, color: '#64748b', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <div style={{ fontSize: 11, color: 'var(--text-subtle)', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {enc.chiefComplaint}
                         </div>
                       )}
                       {enc.clinician?.name && (
-                        <div style={{ fontSize: 10, color: '#475569' }}>Dr. {enc.clinician.name}</div>
+                        <div style={{ fontSize: 10, color: 'var(--text-subtle)' }}>Dr. {enc.clinician.name}</div>
                       )}
                     </button>
 
                     {isExpanded && (
                       <div style={{
                         marginLeft: 10, marginTop: 6, marginBottom: 4,
-                        borderLeft: '2px solid #374151', paddingLeft: 10,
+                        borderLeft: '2px solid var(--border)', paddingLeft: 10,
                       }}>
                         {/* Import button — shown once data has loaded */}
                         {nodes != null && onImportEncounter && (
@@ -542,13 +558,13 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                               style={{
                                 display: 'inline-flex', alignItems: 'center', gap: 4,
                                 fontSize: 10, padding: '3px 8px',
-                                border: '1px solid #374151', borderRadius: 4,
-                                color: '#64748b', background: 'none', cursor: 'pointer',
+                                border: '1px solid var(--border)', borderRadius: 4,
+                                color: 'var(--text-subtle)', background: 'none', cursor: 'pointer',
                                 fontFamily: 'inherit', fontWeight: 500,
                                 transition: 'border-color 0.12s, color 0.12s',
                               }}
-                              onMouseEnter={e => { e.currentTarget.style.borderColor = '#475569'; e.currentTarget.style.color = '#94a3b8'; }}
-                              onMouseLeave={e => { e.currentTarget.style.borderColor = '#374151'; e.currentTarget.style.color = '#64748b'; }}
+                              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--text-subtle)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+                              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-subtle)'; }}
                             >
                               ↓ Import to canvas
                             </button>
@@ -556,15 +572,15 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                         )}
                         {/* Note content — exact original 3-way ternary, unchanged */}
                         {nodes == null ? (
-                          <p style={{ fontSize: 11, color: '#475569', fontStyle: 'italic' }}>Loading…</p>
+                          <p style={{ fontSize: 11, color: 'var(--text-subtle)', fontStyle: 'italic' }}>Loading…</p>
                         ) : nodes.length === 0 && !encDbPrescriptions[enc.id]?.length ? (
-                          <p style={{ fontSize: 11, color: '#475569', fontStyle: 'italic' }}>No note content saved.</p>
+                          <p style={{ fontSize: 11, color: 'var(--text-subtle)', fontStyle: 'italic' }}>No note content saved.</p>
                         ) : (
                           <div style={{ fontSize: 12 }}>
                             {nodes.map(node => {
                               if (node.type === 'text' && node.content.trim()) {
                                 return (
-                                  <p key={node.id} style={{ color: '#94a3b8', whiteSpace: 'pre-wrap', margin: '0 0 6px', lineHeight: 1.5, fontSize: 12 }}>
+                                  <p key={node.id} style={{ color: 'var(--text-muted)', whiteSpace: 'pre-wrap', margin: '0 0 6px', lineHeight: 1.5, fontSize: 12 }}>
                                     {node.content}
                                   </p>
                                 );
@@ -572,10 +588,10 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                               if (node.type === 'diagnosis' && node.data.icd11Code) {
                                 return (
                                   <div key={node.id} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5, flexWrap: 'wrap' }}>
-                                    <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Dx</span>
-                                    <span style={{ fontSize: 10, fontWeight: 700, color: '#93c5fd', fontFamily: 'monospace' }}>{node.data.icd11Code}</span>
-                                    <span style={{ fontSize: 11, color: '#94a3b8' }}>{node.data.icd11Description}</span>
-                                    <span style={{ fontSize: 10, color: '#64748b', marginLeft: 'auto' }}>{node.data.status}</span>
+                                    <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--ws-link)', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Dx</span>
+                                    <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ws-link)', fontFamily: 'monospace' }}>{node.data.icd11Code}</span>
+                                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{node.data.icd11Description}</span>
+                                    <span style={{ fontSize: 10, color: 'var(--text-subtle)', marginLeft: 'auto' }}>{node.data.status}</span>
                                   </div>
                                 );
                               }
@@ -589,9 +605,9 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                                   if (isPendingOrInProgress) {
                                     return (
                                       <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
-                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
-                                        <span style={{ fontSize: 11, color: '#94a3b8' }}>{item.name}</span>
-                                        <span style={{ fontSize: 10, color: '#64748b', marginLeft: 'auto' }}>{dbStatus ?? item.status}</span>
+                                        <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--ws-link)', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
+                                        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.name}</span>
+                                        <span style={{ fontSize: 10, color: 'var(--text-subtle)', marginLeft: 'auto' }}>{dbStatus ?? item.status}</span>
                                       </div>
                                     );
                                   }
@@ -605,13 +621,13 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                                     return (
                                       <div key={item.id} style={{ marginBottom: 5 }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                          <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
-                                          <span style={{ fontSize: 11, color: '#94a3b8' }}>{item.name}</span>
+                                          <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--ws-link)', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
+                                          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.name}</span>
                                           <button
                                             onClick={() => setInvResultsPanel(dbItem)}
                                             style={{
                                               marginLeft: 'auto', background: 'none', border: 'none',
-                                              cursor: 'pointer', fontSize: 10, color: '#93c5fd',
+                                              cursor: 'pointer', fontSize: 10, color: 'var(--ws-link)',
                                               textDecoration: 'underline', padding: 0, fontFamily: 'inherit',
                                             }}
                                           >
@@ -626,13 +642,13 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                                   return (
                                     <div key={item.id} style={{ marginBottom: 5 }}>
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
-                                        <span style={{ fontSize: 11, color: '#94a3b8' }}>{item.name}</span>
+                                        <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--ws-link)', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Inv</span>
+                                        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.name}</span>
                                       </div>
                                       {firstRow && (
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 37, marginTop: 2 }}>
                                           <span style={{ fontSize: 12, fontWeight: 700, color: resultColor(firstRow.status) }}>{firstRow.value}</span>
-                                          {firstRow.units && <span style={{ fontSize: 11, color: '#64748b' }}>{firstRow.units}</span>}
+                                          {firstRow.units && <span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>{firstRow.units}</span>}
                                           <span style={{ fontSize: 10, color: resultColor(firstRow.status) }}>{firstRow.status}</span>
                                         </div>
                                       )}
@@ -648,8 +664,8 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                                   ...node.data.items.map((item: any) => (
                                     <div key={item.id} style={{ marginBottom: 5 }}>
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
-                                        <span style={{ fontSize: 11, color: '#94a3b8' }}>{item.drugName} {item.dose} {item.frequency}</span>
+                                        <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--ws-link)', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
+                                        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.drugName} {item.dose} {item.frequency}</span>
                                       </div>
                                       {item.prescriptionId && (
                                         <div style={{ marginLeft: 37, marginTop: 2 }}>
@@ -661,8 +677,8 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                                   ...extraDbRx.map((rx: any) => (
                                     <div key={`db-${rx.id}`} style={{ marginBottom: 5 }}>
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                        <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
-                                        <span style={{ fontSize: 11, color: '#94a3b8' }}>{rx.medication?.name} {rx.medication?.dosage} {rx.medication?.frequency}</span>
+                                        <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--ws-link)', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
+                                        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{rx.medication?.name} {rx.medication?.dosage} {rx.medication?.frequency}</span>
                                       </div>
                                       <div style={{ marginLeft: 37, marginTop: 2 }}>
                                         {renderDispensingStatus(rx.id, rx.medication?.name ?? '')}
@@ -677,8 +693,8 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                             {!nodes.some(n => n.type === 'prescription') && (encDbPrescriptions[enc.id] ?? []).map((rx: any) => (
                               <div key={`db-${rx.id}`} style={{ marginBottom: 5 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                  <span style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
-                                  <span style={{ fontSize: 11, color: '#94a3b8' }}>{rx.medication?.name} {rx.medication?.dosage} {rx.medication?.frequency}</span>
+                                  <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--ws-link)', background: 'rgba(147,197,253,0.15)', padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace' }}>Rx</span>
+                                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{rx.medication?.name} {rx.medication?.dosage} {rx.medication?.frequency}</span>
                                 </div>
                                 <div style={{ marginLeft: 37, marginTop: 2 }}>
                                   {renderDispensingStatus(rx.id, rx.medication?.name ?? '')}
@@ -692,36 +708,36 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                   </div>
                 );
               })
-              : <p style={{ fontSize: 12, color: '#475569', paddingLeft: 19, margin: '0 0 4px' }}>No previous encounters</p>
+              : <p style={{ fontSize: 12, color: 'var(--text-subtle)', paddingLeft: 19, margin: '0 0 4px' }}>No previous encounters</p>
           )}
         </div>
 
         {/* Active Prescriptions */}
-        <div style={{ borderBottom: '1px solid #2D3748', paddingBottom: 8, marginBottom: 8 }}>
+        <div style={{ borderBottom: '1px solid var(--border-light)', paddingBottom: 8, marginBottom: 8 }}>
           <SectionHeader k="prescriptions" label="Active Prescriptions" Icon={Pill} count={activeMeds.length} />
           {open.prescriptions && (
             activeMeds.length > 0
               ? activeMeds.map(m => (
                 <div key={m.id} style={{ paddingLeft: 19, marginBottom: 7 }}>
-                  <div style={{ fontSize: 12, color: '#cbd5e1', fontWeight: 500 }}>{m.name}</div>
-                  <div style={{ fontSize: 11, color: '#64748b' }}>{m.dosage}{m.frequency ? ` · ${m.frequency}` : ''}</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-body)', fontWeight: 500 }}>{m.name}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-subtle)' }}>{m.dosage}{m.frequency ? ` · ${m.frequency}` : ''}</div>
                 </div>
               ))
-              : <p style={{ fontSize: 12, color: '#475569', paddingLeft: 19, margin: '0 0 4px' }}>No active prescriptions</p>
+              : <p style={{ fontSize: 12, color: 'var(--text-subtle)', paddingLeft: 19, margin: '0 0 4px' }}>No active prescriptions</p>
           )}
         </div>
 
         {/* Recent Investigations (from V2 orders API — last 3 items) */}
-        <div style={{ borderBottom: '1px solid #2D3748', paddingBottom: 8, marginBottom: 8 }}>
+        <div style={{ borderBottom: '1px solid var(--border-light)', paddingBottom: 8, marginBottom: 8 }}>
           <SectionHeader k="recentInvestigations" label="Recent Investigations" Icon={FlaskConical} count={recentInvestigations.length} />
           {open.recentInvestigations && (
             recentInvestigations.length > 0
               ? recentInvestigations.map((item: any) => {
                   const statusMap: Record<string, { bg: string; color: string }> = {
-                    Pending:       { bg: '#1E2427', color: '#94a3b8' },
-                    'In Progress': { bg: '#1e3a5f', color: '#93c5fd' },
-                    Resulted:      { bg: '#14311f', color: '#6ee7b7' },
-                    Amended:       { bg: '#2d2008', color: '#fcd34d' },
+                    Pending:       { bg: 'var(--ws-chip)', color: 'var(--text-muted)' },
+                    'In Progress': { bg: 'var(--ws-blue-bg)', color: 'var(--ws-link)' },
+                    Resulted:      { bg: 'var(--st-ok-bg)', color: 'var(--st-ok)' },
+                    Amended:       { bg: 'var(--st-warn-bg)', color: 'var(--st-warn)' },
                   };
                   const s = statusMap[item.status] ?? statusMap.Pending;
                   const isClickable = item.status === 'Resulted' || item.status === 'Amended';
@@ -740,7 +756,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 12, color: '#cbd5e1', fontWeight: 500, marginBottom: 2 }}>
+                        <div style={{ fontSize: 12, color: 'var(--text-body)', fontWeight: 500, marginBottom: 2 }}>
                           {item.name}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -751,15 +767,15 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                             {item.status}
                           </span>
                           {item.specimen && (
-                            <span style={{ fontSize: 10, color: '#475569' }}>{item.specimen}</span>
+                            <span style={{ fontSize: 10, color: 'var(--text-subtle)' }}>{item.specimen}</span>
                           )}
                         </div>
                       </div>
-                      <ChevronRight size={11} color="#475569" style={{ flexShrink: 0 }} />
+                      <ChevronRight size={11} color="var(--text-subtle)" style={{ flexShrink: 0 }} />
                     </div>
                   ) : (
                     <div key={item.id} style={{ paddingLeft: 19, marginBottom: 8 }}>
-                      <div style={{ fontSize: 12, color: '#cbd5e1', fontWeight: 500, marginBottom: 2 }}>
+                      <div style={{ fontSize: 12, color: 'var(--text-body)', fontWeight: 500, marginBottom: 2 }}>
                         {item.name}
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -770,13 +786,13 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
                           {item.status}
                         </span>
                         {item.specimen && (
-                          <span style={{ fontSize: 10, color: '#475569' }}>{item.specimen}</span>
+                          <span style={{ fontSize: 10, color: 'var(--text-subtle)' }}>{item.specimen}</span>
                         )}
                       </div>
                     </div>
                   );
                 })
-              : <p style={{ fontSize: 12, color: '#475569', paddingLeft: 19, margin: '0 0 4px' }}>None on record</p>
+              : <p style={{ fontSize: 12, color: 'var(--text-subtle)', paddingLeft: 19, margin: '0 0 4px' }}>None on record</p>
           )}
         </div>
 
@@ -787,11 +803,11 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
             pendingInvs.length > 0
               ? pendingInvs.map((inv: any) => (
                 <div key={inv.id} style={{ paddingLeft: 19, marginBottom: 6 }}>
-                  <div style={{ fontSize: 12, color: '#cbd5e1' }}>{inv.name}</div>
-                  <div style={{ fontSize: 10, color: '#475569' }}>Pending · current encounter</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-body)' }}>{inv.name}</div>
+                  <div style={{ fontSize: 10, color: 'var(--text-subtle)' }}>Pending · current encounter</div>
                 </div>
               ))
-              : <p style={{ fontSize: 12, color: '#475569', paddingLeft: 19, margin: '0 0 4px' }}>None pending</p>
+              : <p style={{ fontSize: 12, color: 'var(--text-subtle)', paddingLeft: 19, margin: '0 0 4px' }}>None pending</p>
           )}
         </div>
       </div>
@@ -809,6 +825,7 @@ export default function ConsultationSidebar({ patientId, patient, encounters, vi
       {/* Slide-out investigation results panel (encounter history) */}
       <InvResultsPanel
         item={invResultsPanel}
+        patientId={patientId}
         onClose={() => setInvResultsPanel(null)}
       />
 

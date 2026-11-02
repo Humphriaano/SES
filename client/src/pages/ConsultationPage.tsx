@@ -11,8 +11,9 @@ import DiagnosisBlock from '../components/consultation/blocks/DiagnosisBlock';
 import InvestigationBlock from '../components/consultation/blocks/InvestigationBlock';
 import PrescriptionBlock from '../components/consultation/blocks/PrescriptionBlock';
 import PMHBlock from '../components/consultation/blocks/PMHBlock';
+import FinalInvestigationResults from '../components/consultation/FinalInvestigationResults';
 import ImportedBlock from '../components/consultation/blocks/ImportedBlock';
-import FloatingToolbar from '../components/consultation/FloatingToolbar';
+import InsertBar from '../components/consultation/InsertBar';
 import ConsultationSidebar from '../components/consultation/ConsultationSidebar';
 import CdsPanel from '../components/consultation/CdsPanel/CdsPanel';
 
@@ -103,7 +104,9 @@ export default function ConsultationPage() {
     setCurrent(e);
     currentIdRef.current = e.id;
     setActiveEncounterId(e.id);
-    setNodes(deserializeNodes(e.notes ?? undefined));
+    const loaded = deserializeNodes(e.notes ?? undefined);
+    setNodes(loaded);
+    nodesRef.current = loaded;
     isDirtyRef.current = false;
   }
 
@@ -156,6 +159,8 @@ export default function ConsultationPage() {
   }
 
   function insertBlock(type: BlockType) {
+    // Read the live list, not the one captured at the last render — two quick edits must not overwrite each other.
+    const nodes = nodesRef.current;
     const cursor = lastCursorRef.current;
     const block = makeBlock(type);
     const after: CanvasNode = { type: 'text', id: uid(), content: '' };
@@ -189,6 +194,16 @@ export default function ConsultationPage() {
     updateNodes(newNodes);
   }
 
+  // Adds a new block directly below an existing one (e.g. a second diagnosis under the first).
+  function insertBlockAfter(afterId: string, type: BlockType) {
+    // Read the live list, not the one captured at the last render — two quick edits must not overwrite each other.
+    const nodes = nodesRef.current;
+    const idx = nodes.findIndex(n => n.id === afterId);
+    const block = makeBlock(type);
+    if (idx === -1) { updateNodes([...nodes, block, { type: 'text', id: uid(), content: '' }]); return; }
+    updateNodes([...nodes.slice(0, idx + 1), block, ...nodes.slice(idx + 1)]);
+  }
+
   function makeBlock(type: BlockType): CanvasNode {
     switch (type) {
       case 'diagnosis':
@@ -202,7 +217,8 @@ export default function ConsultationPage() {
           id: d.id,
           icd11Code: d.icd11.code,
           icd11Description: d.icd11.description,
-          dateFirstConfirmed: d.createdAt,
+          dateFirstConfirmed: d.diagnosedAt ?? d.createdAt,
+          diagnosedYear: d.diagnosedAt ? new Date(d.diagnosedAt).getUTCFullYear() : undefined,
           status: d.resolvedAt ? 'RESOLVED' : 'CONFIRMED',
         }));
         return { type: 'pmh', id: uid(), data: { entries } };
@@ -211,14 +227,20 @@ export default function ConsultationPage() {
   }
 
   function updateNodeText(id: string, content: string) {
+    // Read the live list, not the one captured at the last render — two quick edits must not overwrite each other.
+    const nodes = nodesRef.current;
     updateNodes(nodes.map(n => n.id === id && n.type === 'text' ? { ...n, content } : n));
   }
 
   function updateBlockData(id: string, data: any) {
+    // Read the live list, not the one captured at the last render — two quick edits must not overwrite each other.
+    const nodes = nodesRef.current;
     updateNodes(nodes.map(n => n.id === id ? { ...n, data } as CanvasNode : n));
   }
 
   function removeNode(id: string) {
+    // Read the live list, not the one captured at the last render — two quick edits must not overwrite each other.
+    const nodes = nodesRef.current;
     const filtered = nodes.filter(n => n.id !== id);
     const cleaned = filtered.length === 0 || filtered[filtered.length - 1].type !== 'text'
       ? [...filtered, { type: 'text' as const, id: uid(), content: '' }]
@@ -227,6 +249,8 @@ export default function ConsultationPage() {
   }
 
   function handleImportEncounter(data: ImportedBlockData) {
+    // Read the live list, not the one captured at the last render — two quick edits must not overwrite each other.
+    const nodes = nodesRef.current;
     if (!isOpen) { toast.error('Open an encounter before importing'); return; }
     // Deduplicate: skip if this encounter is already imported
     if (nodes.some(n => n.type === 'imported' && (n as Extract<CanvasNode, { type: 'imported' }>).data.encounterId === data.encounterId)) {
@@ -256,122 +280,83 @@ export default function ConsultationPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%', background: 'var(--bg-page)' }}>
-      {/* Consultation top bar */}
-      <div style={{
-        background: 'var(--bg-card)', borderBottom: '1px solid var(--border)',
-        padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 12,
-        position: 'sticky', top: 0, zIndex: 20,
-        boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-      }}>
-        {/* Left: patient meta */}
-        <button
-          onClick={() => setSidebarOpen(v => !v)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-subtle)', padding: 4, flexShrink: 0 }}
-          title={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
-        >
-          {sidebarOpen ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
-        </button>
-
-        <div style={{ flex: 1, minWidth: 0 }}>
-          {patient && (
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-heading)' }}>
-                {patient.firstName} {patient.lastName}
-              </span>
-              <span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>
-                {calcAge(patient.dateOfBirth)} yrs · {patient.gender}
-                {patient.nationalId ? ` · ${patient.nationalId}` : ''}
-              </span>
-              {current && (
-                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                  · {new Date(current.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Centre: encounter type */}
-        {isOpen && (
-          <div style={{ position: 'relative', flexShrink: 0 }}>
-            <select
-              value={encounterType}
-              onChange={e => setEncounterType(e.target.value as EncounterType)}
-              style={{
-                appearance: 'none', background: 'var(--bg-surface)', border: '1.5px solid var(--border-input)',
-                borderRadius: 8, padding: '5px 28px 5px 12px', fontSize: 12.5,
-                color: 'var(--text-body)', fontWeight: 600, cursor: 'pointer', outline: 'none',
-              }}
+      {/* Toolbar strip */}
+      <div style={{ background: 'var(--bg-card)', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: 1600, margin: '0 auto', padding: isMobile ? '10px 14px' : '10px 24px', boxSizing: 'border-box', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <button
+              className="cx-ib"
+              type="button"
+              onClick={() => setSidebarOpen(v => !v)}
+              aria-label={sidebarOpen ? 'Hide patient summary' : 'Show patient summary'}
+              aria-pressed={!sidebarOpen}
+              title={sidebarOpen ? 'Hide patient summary' : 'Show patient summary'}
             >
-              {ENCOUNTER_TYPES.map(t => <option key={t}>{t}</option>)}
-            </select>
-            <ChevronDown size={12} style={{ position: 'absolute', right: 9, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-subtle)', pointerEvents: 'none' }} />
+              {sidebarOpen ? <PanelLeftClose size={17} /> : <PanelLeftOpen size={17} />}
+            </button>
+
+            {isOpen && (
+              <div style={{ position: 'relative' }}>
+                <select
+                  className="cx-btn"
+                  value={encounterType}
+                  onChange={e => setEncounterType(e.target.value as EncounterType)}
+                  aria-label="Encounter type"
+                  style={{ appearance: 'none', paddingRight: 30 }}
+                >
+                  {ENCOUNTER_TYPES.map(t => <option key={t}>{t}</option>)}
+                </select>
+                <ChevronDown size={13} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-subtle)', pointerEvents: 'none' }} />
+              </div>
+            )}
+
+            {isOpen && (
+              <>
+                <button className="cx-btn" type="button" onClick={() => saveNow(true)} disabled={saving}>
+                  <Save size={14} /> {saving ? 'Saving…' : 'Save draft'}
+                </button>
+                <button className="cx-red" type="button" onClick={finaliseNote}>Finalise note</button>
+              </>
+            )}
+            {current?.status === 'CLOSED' && (
+              <button className="cx-btn" type="button" onClick={() => setShowFinalNote(true)}>
+                <FileText size={14} /> View note
+              </button>
+            )}
+            {(!current || current.status === 'CLOSED') && (
+              <button className="cx-red" type="button" onClick={startEncounter}>
+                <Plus size={14} /> New encounter
+              </button>
+            )}
           </div>
-        )}
-
-        {/* Right: actions */}
-        <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-          {isOpen && (
-            <>
-              <button
-                onClick={() => saveNow(true)}
-                disabled={saving}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 6,
-                  background: 'var(--bg-surface)', color: 'var(--text-body)', border: '1.5px solid var(--border-input)',
-                  borderRadius: 8, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
-                }}
-              >
-                <Save size={13} /> {saving ? 'Saving…' : 'Save Draft'}
-              </button>
-              <button
-                onClick={finaliseNote}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 6,
-                  background: 'var(--bg-nav)', color: '#fff', border: 'none',
-                  borderRadius: 8, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
-                }}
-              >
-                <CheckCircle size={13} /> Finalise Note
-              </button>
-            </>
-          )}
-          {current?.status === 'CLOSED' && (
-            <button
-              onClick={() => setShowFinalNote(true)}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--badge-green-bg)', color: 'var(--badge-green-text)', border: '1.5px solid var(--badge-green-text)', borderRadius: 8, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
-            >
-              <FileText size={13} /> View Note
-            </button>
-          )}
-          {(!current || current.status === 'CLOSED') && (
-            <button
-              onClick={startEncounter}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--ses-red)', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
-            >
-              <Plus size={13} /> New Encounter
-            </button>
+          {current && (
+            <span style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
+              {current.status === 'OPEN' ? 'Open encounter' : 'Finalised'} · {new Date(current.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </span>
           )}
         </div>
       </div>
 
-      {/* Body */}
-      <div style={{ display: 'flex', flex: 1 }}>
-        {/* Sidebar */}
-        <ConsultationSidebar
-          patientId={patientId!}
-          patient={patient}
-          encounters={encounters}
-          visible={sidebarOpen}
-          currentNodes={nodes}
-          onImportEncounter={isOpen ? handleImportEncounter : undefined}
-        />
+      {/* Body: patient summary | note | decision support */}
+      <main style={{ maxWidth: 1600, margin: '0 auto', width: '100%', boxSizing: 'border-box', padding: isMobile ? '14px 14px 32px' : '20px 24px 40px' }}>
+        <div style={{
+          display: 'grid', gap: 20, alignItems: 'start',
+          gridTemplateColumns: isMobile ? '1fr'
+            : isTablet ? (sidebarOpen ? '270px minmax(0, 1fr)' : 'minmax(0, 1fr)')
+              : (sidebarOpen ? '270px minmax(0, 1fr) 400px' : 'minmax(0, 1fr) 400px'),
+        }}>
+          <ConsultationSidebar
+            patientId={patientId!}
+            patient={patient}
+            encounters={encounters}
+            visible={sidebarOpen}
+            currentNodes={nodes}
+            onImportEncounter={isOpen ? handleImportEncounter : undefined}
+          />
 
-        {/* Canvas area */}
-        <div style={{ flex: 1, padding: isMobile ? '14px 14px 14px 14px' : '28px 80px 28px 24px' }}>
-          <div style={{ display: 'flex', height: isMobile ? 'auto' : 'calc(100vh - 60px)', minHeight: isMobile ? 'calc(100vh - 120px)' : undefined, overflow: isMobile ? 'visible' : 'hidden', gap: 24 }}>
-            {/* Left: notes area */}
-            <div style={{ flex: 1, minWidth: 0, overflowX: 'hidden', overflowY: isMobile ? 'visible' : 'auto', height: isMobile ? 'auto' : '100%' }}>
+          <section className="cx-card" aria-label="Consultation note" style={{ minWidth: 0 }}>
+            {isOpen && <InsertBar onInsert={insertBlock} />}
+            <div style={{ padding: isMobile ? '16px' : '20px 24px 28px' }}>
               {current ? (
                 <>
                   {current.status === 'CLOSED' && (
@@ -379,9 +364,7 @@ export default function ConsultationPage() {
                       <span>⚠</span> This encounter has been finalised. Open a new encounter to continue documenting.
                     </div>
                   )}
-                  <div style={{ display: 'flex', gap: 0, maxWidth: 860 }}>
-                    {/* Note canvas */}
-                    <div style={{ flex: 1, background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border)', padding: isMobile ? '16px 16px' : '28px 32px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)', minHeight: isMobile ? 320 : 560 }}>
+                  <div style={{ minHeight: isMobile ? 320 : 520 }}>
                       {(() => {
                         const importedNodes = nodes.filter(n => n.type === 'imported') as Extract<CanvasNode, { type: 'imported' }>[];
                         const regularNodes = nodes.filter(n => n.type !== 'imported');
@@ -415,7 +398,7 @@ export default function ConsultationPage() {
                             ? (hasImports
                                 ? 'Begin writing your continuation note here…'
                                 : (isOnlyEmpty
-                                    ? 'Begin writing your consultation note…\n\nUse the block buttons on the right to insert structured data at any point.'
+                                    ? 'Begin writing your consultation note…\n\nUse the Insert buttons above to add a diagnosis, investigation, prescription or history at any point.'
                                     : ''))
                             : '';
                           return (
@@ -437,6 +420,7 @@ export default function ConsultationPage() {
                               onChange={data => updateBlockData(node.id, data)}
                               onRemove={() => removeNode(node.id)}
                               onConfirmed={handleDiagnosisConfirmed}
+                              onAddAnother={() => insertBlockAfter(node.id, 'diagnosis')}
                             />
                           );
                         }
@@ -466,6 +450,7 @@ export default function ConsultationPage() {
                               onChange={data => updateBlockData(node.id, data)}
                               onRemove={() => removeNode(node.id)}
                               onResolve={handleDiagnosisResolved}
+                              patientId={patientId}
                             />
                           );
                         }
@@ -476,38 +461,43 @@ export default function ConsultationPage() {
                       })()}
                     </div>
 
-                    {/* Floating toolbar */}
-                    {isOpen && (
-                      <FloatingToolbar onInsert={insertBlock} />
-                    )}
-                  </div>
                 </>
               ) : (
-                <div style={{ maxWidth: 480, margin: '80px auto', textAlign: 'center' }}>
-                  <div style={{ width: 56, height: 56, borderRadius: 14, background: 'var(--ses-blue-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                    <FileText size={24} color="var(--ses-blue-deep)" />
+                <div style={{ maxWidth: 480, margin: '60px auto', textAlign: 'center' }}>
+                  <div style={{ width: 56, height: 56, borderRadius: 14, background: 'var(--ws-chip)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                    <FileText size={24} color="var(--text-muted)" />
                   </div>
                   <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-heading)', marginBottom: 8 }}>No active encounter</p>
                   <p style={{ fontSize: 14, color: 'var(--text-subtle)', marginBottom: 24 }}>Start a new encounter to begin documenting this visit.</p>
-                  <button
-                    onClick={startEncounter}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--ses-red)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
-                  >
-                    <Plus size={16} /> Start New Encounter
+                  <button className="cx-red" type="button" onClick={startEncounter} style={{ height: 40, padding: '0 18px', fontSize: 14 }}>
+                    <Plus size={16} /> Start new encounter
                   </button>
                 </div>
               )}
             </div>
+          </section>
 
-            {/* Right: CDS panel — hidden on mobile and tablet */}
-            {!isTablet && (
-              <div style={{ width: 380, flexShrink: 0, height: '100%', overflowY: 'auto', position: 'relative' }}>
-                <CdsPanel patientId={patientId!} patient={patient} nodes={nodes} />
-              </div>
-            )}
-          </div>
+          {/* Decision support — hidden on mobile and tablet */}
+          {!isTablet && (
+            <aside aria-label="Clinical decision support" style={{ position: 'sticky', top: 12, alignSelf: 'start', maxHeight: 'calc(100vh - 140px)', overflowY: 'auto' }}>
+              <CdsPanel patientId={patientId!} patient={patient} nodes={nodes} />
+            </aside>
+          )}
         </div>
-      </div>
+      </main>
+
+      <style>{`
+        .cx-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
+        .cx-ib { width: 36px; height: 36px; border: 1px solid var(--btn2-line); border-radius: 9px; background: var(--btn2); color: var(--text-muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+        .cx-ib:hover { background: var(--ws-chip); color: var(--text-heading); }
+        .cx-btn { height: 36px; padding: 0 14px; border: 1px solid var(--btn2-line); border-radius: 9px; background: var(--btn2); color: var(--text-heading); font: inherit; font-size: 13px; font-weight: 600;
+          cursor: pointer; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .cx-btn:hover:not(:disabled) { background: var(--ws-chip); }
+        .cx-btn:disabled { opacity: .6; cursor: wait; }
+        .cx-red { height: 36px; padding: 0 16px; border: 0; border-radius: 9px; background: #C41E25; color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+          display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; transition: filter .15s; }
+        .cx-red:hover { filter: brightness(1.06); }
+      `}</style>
     </div>
   );
 }
@@ -662,13 +652,8 @@ function FinalNoteView({ patient, encounter, nodes, encounterType, onBack }: {
       )}
 
       {invBlocks.length > 0 && (
-        <SummaryCard title="Investigations Ordered">
-          {invBlocks.flatMap(b => b.data.items).map(item => (
-            <div key={item.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid var(--border-light)' }}>
-              <span style={{ fontSize: 13, color: 'var(--text-body)' }}>{item.name}</span>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.status}</span>
-            </div>
-          ))}
+        <SummaryCard title="Investigations & Results">
+          <FinalInvestigationResults items={invBlocks.flatMap(b => b.data.items)} encounterId={encounter.id} />
         </SummaryCard>
       )}
 

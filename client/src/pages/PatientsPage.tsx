@@ -4,7 +4,7 @@ import api from '../api/client';
 import { Patient } from '../types';
 import { usePatient } from '../context/PatientContext';
 import { Search, Plus, Users, ChevronRight, Calendar, Phone, CreditCard } from 'lucide-react';
-import NewPatientModal from '../components/NewPatientModal';
+import RegisterModal from '../components/RegisterModal';
 import toast from 'react-hot-toast';
 
 export default function PatientsPage() {
@@ -181,7 +181,7 @@ export default function PatientsPage() {
       </div>
 
       {showModal && (
-        <NewPatientModal
+        <RegisterModal
           onClose={() => setShowModal(false)}
           onCreated={(p) => {
             toast.success('Patient registered successfully');

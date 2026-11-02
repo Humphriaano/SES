@@ -16,6 +16,7 @@ export interface DisplayRecord {
   weight: number | null;
   height: number | null;
   bmi: number | null;
+  recordedBy: string | null;
 }
 
 export function toDisplay(v: Vital & { bmi?: number | null }): DisplayRecord {
@@ -34,6 +35,7 @@ export function toDisplay(v: Vital & { bmi?: number | null }): DisplayRecord {
     weight:    v.weight                 ?? null,
     height:    v.height                 ?? null,
     bmi:       v.bmi                    ?? null,
+    recordedBy: v.recordedBy?.name      ?? null,
   };
 }
 

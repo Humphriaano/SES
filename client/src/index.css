@@ -3,22 +3,22 @@
 
 /* ── CSS Design Tokens ─────────────────────────────────────────────── */
 :root {
-  --bg-page:         var(--ses-bg-subtle);
+  --bg-page:         #F4F5F7;
   --bg-card:         var(--ses-bg);
   --bg-surface:      #f8fafc;
   --bg-surface-2:    #f1f5f9;
   --bg-input:        #f8fafc;
-  --bg-nav:          var(--ses-charcoal);
+  --bg-nav:          #1E2124;
   --bg-topbar:       var(--ses-bg);
-  --border:          #e8ecf0;
+  --border:          #E6E8EB;
   --border-input:    #e2e8f0;
-  --border-light:    #f1f5f9;
-  --text-heading:    var(--ses-text);
-  --text-heading-alt:var(--ses-text);
+  --border-light:    #EEF0F2;
+  --text-heading:    #16181A;
+  --text-heading-alt:#16181A;
   --text-body:       #374151;
   --text-body2:      #475569;
-  --text-muted:      var(--ses-text-muted);
-  --text-subtle:     #94a3b8;
+  --text-muted:      #5A6066;
+  --text-subtle:     #6B7178;
   --text-faint:      #cbd5e1;
   --shadow-sm:       rgba(0,0,0,0.04);
   --shadow-md:       rgba(0,0,0,0.06);
@@ -37,26 +37,53 @@
   --badge-blue-bg:   var(--ses-blue-tint);        --badge-blue-text:  var(--ses-blue-deep);
   --badge-charcoal-bg: #ECECEC; --badge-charcoal-text: var(--ses-charcoal);
   --modal-overlay:   rgba(15,23,42,0.5);
+  /* Workspace header bar (same dark bar in light mode, per design) */
+  --bar:#1E2124; --bar-text:#FFFFFF; --bar-muted:#A3AAB1; --bar-line:rgba(255,255,255,.09);
+  --bar-field:rgba(255,255,255,.08); --nav-text:#A9B0B6; --nav-active-bg:rgba(255,255,255,.08); --nav-active-line:#E5484D;
+  /* Clinical status + chart series (vitals design) */
+  --st-ok:#15803D; --st-warn:#C2560A; --st-bad:#C0161E; --st-ok-bg:#E7F6EC; --st-warn-bg:#FFF1E6; --st-bad-bg:#FDECEC;
+  --s1:#1F5F96; --s2:#5B9BD5;
+  --btn2:#FFFFFF; --btn2-line:#D5D9DE;
+  --ws-link:#1F5F96; --ws-chip:#F0F2F4; --ws-chip-on:#16181A; --ws-chip-on-text:#FFFFFF; --ws-head:#FAFBFC;
+  --ws-tree:brightness(0); --ws-tree-op:.05;
+  --ws-amber:#B25E09; --ws-amber-bg:#FFF4E5; --ws-blue:#1F5F96; --ws-blue-bg:#EAF2FA; --ws-green:#1E7A46; --ws-green-bg:#E8F5EE;
+  --ring:            #2671AE;
+  --ring-glow:       rgba(38,113,174,.14);
+  --font-body:       'Open Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-heading:    'Montserrat', 'Open Sans', system-ui, sans-serif;
+  --radius-field:    12px;
+  --radius-card:     14px;
+  --bg-header-text:  var(--text-heading-alt);
 }
 
 [data-theme="dark"] {
-  --bg-page:         #0d1117;
-  --bg-card:         #161b22;
-  --bg-surface:      #1c2128;
-  --bg-surface-2:    #22272e;
-  --bg-input:        #1c2128;
-  --bg-nav:          #010409;
-  --bg-topbar:       #161b22;
-  --border:          #30363d;
-  --border-input:    #30363d;
-  --border-light:    #21262d;
-  --text-heading:    #f0f6fc;
-  --text-heading-alt:#e6edf3;
-  --text-body:       #c9d1d9;
-  --text-body2:      #adbac7;
-  --text-muted:      #8b949e;
-  --text-subtle:     #6e7681;
-  --text-faint:      #484f58;
+  color-scheme: dark;
+  --bar:#181B1E; --bar-line:rgba(255,255,255,.08); --bar-field:rgba(255,255,255,.07);
+  --st-ok:#4ADE80; --st-warn:#FB923C; --st-bad:#FF6B70; --st-ok-bg:rgba(74,222,128,.12); --st-warn-bg:rgba(251,146,60,.14); --st-bad-bg:rgba(255,107,112,.14);
+  --s1:#5397DC; --s2:#2B65A3;
+  --btn2:#1F2326; --btn2-line:#33383D;
+  --ws-link:#7DB4E6; --ws-chip:#23272B; --ws-chip-on:#F2F3F4; --ws-chip-on-text:#111315; --ws-head:#1C1F22;
+  --ws-tree:none; --ws-tree-op:.045;
+  --ws-amber:#F0A54A; --ws-amber-bg:rgba(240,165,74,.12); --ws-blue:#7DB4E6; --ws-blue-bg:rgba(125,180,230,.12); --ws-green:#4CC38A; --ws-green-bg:rgba(76,195,138,.12);
+  --ring:            #4A92D0;
+  --ring-glow:       rgba(74,146,208,.18);
+  --bg-page:         #111315;
+  --bg-card:         #181B1E;
+  --bg-surface:      #1A1D20;
+  --bg-surface-2:    #23272B;
+  --bg-input:        #1A1D20;
+  --bg-nav:          #0C0E0F;
+  --bg-topbar:       #181B1E;
+  --border:          #262A2E;
+  --border-input:    #2A2F33;
+  --border-light:    #22262A;
+  --text-heading:    #FFFFFF;
+  --text-heading-alt:#F2F3F4;
+  --text-body:       #E4E6E8;
+  --text-body2:      #C9CDD1;
+  --text-muted:      #A3AAB1;
+  --text-subtle:     #858C93;
+  --text-faint:      #4A5056;
   --shadow-sm:       rgba(0,0,0,0.3);
   --shadow-md:       rgba(0,0,0,0.4);
   --chip-red-bg:     #3a1f12;
@@ -71,6 +98,21 @@
   --modal-overlay:   rgba(0,0,0,0.7);
 }
 
+
+/* Blue skin: charcoal surfaces with the SES blue header, as in the Workspace design. */
+[data-skin="blue"] {
+  --bg-page:    #111315;
+  --bg-card:    #181B1E;
+  --bg-surface: #1A1D20;
+  --bg-input:   #1A1D20;
+  --bg-topbar:  #1F5F96;
+  --bg-nav:     #1F5F96;
+  --border:     #262A2E;
+  --border-input: #2C3135;
+  --bar:#1F5F96; --bar-muted:#CFE0F0; --bar-line:rgba(255,255,255,.16); --bar-field:rgba(0,0,0,.18);
+  --nav-text:#D6E6F4; --nav-active-bg:rgba(255,255,255,.12); --nav-active-line:#FFFFFF;
+}
+
 /* ── Base ──────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -79,7 +121,7 @@
 }
 
 body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   background: var(--bg-page);
   color: var(--text-heading);
   -webkit-font-smoothing: antialiased;
@@ -91,20 +133,22 @@ body {
   min-height: 100vh;
 }
 
+h1, h2, h3, h4 { font-family: var(--font-heading); }
+
 /* ── Scrollbar ─────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
-[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #4b5563; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #3a4046; }
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
 
 /* ── Shared input style ────────────────────────────────────────────── */
 .field-input {
   width: 100%;
   border: 1.5px solid var(--border-input);
-  border-radius: 8px;
-  padding: 8px 12px;
+  border-radius: var(--radius-field);
+  padding: 9px 14px;
   font-size: 13.5px;
   color: var(--text-heading);
   background: var(--bg-card);
@@ -112,8 +156,8 @@ body {
   outline: none;
 }
 .field-input:focus {
-  border-color: var(--ses-red);
-  box-shadow: 0 0 0 3px var(--ses-red-tint);
+  border-color: var(--ring);
+  box-shadow: 0 0 0 4px var(--ring-glow);
 }
 .field-input:disabled {
   background: var(--bg-surface);
@@ -123,7 +167,7 @@ body {
 /* ── Card ──────────────────────────────────────────────────────────── */
 .card {
   background: var(--bg-card);
-  border-radius: 12px;
+  border-radius: var(--radius-card);
   border: 1px solid var(--border);
   box-shadow: 0 1px 3px var(--shadow-sm), 0 1px 2px var(--shadow-sm);
   transition: background-color 0.2s, border-color 0.2s;
@@ -164,12 +208,15 @@ body {
   font-size: 13px;
   font-weight: 600;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-family: var(--font-heading);
+  letter-spacing: 0.2px;
   border: none;
   cursor: pointer;
   transition: background 0.15s, box-shadow 0.15s;
 }
-.btn-primary:hover { background: var(--ses-red-dark); box-shadow: 0 2px 8px rgba(215,29,36,0.25); }
+.btn-primary:hover { background: var(--ses-red-dark); box-shadow: 0 6px 16px rgba(196,30,37,0.28); }
+.btn-primary:active { transform: translateY(1px); }
 .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .btn-secondary {
@@ -181,7 +228,9 @@ body {
   font-size: 13px;
   font-weight: 600;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-family: var(--font-heading);
+  letter-spacing: 0.2px;
   border: 1.5px solid var(--border-input);
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;

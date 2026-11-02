@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { PatientProvider } from './context/PatientContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { ServicePointProvider } from './context/ServicePointContext';
 import AppLayout from './components/layout/AppLayout';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
@@ -34,6 +35,7 @@ export default function App() {
     <ThemeProvider>
     <AuthProvider>
       <PatientProvider>
+      <ServicePointProvider>
         <BrowserRouter>
           <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
           <Routes>
@@ -67,6 +69,7 @@ export default function App() {
             </Route>
           </Routes>
         </BrowserRouter>
+      </ServicePointProvider>
       </PatientProvider>
     </AuthProvider>
     </ThemeProvider>

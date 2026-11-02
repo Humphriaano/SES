@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo, FormEvent } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { Search, Plus, Pencil, Trash2 } from 'lucide-react';
 import api from '../api/client';
-import {
-  Users, Clock, CheckCircle, XCircle, RefreshCw,
-  AlertCircle, Search, UserCheck, UserX, Shield,
-  DoorOpen, Plus, Trash2, Pencil, Check, X,
-} from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -22,6 +21,10 @@ interface AdminUser {
   rejectionReason: string | null;
 }
 
+interface FacilityRoom { id: string; name: string; tag: string; active: boolean; waitingCount: number; }
+
+type Section = 'pending' | 'users' | 'rooms';
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const ROLES: { value: string; label: string }[] = [
@@ -29,717 +32,572 @@ const ROLES: { value: string; label: string }[] = [
   { value: 'clinician', label: 'Clinician' },
   { value: 'nurse', label: 'Nurse' },
   { value: 'pharmacist', label: 'Pharmacist' },
-  { value: 'lab_tech', label: 'Lab Technician' },
+  { value: 'lab_tech', label: 'Lab technician' },
   { value: 'receptionist', label: 'Receptionist' },
-  { value: 'billing', label: 'Billing Officer' },
+  { value: 'billing', label: 'Billing officer' },
 ];
 
+const STATUS: Record<string, { label: string; dot: string }> = {
+  active:      { label: 'Active',      dot: 'var(--st-ok)' },
+  pending:     { label: 'Pending',     dot: 'var(--st-warn)' },
+  rejected:    { label: 'Rejected',    dot: 'var(--st-bad)' },
+  deactivated: { label: 'Deactivated', dot: 'var(--text-subtle)' },
+};
+
 function fmtDate(iso: string) {
-  return new Date(iso).toLocaleString('en-GB', {
-    day: 'numeric', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  });
+  return new Date(iso).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const config: Record<string, { bg: string; color: string; label: string }> = {
-    active:      { bg: 'var(--badge-green-bg)',  color: 'var(--badge-green-text)',  label: 'Active' },
-    pending:     { bg: 'var(--badge-amber-bg)',  color: 'var(--badge-amber-text)',  label: 'Pending' },
-    rejected:    { bg: 'var(--badge-red-bg)',    color: 'var(--badge-red-text)',    label: 'Rejected' },
-    deactivated: { bg: 'var(--badge-gray-bg)',   color: 'var(--badge-gray-text)',   label: 'Deactivated' },
-  };
-  const c = config[status] ?? { bg: 'var(--badge-gray-bg)', color: 'var(--badge-gray-text)', label: status };
-  return (
-    <span style={{
-      fontSize: 11, fontWeight: 700, padding: '3px 9px', borderRadius: 20,
-      background: c.bg, color: c.color, whiteSpace: 'nowrap',
-    }}>
-      {c.label}
-    </span>
-  );
+function displayName(u: AdminUser) {
+  return u.firstName ? `${u.firstName} ${u.surname ?? ''}`.trim() : u.name;
 }
 
-function RoleBadge({ role }: { role: string | null }) {
-  if (!role) return <span style={{ fontSize: 12, color: 'var(--text-subtle)', fontStyle: 'italic' }}>—</span>;
-  const parts = role.split(',').map(r => r.trim()).filter(Boolean);
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-      {parts.map(r => {
-        const label = ROLES.find(x => x.value === r)?.label ?? r;
-        return (
-          <span key={r} style={{
-            fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 4,
-            background: 'var(--badge-blue-bg)', color: 'var(--badge-blue-text)', whiteSpace: 'nowrap',
-          }}>
-            {label}
-          </span>
-        );
-      })}
-    </div>
-  );
+function initials(u: AdminUser) {
+  const n = displayName(u).split(/\s+/);
+  return ((n[0]?.[0] ?? '') + (n[1]?.[0] ?? '')).toUpperCase();
 }
 
-// ── Approve inline flow ───────────────────────────────────────────────────────
+function roleLabels(role: string | null) {
+  if (!role) return '—';
+  return role.split(',').map((r) => r.trim()).filter(Boolean).map((r) => ROLES.find((x) => x.value === r)?.label ?? r).join(', ');
+}
 
-function ApproveFlow({ userId, onDone, onCancel }: { userId: string; onDone: () => void; onCancel: () => void }) {
-  const [selected, setSelected] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+function apiError(err: any, fallback: string) {
+  return err?.response?.data?.error ?? (err?.response ? fallback : null);
+}
 
-  function toggle(value: string) {
-    setSelected(prev => prev.includes(value) ? prev.filter(r => r !== value) : [...prev, value]);
-  }
-
-  async function confirm() {
-    setLoading(true);
-    try {
-      await api.patch(`/auth/users/${userId}`, { action: 'approve', roles: selected });
-      onDone();
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? 'Failed');
-    } finally {
-      setLoading(false);
-    }
-  }
-
+function Person({ u }: { u: AdminUser }) {
   return (
-    <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--border-light)' }}>
-      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
-        Assign Roles
-      </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
-        {ROLES.map(r => {
-          const on = selected.includes(r.value);
-          return (
-            <button
-              key={r.value}
-              type="button"
-              onClick={() => toggle(r.value)}
-              style={{
-                padding: '5px 14px', borderRadius: 20, fontSize: 12.5, fontWeight: 600,
-                cursor: 'pointer', border: `1px solid ${on ? 'var(--ses-blue-deep)' : 'var(--border-input)'}`,
-                background: on ? 'var(--ses-blue-deep)' : 'var(--bg-surface)',
-                color: on ? '#fff' : 'var(--text-body)',
-                transition: 'background 0.12s, color 0.12s, border-color 0.12s',
-              }}
-            >
-              {r.label}
-            </button>
-          );
-        })}
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <button
-          onClick={confirm}
-          disabled={loading || selected.length === 0}
-          style={{
-            height: 32, padding: '0 18px',
-            background: selected.length === 0 ? 'var(--border-input)' : 'var(--ses-red)',
-            color: selected.length === 0 ? 'var(--text-subtle)' : '#fff',
-            border: 'none', borderRadius: 6, fontSize: 12.5, fontWeight: 600,
-            cursor: selected.length === 0 ? 'not-allowed' : 'pointer',
-            transition: 'background 0.15s',
-          }}
-        >
-          {loading ? '…' : 'Confirm'}
-        </button>
-        <button
-          onClick={onCancel}
-          style={{ fontSize: 12, color: 'var(--text-subtle)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-        >
-          Cancel
-        </button>
-        {error && <span style={{ fontSize: 11.5, color: 'var(--badge-red-text)' }}>{error}</span>}
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <span aria-hidden="true" className="a-av">{initials(u)}</span>
+      <div>
+        <div style={{ fontWeight: 600, color: 'var(--text-heading)' }}>{displayName(u)}</div>
+        {u.username && <div className="a-faint" style={{ fontSize: 12 }}>@{u.username}</div>}
       </div>
     </div>
   );
 }
 
-// ── Reject inline flow ────────────────────────────────────────────────────────
+// ── Pending approvals ─────────────────────────────────────────────────────────
 
-function RejectFlow({ userId, onDone }: { userId: string; onDone: () => void }) {
-  const [reason, setReason] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  async function confirm() {
-    if (!reason.trim()) { setError('Reason is required'); return; }
-    setLoading(true);
-    try {
-      await api.patch(`/auth/users/${userId}`, { action: 'reject', rejectionReason: reason.trim() });
-      onDone();
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? 'Failed');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 6 }}>
-      <textarea
-        value={reason}
-        onChange={e => { setReason(e.target.value); setError(''); }}
-        placeholder="Reason for rejection…"
-        rows={2}
-        style={{
-          padding: '6px 10px', border: `1px solid ${error ? 'var(--badge-red-text)' : 'var(--border-input)'}`,
-          borderRadius: 6, fontSize: 12.5, resize: 'vertical', outline: 'none', fontFamily: 'inherit',
-          minHeight: 52, background: 'var(--bg-input)', color: 'var(--text-heading)',
-        }}
-      />
-      {error && <p style={{ fontSize: 11.5, color: 'var(--badge-red-text)', margin: 0 }}>{error}</p>}
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button
-          onClick={confirm}
-          disabled={loading}
-          style={{
-            height: 30, padding: '0 14px', background: 'transparent', color: 'var(--ses-red)',
-            border: '1.5px solid var(--ses-red)', borderRadius: 6, fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
-          }}
-        >
-          {loading ? '…' : 'Confirm Rejection'}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// ── Pending row ───────────────────────────────────────────────────────────────
-
-function PendingRow({ user, onRefresh }: { user: AdminUser; onRefresh: () => void }) {
+function PendingRow({ user, onDone }: { user: AdminUser; onDone: () => void }) {
   const [mode, setMode] = useState<'idle' | 'approve' | 'reject'>('idle');
+  const [roles, setRoles] = useState<string[]>([]);
+  const [reason, setReason] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  async function submit(action: 'approve' | 'reject') {
+    if (action === 'approve' && roles.length === 0) { setError('Choose at least one role'); return; }
+    if (action === 'reject' && !reason.trim()) { setError('Give a reason so the applicant knows why'); return; }
+    setBusy(true);
+    setError('');
+    try {
+      await api.patch(`/auth/users/${user.id}`, action === 'approve'
+        ? { action, roles }
+        : { action, rejectionReason: reason.trim() });
+      toast.success(action === 'approve' ? `${displayName(user)} approved` : `${displayName(user)} rejected`);
+      onDone();
+    } catch (err: any) {
+      const msg = apiError(err, 'Could not save. Try again.');
+      if (msg) setError(msg);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
-    <div style={{
-      padding: '16px 20px', border: '1px solid var(--border)', borderRadius: 10,
-      background: 'var(--bg-card)', marginBottom: 10,
-    }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-heading)' }}>
-              {user.firstName} {user.surname}
-            </span>
-            {user.username && (
-              <span style={{ fontSize: 11.5, color: 'var(--text-subtle)' }}>@{user.username}</span>
-            )}
-          </div>
-          <div style={{ fontSize: 12.5, color: 'var(--text-muted)', marginBottom: 2 }}>{user.email}</div>
-          {user.designation && (
-            <div style={{ fontSize: 12, color: 'var(--text-body2)' }}>{user.designation}</div>
+    <>
+      <tr>
+        <td style={{ paddingLeft: 20 }}><Person u={user} /></td>
+        <td>{user.email}</td>
+        <td className={user.designation ? '' : 'a-faint'}>{user.designation ?? '—'}</td>
+        <td className="a-muted a-num">{fmtDate(user.createdAt)}</td>
+        <td style={{ textAlign: 'right', paddingRight: 20, whiteSpace: 'nowrap' }}>
+          {mode === 'idle' ? (
+            <div style={{ display: 'inline-flex', gap: 6 }}>
+              <button type="button" className="a-q a-q-pri" onClick={() => setMode('approve')}>Approve</button>
+              <button type="button" className="a-q" onClick={() => setMode('reject')}>Reject</button>
+            </div>
+          ) : (
+            <button type="button" className="a-q" onClick={() => { setMode('idle'); setError(''); }} disabled={busy}>Cancel</button>
           )}
-          <div style={{ fontSize: 11, color: 'var(--text-subtle)', marginTop: 4 }}>
-            Applied {fmtDate(user.createdAt)}
-          </div>
-        </div>
-
-        {mode === 'idle' && (
-          <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-            <button
-              onClick={() => setMode('approve')}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 5, height: 32, padding: '0 14px',
-                background: 'var(--ses-red)', color: '#fff', border: 'none', borderRadius: 6,
-                fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
-              }}
-            >
-              <UserCheck size={13} /> Approve
-            </button>
-            <button
-              onClick={() => setMode('reject')}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 5, height: 32, padding: '0 14px',
-                background: 'var(--bg-card)', color: 'var(--badge-red-text)', border: '1px solid var(--badge-red-bg)',
-                borderRadius: 6, fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
-              }}
-            >
-              <UserX size={13} /> Reject
-            </button>
-          </div>
-        )}
-
-      </div>
-
-      {mode === 'approve' && (
-        <ApproveFlow userId={user.id} onDone={onRefresh} onCancel={() => setMode('idle')} />
+        </td>
+      </tr>
+      {mode !== 'idle' && (
+        <tr className="a-expand">
+          <td colSpan={5} style={{ padding: '4px 20px 18px' }}>
+            {mode === 'approve' ? (
+              <div>
+                <p className="a-k" style={{ margin: '0 0 10px' }}>Assign roles</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
+                  {ROLES.map((r) => {
+                    const on = roles.includes(r.value);
+                    return (
+                      <button key={r.value} type="button" aria-pressed={on} className={`a-chip${on ? ' on' : ''}`}
+                        onClick={() => { setRoles((p) => (on ? p.filter((x) => x !== r.value) : [...p, r.value])); setError(''); }}>
+                        {r.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button type="button" className="a-btn" onClick={() => submit('approve')} disabled={busy || roles.length === 0}>
+                  {busy ? 'Approving…' : `Approve as ${roles.length ? roleLabels(roles.join(',')) : '…'}`}
+                </button>
+              </div>
+            ) : (
+              <div style={{ maxWidth: 560 }}>
+                <label className="a-k" htmlFor={`rej-${user.id}`} style={{ display: 'block', marginBottom: 8 }}>Reason for rejection</label>
+                <textarea id={`rej-${user.id}`} className="a-field" rows={2} value={reason}
+                  onChange={(e) => { setReason(e.target.value); setError(''); }}
+                  placeholder="e.g. Not a member of SES staff" />
+                <button type="button" className="a-btn a-btn-bad" style={{ marginTop: 10 }} onClick={() => submit('reject')} disabled={busy}>
+                  {busy ? 'Rejecting…' : 'Reject application'}
+                </button>
+              </div>
+            )}
+            {error && <p role="alert" className="a-err">{error}</p>}
+          </td>
+        </tr>
       )}
-
-      {mode === 'reject' && (
-        <div>
-          <RejectFlow userId={user.id} onDone={onRefresh} />
-          <button onClick={() => setMode('idle')} style={{ fontSize: 11.5, color: 'var(--text-subtle)', background: 'none', border: 'none', cursor: 'pointer', marginTop: 4, padding: 0 }}>
-            Cancel
-          </button>
-        </div>
-      )}
-    </div>
+    </>
   );
 }
 
-// ── All users row ─────────────────────────────────────────────────────────────
+function PendingSection({ users, loading, onChange }: { users: AdminUser[]; loading: boolean; onChange: () => void }) {
+  return (
+    <section aria-labelledby="a-p" className="a-card">
+      <div className="a-head">
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+          <h2 id="a-p" className="a-h2">Pending approvals</h2>
+          <span className="a-faint" style={{ fontSize: 13 }}>{users.length} waiting</span>
+        </div>
+      </div>
+      {loading && users.length === 0 ? <Skeleton /> : users.length === 0 ? (
+        <Empty title="No accounts waiting" text="New sign-ups appear here for you to approve or reject." />
+      ) : (
+        <div style={{ overflowX: 'auto' }}>
+          <table className="a-tbl" style={{ minWidth: 760 }}>
+            <thead><tr>
+              <th style={{ paddingLeft: 20 }}>Name</th><th>Email</th><th>Designation</th><th>Applied</th>
+              <th style={{ textAlign: 'right', paddingRight: 20 }}><span className="sr-only">Actions</span></th>
+            </tr></thead>
+            <tbody>{users.map((u) => <PendingRow key={u.id} user={u} onDone={onChange} />)}</tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
 
-function UserRow({ user, onRefresh }: { user: AdminUser; onRefresh: () => void }) {
-  const [loading, setLoading] = useState(false);
+// ── Users ─────────────────────────────────────────────────────────────────────
+
+function UserRow({ user, isSelf, onDone }: { user: AdminUser; isSelf: boolean; onDone: () => void }) {
+  const [confirming, setConfirming] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const st = STATUS[user.status] ?? { label: user.status, dot: 'var(--text-subtle)' };
+  const deactivating = user.status === 'active';
 
   async function toggle() {
-    const action = user.status === 'deactivated' ? 'reactivate' : 'deactivate';
-    setLoading(true);
+    if (deactivating && !confirming) { setConfirming(true); return; }
+    setBusy(true);
     try {
-      await api.patch(`/auth/users/${user.id}`, { action });
-      onRefresh();
-    } catch {
-      // silent
+      await api.patch(`/auth/users/${user.id}`, { action: deactivating ? 'deactivate' : 'reactivate' });
+      toast.success(`${displayName(user)} ${deactivating ? 'deactivated' : 'reactivated'}`);
+      onDone();
+    } catch (err: any) {
+      const msg = apiError(err, 'Could not update the account');
+      if (msg) toast.error(msg);
     } finally {
-      setLoading(false);
+      setBusy(false);
+      setConfirming(false);
     }
   }
 
   return (
-    <tr style={{ borderBottom: '1px solid var(--border-light)' }}
-      onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-surface)')}
-      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-    >
-      <td style={{ padding: '12px 16px' }}>
-        <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-heading)' }}>
-          {user.firstName ? `${user.firstName} ${user.surname}` : user.name}
-        </div>
-        {user.username && (
-          <div style={{ fontSize: 11.5, color: 'var(--text-subtle)' }}>@{user.username}</div>
-        )}
+    <tr>
+      <td style={{ paddingLeft: 20 }}><Person u={user} /></td>
+      <td>{user.email}</td>
+      <td className={user.designation ? '' : 'a-faint'}>{user.designation ?? '—'}</td>
+      <td className={user.role ? '' : 'a-faint'}>{roleLabels(user.role)}</td>
+      <td>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 600, color: 'var(--text-heading)' }} title={user.rejectionReason ?? undefined}>
+          <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: '50%', background: st.dot }} />{st.label}
+        </span>
       </td>
-      <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--text-body2)' }}>{user.email}</td>
-      <td style={{ padding: '12px 16px', fontSize: 12.5, color: 'var(--text-body2)' }}>{user.designation ?? '—'}</td>
-      <td style={{ padding: '12px 16px' }}><RoleBadge role={user.role} /></td>
-      <td style={{ padding: '12px 16px' }}><StatusBadge status={user.status} /></td>
-      <td style={{ padding: '12px 16px', fontSize: 12, color: 'var(--text-subtle)' }}>{fmtDate(user.createdAt)}</td>
-      <td style={{ padding: '12px 16px' }}>
-        {(user.status === 'active' || user.status === 'deactivated') && (
-          <button
-            onClick={toggle}
-            disabled={loading}
-            style={{
-              height: 28, padding: '0 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer',
-              border: '1px solid', borderRadius: 6,
-              background: user.status === 'deactivated' ? 'var(--badge-green-bg)' : 'var(--bg-card)',
-              color: user.status === 'deactivated' ? 'var(--badge-green-text)' : 'var(--badge-red-text)',
-              borderColor: user.status === 'deactivated' ? 'var(--badge-green-text)' : 'var(--badge-red-bg)',
-            }}
-          >
-            {loading ? '…' : user.status === 'deactivated' ? 'Reactivate' : 'Deactivate'}
-          </button>
-        )}
-        {user.status === 'rejected' && user.rejectionReason && (
-          <span style={{ fontSize: 11.5, color: 'var(--text-subtle)', fontStyle: 'italic' }} title={user.rejectionReason}>
-            Rejected
-          </span>
-        )}
+      <td className="a-muted a-num">{fmtDate(user.createdAt)}</td>
+      <td style={{ textAlign: 'right', paddingRight: 20, whiteSpace: 'nowrap' }}>
+        {isSelf ? <span className="a-faint" style={{ fontSize: 12 }}>You</span>
+          : (user.status === 'active' || user.status === 'deactivated') && (
+            <div style={{ display: 'inline-flex', gap: 6 }}>
+              {confirming && <button type="button" className="a-q" onClick={() => setConfirming(false)} disabled={busy}>Cancel</button>}
+              <button type="button" className={`a-q${confirming ? ' a-q-bad' : ''}`} onClick={toggle} disabled={busy}
+                onBlur={() => !busy && setTimeout(() => setConfirming(false), 150)}>
+                {busy ? 'Saving…' : confirming ? 'Confirm deactivate' : deactivating ? 'Deactivate' : 'Reactivate'}
+              </button>
+            </div>
+          )}
       </td>
     </tr>
   );
 }
 
-// ── Rooms tab ─────────────────────────────────────────────────────────────────
-
-interface FacilityRoom { id: string; name: string; tag: string; active: boolean; waitingCount: number; }
-
-function RoomsTab() {
-  const [rooms, setRooms] = useState<FacilityRoom[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [adding, setAdding] = useState(false);
-  const [newName, setNewName] = useState('');
-  const [newTag, setNewTag] = useState('');
-  const [tagInput, setTagInput] = useState('');
-  const [showTagSuggestions, setShowTagSuggestions] = useState(false);
-  const [editId, setEditId] = useState<string | null>(null);
-  const [editName, setEditName] = useState('');
-  const [editTag, setEditTag] = useState('');
-  const [saving, setSaving] = useState(false);
-
-  const existingTags = [...new Set(rooms.map(r => r.tag))].sort();
-  const tagSuggestions = existingTags.filter(t => t.toLowerCase().includes(tagInput.toLowerCase()) && t !== tagInput);
-
-  async function load() {
-    setLoading(true);
-    try {
-      const { data } = await api.get('/queue/admin/rooms');
-      setRooms(data);
-    } catch { /* ignore */ } finally { setLoading(false); }
-  }
-
-  useEffect(() => { load(); }, []);
-
-  async function createRoom() {
-    if (!newName.trim() || !newTag.trim()) return;
-    setSaving(true);
-    try {
-      await api.post('/queue/admin/rooms', { name: newName.trim(), tag: newTag.trim() });
-      setNewName(''); setNewTag(''); setTagInput(''); setAdding(false);
-      load();
-    } catch (err: any) { setError(err?.response?.data?.error ?? 'Failed'); }
-    finally { setSaving(false); }
-  }
-
-  async function saveEdit(id: string) {
-    if (!editName.trim() || !editTag.trim()) return;
-    setSaving(true);
-    try {
-      await api.patch(`/queue/admin/rooms/${id}`, { name: editName.trim(), tag: editTag.trim() });
-      setEditId(null);
-      load();
-    } catch (err: any) { setError(err?.response?.data?.error ?? 'Failed'); }
-    finally { setSaving(false); }
-  }
-
-  async function toggleActive(room: FacilityRoom) {
-    try {
-      await api.patch(`/queue/admin/rooms/${room.id}`, { active: !room.active });
-      load();
-    } catch (err: any) { setError(err?.response?.data?.error ?? 'Failed'); }
-  }
-
-  async function removeRoom(id: string) {
-    try {
-      await api.delete(`/queue/admin/rooms/${id}`);
-      load();
-    } catch (err: any) { setError(err?.response?.data?.error ?? 'Cannot remove — patients are active in this room'); }
-  }
-
-  const inp: React.CSSProperties = {
-    height: 34, padding: '0 10px', border: '1px solid var(--border-input)',
-    borderRadius: 6, fontSize: 13, outline: 'none',
-    background: 'var(--bg-input)', color: 'var(--text-heading)',
-  };
+function UsersSection({ users, loading, onChange }: { users: AdminUser[]; loading: boolean; onChange: () => void }) {
+  const { user: me } = useAuth();
+  const [q, setQ] = useState('');
+  const shown = useMemo(() => {
+    const t = q.trim().toLowerCase();
+    return t ? users.filter((u) => [displayName(u), u.email, u.username ?? ''].some((v) => v.toLowerCase().includes(t))) : users;
+  }, [users, q]);
 
   return (
-    <div>
-      {error && (
-        <div style={{ marginBottom: 14, padding: '8px 12px', background: 'var(--badge-red-bg)', border: '1px solid var(--border)', borderRadius: 7, fontSize: 13, color: 'var(--badge-red-text)', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <AlertCircle size={14} /> {error}
-          <button onClick={() => setError('')} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit' }}>✕</button>
+    <section aria-labelledby="a-u" className="a-card">
+      <div className="a-head" style={{ padding: '14px 16px 14px 20px' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+          <h2 id="a-u" className="a-h2">Users</h2>
+          <span className="a-faint" style={{ fontSize: 13 }}>{users.length} user{users.length === 1 ? '' : 's'}</span>
+        </div>
+        <label className="a-search">
+          <Search size={16} color="var(--text-subtle)" aria-hidden="true" />
+          <span className="sr-only">Search users</span>
+          <input type="search" placeholder="Search name, email or username" value={q} onChange={(e) => setQ(e.target.value)} />
+        </label>
+      </div>
+      {loading && users.length === 0 ? <Skeleton /> : shown.length === 0 ? (
+        <Empty title={q ? 'No matching users' : 'No users yet'} text={q ? `Nothing matches “${q}”.` : 'Approved staff accounts appear here.'} />
+      ) : (
+        <div style={{ overflowX: 'auto' }}>
+          <table className="a-tbl" style={{ minWidth: 860 }}>
+            <thead><tr>
+              <th style={{ paddingLeft: 20 }}>Name</th><th>Email</th><th>Designation</th><th>Role</th><th>Status</th><th>Joined</th>
+              <th style={{ textAlign: 'right', paddingRight: 20 }}><span className="sr-only">Actions</span></th>
+            </tr></thead>
+            <tbody>{shown.map((u) => <UserRow key={u.id} user={u} isSelf={u.id === me?.id} onDone={onChange} />)}</tbody>
+          </table>
         </div>
       )}
+    </section>
+  );
+}
 
-      {/* Add room inline form */}
-      <div style={{ marginBottom: 20 }}>
-        {adding ? (
-          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 10, padding: '14px 16px' }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10 }}>New Room</div>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-              <div style={{ flex: '1 1 200px' }}>
-                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 600, color: 'var(--text-body)', marginBottom: 4 }}>Room Name</label>
-                <input autoFocus value={newName} onChange={e => setNewName(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Escape') { setAdding(false); setNewName(''); setNewTag(''); setTagInput(''); } }}
-                  placeholder="e.g. Triage Room 1" style={{ ...inp, width: '100%', boxSizing: 'border-box' }} />
-              </div>
-              <div style={{ flex: '1 1 160px', position: 'relative' }}>
-                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 600, color: 'var(--text-body)', marginBottom: 4 }}>Tag / Group</label>
-                <input
-                  value={tagInput}
-                  onChange={e => { setTagInput(e.target.value); setNewTag(e.target.value); setShowTagSuggestions(true); }}
-                  onFocus={() => setShowTagSuggestions(true)}
-                  onBlur={() => setTimeout(() => setShowTagSuggestions(false), 150)}
-                  placeholder="e.g. Triage" style={{ ...inp, width: '100%', boxSizing: 'border-box' }} />
-                {showTagSuggestions && tagSuggestions.length > 0 && (
-                  <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 6, boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 10, marginTop: 2 }}>
-                    {tagSuggestions.map(t => (
-                      <button key={t} onMouseDown={() => { setTagInput(t); setNewTag(t); setShowTagSuggestions(false); }} style={{ width: '100%', textAlign: 'left', padding: '7px 10px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--text-body)' }}
-                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-surface)')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'none')}>
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', paddingBottom: 0, marginTop: 20 }}>
-                <button onClick={createRoom} disabled={saving || !newName.trim() || !newTag.trim()} style={{ height: 34, padding: '0 16px', background: newName.trim() && newTag.trim() ? 'var(--ses-red)' : 'var(--border-input)', color: newName.trim() && newTag.trim() ? '#fff' : 'var(--text-subtle)', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: newName.trim() && newTag.trim() ? 'pointer' : 'not-allowed' }}>
-                  {saving ? 'Saving…' : 'Save Room'}
-                </button>
-                <button onClick={() => { setAdding(false); setNewName(''); setNewTag(''); setTagInput(''); }} style={{ height: 34, padding: '0 12px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 6, fontSize: 13, cursor: 'pointer', color: 'var(--text-muted)' }}>Cancel</button>
-              </div>
-            </div>
+// ── Rooms ─────────────────────────────────────────────────────────────────────
+
+function RoomForm({ initial, tags, onCancel, onSaved }: {
+  initial?: FacilityRoom; tags: string[]; onCancel: () => void; onSaved: () => void;
+}) {
+  const [name, setName] = useState(initial?.name ?? '');
+  const [tag, setTag] = useState(initial?.tag ?? '');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  async function save(e: FormEvent) {
+    e.preventDefault();
+    if (!name.trim() || !tag.trim()) { setError('Enter a room name and a tag'); return; }
+    setBusy(true);
+    setError('');
+    try {
+      if (initial) await api.patch(`/queue/admin/rooms/${initial.id}`, { name: name.trim(), tag: tag.trim() });
+      else await api.post('/queue/admin/rooms', { name: name.trim(), tag: tag.trim() });
+      toast.success(initial ? 'Room updated' : 'Room added');
+      onSaved();
+    } catch (err: any) {
+      const msg = apiError(err, 'Could not save the room');
+      if (err?.response?.status === 404) { toast.error(msg ?? 'This room no longer exists.'); onSaved(); return; } // reload the list
+      if (msg) setError(msg);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <tr className="a-expand">
+      <td colSpan={5} style={{ padding: '14px 20px' }}>
+        <form onSubmit={save} style={{ display: 'flex', gap: 10, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+          <div style={{ flex: '2 1 220px' }}>
+            <label className="a-k" htmlFor="room-name" style={{ display: 'block', marginBottom: 6 }}>Room name</label>
+            <input id="room-name" className="a-field" value={name} onChange={(e) => { setName(e.target.value); setError(''); }}
+              placeholder="e.g. Consultation Room 2" autoFocus maxLength={60} />
           </div>
-        ) : (
-          <button onClick={() => setAdding(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, height: 34, padding: '0 16px', background: 'var(--ses-red)', color: '#fff', border: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
-            <Plus size={14} /> Add Room
-          </button>
-        )}
-      </div>
+          <div style={{ flex: '1 1 180px' }}>
+            <label className="a-k" htmlFor="room-tag" style={{ display: 'block', marginBottom: 6 }}>Tag</label>
+            <input id="room-tag" className="a-field" list="room-tags" value={tag} onChange={(e) => { setTag(e.target.value); setError(''); }}
+              placeholder="e.g. Consultation" maxLength={30} />
+            <datalist id="room-tags">{tags.map((t) => <option key={t} value={t} />)}</datalist>
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button type="button" className="a-q" style={{ height: 40 }} onClick={onCancel} disabled={busy}>Cancel</button>
+            <button type="submit" className="a-btn" disabled={busy}>{busy ? 'Saving…' : initial ? 'Save' : 'Add room'}</button>
+          </div>
+        </form>
+        {error && <p role="alert" className="a-err">{error}</p>}
+      </td>
+    </tr>
+  );
+}
 
-      {loading ? (
-        <div style={{ fontSize: 13.5, color: 'var(--text-subtle)', padding: 24 }}>Loading…</div>
-      ) : rooms.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '40px 24px', background: 'var(--bg-surface)', borderRadius: 12, border: '1px dashed var(--border)' }}>
-          <DoorOpen size={28} color="var(--text-subtle)" style={{ marginBottom: 10 }} />
-          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-heading)', marginBottom: 6 }}>No rooms yet</div>
-          <div style={{ fontSize: 13, color: 'var(--text-subtle)' }}>Add rooms like "Triage Room 1" and group them with tags.</div>
+function RoomRow({ room, tags, onChange }: { room: FacilityRoom; tags: string[]; onChange: () => void }) {
+  const [editing, setEditing] = useState(false);
+  const [confirmDel, setConfirmDel] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  async function toggleActive() {
+    setBusy(true);
+    try {
+      await api.patch(`/queue/admin/rooms/${room.id}`, { active: !room.active });
+      onChange();
+    } catch (err: any) {
+      const msg = apiError(err, 'Could not update the room');
+      if (msg) toast.error(msg);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function remove() {
+    if (!confirmDel) { setConfirmDel(true); return; }
+    setBusy(true);
+    try {
+      await api.delete(`/queue/admin/rooms/${room.id}`);
+      toast.success(`${room.name} deleted`);
+      onChange();
+    } catch (err: any) {
+      const msg = apiError(err, 'Could not delete the room');
+      if (msg) toast.error(msg);
+      setConfirmDel(false);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (editing) return <RoomForm initial={room} tags={tags} onCancel={() => setEditing(false)} onSaved={() => { setEditing(false); onChange(); }} />;
+
+  return (
+    <tr>
+      <td style={{ paddingLeft: 20, fontWeight: 600, color: 'var(--text-heading)' }}>{room.name}</td>
+      <td><span className="a-tag">{room.tag}</span></td>
+      <td className="a-num">{room.waitingCount}</td>
+      <td>
+        <label style={{ display: 'inline-flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+          <button type="button" role="switch" aria-checked={room.active} aria-label={`${room.name} active`}
+            className={`a-sw${room.active ? ' on' : ''}`} onClick={toggleActive} disabled={busy} />
+          <span style={{ fontWeight: 600, color: room.active ? 'var(--text-heading)' : 'var(--text-muted)' }}>{room.active ? 'Active' : 'Off'}</span>
+        </label>
+      </td>
+      <td style={{ textAlign: 'right', paddingRight: 20, whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'inline-flex', gap: 6 }}>
+          {confirmDel ? (
+            <>
+              <button type="button" className="a-q" onClick={() => setConfirmDel(false)} disabled={busy}>Cancel</button>
+              <button type="button" className="a-q a-q-bad" onClick={remove} disabled={busy}>{busy ? 'Deleting…' : 'Confirm delete'}</button>
+            </>
+          ) : (
+            <>
+              <button type="button" className="a-icon" aria-label={`Edit ${room.name}`} title="Edit" onClick={() => setEditing(true)}><Pencil size={15} /></button>
+              <button type="button" className="a-icon a-del" aria-label={`Delete ${room.name}`} title="Delete" onClick={remove}><Trash2 size={15} /></button>
+            </>
+          )}
         </div>
-      ) : (
-        <div style={{ border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border)' }}>
-                {['Room Name', 'Tag', 'Queue', 'Active', 'Actions'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '10px 16px', fontSize: 10.5, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
+      </td>
+    </tr>
+  );
+}
+
+function RoomsSection({ rooms, loading, onChange }: { rooms: FacilityRoom[]; loading: boolean; onChange: () => void }) {
+  const [adding, setAdding] = useState(false);
+  const tags = useMemo(() => [...new Set(rooms.map((r) => r.tag))].sort(), [rooms]);
+
+  return (
+    <section aria-labelledby="a-r" className="a-card">
+      <div className="a-head" style={{ padding: '14px 16px 14px 20px' }}>
+        <div>
+          <h2 id="a-r" className="a-h2" style={{ marginBottom: 2 }}>Rooms</h2>
+          <p className="a-muted" style={{ margin: 0, fontSize: 13 }}>Service points patients can be routed to. Group them with tags like Triage or Consultation.</p>
+        </div>
+        <button type="button" className="a-btn" onClick={() => setAdding(true)} disabled={adding}>
+          <Plus size={15} strokeWidth={2.2} /> Add room
+        </button>
+      </div>
+      {loading && rooms.length === 0 && !adding ? <Skeleton /> : (
+        <div style={{ overflowX: 'auto' }}>
+          <table className="a-tbl" style={{ minWidth: 760 }}>
+            <thead><tr>
+              <th style={{ paddingLeft: 20 }}>Room</th><th>Tag</th><th>In queue</th><th>Status</th>
+              <th style={{ textAlign: 'right', paddingRight: 20 }}><span className="sr-only">Actions</span></th>
+            </tr></thead>
             <tbody>
-              {rooms.map(room => (
-                <tr key={room.id} style={{ borderBottom: '1px solid var(--border-light)' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-surface)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                  {editId === room.id ? (
-                    <>
-                      <td style={{ padding: '8px 16px' }}>
-                        <input value={editName} onChange={e => setEditName(e.target.value)} style={{ ...inp, width: '100%', boxSizing: 'border-box' }} autoFocus />
-                      </td>
-                      <td style={{ padding: '8px 16px' }}>
-                        <input value={editTag} onChange={e => setEditTag(e.target.value)} style={{ ...inp, width: 120 }} />
-                      </td>
-                      <td style={{ padding: '8px 16px', fontSize: 12, color: 'var(--text-muted)' }}>{room.waitingCount} waiting</td>
-                      <td style={{ padding: '8px 16px' }} />
-                      <td style={{ padding: '8px 16px' }}>
-                        <div style={{ display: 'flex', gap: 6 }}>
-                          <button onClick={() => saveEdit(room.id)} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: 4, height: 28, padding: '0 10px', background: 'var(--ses-red)', color: '#fff', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
-                            <Check size={11} /> Save
-                          </button>
-                          <button onClick={() => setEditId(null)} style={{ height: 28, padding: '0 10px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 6, fontSize: 12, cursor: 'pointer', color: 'var(--text-muted)' }}>Cancel</button>
-                        </div>
-                      </td>
-                    </>
-                  ) : (
-                    <>
-                      <td style={{ padding: '12px 16px', fontSize: 13.5, fontWeight: 600, color: 'var(--text-heading)' }}>{room.name}</td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: 'var(--badge-blue-bg)', color: 'var(--badge-blue-text)' }}>{room.tag}</span>
-                      </td>
-                      <td style={{ padding: '12px 16px', fontSize: 12.5, color: room.waitingCount > 0 ? 'var(--badge-amber-text)' : 'var(--text-muted)' }}>
-                        {room.waitingCount > 0 ? `${room.waitingCount} waiting` : '—'}
-                      </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <button onClick={() => toggleActive(room)} title={room.active ? 'Deactivate room' : 'Activate room'} style={{
-                          width: 36, height: 20, borderRadius: 10, border: 'none', cursor: 'pointer', transition: 'background 0.2s',
-                          background: room.active ? 'var(--clinical-normal)' : 'var(--border-input)', position: 'relative',
-                        }}>
-                          <span style={{ position: 'absolute', top: 2, left: room.active ? 18 : 2, width: 16, height: 16, borderRadius: '50%', background: '#fff', transition: 'left 0.2s', display: 'block' }} />
-                        </button>
-                      </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <div style={{ display: 'flex', gap: 6 }}>
-                          <button onClick={() => { setEditId(room.id); setEditName(room.name); setEditTag(room.tag); }} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
-                            <Pencil size={12} />
-                          </button>
-                          <button onClick={() => removeRoom(room.id)} title="Remove room" style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--badge-red-text)' }}>
-                            <Trash2 size={12} />
-                          </button>
-                        </div>
-                      </td>
-                    </>
-                  )}
-                </tr>
-              ))}
+              {adding && <RoomForm tags={tags} onCancel={() => setAdding(false)} onSaved={() => { setAdding(false); onChange(); }} />}
+              {rooms.map((r) => <RoomRow key={r.id} room={r} tags={tags} onChange={onChange} />)}
+              {rooms.length === 0 && !adding && (
+                <tr><td colSpan={5} style={{ padding: 0, border: 0 }}>
+                  <Empty title="No rooms yet" text="Add rooms so patients can be checked in and routed." />
+                </td></tr>
+              )}
             </tbody>
           </table>
         </div>
       )}
+    </section>
+  );
+}
+
+// ── Shared bits ───────────────────────────────────────────────────────────────
+
+function Skeleton() {
+  return (
+    <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {[0, 1, 2].map((i) => <div key={i} className="a-skel" />)}
     </div>
   );
 }
 
-// ── Main page ─────────────────────────────────────────────────────────────────
+function Empty({ title, text }: { title: string; text: string }) {
+  return (
+    <div style={{ padding: '48px 20px 52px', textAlign: 'center' }}>
+      <p style={{ margin: '0 0 4px', fontSize: 14, fontWeight: 600, color: 'var(--text-heading)' }}>{title}</p>
+      <p className="a-muted" style={{ margin: 0 }}>{text}</p>
+    </div>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function AdminUsersPage() {
-  const [tab, setTab] = useState<'pending' | 'all' | 'rooms'>('pending');
-  const [pending, setPending] = useState<AdminUser[]>([]);
-  const [allUsers, setAllUsers] = useState<AdminUser[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState('');
-  const [error, setError] = useState('');
+  const [params, setParams] = useSearchParams();
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [rooms, setRooms] = useState<FacilityRoom[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
-  async function loadData() {
-    setLoading(true);
-    setError('');
+  const pending = useMemo(() => users.filter((u) => u.status === 'pending'), [users]);
+  const staff = useMemo(() => users.filter((u) => u.status !== 'pending'), [users]);
+
+  const requested = params.get('section') as Section | null;
+  const section: Section = requested && ['pending', 'users', 'rooms'].includes(requested)
+    ? requested
+    : pending.length > 0 ? 'pending' : 'users';
+
+  const load = useCallback(async () => {
+    setLoadError(false);
     try {
-      const [pendingRes, allRes] = await Promise.all([
-        api.get('/auth/users?status=pending'),
-        api.get('/auth/users'),
-      ]);
-      setPending(pendingRes.data);
-      setAllUsers(allRes.data);
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? 'Failed to load users');
+      const [u, r] = await Promise.all([api.get('/auth/users'), api.get('/queue/admin/rooms')]);
+      setUsers(u.data);
+      setRooms(r.data);
+    } catch {
+      setLoadError(true);
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => { load(); }, [load]);
 
-  const filteredAll = allUsers.filter(u => {
-    const q = search.toLowerCase();
-    return (
-      u.name?.toLowerCase().includes(q) ||
-      u.email?.toLowerCase().includes(q) ||
-      u.username?.toLowerCase().includes(q) ||
-      u.designation?.toLowerCase().includes(q)
-    );
-  });
+  const NAV: { id: Section; label: string; count: number }[] = [
+    { id: 'pending', label: 'Pending approvals', count: pending.length },
+    { id: 'users', label: 'Users', count: staff.length },
+    { id: 'rooms', label: 'Rooms', count: rooms.length },
+  ];
 
   return (
-    <div className="page-container">
-
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            width: 40, height: 40, borderRadius: 10, background: 'var(--ses-blue-deep)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Shield size={20} color="#fff" />
-          </div>
-          <div>
-            <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-heading)', margin: 0 }}>User Management</h1>
-            <p style={{ fontSize: 12.5, color: 'var(--text-subtle)', margin: 0 }}>Approve, reject, and manage system users</p>
-          </div>
-        </div>
-        <button
-          onClick={loadData}
-          disabled={loading}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px',
-            background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8,
-            fontSize: 13, color: 'var(--text-body2)', cursor: 'pointer',
-          }}
-        >
-          <RefreshCw size={13} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
-          Refresh
-        </button>
+    <div className="adm">
+      <div style={{ marginBottom: 22 }}>
+        <h1 className="a-h1">Administration</h1>
+        <p className="a-muted" style={{ margin: 0, fontSize: 13 }}>Approve accounts, manage users and set up rooms.</p>
       </div>
 
-      {error && (
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px',
-          background: 'var(--badge-red-bg)', border: '1px solid var(--border)', borderRadius: 8, marginBottom: 20,
-          fontSize: 13, color: 'var(--badge-red-text)',
-        }}>
-          <AlertCircle size={15} />
-          {error}
-        </div>
-      )}
+      <div className="a-layout">
+        <nav className="a-side" aria-label="Administration">
+          {NAV.map((n) => (
+            <a key={n.id} href={`?section=${n.id}`} aria-current={section === n.id ? 'page' : undefined}
+              onClick={(e) => { e.preventDefault(); setParams({ section: n.id }); }}>
+              <span>{n.label}</span>
+              <span className={`a-n${n.id === 'pending' && n.count > 0 ? ' a-n-hot' : ''}`}>{loading ? '–' : n.count}</span>
+            </a>
+          ))}
+        </nav>
 
-      {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginBottom: 24, gap: 0 }}>
-        {([
-          { key: 'pending', label: 'Pending Approvals', icon: <Clock size={14} />,    count: pending.length },
-          { key: 'all',     label: 'All Users',          icon: <Users size={14} />,    count: allUsers.length },
-          { key: 'rooms',   label: 'Rooms',              icon: <DoorOpen size={14} />, count: null },
-        ] as const).map(t => (
-          <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px',
-              background: 'none', border: 'none', cursor: 'pointer', fontSize: 13.5, fontWeight: 600,
-              color: tab === t.key ? 'var(--ses-blue-deep)' : 'var(--text-muted)',
-              borderBottom: `2px solid ${tab === t.key ? 'var(--ses-blue-deep)' : 'transparent'}`,
-              marginBottom: -1, transition: 'color 0.15s',
-            }}
-          >
-            {t.icon}
-            {t.label}
-            {t.count !== null && (
-              <span style={{
-                fontSize: 11, fontWeight: 700, padding: '1px 7px', borderRadius: 20,
-                background: tab === t.key ? 'var(--badge-red-bg)' : 'var(--badge-gray-bg)',
-                color: tab === t.key ? 'var(--ses-blue-deep)' : 'var(--text-muted)',
-              }}>
-                {t.count}
-              </span>
-            )}
-          </button>
-        ))}
+        <div>
+          {loadError ? (
+            <section className="a-card">
+              <Empty title="Couldn’t load administration data" text="Check your connection, then try again." />
+              <div style={{ textAlign: 'center', paddingBottom: 28 }}><button type="button" className="a-q" onClick={load}>Try again</button></div>
+            </section>
+          ) : section === 'pending' ? <PendingSection users={pending} loading={loading} onChange={load} />
+            : section === 'users' ? <UsersSection users={staff} loading={loading} onChange={load} />
+              : <RoomsSection rooms={rooms} loading={loading} onChange={load} />}
+        </div>
       </div>
 
-      {/* ── Pending tab ───────────────────────────────────────────────────── */}
-      {tab === 'pending' && (
-        <div>
-          {loading ? (
-            <div style={{ fontSize: 13.5, color: 'var(--text-subtle)', padding: 24 }}>Loading…</div>
-          ) : pending.length === 0 ? (
-            <div style={{
-              textAlign: 'center', padding: '48px 24px',
-              background: 'var(--bg-surface)', borderRadius: 12, border: '1px dashed var(--border)',
-            }}>
-              <CheckCircle size={32} color="var(--clinical-normal)" style={{ marginBottom: 12 }} />
-              <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-heading)', marginBottom: 6 }}>
-                No pending approvals
-              </div>
-              <div style={{ fontSize: 13, color: 'var(--text-subtle)' }}>
-                All account requests have been reviewed.
-              </div>
-            </div>
-          ) : (
-            pending.map(u => <PendingRow key={u.id} user={u} onRefresh={loadData} />)
-          )}
-        </div>
-      )}
-
-      {/* ── Rooms tab ─────────────────────────────────────────────────────── */}
-      {tab === 'rooms' && <RoomsTab />}
-
-      {/* ── All users tab ─────────────────────────────────────────────────── */}
-      {tab === 'all' && (
-        <div>
-          <div style={{ marginBottom: 16, position: 'relative', maxWidth: 340 }}>
-            <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-subtle)', pointerEvents: 'none' }} />
-            <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search by name, email, or username…"
-              className="field-input"
-              style={{
-                width: '100%', height: 38, paddingLeft: 36, paddingRight: 12,
-                fontSize: 13.5, boxSizing: 'border-box',
-              }}
-            />
-          </div>
-
-          {loading ? (
-            <div style={{ fontSize: 13.5, color: 'var(--text-subtle)', padding: 24 }}>Loading…</div>
-          ) : (
-            <div style={{ border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border)' }}>
-                    {['Name', 'Email', 'Designation', 'Role', 'Status', 'Joined', 'Actions'].map(h => (
-                      <th key={h} style={{
-                        textAlign: 'left', padding: '10px 16px',
-                        fontSize: 10.5, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em',
-                      }}>
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredAll.length === 0 ? (
-                    <tr>
-                      <td colSpan={7} style={{ padding: '32px 16px', textAlign: 'center', fontSize: 13.5, color: 'var(--text-subtle)' }}>
-                        {search ? 'No users match your search.' : 'No users found.'}
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredAll.map(u => <UserRow key={u.id} user={u} onRefresh={loadData} />)
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
+      <style>{CSS}</style>
     </div>
   );
 }
+
+const CSS = `
+.adm { padding: 24px 24px 40px; max-width: 1600px; margin: 0 auto; font-size: 14px; color: var(--text-body); }
+.a-h1 { margin: 0 0 4px; font-weight: 700; font-size: 22px; letter-spacing: -0.2px; color: var(--text-heading); }
+.a-h2 { margin: 0; font-family: var(--font-heading); font-size: 16px; font-weight: 700; color: var(--text-heading); }
+.a-muted { color: var(--text-muted); }
+.a-faint { color: var(--text-subtle); }
+.a-num { font-variant-numeric: tabular-nums; }
+.a-k { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-subtle); }
+.a-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; align-items: start; }
+.a-side { display: flex; flex-direction: column; gap: 4px; }
+.a-side a { display: flex; align-items: center; justify-content: space-between; height: 40px; padding: 0 12px; border-radius: 10px;
+  color: var(--text-muted); font-weight: 600; text-decoration: none; transition: background .15s, color .15s; }
+.a-side a:hover { background: var(--ws-chip); color: var(--text-heading); }
+.a-side a[aria-current="page"] { background: var(--bg-card); color: var(--text-heading); box-shadow: inset 3px 0 0 var(--ws-link), 0 0 0 1px var(--border); }
+.a-n { font-size: 12px; font-weight: 600; color: var(--text-subtle); font-variant-numeric: tabular-nums; }
+.a-n-hot { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--st-warn-bg); color: var(--st-warn); font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center; }
+.a-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.a-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 14px 16px 14px 20px; border-bottom: 1px solid var(--border-light); }
+.a-search { display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 12px; width: 320px; max-width: 100%;
+  border: 1px solid var(--btn2-line); border-radius: 10px; background: var(--btn2); }
+.a-search:focus-within { border-color: var(--ring); box-shadow: 0 0 0 4px var(--ring-glow); }
+.a-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 14px; color: var(--text-heading); }
+.a-search input::placeholder { color: var(--text-subtle); }
+.a-tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.a-tbl th { text-align: left; padding: 10px 16px; background: var(--ws-head); font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-subtle); white-space: nowrap; }
+.a-tbl td { padding: 14px 16px; border-top: 1px solid var(--border-light); vertical-align: middle; color: var(--text-heading); }
+.a-tbl tr.a-expand td { border-top: 0; background: var(--ws-head); }
+.a-av { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--ws-chip); color: var(--text-heading);
+  font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.a-q { height: 32px; padding: 0 12px; border: 1px solid var(--btn2-line); border-radius: 8px; background: transparent; color: var(--text-heading);
+  font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s, border-color .15s, color .15s; }
+.a-q:hover:not(:disabled) { background: var(--ws-chip); }
+.a-q:disabled { opacity: .55; cursor: not-allowed; }
+.a-q-pri { background: #C41E25; border-color: #C41E25; color: #fff; }
+.a-q-pri:hover:not(:disabled) { background: #C41E25; filter: brightness(1.06); }
+.a-q-bad { color: var(--st-bad); border-color: var(--st-bad); }
+.a-q-bad:hover:not(:disabled) { background: var(--st-bad-bg); }
+.a-btn { height: 38px; padding: 0 16px; border: 0; border-radius: 10px; background: #C41E25; color: #fff; font: inherit; font-size: 13px; font-weight: 700;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: filter .15s, opacity .15s; }
+.a-btn:hover:not(:disabled) { filter: brightness(1.06); }
+.a-btn:disabled { opacity: .5; cursor: not-allowed; }
+.a-btn-bad { background: transparent; color: var(--st-bad); border: 1px solid var(--st-bad); }
+.a-btn-bad:hover:not(:disabled) { background: var(--st-bad-bg); filter: none; }
+.a-icon { width: 34px; height: 34px; border: 1px solid var(--btn2-line); border-radius: 8px; background: transparent; color: var(--text-muted);
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.a-icon:hover { background: var(--ws-chip); color: var(--text-heading); }
+.a-del:hover { color: var(--st-bad); border-color: var(--st-bad); }
+.a-tag { display: inline-block; padding: 2px 10px; border: 1px solid var(--border); border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.a-sw { position: relative; width: 38px; height: 22px; border-radius: 11px; border: 0; padding: 0; cursor: pointer; background: var(--btn2-line); transition: background .2s; }
+.a-sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: left .2s; }
+.a-sw.on { background: var(--st-ok); }
+.a-sw.on::after { left: 19px; }
+.a-sw:disabled { opacity: .6; cursor: wait; }
+.a-sw:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.a-chip { height: 32px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--btn2-line); background: var(--btn2); color: var(--text-heading);
+  font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.a-chip.on { background: var(--ws-chip-on); border-color: var(--ws-chip-on); color: var(--ws-chip-on-text); }
+.a-field { width: 100%; min-height: 40px; padding: 9px 12px; border: 1px solid var(--btn2-line); border-radius: 10px; background: var(--btn2);
+  font: inherit; font-size: 14px; color: var(--text-heading); outline: 0; resize: vertical; }
+.a-field:focus { border-color: var(--ring); box-shadow: 0 0 0 4px var(--ring-glow); }
+.a-err { margin: 10px 0 0; font-size: 13px; font-weight: 600; color: var(--st-bad); }
+.a-skel { height: 18px; border-radius: 6px; background: var(--ws-chip); animation: a-pulse 1.2s ease-in-out infinite; }
+@keyframes a-pulse { 50% { opacity: .5; } }
+@media (max-width: 900px) { .a-layout { grid-template-columns: 1fr; } .a-side { flex-direction: row; overflow-x: auto; } .a-side a { flex: none; gap: 10px; } }
+@media (max-width: 560px) { .adm { padding: 16px 14px 32px; } }
+`;

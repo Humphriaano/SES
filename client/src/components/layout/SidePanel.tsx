@@ -3,7 +3,8 @@ import { usePatient } from '../../context/PatientContext';
 import { Patient } from '../../types';
 import api from '../../api/client';
 import toast from 'react-hot-toast';
-import { Activity, Pill, TestTube, Heart, ChevronLeft, ChevronRight, Shield, Smartphone, Send, CalendarCheck } from 'lucide-react';
+import { Activity, Pill, TestTube, Heart, ChevronLeft, ChevronRight, Shield, Smartphone, Send, CalendarCheck, Pencil } from 'lucide-react';
+import RegisterModal from '../RegisterModal';
 
 function HIVBadge({ status }: { status: string }) {
   const map: Record<string, { bg: string; color: string; label: string }> = {
@@ -26,11 +27,17 @@ function HIVBadge({ status }: { status: string }) {
 }
 
 export default function SidePanel() {
-  const { activePatient } = usePatient();
+  const { activePatient, setActivePatient } = usePatient();
   const [patient, setPatient] = useState<Patient | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [togglingPortal, setTogglingPortal] = useState(false);
   const [sendingInvite, setSendingInvite] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
+
+  function handleProfileSaved(updated: Patient) {
+    setPatient((p) => (p ? { ...p, ...updated } : updated));
+    setActivePatient(updated);
+  }
 
   useEffect(() => {
     if (!activePatient) return;
@@ -115,27 +122,7 @@ export default function SidePanel() {
 
       {patient ? (
         <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {/* Demographics */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-            <div style={{
-              width: 40, height: 40, borderRadius: 10, flexShrink: 0,
-              background: `hsl(${(patient.firstName.charCodeAt(0) * 13) % 360}, 55%, 90%)`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 14, fontWeight: 700,
-              color: `hsl(${(patient.firstName.charCodeAt(0) * 13) % 360}, 55%, 36%)`,
-            }}>
-              {patient.firstName.charAt(0)}{patient.lastName.charAt(0)}
-            </div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--text-heading)', lineHeight: 1.2 }}>
-                {patient.firstName} {patient.lastName}
-              </div>
-              <div style={{ fontSize: 11.5, color: 'var(--text-muted)', marginTop: 3 }}>
-                {age} yrs · {patient.gender} {patient.nationalId && `· ${patient.nationalId}`}
-              </div>
-              {patient.phone && <div style={{ fontSize: 11.5, color: 'var(--text-subtle)', marginTop: 2 }}>{patient.phone}</div>}
-            </div>
-          </div>
+          {/* Name, age, NRC and phone live in the patient banner above — not repeated here. */}
 
           {/* Portal access */}
           <Section icon={Smartphone} label="Portal Access">

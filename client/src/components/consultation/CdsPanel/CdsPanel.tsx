@@ -360,9 +360,8 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
 
   return (
     <div style={{
-      maxWidth: 860, marginTop: 16,
-      background: 'var(--bg-card)', borderRadius: 12,
-      border: '1px solid var(--border)',
+      maxWidth: 860,
+      background: 'var(--bg-card)', borderRadius: 14, border: '1px solid var(--border)',
       boxShadow: '0 1px 6px rgba(0,0,0,0.05)',
       overflow: 'hidden',
     }}>
@@ -376,17 +375,17 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
       {/* ── Panel header ───────────────────────────────────────────────────── */}
       <div style={{
         width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '12px 20px', background: 'var(--bg-nav)',
+        padding: '12px 20px', background: 'var(--ws-head)',
       }}>
         <button
           onClick={() => setCollapsed(v => !v)}
           style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left' }}
         >
           <Brain size={15} color="var(--ses-red)" />
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#f1f5f9', letterSpacing: '0.02em' }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-heading)', letterSpacing: '0.02em' }}>
             Clinical Decision Support
           </span>
-          <span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>AI · Guideline-based</span>
+          <span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 500 }}>AI · Guideline-based</span>
           {loading && (
             <span style={{
               width: 7, height: 7, borderRadius: '50%', background: 'var(--ses-red)',
@@ -395,8 +394,8 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
             }} />
           )}
           {collapsed
-            ? <ChevronDown size={14} color="#64748b" style={{ marginLeft: 'auto' }} />
-            : <ChevronUp   size={14} color="#64748b" style={{ marginLeft: 'auto' }} />
+            ? <ChevronDown size={14} color="var(--text-muted)" style={{ marginLeft: 'auto' }} />
+            : <ChevronUp   size={14} color="var(--text-muted)" style={{ marginLeft: 'auto' }} />
           }
         </button>
 
@@ -407,13 +406,13 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
           style={{
             background: 'none', border: 'none',
             cursor: (loading || riskLoading) ? 'not-allowed' : 'pointer',
-            color: (loading || riskLoading) ? '#374151' : '#64748b',
+            color: (loading || riskLoading) ? 'var(--text-faint)' : 'var(--text-muted)',
             padding: '2px 4px', marginLeft: 8,
             display: 'flex', alignItems: 'center', borderRadius: 4,
             transition: 'color 0.15s',
           }}
-          onMouseEnter={e => { if (!loading && !riskLoading) e.currentTarget.style.color = '#94a3b8'; }}
-          onMouseLeave={e => { e.currentTarget.style.color = (loading || riskLoading) ? '#374151' : '#64748b'; }}
+          onMouseEnter={e => { if (!loading && !riskLoading) e.currentTarget.style.color = 'var(--text-subtle)'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = (loading || riskLoading) ? 'var(--text-faint)' : 'var(--text-muted)'; }}
         >
           <RefreshCw size={13} />
         </button>
@@ -430,12 +429,12 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
               onClick={() => setRiskCollapsed(v => !v)}
               style={{
                 width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '10px 14px', background: 'var(--bg-nav)', border: 'none', cursor: 'pointer',
+                padding: '10px 14px', background: 'var(--ws-head)', border: 'none', cursor: 'pointer',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                 <Activity size={13} color="var(--ses-red)" />
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-heading)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Chronic Disease Risk
                 </span>
                 {riskLoading && (
@@ -447,8 +446,8 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
                 )}
               </div>
               {riskCollapsed
-                ? <ChevronDown size={13} color="#64748b" />
-                : <ChevronUp   size={13} color="#64748b" />
+                ? <ChevronDown size={13} color="var(--text-muted)" />
+                : <ChevronUp   size={13} color="var(--text-muted)" />
               }
             </button>
 
@@ -605,9 +604,9 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
               )}
 
               {response.summary && (
-                <div style={{ padding: '12px 16px', background: 'var(--bg-nav)', borderRadius: 8, marginBottom: 12 }}>
-                  <p style={{ fontSize: 13, color: '#e2e8f0', lineHeight: 1.6, margin: 0 }}>
-                    <span style={{ color: '#94a3b8', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 4 }}>Clinical Impression</span>
+                <div style={{ padding: '12px 16px', background: 'var(--ws-head)', borderRadius: 8, marginBottom: 12 }}>
+                  <p style={{ fontSize: 13, color: 'var(--text-heading)', lineHeight: 1.6, margin: 0 }}>
+                    <span style={{ color: 'var(--text-subtle)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 4 }}>Clinical Impression</span>
                     {response.summary}
                   </p>
                 </div>
@@ -684,13 +683,13 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
 
               {response.direct_suggestion && (
                 <div style={{ marginBottom: 12, padding: '12px 14px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#7c3aed', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--ws-link)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
                     Differential Diagnosis (AI)
                   </div>
                   <pre style={{ fontSize: 12.5, color: 'var(--text-body)', margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'inherit', lineHeight: 1.6 }}>
                     {response.direct_suggestion}
                   </pre>
-                  <p style={{ fontSize: 10.5, color: '#a78bfa', margin: '8px 0 0', fontStyle: 'italic' }}>
+                  <p style={{ fontSize: 10.5, color: 'var(--ws-link)', margin: '8px 0 0', fontStyle: 'italic' }}>
                     Not guideline-grounded — based on patient context only. Requires clinician review.
                   </p>
                 </div>

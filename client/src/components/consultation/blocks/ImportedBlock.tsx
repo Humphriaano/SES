@@ -12,7 +12,7 @@ interface Props {
 function SectionLabel({ text }: { text: string }) {
   return (
     <div style={{
-      fontSize: 10, fontWeight: 700, color: '#94a3b8',
+      fontSize: 10, fontWeight: 700, color: 'var(--text-subtle)',
       textTransform: 'uppercase', letterSpacing: '0.07em',
       marginBottom: 6,
     }}>
@@ -22,7 +22,7 @@ function SectionLabel({ text }: { text: string }) {
 }
 
 function Divider() {
-  return <div style={{ height: 1, background: '#e2e8f0', margin: '12px 0' }} />;
+  return <div style={{ height: 1, background: 'var(--border)', margin: '12px 0' }} />;
 }
 
 export default function ImportedBlock({ data, onRemove }: Props) {
@@ -48,7 +48,7 @@ export default function ImportedBlock({ data, onRemove }: Props) {
       key: `pre-${i}`,
       label,
       content: (
-        <p style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: 14, lineHeight: 1.7, color: 'var(--text-heading, #0f172a)' }}>
+        <p style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: 14, lineHeight: 1.7, color: 'var(--text-heading, var(--text-heading))' }}>
           {text}
         </p>
       ),
@@ -73,11 +73,11 @@ export default function ImportedBlock({ data, onRemove }: Props) {
                 fontFamily: 'monospace', flexShrink: 0,
               }}>{d.code}</span>
               <span style={{
-                fontSize: 14, color: 'var(--text-heading, #0f172a)', flex: 1, fontWeight: 500,
+                fontSize: 14, color: 'var(--text-heading, var(--text-heading))', flex: 1, fontWeight: 500,
               }}>{d.description}</span>
               <span style={{
-                fontSize: 10, color: '#64748b', fontWeight: 600,
-                background: '#f1f5f9', padding: '1px 6px', borderRadius: 3, flexShrink: 0,
+                fontSize: 10, color: 'var(--text-muted)', fontWeight: 600,
+                background: 'var(--ws-chip)', padding: '1px 6px', borderRadius: 3, flexShrink: 0,
               }}>{d.status}</span>
             </div>
           ))}
@@ -94,7 +94,7 @@ export default function ImportedBlock({ data, onRemove }: Props) {
         key: 'plan',
         label: 'PLAN',
         content: (
-          <p style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: 14, lineHeight: 1.7, color: 'var(--text-heading, #0f172a)' }}>
+          <p style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: 14, lineHeight: 1.7, color: 'var(--text-heading, var(--text-heading))' }}>
             {planText}
           </p>
         ),
@@ -108,7 +108,7 @@ export default function ImportedBlock({ data, onRemove }: Props) {
       key: 'prescribed',
       label: 'PRESCRIBED',
       content: (
-        <p style={{ margin: 0, fontSize: 14, lineHeight: 1.7, color: 'var(--text-heading, #0f172a)' }}>
+        <p style={{ margin: 0, fontSize: 14, lineHeight: 1.7, color: 'var(--text-heading, var(--text-heading))' }}>
           {data.prescriptionSummary}
         </p>
       ),
@@ -121,7 +121,7 @@ export default function ImportedBlock({ data, onRemove }: Props) {
       key: 'investigations',
       label: 'INVESTIGATIONS',
       content: (
-        <p style={{ margin: 0, fontSize: 14, lineHeight: 1.7, color: 'var(--text-heading, #0f172a)' }}>
+        <p style={{ margin: 0, fontSize: 14, lineHeight: 1.7, color: 'var(--text-heading, var(--text-heading))' }}>
           {data.investigationSummary}
         </p>
       ),
@@ -132,19 +132,19 @@ export default function ImportedBlock({ data, onRemove }: Props) {
     <div style={{
       marginBottom: 16,
       borderRadius: 10,
-      border: '1px solid #bfcfe0',
+      border: '1px solid var(--border)',
       overflow: 'hidden',
     }}>
       {/* Header bar */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '8px 16px',
-        background: '#dce8f5',
-        borderBottom: '1px solid #bfcfe0',
+        background: 'var(--ws-blue-bg)',
+        borderBottom: '1px solid var(--border)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          <History size={13} color="#475569" />
-          <span style={{ fontSize: 12.5, fontWeight: 600, color: '#334155' }}>
+          <History size={13} color="var(--text-muted)" />
+          <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-body)' }}>
             Imported from {dateStr}
           </span>
         </div>
@@ -153,21 +153,21 @@ export default function ImportedBlock({ data, onRemove }: Props) {
           title="Remove imported block"
           style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            color: '#94a3b8', padding: '2px 4px', borderRadius: 4,
+            color: 'var(--text-subtle)', padding: '2px 4px', borderRadius: 4,
             display: 'flex', alignItems: 'center',
             transition: 'color 0.12s',
           }}
-          onMouseEnter={e => (e.currentTarget.style.color = '#475569')}
-          onMouseLeave={e => (e.currentTarget.style.color = '#94a3b8')}
+          onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-muted)')}
+          onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-subtle)')}
         >
           <X size={13} />
         </button>
       </div>
 
       {/* Content area — white background */}
-      <div style={{ background: 'var(--bg-card, #ffffff)', padding: '14px 20px' }}>
+      <div style={{ background: 'var(--bg-card, var(--bg-card))', padding: '14px 20px' }}>
         {sections.length === 0 && preTexts.length === 0 ? (
-          <p style={{ margin: 0, fontStyle: 'italic', color: '#94a3b8', fontSize: 13 }}>
+          <p style={{ margin: 0, fontStyle: 'italic', color: 'var(--text-subtle)', fontSize: 13 }}>
             No note content in this encounter.
           </p>
         ) : (

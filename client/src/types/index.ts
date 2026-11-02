@@ -16,6 +16,10 @@ export interface Patient {
   nationalId?: string;
   hivStatus: 'POSITIVE' | 'NEGATIVE' | 'UNKNOWN';
   hivTestDate?: string;
+  religion?: string;
+  nextOfKinName?: string;
+  nextOfKinRelationship?: string;
+  nextOfKinPhone?: string;
   allergies?: string[];
   createdAt: string;
   email?: string;
@@ -56,6 +60,7 @@ export interface PatientDiagnosis {
   icd11Id: string;
   icd11: ICD11Code;
   notes?: string;
+  diagnosedAt?: string;
   resolvedAt?: string;
   createdAt: string;
 }
@@ -103,6 +108,7 @@ export interface Vital {
   oxygenSat?: number;
   glucose?: number;
   recordedAt: string;
+  recordedBy?: { id: string; name: string } | null;
 }
 
 export interface Medication {

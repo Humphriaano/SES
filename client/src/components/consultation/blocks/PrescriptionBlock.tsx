@@ -215,15 +215,15 @@ export default function PrescriptionBlock({ data, onChange, onRemove, readOnly, 
 
   return (
     <div style={{
-      borderLeft: '3px solid var(--ses-blue-deep)',
+      border: '1px solid var(--border)',
       background: 'var(--bg-card)',
-      borderRadius: '0 10px 10px 0',
+      borderRadius: 12,
       padding: '10px 14px',
-      margin: '4px 0',
+      margin: '16px 0',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: data.items.length > 0 ? 8 : 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ses-blue-deep)', background: 'var(--ses-blue-tint)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace' }}>Rx</span>
+          <span style={{ fontSize: 10, color: 'var(--text-muted)', background: 'var(--ws-chip)', padding: '0 6px', minWidth: 28, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 5, fontWeight: 800, letterSpacing: '0.3px', boxSizing: 'border-box' }}>Rx</span>
           <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-heading)' }}>Prescription</span>
         </div>
         {!readOnly && (

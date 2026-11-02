@@ -1,4 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { useVisiblePolling } from '../../../hooks/useVisiblePolling';
+import { flattenOrders, pairWithOrders, isDone } from '../../../lib/investigations';
 import { X, Plus, FlaskConical } from 'lucide-react';
 import { InvestigationBlockData } from '../../../types/consultation';
 import { searchCatalogue, CatalogueResult, CataloguePanel, CatalogueSingle } from '../../../data/investigationsCatalogue';
@@ -20,6 +22,11 @@ interface Props {
   encounterId?: string;
 }
 
+// What the lab has actually done with an ordered test, as reported by the server.
+type LiveStatus = 'Pending' | 'In Progress' | 'Resulted' | 'Amended';
+
+const DONE: LiveStatus[] = ['Resulted', 'Amended'];
+
 export default function InvestigationBlock({
   data,
   onChange,
@@ -35,6 +42,41 @@ export default function InvestigationBlock({
   const [submitting, setSubmitting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [live, setLive] = useState<Record<string, LiveStatus>>({});   // block item id → real status
+  const dataRef = useRef(data);
+  dataRef.current = data;
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  // The block is a note: its Pending/Resulted label was frozen the moment the test was ordered.
+  // Ask the server what the lab has done, show that, and keep the note's saved status in step
+  // (the decision-support panel reads "pending investigations" from the note).
+  const sync = useCallback(async () => {
+    if (!encounterId && !patientId) return;
+    try {
+      const { data: orders } = await api.get('/investigations/orders', { params: encounterId ? { encounterId } : { patientId } });
+      const items = dataRef.current.items;
+      const matched = pairWithOrders(items, flattenOrders(orders));
+
+      const nextLive: Record<string, LiveStatus> = {};
+      let changed = false;
+      const updated = items.map((item, i) => {
+        const s = matched[i];
+        if (!s) return item;
+        nextLive[item.id] = s.status;
+        const stored: 'PENDING' | 'RESULTED' = isDone(s.status) ? 'RESULTED' : 'PENDING';
+        if (item.status !== stored || item.orderItemId !== s.id) { changed = true; return { ...item, status: stored, orderItemId: s.id }; }
+        return item;
+      });
+      setLive(nextLive);
+      if (changed && !readOnly) onChangeRef.current({ items: updated });
+    } catch { /* keep what is shown; the API client already reported connectivity problems */ }
+  }, [encounterId, patientId, readOnly]);
+
+  // Check on open, whenever the list of tests changes, and every 30s while anything is still outstanding.
+  const outstanding = data.items.some((i) => i.status !== 'RESULTED' || !i.orderItemId);
+  useVisiblePolling(sync, 30000, outstanding);
+  useEffect(() => { sync(); }, [data.items.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (query.length >= 2) {
@@ -89,7 +131,8 @@ export default function InvestigationBlock({
     if (patientId && encounterId) {
       setSubmitting(true);
       try {
-        await api.post('/investigations/orders', { patientId, encounterId, items });
+        const { data: order } = await api.post('/investigations/orders', { patientId, encounterId, items });
+        const created: { id: string; type: string; catalogueId: string }[] = order?.items ?? [];
         const newItems = basket.map(b => ({
           id: `${Date.now()}_${b.key}`,
           name: b.kind === 'panel'
@@ -98,6 +141,7 @@ export default function InvestigationBlock({
           catalogCode: b.key,
           catalogueType: b.kind as 'panel' | 'single',
           status: 'PENDING' as const,
+          orderItemId: created.find(c => `${c.type}_${c.catalogueId}` === b.key)?.id,
         }));
         onChange({ items: [...data.items, ...newItems] });
         setBasket([]);
@@ -126,11 +170,11 @@ export default function InvestigationBlock({
 
   return (
     <div style={{
-      borderLeft: '3px solid var(--ses-blue-deep)',
+      border: '1px solid var(--border)',
       background: 'var(--bg-card)',
-      borderRadius: '0 10px 10px 0',
+      borderRadius: 12,
       padding: '10px 14px',
-      margin: '4px 0',
+      margin: '16px 0',
       fontFamily: "'Segoe UI', system-ui, sans-serif",
     }}>
       {/* Header */}
@@ -164,15 +208,23 @@ export default function InvestigationBlock({
         }}>
           <FlaskConical size={12} color="var(--ses-blue-deep)" />
           <span style={{ flex: 1, fontSize: 13, color: 'var(--text-heading)' }}>{item.name}</span>
-          <span style={{
-            fontSize: 11, fontWeight: 600,
-            background: item.status === 'RESULTED' ? 'var(--badge-green-bg)' : 'var(--badge-amber-bg)',
-            color: item.status === 'RESULTED' ? 'var(--badge-green-text)' : 'var(--badge-amber-text)',
-            border: `1px solid ${item.status === 'RESULTED' ? 'var(--badge-green-text)' : 'var(--badge-amber-text)'}`,
-            borderRadius: 5, padding: '2px 8px',
-          }}>
-            {item.status === 'RESULTED' ? '✓ Resulted' : 'Pending'}
-          </span>
+          {(() => {
+            const real = live[item.id];
+            const done = real ? DONE.includes(real) : item.status === 'RESULTED';
+            const inProgress = real === 'In Progress';
+            const tone = done ? 'green' : inProgress ? 'blue' : 'amber';
+            return (
+              <span style={{
+                fontSize: 11, fontWeight: 600,
+                background: `var(--badge-${tone}-bg)`,
+                color: `var(--badge-${tone}-text)`,
+                border: `1px solid var(--badge-${tone}-text)`,
+                borderRadius: 5, padding: '2px 8px',
+              }}>
+                {done ? (real === 'Amended' ? '✓ Resulted · amended' : '✓ Resulted') : inProgress ? 'In progress' : 'Pending'}
+              </span>
+            );
+          })()}
           {!readOnly && (
             <button
               onClick={() => onChange({ items: data.items.filter(i => i.id !== item.id) })}

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, X } from 'lucide-react';
+import { Search, X, Plus } from 'lucide-react';
 import api from '../../../api/client';
 import { DiagnosisBlockData, DiagnosisStatus } from '../../../types/consultation';
 
@@ -22,10 +22,12 @@ interface Props {
   onChange: (data: DiagnosisBlockData) => void;
   onRemove: () => void;
   onConfirmed?: (icd11Id: string) => void;
+  onAddAnother?: () => void;   // adds a new, empty diagnosis block below this one
   readOnly?: boolean;
 }
 
-export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, readOnly }: Props) {
+// One block = one diagnosis. To record several conditions, add several blocks.
+export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, onAddAnother, readOnly }: Props) {
   const [searching, setSearching] = useState(!data.icd11Code);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<any[]>([]);
@@ -79,16 +81,16 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
 
   return (
     <div style={{
-      borderLeft: '3px solid var(--ses-blue-deep)',
+      border: '1px solid var(--border)',
       background: 'var(--bg-card)',
-      borderRadius: '0 10px 10px 0',
+      borderRadius: 12,
       padding: '10px 14px',
-      margin: '4px 0',
+      margin: '16px 0',
       position: 'relative',
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--ses-blue-deep)', background: 'var(--ses-blue-tint)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace', flexShrink: 0 }}>Dx</span>
+          <span style={{ fontSize: 10, color: 'var(--text-muted)', background: 'var(--ws-chip)', padding: '0 6px', minWidth: 28, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 5, fontWeight: 800, letterSpacing: '0.3px', boxSizing: 'border-box', flexShrink: 0 }}>Dx</span>
           {data.icd11Code ? (
             <>
               <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ses-blue-deep)', fontFamily: 'monospace' }}>{data.icd11Code}</span>
@@ -123,7 +125,8 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
                 <button
                   onClick={() => setSearching(v => !v)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 3 }}
-                  title="Change diagnosis"
+                  title="Replace this diagnosis with a different one"
+                  aria-label="Replace this diagnosis"
                 >
                   <Search size={12} />
                 </button>
@@ -136,8 +139,45 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
         </div>
       </div>
 
+      {data.icd11Code && !searching && !readOnly && onAddAnother && (
+        <button
+          onClick={onAddAnother}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 8, padding: '4px 10px',
+            border: '1px dashed var(--border-input)', borderRadius: 7, background: 'transparent',
+            color: 'var(--ses-blue-deep)', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+          }}
+        >
+          <Plus size={12} /> Add another diagnosis
+        </button>
+      )}
+
       {searching && !readOnly && (
         <div style={{ marginTop: 10, position: 'relative' }}>
+          {data.icd11Code && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 8, padding: '7px 10px',
+              borderRadius: 7, background: 'var(--badge-amber-bg)', color: 'var(--badge-amber-text)', fontSize: 12.5,
+            }}>
+              <span style={{ flex: 1, minWidth: 180 }}>
+                Choosing a condition here will <b>replace {data.icd11Description}</b>.
+              </span>
+              {onAddAnother && (
+                <button
+                  onClick={() => { setSearching(false); setQuery(''); setResults([]); onAddAnother(); }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 12.5, color: 'inherit', textDecoration: 'underline', padding: 0 }}
+                >
+                  Keep it and add another instead
+                </button>
+              )}
+              <button
+                onClick={() => { setSearching(false); setQuery(''); setResults([]); }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12.5, color: 'inherit', padding: 0 }}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
           <div style={{ position: 'relative' }}>
             <Search size={12} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
             <input
@@ -179,7 +219,7 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
                   onMouseEnter={e => (e.currentTarget.style.background = 'var(--ses-blue-tint)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                 >
-                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ses-blue-deep)', background: 'var(--ses-blue-tint)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace', flexShrink: 0 }}>{c.code}</span>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', background: 'var(--ws-chip)', padding: '0 6px', minWidth: 28, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 5, fontWeight: 800, letterSpacing: '0.3px', boxSizing: 'border-box', flexShrink: 0 }}>{c.code}</span>
                   <span style={{ fontSize: 13, color: 'var(--text-body)' }}>{c.description}</span>
                   {c.category && <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto', flexShrink: 0 }}>{c.category}</span>}
                 </button>
