@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { LATEST_RESULT_LAST } from '../lib/resultOrder';
 import prisma from '../lib/prisma';
 
 const CDS_BASE = process.env['CDS_URL'] ?? 'http://localhost:8000';
@@ -104,11 +105,20 @@ function ckdEpiEgfr(creatinine_umol: number, age: number, gender: number): numbe
 
 // ── Controller ────────────────────────────────────────────────────────────────
 
-export async function getRiskPrediction(req: Request, res: Response): Promise<void> {
-  const patientId = String(req.params['patientId']);
-  console.log(`[risk] GET /patients/${patientId}/risk-predict`);
+export class RiskError extends Error {
+  constructor(public status: number, message: string) { super(message); }
+}
 
-  try {
+export interface RiskResult {
+  status: string;
+  predictions: Record<string, unknown>;
+  features: Record<string, number | null>;
+}
+
+// Builds the model features from the record and scores them with the XGBoost
+// models in the CDS service. Shared by GET /risk-predict and the CDS payload.
+export async function computeRiskPrediction(patientId: string): Promise<RiskResult> {
+  {
     const now = new Date();
     const ago6m  = new Date(now.getTime() - 180 * 86_400_000);
     const ago12m = new Date(now.getTime() - 365 * 86_400_000);
@@ -124,10 +134,7 @@ export async function getRiskPrediction(req: Request, res: Response): Promise<vo
       },
     });
 
-    if (!patient) {
-      res.status(404).json({ error: 'Patient not found' });
-      return;
-    }
+    if (!patient) throw new RiskError(404, 'Patient not found');
 
     const age = ageYears(patient.dateOfBirth);
 
@@ -195,7 +202,7 @@ export async function getRiskPrediction(req: Request, res: Response): Promise<vo
       include: {
         items: {
           include: {
-            results: { orderBy: { resultedAt: 'asc' } },  // asc so last item = most recent
+            results: { orderBy: LATEST_RESULT_LAST },  // oldest → newest; amendments sort after the original they correct
           },
         },
       },
@@ -220,7 +227,8 @@ export async function getRiskPrediction(req: Request, res: Response): Promise<vo
             const raw = parseFloat(String(comp.value));
             if (!isFinite(raw)) continue;
             const existing = latestByComponentId.get(cid);
-            if (!existing || result.resultedAt > existing.ts) {
+            // >= so an amendment (same result time as the original, later in order) replaces it
+            if (!existing || result.resultedAt >= existing.ts) {
               latestByComponentId.set(cid, { raw, ts: result.resultedAt });
             }
           }
@@ -355,7 +363,6 @@ export async function getRiskPrediction(req: Request, res: Response): Promise<vo
 
     // ── 8. Forward to FastAPI ──────────────────────────────────────────────────
     console.log(`[risk] DB stage complete for ${patientId}, forwarding to FastAPI`);
-    console.log('[risk] features:', JSON.stringify(features, null, 2));
     let cdsResponse: Response | globalThis.Response;
     try {
       cdsResponse = await fetch(`${CDS_BASE}/cds/risk-predict`, {
@@ -364,14 +371,12 @@ export async function getRiskPrediction(req: Request, res: Response): Promise<vo
         body: JSON.stringify(features),
       });
     } catch (fetchErr: any) {
-      res.status(502).json({ error: `Risk prediction service unreachable: ${fetchErr.message}` });
-      return;
+      throw new RiskError(502, `Risk prediction service unreachable: ${fetchErr.message}`);
     }
 
     if (!cdsResponse.ok) {
       const body = await cdsResponse.text();
-      res.status(502).json({ error: `Risk prediction service error (${cdsResponse.status}): ${body}` });
-      return;
+      throw new RiskError(502, `Risk prediction service error (${cdsResponse.status}): ${body}`);
     }
 
     const prediction = await (cdsResponse as globalThis.Response).json() as {
@@ -379,13 +384,19 @@ export async function getRiskPrediction(req: Request, res: Response): Promise<vo
       predictions: Record<string, unknown>;
     };
 
-    res.json({
-      patientId,
-      status:      prediction.status,
-      predictions: prediction.predictions,
-      features,     // returned for transparency — frontend can display which data was used
-    });
+    return { status: prediction.status, predictions: prediction.predictions, features };
+  }
+}
+
+export async function getRiskPrediction(req: Request, res: Response): Promise<void> {
+  const patientId = String(req.params['patientId']);
+  console.log(`[risk] GET /patients/${patientId}/risk-predict`);
+  try {
+    const result = await computeRiskPrediction(patientId);
+    // features returned for transparency — frontend can display which data was used
+    res.json({ patientId, ...result });
   } catch (err: any) {
+    if (err instanceof RiskError) { res.status(err.status).json({ error: err.message }); return; }
     const msg = err?.message ?? String(err);
     console.error('[risk] unhandled error:', msg, err?.stack ?? '');
     res.status(500).json({ error: msg });

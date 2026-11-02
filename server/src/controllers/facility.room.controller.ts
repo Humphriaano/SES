@@ -67,8 +67,10 @@ export async function createRoom(req: AuthRequest, res: Response): Promise<void>
   try {
     const room = await prisma.facilityRoom.create({ data: { name: name.trim(), tag: tag.trim() } });
     res.status(201).json({ ...room, waitingCount: 0 });
-  } catch {
-    res.status(409).json({ error: 'A room with this name already exists' });
+  } catch (err: any) {
+    if (err?.code === 'P2002') { res.status(409).json({ error: `A room named “${name.trim()}” already exists.` }); return; }
+    console.error('[rooms] create failed:', err?.message ?? err);
+    res.status(500).json({ error: 'Could not save the room. Please try again.' });
   }
 }
 
@@ -84,8 +86,12 @@ export async function updateRoom(req: AuthRequest, res: Response): Promise<void>
   try {
     const room = await prisma.facilityRoom.update({ where: { id }, data });
     res.json(room);
-  } catch {
-    res.status(409).json({ error: 'Name already in use' });
+  } catch (err: any) {
+    // Prisma codes: P2002 = duplicate name, P2025 = the room is gone (e.g. deleted by someone else meanwhile)
+    if (err?.code === 'P2002') { res.status(409).json({ error: `A room named “${String(data.name ?? '')}” already exists.` }); return; }
+    if (err?.code === 'P2025') { res.status(404).json({ error: 'This room no longer exists — it was deleted. The list has been refreshed.' }); return; }
+    console.error('[rooms] update failed:', err?.message ?? err);
+    res.status(500).json({ error: 'Could not save the room. Please try again.' });
   }
 }
 
@@ -97,6 +103,12 @@ export async function deleteRoom(req: AuthRequest, res: Response): Promise<void>
     where: { roomId: id, status: { in: ['Waiting', 'In Progress'] }, checkedInAt: { gte: todayStart() } },
   });
   if (activeCount > 0) { res.status(409).json({ error: 'Room has active patients in queue' }); return; }
+  // Past queue entries reference the room; deleting would break that history.
+  const historyCount = await prisma.queueEntry.count({ where: { roomId: id } });
+  if (historyCount > 0) {
+    res.status(409).json({ error: 'This room has queue history, so it can’t be deleted. Switch it off instead.' });
+    return;
+  }
   await prisma.facilityRoom.delete({ where: { id } });
   res.json({ ok: true });
 }

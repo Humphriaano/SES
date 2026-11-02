@@ -6,6 +6,13 @@ export interface AuthRequest extends Request {
   userRole?: string;
 }
 
+// No fallback: a guessable default secret would let anyone mint admin tokens.
+export function jwtSecret(): string {
+  const s = process.env['JWT_SECRET'];
+  if (!s) throw new Error('JWT_SECRET is not set');
+  return s;
+}
+
 export function authenticate(req: AuthRequest, res: Response, next: NextFunction): void {
   const header = req.headers.authorization;
   if (!header || !header.startsWith('Bearer ')) {
@@ -14,7 +21,7 @@ export function authenticate(req: AuthRequest, res: Response, next: NextFunction
   }
   const token = header.slice(7);
   try {
-    const payload = jwt.verify(token, process.env['JWT_SECRET'] ?? 'secret') as { userId: string; role: string };
+    const payload = jwt.verify(token, jwtSecret()) as { userId: string; role: string };
     req.userId = payload.userId;
     req.userRole = payload.role;
     next();

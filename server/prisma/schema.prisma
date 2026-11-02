@@ -61,6 +61,8 @@ model User {
 
   encounters              Encounter[]
   orderedInvestigations   InvestigationOrder[] @relation("OrderedInvestigations")
+  vitalsRecorded          Vital[]              @relation("VitalsRecordedBy")
+  queueStarted            QueueEntry[]         @relation("QueueStartedBy")
 }
 
 model Patient {
@@ -74,7 +76,13 @@ model Patient {
   nationalId  String?   @unique
   hivStatus   HIVStatus @default(UNKNOWN)
   hivTestDate DateTime?
+  religion    String?
   createdAt   DateTime  @default(now())
+
+  // Next of kin
+  nextOfKinName         String?
+  nextOfKinRelationship String?
+  nextOfKinPhone        String?
   updatedAt   DateTime  @updatedAt
 
   // Patient portal
@@ -141,6 +149,7 @@ model PatientDiagnosis {
   patientId  String
   icd11Id    String
   notes      String?
+  diagnosedAt DateTime?  // when it was first diagnosed (year precision) — may be long before it was recorded here
   resolvedAt DateTime?
   createdAt  DateTime  @default(now())
 
@@ -172,9 +181,13 @@ model Vital {
   oxygenSat              Float?
   glucose                Float?
   recordedAt             DateTime  @default(now())
+  recordedById           String?
 
-  patient   Patient    @relation(fields: [patientId], references: [id])
-  encounter Encounter? @relation(fields: [encounterId], references: [id])
+  patient    Patient    @relation(fields: [patientId], references: [id])
+  encounter  Encounter? @relation(fields: [encounterId], references: [id])
+  recordedBy User?      @relation("VitalsRecordedBy", fields: [recordedById], references: [id])
+
+  @@index([patientId, recordedAt])
 }
 
 model Medication {
@@ -382,10 +395,16 @@ model QueueEntry {
   priority    String       @default("Normal")
   status      String       @default("Waiting")
   checkedInAt DateTime     @default(now())
+  startedAt   DateTime?    // when the patient started being seen — waiting time stops here
+  startedById String?      // the staff member seeing them
   updatedAt   DateTime     @updatedAt
 
-  patient Patient      @relation(fields: [patientId], references: [id])
-  room    FacilityRoom @relation(fields: [roomId], references: [id])
+  patient   Patient      @relation(fields: [patientId], references: [id])
+  room      FacilityRoom @relation(fields: [roomId], references: [id])
+  startedBy User?        @relation("QueueStartedBy", fields: [startedById], references: [id])
+
+  @@index([roomId, status, checkedInAt])
+  @@index([checkedInAt])
 }
 
 // ── Patient Portal ────────────────────────────────────────────────────────────

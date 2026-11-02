@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import prisma from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth';
 
-const JWT_SECRET = process.env['JWT_SECRET'] ?? 'secret';
+import { jwtSecret } from '../middleware/auth';
 
 const AVAILABLE_ROLES = [
   'admin', 'clinician', 'nurse', 'pharmacist', 'lab_tech', 'receptionist', 'billing',
@@ -74,7 +74,7 @@ export async function login(req: Request, res: Response): Promise<void> {
     if (user.status === 'deactivated') {
       res.status(403).json({ error: 'Your account has been deactivated. Contact an administrator.' }); return;
     }
-    const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, { expiresIn: '8h' });
+    const token = jwt.sign({ userId: user.id, role: user.role }, jwtSecret(), { expiresIn: '8h' });
     res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -134,6 +134,13 @@ export async function updateUser(req: AuthRequest, res: Response): Promise<void>
       if (!rejectionReason) { res.status(400).json({ error: 'rejectionReason is required' }); return; }
       data = { status: 'rejected', rejectionReason };
     } else if (action === 'deactivate') {
+      // Never let administration lock itself out.
+      if (id === req.userId) { res.status(400).json({ error: 'You can’t deactivate your own account' }); return; }
+      const target = await prisma.user.findUnique({ where: { id }, select: { role: true } });
+      if (target?.role?.split(',').map((r) => r.trim()).includes('admin')) {
+        const activeAdmins = await prisma.user.count({ where: { status: 'active', role: { contains: 'admin' } } });
+        if (activeAdmins <= 1) { res.status(400).json({ error: 'At least one active admin is required' }); return; }
+      }
       data = { status: 'deactivated' };
     } else if (action === 'reactivate') {
       data = { status: 'active' };

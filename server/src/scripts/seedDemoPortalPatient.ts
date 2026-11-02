@@ -88,7 +88,7 @@ async function main() {
 
   console.log(`Demo portal patient ready: ${DEMO_EMAIL} (id: ${patient.id})`);
   console.log('Portal access is enabled. Sign in at the portal login screen with this email —');
-  console.log('the magic sign-in link will print to this server console (no SendGrid key set).');
+  console.log('the magic sign-in link will print to this server console (no Brevo key set).');
 }
 
 main()

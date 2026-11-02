@@ -1,6 +1,7 @@
 import { Router } from 'express';
+import { staffLoginRateLimit } from '../middleware/staffRateLimit';
 import { register, login, checkUsername, getRoles, listUsers, updateUser } from '../controllers/auth.controller';
-import { listPatients, getPatient, createPatient, updatePatient, resolveDiagnosis, sendPortalInvitation } from '../controllers/patient.controller';
+import { listPatients, getPatient, createPatient, updatePatient, resolveDiagnosis, addPatientDiagnosis, sendPortalInvitation } from '../controllers/patient.controller';
 import {
   listEncounters, getEncounter, createEncounter, updateEncounter,
   addDiagnosis, closeEncounter,
@@ -28,7 +29,7 @@ import { searchICD11, seedICD11 } from '../controllers/icd11.controller';
 import { importDocumentData } from '../controllers/documentImport.controller';
 import { getPatientQueue } from '../controllers/queue.controller';
 import { getActiveRooms, getAllRooms, createRoom, updateRoom, deleteRoom } from '../controllers/facility.room.controller';
-import { getEntries, checkin, updateStatus, rerouteEntry, startEntry } from '../controllers/queue.entry.controller';
+import { getEntries, getQueueSummary, getPatientEntry, callNext, checkin, updateStatus, rerouteEntry, startEntry } from '../controllers/queue.entry.controller';
 import { recordPreference, getPreferences } from '../controllers/user.room.preference.controller';
 import { populationDiagnoses, populationVitals, populationMedications, populationInvestigations, populationPatients, populationKpis } from '../controllers/reports.controller';
 import { getRiskPrediction } from '../controllers/risk.controller';
@@ -39,7 +40,7 @@ const router = Router();
 
 // Auth
 router.post('/auth/register', register);
-router.post('/auth/login', login);
+router.post('/auth/login', staffLoginRateLimit, login);
 router.get('/auth/check-username', checkUsername);
 router.get('/auth/roles', authenticate, getRoles);
 router.get('/auth/users', authenticate, listUsers);
@@ -47,13 +48,14 @@ router.patch('/auth/users/:id', authenticate, updateUser);
 
 // ICD-11
 router.get('/icd11/search', authenticate, searchICD11);
-router.post('/icd11/seed', seedICD11);
+router.post('/icd11/seed', authenticate, seedICD11);
 
 // Patients
 router.get('/patients', authenticate, listPatients);
 router.post('/patients', authenticate, createPatient);
 router.get('/patients/:id', authenticate, getPatient);
 router.patch('/patients/:id', authenticate, updatePatient);
+router.post('/patients/:patientId/diagnoses', authenticate, addPatientDiagnosis);
 router.patch('/patients/:patientId/diagnoses/:diagnosisId/resolve', authenticate, resolveDiagnosis);
 router.post('/patients/:id/portal-invite', authenticate, sendPortalInvitation);
 
@@ -120,6 +122,9 @@ router.post('/queue/user-room-preference', authenticate, recordPreference);
 
 // Queue — entries
 router.get('/queue', authenticate, getEntries);
+router.get('/queue/patient/:patientId', authenticate, getPatientEntry);
+router.get('/queue/summary', authenticate, getQueueSummary);
+router.post('/queue/rooms/:roomId/next', authenticate, callNext);
 router.post('/queue/checkin', authenticate, checkin);
 router.patch('/queue/:entryId/status', authenticate, updateStatus);
 router.patch('/queue/:entryId/reroute', authenticate, rerouteEntry);

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
+import { seedIcd11FromFile } from '../lib/icd11Seed';
 
 const WHO_CLIENT_ID = process.env.WHO_ICD11_CLIENT_ID;
 const WHO_CLIENT_SECRET = process.env.WHO_ICD11_CLIENT_SECRET;
@@ -91,24 +92,40 @@ export async function searchICD11(req: Request, res: Response): Promise<void> {
   const whoResults = await whoSearch(q);
   if (whoResults) { res.json(whoResults); return; }
 
-  // Fallback: local seeded codes
-  const codes = await prisma.iCD11Code.findMany({
+  // Local catalogue: every word must appear (in any order) in the code or the name,
+  // so "diabetes type 2" finds "Type 2 diabetes mellitus".
+  const term = q.trim().toLowerCase();
+  const words = term.split(/\s+/).filter(Boolean);
+  const found = await prisma.iCD11Code.findMany({
     where: {
-      OR: [
-        { code: { contains: q, mode: 'insensitive' } },
-        { description: { contains: q, mode: 'insensitive' } },
-      ],
+      AND: words.map((w) => ({
+        OR: [
+          { code: { contains: w, mode: 'insensitive' as const } },
+          { description: { contains: w, mode: 'insensitive' as const } },
+        ],
+      })),
     },
-    take: 15,
+    take: 150,
   });
-  res.json(codes);
+
+  // Rank: exact code, then code prefix, then names starting with the search, then names with a word starting with it.
+  const rank = (c: { code: string; description: string }) => {
+    const code = c.code.toLowerCase();
+    const name = c.description.toLowerCase();
+    if (code === term) return 0;
+    if (code.startsWith(term)) return 1;
+    if (name.startsWith(term)) return 2;
+    if (words.every((w) => new RegExp(`(^|[^a-z0-9])${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(name))) return 3;
+    return 4;
+  };
+  res.json(found.sort((a, b) => rank(a) - rank(b) || a.description.length - b.description.length).slice(0, 15));
 }
 
 // Local fallback catalogue used whenever the WHO ICD-11 API isn't reachable
 // (no WHO_ICD11_CLIENT_ID/SECRET configured, or the API call fails) — see
 // whoSearch() above. Kept broad enough to cover common outpatient/ED
 // presentations so search stays usable without live WHO credentials.
-const commonCodes = [
+export const commonCodes = [
   { code: '1C62.Z', description: 'HIV disease, unspecified', category: 'Infectious diseases' },
   { code: 'BA80',   description: 'Essential hypertension', category: 'Cardiovascular' },
   { code: '5A11',   description: 'Type 2 diabetes mellitus', category: 'Endocrine' },
@@ -152,7 +169,13 @@ const commonCodes = [
   { code: '5C80.Z', description: 'Disorder of lipoprotein metabolism, unspecified', category: 'Endocrine' },
 ];
 
-export async function seedICD11(req: Request, res: Response): Promise<void> {
-  await prisma.iCD11Code.createMany({ data: commonCodes, skipDuplicates: true });
-  res.json({ message: `Seeded ${commonCodes.length} ICD-11 codes` });
+export async function seedICD11(_req: Request, res: Response): Promise<void> {
+  try {
+    const { parsed, inserted } = await seedIcd11FromFile();
+    res.json({ message: `Loaded ${inserted} new ICD-11 codes (${parsed} in the list)` });
+  } catch {
+    // The full list file is missing — fall back to the built-in common conditions.
+    await prisma.iCD11Code.createMany({ data: commonCodes, skipDuplicates: true });
+    res.json({ message: `Seeded ${commonCodes.length} common ICD-11 codes` });
+  }
 }

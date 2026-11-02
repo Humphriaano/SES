@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
+import { LATEST_RESULT_FIRST } from '../lib/resultOrder';
 import prisma from '../lib/prisma';
+import { computeRiskPrediction } from './risk.controller';
 
 /**
  * Server-side assembly of the guideline-CDS payload. The frontend sends only
@@ -8,15 +10,42 @@ import prisma from '../lib/prisma';
  * vitals history, dispensing history — is aggregated here from PostgreSQL so
  * the CDS always sees the full record regardless of what the canvas loaded.
  *
- * This is strictly the guideline-CDS context. The chronic-disease risk ML
- * pipeline (risk.controller.ts) has a fixed XGBoost input schema and is
- * deliberately untouched.
+ * The chronic-disease risk ML pipeline (risk.controller.ts) keeps its own fixed
+ * XGBoost input schema; its *output* (scores + top SHAP drivers) is attached
+ * here as `ml_risk` so the LLM can weigh model-predicted risk alongside the
+ * guidelines.
  */
 
-// Character budget for the four record-history sections combined. Qwen 3.6
-// runs at num_ctx 32768 in Ollama; this keeps the patient record well under
-// ~1.5k tokens so guideline chunks + generation always fit comfortably.
+// Character budget for the four record-history sections combined. Llama 3.2
+// runs at num_ctx 8192 here (cds-service/config.py); this keeps the patient
+// record under ~1.5k tokens so guideline chunks + generation always fit.
 const PATIENT_CONTEXT_CHAR_BUDGET = 6000;
+
+const ML_RISK_TIMEOUT_MS = 8000;
+const RISK_LABEL: Record<string, string> = {
+  hypertension: 'Hypertension', cardiovascular: 'Cardiovascular disease', diabetes: 'Diabetes', ckd: 'Chronic kidney disease',
+};
+
+// One terse line per condition, e.g.
+// "Hypertension: HIGH risk (72%) — drivers: Systolic BP of 150 mmHg is elevated; Age of 58 increases risk".
+// Never blocks the CDS: on timeout or model error the section is omitted.
+async function mlRiskLines(patientId: string): Promise<string[]> {
+  try {
+    const result = await Promise.race([
+      computeRiskPrediction(patientId),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), ML_RISK_TIMEOUT_MS)),
+    ]);
+    return Object.entries(result.predictions).map(([key, raw]) => {
+      const p = raw as { probability: number; risk_level: string; top_factors?: { comment: string; direction: string }[] };
+      const drivers = (p.top_factors ?? []).filter((f) => f.direction === 'increases_risk').map((f) => f.comment).slice(0, 2);
+      return `${RISK_LABEL[key] ?? key}: ${String(p.risk_level).toUpperCase()} risk (${Math.round(p.probability * 100)}%)`
+        + (drivers.length ? ` — drivers: ${drivers.join('; ')}` : '');
+    });
+  } catch (err: any) {
+    console.warn(`[cds] ML risk unavailable for ${patientId}: ${err?.message ?? err}`);
+    return [];
+  }
+}
 
 const INVESTIGATION_WINDOW_MONTHS = 12;
 const INVESTIGATION_MAX_COUNT = 20;
@@ -56,6 +85,9 @@ export async function buildCdsPayload(req: Request, res: Response): Promise<void
   const patientId = String(req.params.patientId);
   const canvas = ((req.body as { canvas?: CanvasPayload })?.canvas ?? {});
 
+  // Runs in parallel with the record queries below.
+  const mlRisk = mlRiskLines(patientId);
+
   const invWindow = monthsAgo(INVESTIGATION_WINDOW_MONTHS);
   const dispWindow = monthsAgo(DISPENSING_WINDOW_MONTHS);
 
@@ -76,7 +108,7 @@ export async function buildCdsPayload(req: Request, res: Response): Promise<void
       order: { patientId },
       status: { in: ['Resulted', 'Amended'] },
     },
-    include: { results: { orderBy: { resultedAt: 'desc' }, take: 1 } },
+    include: { results: { orderBy: LATEST_RESULT_FIRST, take: 1 } },
   });
 
   // ── Active diagnoses: committed unresolved ∪ canvas (dedup by ICD code) ──
@@ -213,6 +245,7 @@ export async function buildCdsPayload(req: Request, res: Response): Promise<void
     past_medical_history: pmh,
     vitals_history: vitalsHistory,
     dispensing_history: dispensingHistory,
+    ml_risk: await mlRisk,
   });
 }
 
@@ -227,7 +260,7 @@ export async function getCdsSignature(req: Request, res: Response): Promise<void
     prisma.labResult.findFirst({ where: { patientId }, orderBy: { recordedAt: 'desc' }, select: { recordedAt: true } }),
     prisma.investigationResult.findFirst({
       where: { item: { order: { patientId } } },
-      orderBy: { resultedAt: 'desc' },
+      orderBy: LATEST_RESULT_FIRST,
       select: { resultedAt: true, amendedAt: true },
     }),
     prisma.dispensing.findFirst({ where: { patientId }, orderBy: { dispensedAt: 'desc' }, select: { dispensedAt: true } }),

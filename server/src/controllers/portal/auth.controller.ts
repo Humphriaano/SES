@@ -2,8 +2,9 @@ import { Request, Response } from 'express';
 import prisma from '../../lib/prisma';
 import { requestMagicLink, exchangeMagicLink, revokeSession } from '../../services/portalAuth.service';
 import { PORTAL_SESSION_COOKIE, PortalRequest } from '../../middleware/portalAuth';
+import { isTrustedOrigin } from '../../lib/trustedOrigins';
 
-const PORTAL_URL = process.env['PORTAL_URL'] ?? 'http://localhost:5174';
+const PORTAL_URL = process.env['PORTAL_URL'] ?? 'http://localhost:5175';
 const isProd = process.env['NODE_ENV'] === 'production';
 
 const NEUTRAL_MESSAGE = { message: "If this email is registered for portal access, we've sent a sign-in link." };
@@ -18,12 +19,22 @@ function cookieOptions(expiresAt: Date) {
   };
 }
 
+// The patient may be on the configured PORTAL_URL, a LAN IP, or a Cloudflare
+// quick tunnel — build the magic link against whichever one they're actually
+// browsing from (via the request's own Origin header) rather than always the
+// static env var, so a link requested from a phone on the tunnel doesn't
+// point back at this machine's localhost.
+function resolvePortalUrl(req: Request): string {
+  const origin = req.headers.origin;
+  return isTrustedOrigin(origin, [PORTAL_URL]) ? origin! : PORTAL_URL;
+}
+
 export async function requestLink(req: Request, res: Response): Promise<void> {
   const { email } = req.body as { email?: string };
   if (!email || typeof email !== 'string') { res.status(400).json({ error: 'Email is required' }); return; }
 
   await requestMagicLink(email.trim().toLowerCase(), 'login', {
-    ip: req.ip, userAgent: req.headers['user-agent'], portalUrl: PORTAL_URL,
+    ip: req.ip, userAgent: req.headers['user-agent'], portalUrl: resolvePortalUrl(req),
   });
   // Same response whether or not the email matched a registered patient.
   res.json(NEUTRAL_MESSAGE);

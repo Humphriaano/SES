@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { LATEST_RESULT_FIRST } from '../lib/resultOrder';
 import prisma from '../lib/prisma';
 
 // POST /api/investigations/orders
@@ -47,7 +48,7 @@ export async function getInvestigationOrders(req: Request, res: Response) {
               orderedBy: { select: { id: true, name: true } },
             },
           },
-          results: { orderBy: { resultedAt: 'desc' }, take: 1 },
+          results: { orderBy: LATEST_RESULT_FIRST, take: 1 },
         },
         orderBy: { order: { orderedAt: 'asc' } },
       });
@@ -65,7 +66,7 @@ export async function getInvestigationOrders(req: Request, res: Response) {
         orderedBy: { select: { id: true, name: true } },
         items: {
           include: {
-            results: { orderBy: { resultedAt: 'desc' } },
+            results: { orderBy: LATEST_RESULT_FIRST },
           },
         },
       },
@@ -169,7 +170,7 @@ export async function getInvestigationResultHistory(req: Request, res: Response)
         status: { in: ['Resulted', 'Amended'] },
       },
       include: {
-        results: { orderBy: { resultedAt: 'desc' } },
+        results: { orderBy: LATEST_RESULT_FIRST },
         order: { select: { orderedAt: true, encounterId: true } },
       },
       orderBy: { order: { orderedAt: 'desc' } },
