@@ -32,6 +32,9 @@ class PatientContext(BaseModel):
     past_medical_history: list[str] = []
     vitals_history: list[str] = []
     dispensing_history: list[str] = []
+    # XGBoost chronic-disease risk (one line per condition: level, %, top
+    # SHAP drivers), attached by Express from /cds/risk-predict.
+    ml_risk: list[str] = []
 
 
 class CdsRequest(BaseModel):
@@ -56,3 +59,6 @@ class CdsResponse(BaseModel):
     low_confidence: bool = False
     error: Optional[str] = None
     direct_suggestion: Optional[str] = None
+    # Echo of the ML risk lines the LLM was given, and which LLM answered.
+    ml_risk: list[str] = []
+    model: Optional[str] = None

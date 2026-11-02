@@ -216,20 +216,24 @@ def predict(patient_data: dict) -> dict:
         # Pair each feature with its SHAP value and patient value
         pairs = list(zip(FEATURE_COLS, shap_features, values))
 
+        # Only features actually on record can be explained to a clinician: a
+        # missing value still shifts the tree's output, but a sentence like
+        # "eGFR of 0 mL/min" for a test never done is wrong and misleading.
+        present = [p for p in pairs if p[2] is not None and not np.isnan(p[2])]
+
         # Sort by absolute SHAP value — strongest contributors first
-        pairs_sorted = sorted(pairs, key=lambda x: abs(x[1]), reverse=True)
+        pairs_sorted = sorted(present, key=lambda x: abs(x[1]), reverse=True)
 
         # Take top 3
         top3 = []
         for feat, shap_val, pat_val in pairs_sorted[:3]:
             direction = "up" if shap_val > 0 else "down"
-            comment = get_comment(feat, direction, pat_val if not np.isnan(pat_val) else 0)
             top3.append({
                 "feature":   feat,
-                "value":     round(float(pat_val), 2) if not np.isnan(pat_val) else None,
+                "value":     round(float(pat_val), 2),
                 "impact":    round(float(shap_val), 3),
                 "direction": "increases_risk" if shap_val > 0 else "decreases_risk",
-                "comment":   comment
+                "comment":   get_comment(feat, direction, pat_val)
             })
         return top3
 

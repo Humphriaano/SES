@@ -24,7 +24,7 @@ from pydantic import BaseModel
 
 # ── configuration ──────────────────────────────────────────────────────────────
 
-from config import LLM_MODEL, OLLAMA_URL
+from config import LLM_MODEL, OLLAMA_URL, MODEL_NUM_CTX, THINKING_MODEL
 
 _ollama    = ollama.Client(host=OLLAMA_URL)
 
@@ -396,8 +396,8 @@ async def upload_document(
         response = _ollama.chat(
             model=LLM_MODEL,
             messages=[{"role": "user", "content": prompt}],
-            think=False,
-            options={"temperature": 0},
+            options={"temperature": 0, "num_ctx": MODEL_NUM_CTX},
+            **({"think": False} if THINKING_MODEL else {}),
         )
         raw_llm = response.message.content
         print(f"[document_router] raw LLM response (pre post-processing):\n{raw_llm}", flush=True)

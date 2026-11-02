@@ -10,7 +10,7 @@ from chromadb.utils.embedding_functions import OllamaEmbeddingFunction
 
 CHROMA_DIR  = Path(__file__).parent.parent / "chroma_db"
 EMBED_MODEL = "nomic-embed-text"
-OLLAMA_URL  = "http://localhost:11434"
+from config import OLLAMA_URL  # noqa: E402  (single source of truth)
 COLLECTION  = "guidelines"
 TOP_K       = 5
 LOW_CONF_THRESHOLD = 0.30  # cosine distance — below this = low confidence

@@ -25,13 +25,29 @@ from models.schemas import CdsRequest, CdsResponse, Recommendation
 from rag.retriever import retrieve, doc_count, filter_chunks_by_age
 from rag.prompt import build_query, build_prompt, build_direct_prompt
 from rag.ingest import ingest as run_ingest
-from config import LLM_MODEL, OLLAMA_URL
+from config import LLM_MODEL, OLLAMA_URL, MODEL_NUM_CTX, THINKING_MODEL
 
 TEMPERATURE = 0.1
 
 _ollama = ollama.Client(host=OLLAMA_URL)
 
-print(f"Using model: {LLM_MODEL}", flush=True)
+print(f"Using model: {LLM_MODEL} via {OLLAMA_URL} (num_ctx {MODEL_NUM_CTX})", flush=True)
+
+
+def llm_chat(messages: list[dict], temperature: float) -> str:
+    """One Ollama chat call with the service-wide settings. format="json" makes
+    Ollama constrain Llama's output to valid JSON, so parsing rarely fails."""
+    kwargs: dict = {
+        "model": LLM_MODEL,
+        "messages": messages,
+        "format": "json",
+        # num_predict caps generation: the JSON answers need ~300-600 tokens, and
+        # on a CPU-only laptop every extra token is wall-clock time.
+        "options": {"temperature": temperature, "num_ctx": MODEL_NUM_CTX, "num_predict": 800},
+    }
+    if THINKING_MODEL:
+        kwargs["think"] = False
+    return _ollama.chat(**kwargs).message.content
 
 app = FastAPI(title="SES Clinical Decision Support", version="1.0.0")
 
@@ -113,7 +129,7 @@ async def suggest(req: CdsRequest):
         f"[cds] patient={p.patient_id} age={p.age} sex={p.sex} "
         f"dx={len(p.active_diagnoses)} meds={len(p.current_medications)} "
         f"inv_results={len(p.investigation_results)} pmh={len(p.past_medical_history)} "
-        f"vitals_hist={len(p.vitals_history)} dispensing={len(p.dispensing_history)}",
+        f"vitals_hist={len(p.vitals_history)} dispensing={len(p.dispensing_history)} ml_risk={len(p.ml_risk)}",
         flush=True,
     )
     if p.investigation_results:
@@ -127,19 +143,14 @@ async def suggest(req: CdsRequest):
         retrieved = await asyncio.to_thread(retrieve, query)
         chunks = filter_chunks_by_age(retrieved["chunks"], req.patient.age)
         messages = build_prompt(req.patient, req.question, chunks, retrieved["low_confidence"])
-        resp = await asyncio.to_thread(
-            lambda: _ollama.chat(model=LLM_MODEL, messages=messages, think=False, options={"temperature": TEMPERATURE})
-        )
-        return resp.message.content, retrieved["low_confidence"], retrieved["sources"]
+        raw = await asyncio.to_thread(llm_chat, messages, TEMPERATURE)
+        return raw, retrieved["low_confidence"], retrieved["sources"]
 
     # 3. Direct pipeline: patient context only → differential diagnosis
     async def direct_pipeline():
         try:
             messages = build_direct_prompt(req.patient)
-            resp = await asyncio.to_thread(
-                lambda: _ollama.chat(model=LLM_MODEL, messages=messages, think=False, options={"temperature": 0.3})
-            )
-            return resp.message.content
+            return await asyncio.to_thread(llm_chat, messages, 0.3)
         except Exception:
             return None
 
@@ -156,6 +167,8 @@ async def suggest(req: CdsRequest):
 
     # 5. Parse guideline-based response
     result = parse_llm_response(raw_text, low_confidence, sources)
+    result.ml_risk = req.patient.ml_risk
+    result.model = LLM_MODEL
 
     # 6. Parse differential diagnosis and attach
     if direct_raw:
@@ -333,10 +346,7 @@ async def reports_chat(req: ReportsChatRequest):
 
     # 3. Call Ollama
     try:
-        resp = await asyncio.to_thread(
-            lambda: _ollama.chat(model=LLM_MODEL, messages=messages, think=False, options={"temperature": 0.1})
-        )
-        raw = resp.message.content
+        raw = await asyncio.to_thread(llm_chat, messages, 0.1)
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Ollama unreachable: {e}")
 
@@ -398,7 +408,7 @@ async def health():
     return {
         "ollama":            "ok" if ollama_ok else "unreachable",
         "llm_model":         LLM_MODEL,
-        "llm_available":     any(LLM_MODEL in m for m in available_models),
+        "llm_available":     LLM_MODEL in available_models or f"{LLM_MODEL}:latest" in available_models,
         "available_models":  available_models,
         "chroma_doc_count":  doc_count(),
         "embed_model":       "nomic-embed-text",

@@ -16,7 +16,8 @@ from pypdf import PdfReader
 GUIDELINES_DIR = Path(__file__).parent.parent / "guidelines"
 CHROMA_DIR     = Path(__file__).parent.parent / "chroma_db"
 EMBED_MODEL    = "nomic-embed-text"
-OLLAMA_URL     = "http://localhost:11434"
+sys.path.insert(0, str(Path(__file__).parent.parent))  # so `python rag/ingest.py` finds config.py
+from config import OLLAMA_URL  # noqa: E402  (single source of truth)
 CHUNK_SIZE     = 512
 CHUNK_OVERLAP  = 64
 COLLECTION     = "guidelines"
