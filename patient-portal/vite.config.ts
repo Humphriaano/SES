@@ -41,7 +41,7 @@ export default defineConfig({
   ],
   server: {
     host: '0.0.0.0',
-    port: 5174,
+    port: 5175,
     allowedHosts: true,
     fs: { allow: ['..'] }, // theme/ses-tokens.css lives one level up, shared with client
     proxy: {
