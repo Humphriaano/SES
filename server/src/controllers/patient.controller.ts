@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import { Request as ExpressRequest, Response } from 'express';
+// Route params are always single strings in these routes (no wildcards).
+type Request = ExpressRequest<Record<string, string>>;
 import prisma from '../lib/prisma';
 import { requestMagicLink } from '../services/portalAuth.service';
 import { AuthRequest } from '../middleware/auth';
@@ -195,6 +197,7 @@ export async function updatePatient(req: Request, res: Response): Promise<void> 
       ...data,
       dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : undefined,
       gender: data.gender as any,
+      hivStatus: data.hivStatus as any,
       hivTestDate: data.hivTestDate ? new Date(data.hivTestDate) : undefined,
     },
   });

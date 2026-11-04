@@ -4,7 +4,7 @@ import { verifySession } from '../services/portalAuth.service';
 
 export const PORTAL_SESSION_COOKIE = 'ses_portal_session';
 
-export interface PortalRequest extends Request {
+export interface PortalRequest extends Request<Record<string, string>> {
   patientId?: string;
 }
 

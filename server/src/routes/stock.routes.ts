@@ -6,6 +6,7 @@ import { receiveStock, listStockReceipts, reverseStockReceipt, createReceivingDr
 import { stockOnHand, stockProductRows, stockExpiryBatches, stockCard } from '../lib/stockViews';
 import { dispenseStockPlan } from '../lib/stockDispensing';
 import { adjustmentBatches, getAdjustment, listAdjustments, submitAdjustment, reviewAdjustment } from '../lib/stockAdjustments';
+import { runStockReport } from '../controllers/stockReports.controller';
 import { reviewPrescriptionStock } from '../lib/stockAvailability';
 
 const router = Router();
@@ -49,4 +50,5 @@ router.post('/adjustments', handler(req => submitAdjustment(prisma, actor(req), 
 router.post('/adjustments/:id/approve', requireRoles('admin'), handler(req => reviewAdjustment(prisma, actor(req), req.header('Idempotency-Key'), req.params.id, 'APPROVE', req.body), true));
 router.post('/adjustments/:id/reject', requireRoles('admin'), handler(req => reviewAdjustment(prisma, actor(req), req.header('Idempotency-Key'), req.params.id, 'REJECT', req.body), true));
 router.post('/adjustments/:id/cancel', handler(req => reviewAdjustment(prisma, actor(req), req.header('Idempotency-Key'), req.params.id, 'CANCEL', req.body), true));
+router.get('/reports/:name', runStockReport);
 export default router;

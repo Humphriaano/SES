@@ -43,7 +43,7 @@ export async function sendEmail({ to, subject, html }: SendEmailArgs): Promise<v
     }),
   });
 
-  const body = await res.json().catch(() => null);
+  const body = (await res.json().catch(() => null)) as { message?: string; messageId?: string } | null;
   if (!res.ok) {
     console.error(`[email] Brevo send to ${to} FAILED (${res.status}):`, body);
     throw new Error(`Brevo rejected the email (${res.status}): ${body?.message ?? 'unknown error'}`);

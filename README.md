@@ -112,11 +112,12 @@ Commit the new folder under `server/prisma/migrations`. Other machines pick it u
 
 ## Known issues
 
-- `npm run build` in `server/` fails type-checking in several older controllers. The server runs through `ts-node --transpile-only`, so use `npm run dev` for now.
 - Money is stored in ZMW; invoice numbers (`INV-YYYY-000001`) and receipt numbers (`RCT-…`) are sequential and never reused.
+- Pharmacy stock control (receiving, dispensing, adjustments, reports) is built (see `server/docs/pharmacy-stock-stage*.md`). Facility products, batches and opening balances still have to be entered. Reorder suggestions, stock value and multi-store transfers are not built.
 
 ## Further reading
 
+- `server/docs/`: per-stage notes for the pharmacy stock-control build.
 - `risk-prediction-architecture.md`: how the chronic-disease risk models work.
 - `SES Documentation/`: consultation notes spec.
 - `client/README.md` and `patient-portal/README.md`: front-end notes.

@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import { Request as ExpressRequest, Response } from 'express';
+// Route params are always single strings in these routes (no wildcards).
+type Request = ExpressRequest<Record<string, string>>;
 import prisma from '../lib/prisma';
 
 export async function getBillingItems(req: Request, res: Response): Promise<void> {

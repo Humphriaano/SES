@@ -258,7 +258,7 @@ function logoPng(): Buffer | null {
   } catch { return null; }
 }
 
-async function toWorkbook(r: Report, by: string): Promise<Buffer> {
+export async function toWorkbook(r: Report, by: string): Promise<Buffer> {
   const wb = new ExcelJS.Workbook();
   wb.creator = 'SES EHR';
   const ws = wb.addWorksheet(r.title.slice(0, 30), { views: [{ state: 'frozen', ySplit: 6, showGridLines: false }] });

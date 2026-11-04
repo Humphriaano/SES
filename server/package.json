@@ -18,7 +18,8 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:deploy": "prisma migrate deploy",
-    "create-admin": "ts-node --transpile-only scripts/create-admin.ts"
+    "create-admin": "ts-node --transpile-only scripts/create-admin.ts",
+    "test:stock-reports": "node tests/stock.reports.cjs"
   },
   "keywords": [],
   "author": "",

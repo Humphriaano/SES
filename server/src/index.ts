@@ -55,7 +55,7 @@ app.use(idempotency);
 app.use('/api/portal', portalRoutes);
 app.use('/api', routes);
 
-app.get('/health', (_req, res) => res.json({ status: 'ok', version: 4, pharmacyStockStage: 7 }));
+app.get('/health', (_req, res) => res.json({ status: 'ok', version: 4, pharmacyStockStage: 8 }));
 
 app.listen(PORT, () => {
   console.log(`SES EHR API running on port ${PORT}`);

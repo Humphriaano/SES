@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import { Request as ExpressRequest, Response } from 'express';
+// Route params are always single strings in these routes (no wildcards).
+type Request = ExpressRequest<Record<string, string>>;
 import prisma from '../lib/prisma';
 
 const SERVICE_POINTS = ['REGISTRY', 'VITALS', 'CONSULTATION', 'PHARMACY', 'LAB', 'BILLING'] as const;

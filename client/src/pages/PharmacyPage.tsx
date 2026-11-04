@@ -7,6 +7,7 @@ import { stockQuantity } from '../lib/stockViews';
 import StockReceiving from '../components/pharmacy/StockReceiving';
 import StockViews from '../components/pharmacy/StockViews';
 import StockAdjustments from '../components/pharmacy/StockAdjustments';
+import StockReports from '../components/pharmacy/StockReports';
 import { formatCourseDate } from '../lib/prescriptionCourse';
 import { useEffect, useState, useRef, useCallback, Fragment } from 'react';
 import { Navigate } from 'react-router-dom';
@@ -851,7 +852,7 @@ function PatientTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: bool
 export default function PharmacyPage() {
   const { user } = useAuth();
   const { activePatient } = usePatient();
-  const [tab, setTab] = useState<'queue' | 'patient' | 'receiving' | 'stock' | 'adjustments'>('queue');
+  const [tab, setTab] = useState<'queue' | 'patient' | 'receiving' | 'stock' | 'adjustments' | 'reports'>('queue');
   const [encounters, setEncounters] = useState<Encounter[]>([]);
   const [dispensingVersion,setDispensingVersion] = useState(0);
 
@@ -918,7 +919,7 @@ export default function PharmacyPage() {
           display: 'flex', width: 'fit-content', maxWidth: '100%', flexWrap: 'wrap', gap: 4,
           background: 'var(--bg-surface)',
         }}>
-          {(['queue', 'patient', ...(canAct ? ['stock' as const, 'receiving' as const, 'adjustments' as const] : [])] as const).map(t => (
+          {(['queue', 'patient', ...(canAct ? ['stock' as const, 'receiving' as const, 'adjustments' as const, 'reports' as const] : [])] as const).map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
               padding: '8px 18px', borderRadius: 999, border: 'none',
               background: tab === t ? 'var(--bg-card)' : 'transparent',
@@ -927,7 +928,7 @@ export default function PharmacyPage() {
               fontSize: 13, fontWeight: 500, cursor: 'pointer',
               transition: 'color 0.15s',
             }}>
-              {t === 'queue' ? 'Queue' : t === 'patient' ? 'Patient' : t === 'stock' ? 'Stock' : t === 'receiving' ? 'Receive stock' : 'Adjust stock'}
+              {t === 'queue' ? 'Queue' : t === 'patient' ? 'Patient' : t === 'stock' ? 'Stock' : t === 'receiving' ? 'Receive stock' : t === 'reports' ? 'Stock reports' : 'Adjust stock'}
             </button>
           ))}
         </div>
@@ -940,6 +941,7 @@ export default function PharmacyPage() {
           {tab === 'receiving' && canAct && <StockReceiving key={user.id} />}
           {tab === 'stock' && canAct && <StockViews />}
           {tab === 'adjustments' && canAct && <StockAdjustments key={user.id} />}
+          {tab === 'reports' && canAct && <StockReports />}
         </div>
 
       </div>

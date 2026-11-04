@@ -28,7 +28,7 @@ function facilityDate(value: unknown, label: string): string | null {
 
 // All quantities originate in this per-batch ledger sum. Categories are
 // disjoint: expired first, then quarantine, inactive, finally usable stock.
-function batchTotals() {
+export function batchTotals() {
   const today = todayInput();
   return Prisma.sql`batch_totals AS (
     SELECT b."id" AS "batchId", b."productId", b."lotNumber", b."expiryDate", b."status" AS "batchStatus",
