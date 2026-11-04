@@ -33,11 +33,11 @@ _ollama    = ollama.Client(host=OLLAMA_URL)
 DOCS_DIR = Path(__file__).parent / "documents"
 DOCS_DIR.mkdir(exist_ok=True)
 
-# PostgreSQL — read DATABASE_URL from env, fall back to local dev default
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:Hypercrux@localhost:5432/ses_ehr"
-)
+# PostgreSQL — DATABASE_URL comes from cds-service/.env (see .env.example). It is
+# a plain libpq URL: no ?schema= suffix, which psycopg2 rejects.
+DATABASE_URL = os.getenv("DATABASE_URL", "")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL is not set. Copy cds-service/.env.example to cds-service/.env and fill it in.")
 
 # Tesseract path (Windows default install location)
 TESSERACT_CMD = os.getenv(

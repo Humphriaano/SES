@@ -4,6 +4,12 @@ here (overridable via env var) so a model swap is a one-line/env change.
 """
 
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+# cds-service/.env holds machine-specific settings (database URL, model overrides).
+load_dotenv(Path(__file__).parent / ".env")
 
 # Exact installed Ollama tag — confirm with `ollama list` after changing.
 LLM_MODEL = os.getenv("CDS_LLM_MODEL", "llama3.2:latest")
