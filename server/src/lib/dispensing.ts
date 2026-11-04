@@ -4,13 +4,16 @@ import { openInvoice } from './billing';
 import { audit, lockInvoice, recalcInvoice } from './billingOps';
 import { parseMedicationDraft } from './medicationDraft';
 import { pricingUnit, PriceBasis } from './prescriptionSupply';
+import { StockActor, stockPrimitives as s } from './stock';
+import { issueDispensingStock, stockSelection, dispensingStockInclude } from './stockDispensing';
 
 export class DispensingError extends Error {
   constructor(public status: number, message: string) { super(message); }
 }
 
 // The original order stays on record. Its single billing source is repriced in place.
-export async function saveDispensing(body: any, userId?: string) {
+export async function saveDispensing(body: any, actor: StockActor, key: unknown) {
+  const userId = s.authorize(actor);
   if (!body.patientId || !body.dispensedDrug?.trim()) throw new DispensingError(400, 'Patient and drug are required.');
   const substitution = body.type === 'substitution';
   if (substitution && !body.prescriptionId) throw new DispensingError(400, 'A prescription is required.');
@@ -21,7 +24,9 @@ export async function saveDispensing(body: any, userId?: string) {
   if (parsed && 'error' in parsed) throw new DispensingError(400, parsed.error);
   if (parsed && 'data' in parsed && !parsed.data.dosage) throw new DispensingError(400, 'Dosage is required.');
   if (parsed && 'data' in parsed && parsed.data.quantity == null) throw new DispensingError(400, 'Enter the substitute quantity.');
-  return prisma.$transaction(async tx => {
+  const selection = stockSelection(body.stock);
+  return s.write(prisma, actor, key, 'DISPENSE', s.snapshot(body), async (tx, operationId) => {
+    const staff = await tx.user.findUniqueOrThrow({ where: { id: userId }, select: { name: true } });
     if (body.prescriptionId) await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${'dispense:' + body.prescriptionId}))`;
     const rx = body.prescriptionId ? await tx.prescription.findUnique({ where: { id: body.prescriptionId }, include: { medication: true, encounter: true } }) : null;
     if (body.prescriptionId && (!rx || rx.encounter.patientId !== body.patientId)) throw new DispensingError(404, 'Prescription not found for this patient.');
@@ -94,12 +99,14 @@ export async function saveDispensing(body: any, userId?: string) {
       dispensedDuration: med?.duration ?? body.dispensedDuration ?? null,
       quantity: med?.quantity ?? null, unitPrice: price, catalogueCode: med?.catalogueCode ?? null,
       quantityUnit: med?.quantityUnit, priceBasis: med?.priceBasis, billingQuantity: med?.priceBasis === 'COURSE' ? 1 : med?.billingQuantity ?? med?.quantity,
-      dispensedBy: body.dispensedBy || userId || 'Staff', substitution: substitutionRecord,
+      dispensedBy: staff.name, substitution: substitutionRecord,
       modifications: parsed && rx && !substitution ? { original: JSON.parse(JSON.stringify(rx.medication)), dispensed: JSON.parse(JSON.stringify(med)) } : body.modifications ?? undefined,
     }, include: { patient: { select: { firstName: true, lastName: true, nationalId: true } } } });
     // Inventory uses whole units; never round a fractional clinical quantity into stock.
     const quantity = med?.quantity != null ? Number(med.quantity) : 1;
-    if (Number.isInteger(quantity)) await tx.drugInventory.updateMany({ where: { drugName: { equals: dispensing.dispensedDrug, mode: 'insensitive' }, ...(med?.doseUnit === 'mL' && med?.quantityUnit !== 'bottle' ? { unit: { in: ['mL', 'ml'] } } : {}) }, data: { quantity: { decrement: quantity } } });
-    return dispensing;
+    const tracked = await issueDispensingStock(tx, operationId, userId, dispensing, selection);
+    if (!tracked && Number.isInteger(quantity)) await tx.drugInventory.updateMany({ where: { drugName: { equals: dispensing.dispensedDrug, mode: 'insensitive' }, ...(med?.doseUnit === 'mL' && med?.quantityUnit !== 'bottle' ? { unit: { in: ['mL', 'ml'] } } : {}) }, data: { quantity: { decrement: quantity } } });
+    const stockAllocations = await tx.stockDispensingAllocation.findMany({ where: { dispensingId: dispensing.id }, include: dispensingStockInclude });
+    return { ...dispensing, stockAllocations };
   });
 }

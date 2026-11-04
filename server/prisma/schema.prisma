@@ -65,6 +65,8 @@ model User {
   queueStarted            QueueEntry[]         @relation("QueueStartedBy")
   priceUpdates            PriceListItem[]      @relation("PriceListUpdatedBy")
   priceChanges            PriceListChange[]    @relation("PriceListChangedBy")
+  stockAdjustmentsPrepared StockAdjustment[] @relation("StockAdjustmentPreparedBy")
+  stockAdjustmentsReviewed StockAdjustment[] @relation("StockAdjustmentReviewedBy")
 }
 
 model Patient {
@@ -231,6 +233,7 @@ model Prescription {
   encounterId  String
   medicationId String
   substituteMedicationId String?
+  preferredStockProductId String?
   dispensed    Boolean   @default(false)
   dispensedAt  DateTime?
   notAvailable Boolean   @default(false)   // pharmacy is out of it: the client buys elsewhere and is not charged
@@ -239,7 +242,9 @@ model Prescription {
   encounter   Encounter    @relation(fields: [encounterId], references: [id])
   medication  Medication   @relation("PrescribedMedication", fields: [medicationId], references: [id])
   substituteMedication Medication? @relation("SubstituteMedication", fields: [substituteMedicationId], references: [id], onDelete: SetNull)
+  preferredStockProduct PharmacyProduct? @relation(fields: [preferredStockProductId], references: [id], onDelete: Restrict)
   dispensings Dispensing[]
+  @@index([preferredStockProductId])
 }
 
 model Dispensing {
@@ -267,6 +272,7 @@ model Dispensing {
 
   prescription Prescription? @relation(fields: [prescriptionId], references: [id])
   patient      Patient       @relation(fields: [patientId], references: [id])
+  stockAllocations StockDispensingAllocation[]
 }
 
 model DrugInventory {
@@ -275,6 +281,191 @@ model DrugInventory {
   quantity  Int      @default(0)
   unit      String?
   updatedAt DateTime @updatedAt
+}
+
+// Ledger-managed catalogue items use batch allocations at dispensing. Items
+// without a stock product retain the legacy counter during transition.
+enum StockBatchStatus {
+  USABLE
+  QUARANTINED
+}
+
+enum StockMovementType {
+  RECEIVED
+  ISSUED
+  LOSS
+  ADJUSTMENT
+  REVERSAL
+}
+
+model PharmacyProduct {
+  id              String        @id @default(uuid())
+  catalogueType   PriceItemType @default(DRUG)
+  catalogueRef    String
+  brand           String
+  brandKey        String
+  manufacturer    String?
+  manufacturerKey String        @default("")
+  baseUnit        String
+  packSize        Decimal       @db.Decimal(18, 2)
+  packLabel       String
+  active          Boolean       @default(true)
+  createdById     String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  catalogueItem PriceListItem @relation(fields: [catalogueType, catalogueRef], references: [itemType, catalogueRef], onDelete: Restrict, onUpdate: Restrict)
+  batches       StockBatch[]
+  preferredPrescriptions Prescription[]
+
+  @@unique([catalogueRef, brandKey, manufacturerKey, baseUnit, packSize], map: "PharmacyProduct_identity_key")
+  @@index([catalogueRef, active])
+}
+
+model StockBatch {
+  id          String           @id @default(uuid())
+  productId   String
+  lotNumber   String
+  expiryDate  DateTime         @db.Date
+  status      StockBatchStatus @default(USABLE)
+  createdById String
+  createdAt   DateTime         @default(now())
+
+  product     PharmacyProduct @relation(fields: [productId], references: [id], onDelete: Restrict)
+  movements   StockMovement[]
+  receiptLines StockReceiptLine[]
+  allocations StockDispensingAllocation[]
+  adjustmentLines StockAdjustmentLine[]
+
+  @@unique([productId, lotNumber])
+  @@index([expiryDate, status])
+}
+
+// Retained in the database, so retries remain safe across process restarts.
+model StockOperation {
+  id          String   @id @default(uuid())
+  actorId     String
+  key         String
+  kind        String
+  requestHash String
+  response    Json?
+  createdAt   DateTime @default(now())
+  movements   StockMovement[]
+  receipts    StockReceipt[]
+  submittedAdjustment StockAdjustment? @relation("AdjustmentSubmission")
+  postedAdjustment StockAdjustment? @relation("AdjustmentPosting")
+
+  @@unique([actorId, key])
+}
+
+model StockReceipt {
+  id          String   @id @default(uuid())
+  operationId String   @unique
+  kind        String   @default("DELIVERY")
+  receivedDate DateTime @db.Date
+  reference   String
+  source      String
+  receivedById String
+  createdAt   DateTime @default(now())
+  operation StockOperation @relation(fields: [operationId], references: [id], onDelete: Restrict)
+  lines StockReceiptLine[]
+  @@index([receivedDate])
+}
+
+model StockReceiptLine {
+  id          String  @id @default(uuid())
+  receiptId   String
+  batchId     String
+  packCount   Decimal @db.Decimal(18, 2)
+  packSize    Decimal @db.Decimal(18, 2)
+  packLabel   String
+  baseQuantity Decimal @db.Decimal(18, 2)
+  baseUnit    String
+  costPerPack Decimal? @db.Decimal(18, 2)
+  receipt StockReceipt @relation(fields: [receiptId], references: [id], onDelete: Restrict)
+  batch StockBatch @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  movement StockMovement?
+  @@unique([receiptId, batchId])
+}
+
+model StockMovement {
+  id          String            @id @default(uuid())
+  postingOrder BigInt           @unique @default(autoincrement())
+  operationId String
+  batchId     String
+  type        StockMovementType
+  quantity    Decimal           @db.Decimal(18, 2)
+  baseUnit    String
+  reference   String
+  reason      String?
+  actorId     String
+  approvedById String?
+  receiptLineId String?         @unique
+  reversalOfId String?          @unique
+  createdAt   DateTime          @default(now())
+
+  operation StockOperation @relation(fields: [operationId], references: [id], onDelete: Restrict)
+  batch StockBatch @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  receiptLine StockReceiptLine? @relation(fields: [receiptLineId], references: [id], onDelete: Restrict)
+  reversalOf StockMovement? @relation("StockReversal", fields: [reversalOfId], references: [id], onDelete: Restrict)
+  reversal StockMovement? @relation("StockReversal")
+  allocation StockDispensingAllocation?
+  adjustmentLine StockAdjustmentLine?
+  @@index([batchId, createdAt, id])
+  @@index([batchId, postingOrder])
+}
+
+// Posted atomically with dispensing and its billing changes. One dispensing
+// can span eligible batches and products of the same clinical item and unit.
+model StockDispensingAllocation {
+  id           String  @id @default(uuid())
+  dispensingId String
+  batchId      String
+  movementId   String  @unique
+  quantity     Decimal @db.Decimal(18, 2)
+  baseUnit     String
+  dispensing Dispensing @relation(fields: [dispensingId], references: [id], onDelete: Restrict)
+  batch StockBatch @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  movement StockMovement @relation(fields: [movementId], references: [id], onDelete: Restrict)
+  @@unique([dispensingId, batchId])
+}
+
+model StockAdjustment {
+  id                   String @id @default(uuid())
+  kind                 String
+  status               String @default("PENDING")
+  reference            String
+  reasonCode           String
+  reason               String?
+  preparedById         String
+  preparedAt           DateTime @default(now())
+  reviewedById         String?
+  reviewedAt           DateTime?
+  reviewNote           String?
+  submittedOperationId String @unique
+  postedOperationId    String? @unique
+  preparedBy User @relation("StockAdjustmentPreparedBy", fields: [preparedById], references: [id], onDelete: Restrict)
+  reviewedBy User? @relation("StockAdjustmentReviewedBy", fields: [reviewedById], references: [id], onDelete: Restrict)
+  submittedOperation StockOperation @relation("AdjustmentSubmission", fields: [submittedOperationId], references: [id], onDelete: Restrict)
+  postedOperation StockOperation? @relation("AdjustmentPosting", fields: [postedOperationId], references: [id], onDelete: Restrict)
+  lines StockAdjustmentLine[]
+  @@index([status, preparedAt])
+}
+
+model StockAdjustmentLine {
+  id                   String @id @default(uuid())
+  adjustmentId         String
+  batchId              String
+  baseUnit             String
+  expectedQuantity     Decimal @db.Decimal(18, 2)
+  expectedPostingOrder BigInt
+  countedQuantity      Decimal? @db.Decimal(18, 2)
+  changeQuantity       Decimal @db.Decimal(18, 2)
+  movementId           String? @unique
+  adjustment StockAdjustment @relation(fields: [adjustmentId], references: [id], onDelete: Restrict)
+  batch StockBatch @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  movement StockMovement? @relation(fields: [movementId], references: [id], onDelete: Restrict)
+  @@unique([adjustmentId, batchId])
 }
 
 model LabOrder {
@@ -594,6 +785,7 @@ model PriceListItem {
 
   updatedBy User?             @relation("PriceListUpdatedBy", fields: [updatedById], references: [id])
   changes   PriceListChange[]
+  pharmacyProducts PharmacyProduct[]
 
   @@unique([itemType, catalogueRef])
   @@index([itemType, name])
@@ -625,6 +817,8 @@ model CatalogueDrug {
   route        String                      // Oral, IV …
   atcCode      String?
   manufacturer String?
+  ingredients  Json?
+  pendingReview Boolean @default(false)
   active       Boolean  @default(true)
   createdById  String?
   createdAt    DateTime @default(now())

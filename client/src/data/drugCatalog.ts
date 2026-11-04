@@ -23,6 +23,7 @@ export interface DrugEntry extends DrugVariant {
   route: string;
   sku: string;
   brand?: string;
+  pendingReview?: boolean;
 }
 
 const catalog = { ...catalogJson, ...supplementJson.drugs } as Record<string, DrugVariant[]>;
@@ -62,8 +63,8 @@ export function searchCatalog(query: string, limit = 12): DrugEntry[] {
   // Drugs added by staff: found by generic or brand name
   for (const d of getCustomCatalogue().drugs) {
     if (!d.active) continue;
-    const rank = catalogueSearchRank(query, [d.generic, d.brand, ...aliases(d.generic), `${d.generic} ${d.strength} ${d.form}`, d.atcCode]);
-    if (rank !== null) ranked.push({ rank, item: { name: d.generic, dose: d.strength, form: d.form, route: d.route, sku: d.code, brand: d.brand ?? undefined, atcCode: d.atcCode ?? undefined } });
+    const rank = catalogueSearchRank(query, [d.generic, d.brand, ...aliases(d.generic), `${d.generic} ${d.strength} ${d.form}`, d.atcCode, ...(d.ingredients ?? []).map(ingredient => ingredient.name)]);
+    if (rank !== null) ranked.push({ rank, item: { name: d.generic, dose: d.strength, form: d.form, route: d.route, sku: d.code, brand: d.brand ?? undefined, atcCode: d.atcCode ?? undefined, pendingReview: d.pendingReview } });
   }
   return ranked.sort((a, b) => a.rank - b.rank).slice(0, Math.max(0, limit)).map(r => r.item);
 }

@@ -63,6 +63,7 @@ export default function App() {
               <Route path="patient/:patientId/consultation" element={<ModuleRoute module="consultation"><ConsultationPage /></ModuleRoute>} />
               <Route path="patient/:patientId/vitals" element={<ModuleRoute module="vitals"><VitalsPage /></ModuleRoute>} />
               <Route path="patient/:patientId/pharmacy" element={<ModuleRoute module="pharmacy"><PharmacyPage /></ModuleRoute>} />
+              <Route path="pharmacy" element={<ModuleRoute module="pharmacy"><PharmacyPage /></ModuleRoute>} />
               <Route path="patient/:patientId/investigations" element={<ModuleRoute module="investigations"><InvestigationsPage /></ModuleRoute>} />
               <Route path="reports" element={<ModuleRoute module="reports"><ReportsPage /></ModuleRoute>} />
               <Route path="patient/:patientId/reports" element={<Navigate to="/reports" replace />} />

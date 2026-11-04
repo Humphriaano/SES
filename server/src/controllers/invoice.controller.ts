@@ -3,6 +3,7 @@ import prisma from '../lib/prisma';
 import { staffDisplayName } from '../lib/staffNames';
 import { canReadClinical } from '../lib/clinicalAccess';
 import { AuthRequest } from '../middleware/auth';
+import { applyPrescriptionAvailability } from '../lib/prescriptionAvailability';
 import { nextDocumentNumber, openInvoice } from '../lib/billing';
 import {
   PAYMENT_METHODS, PaymentMethod, audit, creditBalanceC, fromCents, isAdmin, lineCents, lockInvoice,
@@ -429,19 +430,7 @@ export async function setPrescriptionAvailability(req: AuthRequest, res: Respons
       const current = await tx.prescription.findUniqueOrThrow({ where: { id } });
       if (current.dispensed) throw new Error('This prescription has already been dispensed.');
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${'invoice:' + rx.encounter.patientId}))`;
-      await tx.prescription.update({ where: { id }, data: { notAvailable } });
-      const line = await tx.chargeLine.findUnique({ where: { sourceType_sourceId: { sourceType: 'PRESCRIPTION', sourceId: id } } });
-      if (line && line.status === 'ACTIVE' && notAvailable) {
-        await lockInvoice(tx, line.invoiceId);
-        await tx.chargeLine.update({ where: { id: line.id }, data: { status: 'VOIDED', voidedAt: new Date(), voidReason: 'Not available at the pharmacy' } });
-        await audit(tx, { userId: req.userId, action: 'LINE_VOIDED', entity: 'ChargeLine', entityId: line.id, invoiceId: line.invoiceId, patientId: rx.encounter.patientId, reason: 'Not available at the pharmacy' });
-        await recalcInvoice(tx, line.invoiceId, req.userId);
-      } else if (line && line.status === 'VOIDED' && !notAvailable && line.voidReason === 'Not available at the pharmacy') {
-        await lockInvoice(tx, line.invoiceId);
-        await tx.chargeLine.update({ where: { id: line.id }, data: { status: 'ACTIVE', voidedAt: null, voidReason: null } });
-        await audit(tx, { userId: req.userId, action: 'LINE_RESTORED', entity: 'ChargeLine', entityId: line.id, invoiceId: line.invoiceId, patientId: rx.encounter.patientId, reason: 'Back in stock' });
-        await recalcInvoice(tx, line.invoiceId, req.userId);
-      }
+      await applyPrescriptionAvailability(tx, rx, notAvailable, req.userId);
     });
     res.json({ ok: true, notAvailable });
   } catch (e: any) { fail(res, 409, e?.message ?? 'Couldn’t save that.'); }

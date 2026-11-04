@@ -1,6 +1,7 @@
 import { Prisma, ChargeSource, PriceItemType } from '@prisma/client';
 import prisma from './prisma';
 import { pricingUnit, PriceBasis } from './prescriptionSupply';
+import { initialPrescriptionStock } from './stockAvailability';
 
 type Tx = Prisma.TransactionClient;
 
@@ -49,20 +50,21 @@ interface ChargeInput {
 // Adds a charge once per source (a retry or a second save of the same prescription is a no-op).
 // The price is copied onto the line here, so later price-list changes never touch it.
 async function addCharge(input: ChargeInput) {
-  return prisma.$transaction(async (tx) => {
-    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${'invoice:' + input.patientId}))`;   // one charge at a time per patient, so the duplicate check below is reliable
-    const dup = await tx.chargeLine.findUnique({ where: { sourceType_sourceId: { sourceType: input.sourceType, sourceId: input.sourceId } } });
-    if (dup) return dup;
-    const priced = 'manual' in input.price ? { id: null, unitPrice: new Prisma.Decimal(input.price.manual) } : 'match' in input.price ? await input.price.match(tx) : await priceByRef(tx, input.price.itemType, input.price.catalogueRef);
-    const invoice = await openInvoice(tx, input.patientId);
-    return tx.chargeLine.create({
-      data: {
-        invoiceId: invoice.id, patientId: input.patientId, encounterId: input.encounterId ?? null,
-        sourceType: input.sourceType, sourceId: input.sourceId, description: input.description, detail: input.detail ?? null,
-        quantity: input.quantity ?? 1, unitPrice: priced?.unitPrice ?? null, priceItemId: priced?.id ?? null,
-        needsReview: !!input.needsReview || !priced || priced.unitPrice === null, quantityUnsure: !!input.quantityUnsure, createdById: input.createdById,
-      },
-    });
+  return prisma.$transaction(tx => addChargeInTransaction(tx, input));
+}
+async function addChargeInTransaction(tx: Tx, input: ChargeInput) {
+  await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${'invoice:' + input.patientId}))`;   // one charge at a time per patient, so the duplicate check below is reliable
+  const dup = await tx.chargeLine.findUnique({ where: { sourceType_sourceId: { sourceType: input.sourceType, sourceId: input.sourceId } } });
+  if (dup) return dup;
+  const priced = 'manual' in input.price ? { id: null, unitPrice: new Prisma.Decimal(input.price.manual) } : 'match' in input.price ? await input.price.match(tx) : await priceByRef(tx, input.price.itemType, input.price.catalogueRef);
+  const invoice = await openInvoice(tx, input.patientId);
+  return tx.chargeLine.create({
+    data: {
+      invoiceId: invoice.id, patientId: input.patientId, encounterId: input.encounterId ?? null,
+      sourceType: input.sourceType, sourceId: input.sourceId, description: input.description, detail: input.detail ?? null,
+      quantity: input.quantity ?? 1, unitPrice: priced?.unitPrice ?? null, priceItemId: priced?.id ?? null,
+      needsReview: !!input.needsReview || !priced || priced.unitPrice === null, quantityUnsure: !!input.quantityUnsure, createdById: input.createdById,
+    },
   });
 }
 
@@ -100,14 +102,18 @@ export function chargeConsultationFee(patientId: string, encounterId: string | n
 }
 
 export function chargePrescription(prescriptionId: string, userId?: string) {
-  return safely('a prescription', async () => {
-    const rx = await prisma.prescription.findUnique({ where: { id: prescriptionId }, include: { medication: true, encounter: { select: { patientId: true } } } });
+  return safely('a prescription', () => prisma.$transaction(async tx => {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${'dispense:' + prescriptionId}))`;
+    const rx = await tx.prescription.findUnique({ where: { id: prescriptionId }, include: { medication: true, encounter: { select: { patientId: true } } } });
     if (!rx) return;
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${'invoice:' + rx.encounter.patientId}))`;
+    const existing = await tx.chargeLine.findUnique({ where: { sourceType_sourceId: { sourceType: 'PRESCRIPTION', sourceId: rx.id } } });
+    if (existing) return;
     const m = rx.medication;
     const { quantity, certain } = m.billingQuantity != null || m.priceBasis === 'COURSE' || m.quantity != null
       ? { quantity: m.priceBasis === 'COURSE' ? 1 : Number(m.billingQuantity ?? m.quantity), certain: true }
       : dispenseQuantity(m.frequency, m.duration);
-    await addCharge({
+    await addChargeInTransaction(tx, {
       patientId: rx.encounter.patientId, encounterId: rx.encounterId, sourceType: 'PRESCRIPTION', sourceId: rx.id,
       description: [m.name, m.dosage].filter(Boolean).join(' '),
       detail: [m.frequency, m.duration, m.priceBasis ? pricingUnit(m.priceBasis as PriceBasis, m.doseUnit || 'unit') : null, m.priceBasis && m.quantity != null ? `Supply ${Number(m.quantity)} ${m.quantityUnit || 'items'}` : null].filter(Boolean).join(' · ') || null,
@@ -130,7 +136,8 @@ export function chargePrescription(prescriptionId: string, userId?: string) {
         },
       },
     });
-  });
+    await initialPrescriptionStock(tx, rx, userId);
+  }, { timeout: 20000 }));
 }
 
 export function chargeInvestigationOrder(orderId: string, userId?: string) {

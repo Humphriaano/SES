@@ -41,6 +41,7 @@ export function patientSelectionPath(role: string | null | undefined, patientId:
   const module = match?.[1] as 'vitals' | 'consultation' | 'pharmacy' | 'investigations' | 'billing' | 'documents' | undefined;
   if (module && canAccessModule(role, module)) return `/patient/${patientId}/${module}`;
   if (/^\/billing(?:\/|$)/.test(pathname) && canAccessModule(role, 'billing')) return `/patient/${patientId}/billing`;
+  if (/^\/pharmacy(?:\/|$)/.test(pathname) && canAccessModule(role, 'pharmacy')) return `/patient/${patientId}/pharmacy`;
   if (/^\/reports(?:\/|$)/.test(pathname) && canAccessModule(role, 'reports')) return '/reports';
   return patientLanding(role, patientId);
 }

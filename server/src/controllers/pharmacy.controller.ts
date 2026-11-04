@@ -5,6 +5,9 @@ import prisma from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth';
 import { parseMedicationDraft } from '../lib/medicationDraft';
 import { pricingUnit } from '../lib/prescriptionSupply';
+import { StockError } from '../lib/stock';
+import { dispensingStockInclude } from '../lib/stockDispensing';
+import { validateStockPreference, preferredStockInclude } from '../lib/prescribingStock';
 
 // ── Existing medication / prescription handlers ───────────────────────────────
 
@@ -43,7 +46,7 @@ export async function getPrescriptions(req: Request, res: Response): Promise<voi
   const { encounterId } = req.params;
   const prescriptions = await prisma.prescription.findMany({
     where: { encounterId },
-    include: { medication: true, substituteMedication: true },
+    include: { medication: true, substituteMedication: true, preferredStockProduct: preferredStockInclude },
   });
   res.json(prescriptions);
 }
@@ -52,17 +55,21 @@ export async function createPrescription(req: Request, res: Response): Promise<v
   const encounterId = String(req.params['encounterId']);
   const { medicationId } = req.body as { medicationId: string };
   if (!medicationId) { res.status(400).json({ error: 'Medication is required.' }); return; }
-  const [encounter, medication] = await Promise.all([
-    prisma.encounter.findUnique({ where: { id: encounterId }, select: { patientId: true } }),
-    prisma.medication.findUnique({ where: { id: medicationId }, select: { patientId: true } }),
-  ]);
-  if (!encounter || !medication || encounter.patientId !== medication.patientId) { res.status(404).json({ error: 'Medication not found for this encounter.' }); return; }
-  const prescription = await prisma.prescription.create({
-    data: { encounterId, medicationId },
-    include: { medication: true, substituteMedication: true },
-  });
-  void chargePrescription(prescription.id, (req as any).userId);   // priced from the price list, once per prescription
-  res.status(201).json(prescription);
+  let prescription;
+  try {
+    prescription = await prisma.$transaction(async tx => {
+      const [encounter, medication] = await Promise.all([
+        tx.encounter.findUnique({ where: { id: encounterId }, select: { patientId: true } }),
+        tx.medication.findUnique({ where: { id: medicationId }, select: { patientId: true, catalogueCode: true, quantityUnit: true } }),
+      ]);
+      if (!encounter || !medication || encounter.patientId !== medication.patientId) throw new StockError(404, 'Medication not found for this encounter.');
+      const preferredStockProductId = await validateStockPreference(tx, req.body.preferredStockProductId, medication);
+      return tx.prescription.create({ data: { encounterId, medicationId, preferredStockProductId }, include: { medication: true, substituteMedication: true, preferredStockProduct: preferredStockInclude } });
+    });
+  } catch (error) { if (error instanceof StockError) { res.status(error.status).json({ error: error.message }); return; } throw error; }
+  await chargePrescription(prescription.id, (req as any).userId);   // clinical save survives a billing failure
+  const current = await prisma.prescription.findUnique({ where: { id: prescription.id }, include: { medication: true, substituteMedication: true, preferredStockProduct: preferredStockInclude } });
+  res.status(201).json(current ?? prescription);
 }
 
 export async function dispensePrescription(req: AuthRequest, res: Response): Promise<void> {
@@ -84,7 +91,7 @@ export async function listGlobalPrescriptions(req: Request, res: Response): Prom
   const prescriptions = await prisma.prescription.findMany({
     where,
     include: {
-      medication: true, substituteMedication: true,
+      medication: true, substituteMedication: true, preferredStockProduct: preferredStockInclude,
       encounter: {
         include: {
           patient: {
@@ -134,8 +141,12 @@ export async function searchDrugs(req: Request, res: Response): Promise<void> {
 
 /** POST /dispensing */
 export async function createDispensing(req: AuthRequest, res: Response): Promise<void> {
-  try { res.status(201).json(await saveDispensing(req.body, req.userId)); }
-  catch (error) { if (error instanceof DispensingError) { res.status(error.status).json({ error: error.message }); return; } throw error; }
+  try {
+    const saved = await saveDispensing(req.body, { userId: req.userId, role: req.userRole }, req.header('Idempotency-Key'));
+    if (saved.replayed) res.setHeader('Idempotent-Replay', 'true');
+    res.status(saved.replayed ? 200 : 201).json(saved.result);
+  }
+  catch (error) { if (error instanceof DispensingError || error instanceof StockError) { res.status(error.status).json({ error: error.message }); return; } throw error; }
 }
 
 /** GET /dispensing?date=today  or  GET /dispensing?patientId=:id */
@@ -154,6 +165,7 @@ export async function getDispensing(req: Request, res: Response): Promise<void> 
     where,
     include: {
       patient: { select: { firstName: true, lastName: true, nationalId: true } },
+      stockAllocations: { include: dispensingStockInclude },
     },
     orderBy: { dispensedAt: 'desc' },
   });
@@ -167,6 +179,7 @@ export async function getPatientDispensing(req: Request, res: Response): Promise
     where: { patientId },
     include: {
       patient: { select: { firstName: true, lastName: true, nationalId: true } },
+      stockAllocations: { include: dispensingStockInclude },
     },
     orderBy: { dispensedAt: 'desc' },
   });
@@ -182,6 +195,7 @@ export async function updateDispensing(req: Request, res: Response): Promise<voi
     data: { collectedAt: new Date(), collectedBy: collectedBy ?? null },
     include: {
       patient: { select: { firstName: true, lastName: true, nationalId: true } },
+      stockAllocations: { include: dispensingStockInclude },
     },
   });
   res.json(updated);

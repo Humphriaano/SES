@@ -4,6 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test:stock": "node tests/stock.foundation.cjs",
+    "test:receiving": "node tests/stock.receiving.cjs",
+    "test:stock-views": "node tests/stock.views.cjs",
+    "test:stock-dispensing": "node tests/stock.dispensing.cjs",
+    "test:prescribing-stock": "node tests/stock.prescribing.cjs",
+    "test:stock-adjustments": "node tests/stock.adjustments.cjs",
+    "test:stock-availability": "node tests/stock.availability.cjs",
     "dev": "nodemon --exec \"ts-node --transpile-only\" src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",

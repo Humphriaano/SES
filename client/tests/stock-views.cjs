@@ -1,0 +1,6 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),ts=require('typescript');
+const source=fs.readFileSync(path.join(__dirname,'../src/lib/stockViews.ts'),'utf8'),exportsObject={};vm.runInNewContext(ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS}}).outputText,{exports:exportsObject});
+const {stockQuantity,movementColumns}=exportsObject;
+for(const [input,expected]of [[null,'—'],[undefined,'—'],['0.00','0'],['1000.00','1,000'],['104.50','104.5'],['9007199254740993.25','9,007,199,254,740,993.25'],['-1000000.05','-1,000,000.05'],['NaN','—']])assert.equal(stockQuantity(input),expected);
+const plain=value=>JSON.parse(JSON.stringify(value));assert.deepEqual(plain(movementColumns({type:'RECEIVED',quantity:'100.00'})),{received:'100.00',issued:null,adjustment:null});assert.deepEqual(plain(movementColumns({type:'ISSUED',quantity:'-40.00'})),{received:null,issued:'40.00',adjustment:null});for(const type of ['REVERSAL','LOSS','ADJUSTMENT'])assert.deepEqual(plain(movementColumns({type,quantity:'-1.25'})),{received:null,issued:null,adjustment:'-1.25'});
+console.log('Passed stock view client checks: exact large-decimal quantities, unknown versus zero and signed receipt/issue/correction columns.');

@@ -4,6 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "test:stock-receiving": "node tests/stock-receiving.cjs",
+    "test:stock-views": "node tests/stock-views.cjs",
+    "test:stock-dispensing": "node tests/stock-dispensing.cjs",
+    "test:prescribing-stock": "node tests/prescribing-stock.cjs",
+    "test:stock-adjustments": "node tests/stock-adjustments.cjs",
+    "test:stock-availability": "node tests/stock-availability.cjs",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",

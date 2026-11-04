@@ -18,6 +18,11 @@ function sweep() {
 }
 
 export function idempotency(req: Request, res: Response, next: NextFunction): void {
+  // The stock service uses durable, payload-checked operation records. Replaying
+  // this older memory cache would bypass its different-payload conflict check.
+  const requestPath = req.originalUrl.split('?')[0].toLowerCase();
+  if (requestPath === '/api/pharmacy-stock' || requestPath.startsWith('/api/pharmacy-stock/')) { next(); return; }
+  if (req.method === 'POST' && (requestPath === '/api/dispensing' || /^\/api\/prescriptions\/[^/]+\/dispense$/.test(requestPath))) { next(); return; }
   const key = req.header('Idempotency-Key');
   if (!key || req.method === 'GET') { next(); return; }
 

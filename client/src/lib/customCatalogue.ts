@@ -6,6 +6,7 @@ import api from '../api/client';
 export interface CustomDrug {
   id: string; code: string; generic: string; brand: string | null; strength: string; form: string; route: string;
   atcCode: string | null; manufacturer: string | null; active: boolean;
+  ingredients?: { name: string; amount: string; unit: string }[] | null; pendingReview?: boolean;
 }
 export interface CustomTest {
   id: number; rowId: string; seq: number; kind: 'SINGLE' | 'PANEL'; name: string; abbr: string | null; loinc: string | null;

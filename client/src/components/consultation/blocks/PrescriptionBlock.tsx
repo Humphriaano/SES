@@ -77,6 +77,7 @@ export default function PrescriptionBlock({ data, onChange, onRemove, readOnly, 
               {!readOnly && item.drugCode && <CataloguePrice catalogueRef={item.drugCode} itemType="DRUG" name={item.drugName} patientId={patientId} suffix={" " + pricingUnit(item.priceBasis ?? 'ITEM', item.doseUnit || item.quantityUnit || 'unit')} unpricedLabel="Add price" />}
             </div>
             {(item.quantity != null || item.startDate) && <div style={{ fontSize: 11, color: 'var(--text-body2)', marginTop: 4 }}>{item.quantity != null ? `Qty ${item.quantity} ${item.quantityUnit || 'units'}` : ''}{item.startDate ? ` · ${formatCourseDate(item.startDate)}${item.endDate ? ' – ' + formatCourseDate(item.endDate) : ''}` : ''}</div>}
+            {item.preferredStockBrand && !(item.prescriptionId && live[item.prescriptionId]) && <div style={{ fontSize: 11, color: 'var(--text-body2)', marginTop: 4 }}>Preferred brand: {item.preferredStockBrand}</div>}
             {item.specialInstructions && (
               <p style={{ fontSize: 12, color: 'var(--text-body2)', margin: '3px 0 0', fontStyle: 'italic' }}>{item.specialInstructions}</p>
             )}

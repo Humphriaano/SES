@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import stockRoutes from './stock.routes';
+import prescribingStockRoutes from './prescribingStock.routes';
 import { staffLoginRateLimit } from '../middleware/staffRateLimit';
 import { register, login, checkUsername, getRoles, listUsers, updateUser, getCurrentUser } from '../controllers/auth.controller';
 import { listPatients, getPatient, createPatient, updatePatient, resolveDiagnosis, addPatientDiagnosis, sendPortalInvitation } from '../controllers/patient.controller';
@@ -47,6 +49,8 @@ import { authenticate, requireRoles } from '../middleware/auth';
 import { CLINICAL_ROLES } from '../lib/clinicalAccess';
 
 const router = Router();
+router.use('/pharmacy-stock', stockRoutes);
+router.use('/prescribing-stock', prescribingStockRoutes);
 
 // Auth
 router.post('/auth/register', register);

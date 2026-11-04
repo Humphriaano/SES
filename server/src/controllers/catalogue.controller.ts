@@ -1,6 +1,8 @@
 import { Response } from 'express';
 import prisma from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth';
+import { readDrug, readDrugIngredients } from '../lib/drugCatalogueInput';
+import { audit } from '../lib/billingOps';
 
 const TEST_ID_BASE = 100000;                       // built-in test ids are below this
 const DATA_TYPES = ['float', 'integer', 'enum', 'free text', 'date'];
@@ -47,16 +49,6 @@ export async function listCustom(_req: AuthRequest, res: Response): Promise<void
 }
 
 // ── Drugs ───────────────────────────────────────────────────────────────────
-function readDrug(body: any) {
-  const generic = str(body.generic, 120), strength = str(body.strength, 60), form = str(body.form, 60), route = str(body.route, 60);
-  if (!generic) return { error: 'Enter the generic name.' };
-  if (!strength) return { error: 'Enter the strength, for example 500mg or 125mg/5ml.' };
-  if (!form) return { error: 'Choose the form (tablet, syrup, injection…).' };
-  if (!route) return { error: 'Choose the route.' };
-  const atc = str(body.atcCode, 10)?.toUpperCase() ?? null;
-  if (atc && !/^[A-Z]\d{2}[A-Z]{0,2}\d{0,2}$/.test(atc)) return { error: 'The ATC code looks wrong. It is a letter, two digits, then up to two letters and two digits, e.g. N02BE01.' };
-  return { data: { generic, brand: str(body.brand, 120), strength, form, route, atcCode: atc, manufacturer: str(body.manufacturer, 120) } };
-}
 
 const drugDetail = (d: { strength: string; form: string; route: string }) => [d.strength, d.form, d.route].join(' · ');
 const drugName = (d: { generic: string; brand: string | null }) => (d.brand ? `${d.generic} (${d.brand})` : d.generic);
@@ -86,16 +78,35 @@ export async function updateDrug(req: AuthRequest, res: Response): Promise<void>
   if (!current) { res.status(404).json({ error: 'That drug no longer exists. Refresh the list.' }); return; }
   const body = req.body ?? {};
   const data: Record<string, unknown> = {};
+  if (body.pendingReview !== undefined) {
+    if (typeof body.pendingReview !== 'boolean') { res.status(400).json({ error: 'Choose a valid review status.' }); return; }
+    if (!(req.userRole ?? '').split(',').some(role => role.trim() === 'admin')) { res.status(403).json({ error: 'Only an administrator can mark a catalogue item reviewed.' }); return; }
+    data['pendingReview'] = body.pendingReview;
+  }
   if (typeof body.active === 'boolean') data['active'] = body.active;
-  if (body.generic !== undefined) {
+  if (body.ingredients !== undefined) {
+    const ingredients = readDrugIngredients(body.ingredients);
+    if (ingredients.error) { res.status(400).json({ error: ingredients.error }); return; }
+    body.strength = ingredients.strength;
+    data['ingredients'] = ingredients.data;
+    data['pendingReview'] = body.pendingReview === false ? false : true;
+  } else if (current.ingredients && body.strength !== undefined && body.strength !== current.strength) {
+    res.status(400).json({ error: 'Edit the active ingredients to change this item’s strength.' }); return;
+  }
+  if (body.generic !== undefined || body.ingredients !== undefined) {
     const r = readDrug({ ...current, ...body });
     if (!r.data) { res.status(400).json({ error: r.error }); return; }
     Object.assign(data, r.data);
   }
-  const drug = await prisma.catalogueDrug.update({ where: { id }, data });
-  await prisma.priceListItem.updateMany({
-    where: { itemType: 'DRUG', catalogueRef: drug.code },
-    data: { name: drugName(drug), detail: drugDetail(drug), ...(typeof body.active === 'boolean' ? { active: drug.active } : {}) },
+  const drug = await prisma.$transaction(async tx => {
+    const updated = await tx.catalogueDrug.update({ where: { id }, data });
+    await tx.priceListItem.updateMany({
+      where: { itemType: 'DRUG', catalogueRef: updated.code },
+      data: { name: drugName(updated), detail: drugDetail(updated), ...(typeof body.active === 'boolean' ? { active: updated.active } : {}) },
+    });
+    if (body.pendingReview !== undefined && body.pendingReview !== current.pendingReview) await audit(tx, { userId: req.userId, action: 'CATALOGUE_DRUG_REVIEWED', entity: 'CatalogueDrug', entityId: updated.id, before: { pendingReview: current.pendingReview }, after: { pendingReview: updated.pendingReview } });
+    if (body.ingredients !== undefined) await audit(tx, { userId: req.userId, action: 'CATALOGUE_DRUG_INGREDIENTS_UPDATED', entity: 'CatalogueDrug', entityId: updated.id, before: { ingredients: current.ingredients, strength: current.strength }, after: { ingredients: updated.ingredients, strength: updated.strength } });
+    return updated;
   });
   res.json(drug);
 }

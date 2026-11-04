@@ -306,9 +306,10 @@ export default function TopNav() {
       <nav className="tn-nav module-nav" aria-label="Modules" style={{ padding: isMobile ? '0 4px' : '0 12px' }}>
         {canAccessModule(user?.role, 'home') && <NavLink to="/" end className="tn-link">Home</NavLink>}
         {canAccessModule(user?.role, 'reports') && <NavLink to="/reports" className="tn-link">Reports</NavLink>}
+        {!activePatient && canAccessModule(user?.role, 'pharmacy') && <NavLink to="/pharmacy" className="tn-link">Pharmacy</NavLink>}
         {/* Patient modules only appear once a patient is open, so there is nothing to click that can't work. */}
         {activePatient && NAV_ITEMS.filter(item => canAccessModule(user?.role, item.path)).map(({ label, path }) => (
-          <NavLink key={path} to={`/patient/${activePatient.id}/${path}`} className={({ isActive }) => `tn-link${isActive ? ' active' : ''}`}>
+          <NavLink key={path} to={`/patient/${activePatient.id}/${path}`} className={({ isActive }) => `tn-link${isActive || (path === 'pharmacy' && location.pathname === '/pharmacy') ? ' active' : ''}`}>
             {label}
           </NavLink>
         ))}

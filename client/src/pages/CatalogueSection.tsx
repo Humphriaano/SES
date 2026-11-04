@@ -2,6 +2,8 @@ import { useMemo, useState, FormEvent } from 'react';
 import toast from 'react-hot-toast';
 import { Plus, Search, X, Pencil } from 'lucide-react';
 import api from '../api/client';
+import { useAuth } from '../context/AuthContext';
+import { hasRole } from '../lib/money';
 import { useCustomCatalogue, loadCustomCatalogue, CustomDrug, CustomTest, CustomDiagnosis } from '../lib/customCatalogue';
 import { allSingles } from '../data/investigationsCatalogue';
 import { CSS as LIST_CSS } from './PriceListSection';
@@ -48,6 +50,7 @@ function FormShell({ title, onSubmit, onCancel, busy, error, children }: { title
 
 // ── Drugs ─────────────────────────────────────────────────────────────────────
 function DrugForm({ initial, onDone }: { initial: CustomDrug | null; onDone: () => void }) {
+  const [ingredients, setIngredients] = useState(initial?.ingredients ?? null);
   const [v, setV] = useState({
     generic: initial?.generic ?? '', brand: initial?.brand ?? '', strength: initial?.strength ?? '', form: initial?.form ?? '',
     route: initial?.route ?? '', atcCode: initial?.atcCode ?? '', manufacturer: initial?.manufacturer ?? '',
@@ -59,7 +62,8 @@ function DrugForm({ initial, onDone }: { initial: CustomDrug | null; onDone: () 
   async function save(e: FormEvent) {
     e.preventDefault(); setBusy(true); setError('');
     try {
-      if (initial) await api.patch(`/catalogue/drugs/${initial.id}`, v); else await api.post('/catalogue/drugs', v);
+      const payload = ingredients ? { ...v, ingredients, strength: ingredients.map(row => row.amount + row.unit).join(' + ') } : v;
+      if (initial) await api.patch(`/catalogue/drugs/${initial.id}`, payload); else await api.post('/catalogue/drugs', payload);
       await loadCustomCatalogue();
       toast.success(`${v.generic} ${initial ? 'updated' : 'added'}`);
       onDone();
@@ -70,7 +74,8 @@ function DrugForm({ initial, onDone }: { initial: CustomDrug | null; onDone: () 
     <FormShell title={initial ? `Edit ${initial.generic}` : 'Add a drug'} onSubmit={save} onCancel={onDone} busy={busy} error={error}>
       <Field id="d-generic" label="Generic name" grow={2}><input id="d-generic" className="a-field" autoFocus maxLength={120} value={v.generic} onChange={set('generic')} placeholder="e.g. Amlodipine" /></Field>
       <Field id="d-brand" label="Brand name" hint="optional" grow={2}><input id="d-brand" className="a-field" maxLength={120} value={v.brand} onChange={set('brand')} placeholder="e.g. Norvasc" /></Field>
-      <Field id="d-strength" label="Strength"><input id="d-strength" className="a-field" maxLength={60} value={v.strength} onChange={set('strength')} placeholder="e.g. 5mg or 125mg/5ml" /></Field>
+      <Field id="d-strength" label="Strength"><input id="d-strength" className="a-field" maxLength={60} readOnly={Boolean(ingredients)} value={ingredients ? ingredients.map(row => row.amount + row.unit).join(' + ') : v.strength} onChange={set('strength')} placeholder="e.g. 5mg or 125mg/5ml" /></Field>
+      {ingredients && <div style={{ flexBasis: '100%' }}><div className="a-k">Active ingredients</div>{ingredients.map((row, index) => <div key={index} style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}><input aria-label={`Edit ingredient ${index + 1}`} className="a-field" style={{ flex: 2 }} value={row.name} onChange={e => setIngredients(rows => rows!.map((r, i) => i === index ? { ...r, name: e.target.value } : r))} /><input aria-label={`Edit ingredient amount ${index + 1}`} className="a-field" style={{ flex: 1 }} type="number" min="0.000001" step="any" value={row.amount} onChange={e => setIngredients(rows => rows!.map((r, i) => i === index ? { ...r, amount: e.target.value } : r))} /><input aria-label={`Edit ingredient unit ${index + 1}`} className="a-field" style={{ flex: 1 }} value={row.unit} onChange={e => setIngredients(rows => rows!.map((r, i) => i === index ? { ...r, unit: e.target.value } : r))} /></div>)}</div>}
       <Field id="d-form" label="Form">
         <input id="d-form" className="a-field" list="d-forms" maxLength={60} value={v.form} onChange={set('form')} placeholder="Tablet" />
         <datalist id="d-forms">{FORMS.map((f) => <option key={f} value={f} />)}</datalist>
@@ -221,6 +226,7 @@ function DiagnosisForm({ initial, onDone }: { initial: CustomDiagnosis | null; o
 
 // ── Section ───────────────────────────────────────────────────────────────────
 export default function CatalogueSection() {
+  const { user } = useAuth();
   const cat = useCustomCatalogue();
   const [tab, setTab] = useState<Tab>('drugs');
   const [q, setQ] = useState('');
@@ -239,6 +245,7 @@ export default function CatalogueSection() {
   }
 
   const close = () => setEditing(null);
+  async function markReviewed(drug: CustomDrug) { try { await api.patch(`/catalogue/drugs/${drug.id}`, { pendingReview: false }); await loadCustomCatalogue(); } catch (err) { toast.error(errMsg(err)); } }
   const empty = (what: string) => (
     <div style={{ padding: '44px 20px 48px', textAlign: 'center' }}>
       <p style={{ margin: '0 0 4px', fontWeight: 500, color: 'var(--text-heading)' }}>{term ? `Nothing matches “${q.trim()}”` : `You haven’t added any ${what} yet`}</p>
@@ -283,11 +290,11 @@ export default function CatalogueSection() {
             <thead><tr><th style={{ paddingLeft: 20 }}>Drug</th><th>Strength · form · route</th><th>Code</th><th>Active</th><th style={{ paddingRight: 20 }} /></tr></thead>
             <tbody>{drugs.map((d) => (
               <tr key={d.id} style={{ opacity: d.active ? 1 : 0.55 }}>
-                <td style={{ paddingLeft: 20 }}><div style={{ fontWeight: 500, color: 'var(--text-heading)' }}>{d.generic}</div><div className="a-faint" style={{ fontSize: 12 }}>{[d.brand, d.manufacturer, d.atcCode].filter(Boolean).join(' · ') || '—'}</div></td>
+                <td style={{ paddingLeft: 20 }}><div style={{ fontWeight: 500, color: 'var(--text-heading)' }}>{d.generic} {d.pendingReview && <span className="a-tag">Pending review</span>}</div><div className="a-faint" style={{ fontSize: 12 }}>{[d.brand, d.manufacturer, d.atcCode].filter(Boolean).join(' · ') || '—'}</div>{d.ingredients?.length ? <div className="a-muted" style={{ fontSize: 12 }}>{d.ingredients.map(ingredient => `${ingredient.name} ${ingredient.amount}${ingredient.unit}`).join(' + ')}</div> : null}</td>
                 <td className="a-muted">{[d.strength, d.form, d.route].join(' · ')}</td>
                 <td className="a-faint">{d.code}</td>
                 <td><button type="button" role="switch" aria-checked={d.active} aria-label={`${d.generic} active`} className={`a-sw${d.active ? ' on' : ''}`} onClick={() => toggle('drugs', d.id, d.active)} /></td>
-                <td style={{ paddingRight: 20, textAlign: 'right' }}><button type="button" className="a-q" onClick={() => setEditing(d)} disabled={editing !== null}><Pencil size={13} style={{ marginRight: 5, verticalAlign: -1 }} />Edit</button></td>
+                <td style={{ paddingRight: 20, textAlign: 'right' }}>{d.pendingReview && hasRole(user?.role, 'admin') && <button type="button" className="a-q" onClick={() => void markReviewed(d)} disabled={editing !== null} style={{ marginRight: 6 }}>Mark reviewed</button>}<button type="button" className="a-q" onClick={() => setEditing(d)} disabled={editing !== null}><Pencil size={13} style={{ marginRight: 5, verticalAlign: -1 }} />Edit</button></td>
               </tr>))}</tbody>
           </table>
         </div>

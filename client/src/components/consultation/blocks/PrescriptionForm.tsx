@@ -9,20 +9,26 @@ import { flushPriceEdits } from '../../../lib/priceEditing';
 import { apiError, zmw } from '../../../lib/money';
 import { calculateCourse, durationInDays, medicationDateInput, formatCourseDate, prescriptionUnit, todayInput, validCourseDate } from '../../../lib/prescriptionCourse';
 import InlinePrice from '../../billing/InlinePrice';
+import { usePrescribingAvailability, availabilityText } from '../../../lib/prescribingStock';
+import './PrescribingStock.css';
 
 export type PrescriptionDraft = Omit<PrescriptionItem, 'id'>;
 const FREQUENCIES = ['OD', 'BD', 'TDS', 'QDS', 'PRN', 'Stat', 'Weekly', 'Monthly'];
 const ROUTES = ['Oral', 'IV', 'IM', 'IV/IM', 'SC', 'Topical', 'Inhaled', 'SL', 'PR', 'Nasal', 'Ophthalmic', 'Rectal', 'Vaginal', 'Transdermal'];
 
-export default function PrescriptionForm({ onAdd, onSave, onCancel, patientId, encounterId, children, submitLabel = 'Add Drug', canSubmit = true, requirePrice = false, initial, lockDrug = false }: {
+export default function PrescriptionForm({ onAdd, onSave, onCancel, patientId, encounterId, children, submitLabel = 'Add Drug', canSubmit = true, requirePrice = false, initial, lockDrug = false, onDraftChange }: {
   onAdd?: (item: PrescriptionDraft) => void; onSave?: (item: PrescriptionDraft) => Promise<void>;
   onCancel: () => void; patientId?: string; encounterId?: string; children?: ReactNode;
   submitLabel?: string; canSubmit?: boolean; requirePrice?: boolean; initial?: Partial<PrescriptionDraft>; lockDrug?: boolean;
+  onDraftChange?: (draft: Pick<PrescriptionDraft, 'drugCode' | 'quantity' | 'quantityUnit'>) => void;
 }) {
   const [drug, setDrug] = useState(initial?.drugName ?? '');
   const [sku, setSku] = useState(initial?.drugCode ?? '');
   const [suggestions, setSuggestions] = useState<DrugEntry[]>([]);
   const [showDrugs, setShowDrugs] = useState(false);
+  const prescribing = !onSave;
+  const stock = usePrescribingAvailability([sku, ...(showDrugs ? suggestions.map(item => item.sku) : [])], prescribing);
+  const [preferred,setPreferred] = useState<{ id: string; brand: string; baseUnit: string } | null>(initial?.preferredStockProductId ? { id: initial.preferredStockProductId, brand: initial.preferredStockBrand ?? 'Saved preferred brand', baseUnit: initial.preferredStockUnit ?? initial.quantityUnit ?? '' } : null);
   const initialEntry = getDrugVariants(initial?.drugName ?? '').find(entry => entry.sku === initial?.drugCode);
   const initialForm = initialEntry ? `${initialEntry.form} ${initialEntry.dose}` : (/\/\s*\d+(?:\.\d+)?\s*ml\b/i.test(initial?.dose ?? '') && (!initial?.route || initial.route === 'Oral') ? 'liquid' : initial?.dose ?? '');
   const [liquid, setLiquid] = useState(initial?.doseUnit === 'mL' || isLiquidMedicine(initialForm));
@@ -54,6 +60,11 @@ export default function PrescriptionForm({ onAdd, onSave, onCancel, patientId, e
   const supply = calculateSupply(course?.quantity ?? null, doseUnit, basis, bottle, form.quantity.trim() ? Number(form.quantity) : null);
   const calculated = supply?.calculated ? supply.quantity : null;
   const quantity = supply?.quantity ?? null;
+  const stockUnit = supply?.quantityUnit ?? (liquid && (basis === 'BOTTLE' || (basis === 'COURSE' && bottle != null && bottle > 0)) ? 'bottle' : doseUnit);
+  const preferenceContext = useRef({ sku, stockUnit });
+  useEffect(() => { if (preferenceContext.current.sku !== sku || preferenceContext.current.stockUnit !== stockUnit) setPreferred(null); preferenceContext.current = { sku, stockUnit }; }, [sku,stockUnit]);
+  const availability = stock.items[sku], brands = availability?.products.filter(product => product.baseUnit === stockUnit) ?? [];
+  useEffect(() => { onDraftChange?.({ drugCode: sku || undefined, quantity: quantity ?? undefined, quantityUnit: supply?.quantityUnit }); }, [sku, quantity, supply?.quantityUnit, onDraftChange]);
   const sharedUnit = pricingUnit(basis, doseUnit);
   const metadataBottle = liquid ? bottle ?? details?.bottleSizeMl ?? null : null;
   const priceMetadata = details ? { unit: sharedUnit, bottleSizeMl: metadataBottle, expectedUnit: details.unit, expectedBottleSizeMl: details.bottleSizeMl ?? null } : undefined;
@@ -73,13 +84,14 @@ export default function PrescriptionForm({ onAdd, onSave, onCancel, patientId, e
     const productForm = `${entry.form} ${entry.dose}`;
     const isLiquid = isLiquidMedicine(productForm);
     setDrug(entry.name); setSku(entry.sku); setShowDrugs(false); setUnit(prescriptionUnit(productForm)); setManualPrice('');
+    setPreferred(null);
     setLiquid(isLiquid); setBasis(isLiquid ? 'BOTTLE' : 'ITEM'); setBottleSize(''); pricingTouched.current = false;
     setForm(current => ({ ...current, dose: entry.dose || current.dose, route: ROUTES.includes(entry.route) ? entry.route : current.route, unitsPerDose: isLiquid ? '' : '1', quantity: '' }));
   }
 
   async function save() {
     if (!canAdd) return;
-    const draft: PrescriptionDraft = { drugName: drug.trim(), drugCode: sku || undefined, dose: form.dose, frequency: form.frequency, duration: form.duration ? `${Number(form.duration)} ${form.durationUnit}` : '', durationCount: form.duration ? Number(form.duration) : undefined, durationUnit: form.duration ? form.durationUnit : undefined, durationDays: days ?? undefined, route: form.route, specialInstructions: form.specialInstructions, unitsPerDose: Number(form.unitsPerDose), quantity: quantity!, quantityUnit: supply!.quantityUnit, quantityManual: !supply!.calculated, doseUnit, priceBasis: basis, bottleSizeMl: liquid && bottle != null ? bottle : undefined, courseQuantity: supply!.courseQuantity ?? undefined, billingQuantity: supply!.billingQuantity, startDate: effectiveStart, endDate: course?.endDate, ...(!sku && validPrice ? { unitPrice: enteredPrice! } : {}) };
+    const draft: PrescriptionDraft = { ...(prescribing && preferred ? { preferredStockProductId: preferred.id, preferredStockBrand: preferred.brand, preferredStockUnit: preferred.baseUnit } : {}), drugName: drug.trim(), drugCode: sku || undefined, dose: form.dose, frequency: form.frequency, duration: form.duration ? `${Number(form.duration)} ${form.durationUnit}` : '', durationCount: form.duration ? Number(form.duration) : undefined, durationUnit: form.duration ? form.durationUnit : undefined, durationDays: days ?? undefined, route: form.route, specialInstructions: form.specialInstructions, unitsPerDose: Number(form.unitsPerDose), quantity: quantity!, quantityUnit: supply!.quantityUnit, quantityManual: !supply!.calculated, doseUnit, priceBasis: basis, bottleSizeMl: liquid && bottle != null ? bottle : undefined, courseQuantity: supply!.courseQuantity ?? undefined, billingQuantity: supply!.billingQuantity, startDate: effectiveStart, endDate: course?.endDate, ...(!sku && validPrice ? { unitPrice: enteredPrice! } : {}) };
     setSaving(true);
     let clinicalStarted = false;
     try {
@@ -97,7 +109,7 @@ export default function PrescriptionForm({ onAdd, onSave, onCancel, patientId, e
       if (onSave) { await onSave(draft); return; }
       if (patientId && encounterId) {
         const med = await api.post(`/patients/${patientId}/medications`, { name: draft.drugName, dosage: draft.dose, frequency: draft.frequency, route: draft.route, duration: draft.duration, catalogueCode: draft.drugCode, startDate: draft.startDate, endDate: draft.endDate, unitsPerDose: draft.unitsPerDose, durationDays: draft.durationDays, durationCount: draft.durationCount, durationUnit: draft.durationUnit, quantity: draft.quantity, quantityUnit: draft.quantityUnit, quantityManual: draft.quantityManual, doseUnit: draft.doseUnit, priceBasis: draft.priceBasis, bottleSizeMl: draft.bottleSizeMl, courseQuantity: draft.courseQuantity, billingQuantity: draft.billingQuantity, unitPrice: draft.unitPrice, notes: draft.specialInstructions });
-        const rx = await api.post(`/encounters/${encounterId}/prescriptions`, { medicationId: med.data.id });
+        const rx = await api.post(`/encounters/${encounterId}/prescriptions`, { medicationId: med.data.id, preferredStockProductId: draft.preferredStockProductId });
         onAdd?.({ ...draft, medicationId: med.data.id, prescriptionId: rx.data.id });
       } else onAdd?.(draft);
     } catch (error) {
@@ -112,11 +124,11 @@ export default function PrescriptionForm({ onAdd, onSave, onCancel, patientId, e
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9 }}>
       <div style={{ gridColumn: '1/-1', position: 'relative' }}>
         <label style={labelStyle}>Drug</label>
-        <input aria-label="Drug" readOnly={lockDrug} style={style} value={drug} placeholder="Search drug name…" onChange={event => { setDrug(event.target.value); setSku(''); setUnit(prescriptionUnit('')); setLiquid(false); setBasis('ITEM'); setBottleSize(''); pricingTouched.current = false; setSuggestions(event.target.value.length >= 2 ? searchCatalog(event.target.value, 10) : []); setShowDrugs(true); }} onFocus={() => !lockDrug && setShowDrugs(true)} onBlur={() => setTimeout(() => setShowDrugs(false), 150)} />
+        <input aria-label="Drug" readOnly={lockDrug} style={style} value={drug} placeholder="Search drug name…" onChange={event => { setDrug(event.target.value); setSku(''); setPreferred(null); setUnit(prescriptionUnit('')); setLiquid(false); setBasis('ITEM'); setBottleSize(''); pricingTouched.current = false; setSuggestions(event.target.value.length >= 2 ? searchCatalog(event.target.value, 10) : []); setShowDrugs(true); }} onFocus={() => !lockDrug && setShowDrugs(true)} onBlur={() => setTimeout(() => setShowDrugs(false), 150)} />
         {showDrugs && suggestions.length > 0 && <div style={{ position: 'absolute', zIndex: 100, background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,.1)', width: '100%', maxHeight: 220, overflowY: 'auto', marginTop: 4 }}>
           {suggestions.map((entry, index) => <button key={entry.sku + index} type="button" onMouseDown={() => pick(entry)} style={{ width: '100%', textAlign: 'left', padding: '8px 12px', background: 'none', border: 'none', borderBottom: '1px solid var(--border-light)', cursor: 'pointer', color: 'var(--text-heading)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}><span>{entry.name}</span><span>{priceText(prices[entry.sku])}</span></div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{[entry.brand, entry.dose, entry.form, entry.route].filter(Boolean).join(' · ')}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{[entry.brand, entry.dose, entry.form, entry.route].filter(Boolean).join(' · ')}</div>{prescribing && <small className="ps-search-stock">{stock.error || (stock.loading ? 'Checking stock…' : availabilityText(stock.items[entry.sku]))}{stock.items[entry.sku]?.products.length ? ' · ' + [...new Set(stock.items[entry.sku].products.map(product => product.brand))].join(', ') : ''}</small>}
           </button>)}
         </div>}
       </div>
@@ -124,6 +136,7 @@ export default function PrescriptionForm({ onAdd, onSave, onCancel, patientId, e
         <span>Price:</span><select aria-label="Price basis" value={basis === 'ITEM' && !liquid ? `ITEM:${unit.name}` : basis} onChange={event => { pricingTouched.current = true; const [value, selectedUnit] = event.target.value.split(':'); setBasis(value as PriceBasis); if (selectedUnit) setUnit(prescriptionUnit(selectedUnit)); }} style={{ ...style, width: 140 }}>{liquid ? <option value="ITEM">Per mL</option> : dispensingUnits.map(value => <option key={value} value={`ITEM:${value}`}>Per {value}</option>)}{liquid && <option value="BOTTLE">Per bottle</option>}<option value="COURSE">Per course</option></select>{sku ? <InlinePrice catalogueRef={sku} itemType="DRUG" name={drug} value={prices[sku]} patientId={patientId} suffix={" " + sharedUnit} unpricedLabel={"ZMW — " + sharedUnit} priceMetadata={priceMetadata} editable={Boolean(details)} /> : <label style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>ZMW <input aria-label="Unit price (ZMW)" type="number" min={0} step="0.01" max={10000000} value={manualPrice} onChange={e => setManualPrice(e.target.value)} style={{ ...style, width: 100 }} /></label>}
         {supply !== null && price !== null && price !== undefined && Number.isFinite(price) && <span style={{ marginLeft: 'auto' }}>Course cost <b>{zmw(supply!.billingQuantity * price)}</b></span>}
       </div>}
+      {prescribing && sku && <div className="ps-stock" aria-label="Prescribing stock availability"><span className={availability?.tracked ? brands.length ? 'ps-available' : 'ps-empty' : ''}>{stock.error || (stock.loading && !availability ? 'Checking stock…' : availabilityText(availability,stockUnit))}</span>{(brands.length > 0 || preferred) && <label>Preferred brand (optional)<select aria-label="Preferred brand" title="Preference only; pharmacy confirms stock at dispensing" value={preferred?.id ?? ''} onChange={event => { const product = brands.find(product => product.id === event.target.value); setPreferred(product ? { id: product.id, brand: product.brand, baseUnit: product.baseUnit } : null); }}><option value="">No preference</option>{preferred && !brands.some(product => product.id === preferred.id) && <option value={preferred.id}>{preferred.brand} · availability unconfirmed</option>}{brands.map(product => <option key={product.id} value={product.id}>{product.brand}{product.manufacturer ? ' · ' + product.manufacturer : ''} · {product.available} {product.baseUnit}</option>)}</select></label>}</div>}
       <div><label style={labelStyle}>{liquid ? 'Strength' : 'Dosage'}</label><input aria-label="Dosage" style={style} value={form.dose} onChange={e => set('dose', e.target.value)} /></div>
       <div><label style={labelStyle}>{liquid ? 'mL per dose' : `Items per dose (${unit.name})`}</label><input aria-label="Items per dose" type="number" min="0.01" max={10000} step="0.01" style={style} value={form.unitsPerDose} onChange={e => set('unitsPerDose', e.target.value)} /></div>
       <div><label style={labelStyle}>Frequency</label><select aria-label="Frequency" style={style} value={form.frequency} onChange={e => set('frequency', e.target.value)}><option value="">Not specified</option>{FREQUENCIES.map(value => <option key={value}>{value}</option>)}</select></div>

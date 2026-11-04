@@ -31,6 +31,9 @@ export interface PrescriptionItem {
   id: string;
   drugName: string;
   drugCode?: string;
+  preferredStockProductId?: string;
+  preferredStockBrand?: string;
+  preferredStockUnit?: string;
   dose: string;
   frequency: string;
   duration: string;

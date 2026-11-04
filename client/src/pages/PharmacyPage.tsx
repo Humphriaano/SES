@@ -1,5 +1,12 @@
 import { pricingUnit, PriceBasis } from '../lib/prescriptionSupply';
-import PrescriptionForm, { PrescriptionDraft } from '../components/consultation/blocks/PrescriptionForm';
+import { PrescriptionDraft } from '../components/consultation/blocks/PrescriptionForm';
+import DispensingForm, { DispensingRecovery } from '../components/pharmacy/DispensingForm';
+import { sendDispensing, StockSelection } from '../lib/stockDispensing';
+import { readStockReview, reviewStock, retryStockReview, stockReviewMessage, STOCK_REVIEW_EVENT, pharmacyStockKey, StockAvailabilityResult } from '../lib/stockAvailability';
+import { stockQuantity } from '../lib/stockViews';
+import StockReceiving from '../components/pharmacy/StockReceiving';
+import StockViews from '../components/pharmacy/StockViews';
+import StockAdjustments from '../components/pharmacy/StockAdjustments';
 import { formatCourseDate } from '../lib/prescriptionCourse';
 import { useEffect, useState, useRef, useCallback, Fragment } from 'react';
 import { Navigate } from 'react-router-dom';
@@ -101,6 +108,7 @@ interface GlobalPrescription {
   id: string; encounterId: string;
   medication: RxMedication;
   substituteMedication?: RxMedication;
+  preferredStockProduct?: { id: string; brand: string; manufacturer: string | null; baseUnit: string; active: boolean } | null;
   dispensed: boolean; dispensedAt?: string; notAvailable?: boolean;
   encounter: { patient: RxPatient; clinician: { id: string; name: string } };
   createdAt: string;
@@ -113,10 +121,11 @@ interface Dispensing {
   quantity?: number | string; unitPrice?: number | string; quantityUnit?: string; priceBasis?: PriceBasis; billingQuantity?: number | string;
   dispensedBy: string; dispensedAt: string;
   substitution?: Record<string, unknown>; modifications?: Record<string, unknown>;
+  stockAllocations?: { id: string; quantity: string; baseUnit: string; batch: { lotNumber: string; expiryDate: string; product: { brand: string; manufacturer: string | null } }; movement: { reason: string | null } }[];
   patient: { firstName: string; lastName: string; nationalId?: string };
 }
 
-interface StockInfo { quantity: number; unit: string }
+interface StockInfo { quantity: number | string; unit: string; tracked?: boolean; unknown?: boolean }
 type SimplePatient = { id: string; firstName: string; lastName: string; nationalId?: string };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -291,13 +300,13 @@ function DispenseModal({ rx, onClose, onDone, dispensedBy }: {
   rx: GlobalPrescription; onClose: () => void; onDone: (d: Dispensing) => void; dispensedBy: string;
 }) {
   const pt = rx.encounter.patient;
-  async function confirm(draft: PrescriptionDraft) {
-    const { data } = await api.post('/dispensing', { prescriptionId: rx.id, patientId: pt.id, type: 'prescription', dispensedDrug: draft.drugName, dispensedBy, medication: medicationBody(draft) });
+  async function confirm(draft: PrescriptionDraft, stock: StockSelection, userId: string) {
+    const { data } = await sendDispensing({ prescriptionId: rx.id, patientId: pt.id, type: 'prescription', dispensedDrug: draft.drugName, dispensedBy, medication: medicationBody(draft), stock }, userId);
     onDone(data);
   }
   return <ModalOverlay onClose={onClose}><ModalTitle>Confirm Dispense</ModalTitle>
     <p style={{ margin: '-10px 0 8px', fontSize: 12, color: C.muted }}>{pt.firstName} {pt.lastName}</p>
-    <PrescriptionForm initial={courseDraft(rx.medication)} lockDrug patientId={pt.id} encounterId={rx.encounterId} onSave={confirm} onCancel={onClose} submitLabel="Dispense" />
+    <DispensingForm prescriberPreference={rx.preferredStockProduct} initial={courseDraft(rx.medication)} lockDrug patientId={pt.id} encounterId={rx.encounterId} onSave={confirm} onRecovered={onDone} onCancel={onClose} submitLabel="Dispense" />
   </ModalOverlay>;
 }
 
@@ -309,24 +318,24 @@ function SubstituteModal({ rx, onClose, onDone, dispensedBy }: {
   const [subType, setSubType] = useState('generic_equivalent');
   const [reason, setReason] = useState('');
   const pt = rx.encounter.patient;
-  async function substitute(draft: PrescriptionDraft) {
-    const { data } = await api.post('/dispensing', {
+  async function substitute(draft: PrescriptionDraft, stock: StockSelection, userId: string) {
+    const { data } = await sendDispensing({
       prescriptionId: rx.id, patientId: pt.id, type: 'substitution', dispensedDrug: draft.drugName, dispensedBy,
-      medication: { name: draft.drugName, dosage: draft.dose, frequency: draft.frequency, route: draft.route, duration: draft.duration, catalogueCode: draft.drugCode, startDate: draft.startDate, endDate: draft.endDate, unitsPerDose: draft.unitsPerDose, durationDays: draft.durationDays, durationCount: draft.durationCount, durationUnit: draft.durationUnit, quantity: draft.quantity, quantityUnit: draft.quantityUnit, quantityManual: draft.quantityManual, unitPrice: draft.unitPrice, notes: draft.specialInstructions },
+      medication: medicationBody(draft), stock,
       substitution: { substituteType: subType, reason },
-    });
+    }, userId);
     onDone(data);
   }
   return <ModalOverlay onClose={onClose}>
     <ModalTitle>Substitute Drug</ModalTitle>
     <p style={{ margin: '-10px 0 8px', fontSize: 12, color: C.muted }}>Prescribed: <strong>{rx.medication.name} {rx.medication.dosage}</strong></p>
-    <PrescriptionForm patientId={pt.id} encounterId={rx.encounterId} onSave={substitute} onCancel={onClose} submitLabel="Substitute & Dispense" requirePrice>
+    <DispensingForm patientId={pt.id} encounterId={rx.encounterId} onSave={substitute} onRecovered={onDone} onCancel={onClose} submitLabel="Substitute & Dispense" requirePrice>
       <FieldLabel>Substitution type</FieldLabel>
       <select aria-label="Substitution type" value={subType} onChange={e => setSubType(e.target.value)} style={inputStyle}>
         <option value="generic_equivalent">Generic Equivalent</option><option value="therapeutic_alternative">Therapeutic Alternative</option><option value="out_of_stock">Out of Stock — nearest equivalent</option>
       </select>
       <div style={{ marginTop: 8 }}><FieldLabel>Reason (optional)</FieldLabel><textarea aria-label="Substitution reason" value={reason} onChange={e => setReason(e.target.value)} rows={2} style={inputStyle}/></div>
-    </PrescriptionForm>
+    </DispensingForm>
   </ModalOverlay>;
 }
 
@@ -335,11 +344,11 @@ function SubstituteModal({ rx, onClose, onDone, dispensedBy }: {
 function EditExpandRow({ rx, colSpan, onClose, onDone, dispensedBy }: {
   rx: GlobalPrescription; colSpan: number; onClose: () => void; onDone: (d: Dispensing) => void; dispensedBy: string;
 }) {
-  async function submit(draft: PrescriptionDraft) {
-    const { data } = await api.post('/dispensing', { prescriptionId: rx.id, patientId: rx.encounter.patient.id, type: 'modified', dispensedDrug: draft.drugName, dispensedBy, medication: medicationBody(draft) });
+  async function submit(draft: PrescriptionDraft, stock: StockSelection, userId: string) {
+    const { data } = await sendDispensing({ prescriptionId: rx.id, patientId: rx.encounter.patient.id, type: 'modified', dispensedDrug: draft.drugName, dispensedBy, medication: medicationBody(draft), stock }, userId);
     onDone(data);
   }
-  return <tr><td colSpan={colSpan} style={{ padding: '10px 14px' }}><PrescriptionForm initial={courseDraft(rx.medication)} lockDrug patientId={rx.encounter.patient.id} encounterId={rx.encounterId} onSave={submit} onCancel={onClose} submitLabel="Dispense" /></td></tr>;
+  return <tr><td colSpan={colSpan} style={{ padding: '10px 14px' }}><DispensingForm prescriberPreference={rx.preferredStockProduct} initial={courseDraft(rx.medication)} lockDrug patientId={rx.encounter.patient.id} encounterId={rx.encounterId} onSave={submit} onRecovered={onDone} onCancel={onClose} submitLabel="Dispense" /></td></tr>;
 }
 
 // ── Dispensing card ───────────────────────────────────────────────────────────
@@ -365,6 +374,7 @@ function DispensingCard({ record, canAct }: {
         </div>
       </div>
       {Boolean(record.substitution?.originalDrug) && <div style={{ fontSize: 11, color: C.muted, marginBottom: 6 }}>Substituted: <s>{String(record.substitution!.originalDrug)}</s></div>}
+      {record.stockAllocations?.map(line => <div key={line.id} style={{ fontSize: 11, color: C.muted, marginBottom: 5 }}>{line.batch.product.brand} · {line.batch.lotNumber} · {stockQuantity(line.quantity)} {line.baseUnit} · Exp {formatCourseDate(line.batch.expiryDate)}{line.movement.reason && <span> · {line.movement.reason}</span>}</div>)}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 130px), 1fr))', gap: 4, marginBottom: 6 }}>
         {[['Dosage', record.dispensedDose], ['Freq', record.dispensedFrequency], ['Duration', record.dispensedDuration], ['Qty', record.quantity != null ? String(record.quantity) + ' ' + (record.quantityUnit || 'items') : undefined], ['Price', record.unitPrice != null ? 'ZMW ' + Number(record.unitPrice).toFixed(2) + ' ' + pricingUnit(record.priceBasis ?? 'ITEM', record.quantityUnit || 'unit') : undefined]].map(([lbl, val]) => (
           <div key={lbl as string}>
@@ -473,6 +483,11 @@ function PatientHistorySearch({ canAct }: { canAct: boolean }) {
 // ── Queue Tab ─────────────────────────────────────────────────────────────────
 
 function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolean }) {
+  const {user}=useAuth();
+  const [reviewBusy,setReviewBusy]=useState(false),[reviewPending,setReviewPending]=useState(false),[reviewError,setReviewError]=useState(''),[reviewResults,setReviewResults]=useState<Record<string,StockAvailabilityResult>>({});
+  const reviewInFlight=useRef(false);
+  useEffect(()=>{function read(){try{setReviewPending(Boolean(readStockReview(user!.id)));setReviewError('')}catch(e){setReviewError((e as Error).message)}}read();window.addEventListener(STOCK_REVIEW_EVENT,read);window.addEventListener('storage',read);return()=>{window.removeEventListener(STOCK_REVIEW_EVENT,read);window.removeEventListener('storage',read)}},[user?.id]);
+  const reviewLocked=reviewBusy||reviewPending||Boolean(reviewError);
   const [prescriptions, setPrescriptions] = useState<GlobalPrescription[]>([]);
   const [dispensedToday, setDispensedToday] = useState<Dispensing[]>([]);
   const [filter, setFilter] = useState<'pending' | 'all'>('pending');
@@ -487,6 +502,7 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
 
   const loadQueue = useCallback(async () => {
     setLoading(true);
+    setReviewResults({});
     try {
       const params = filter === 'pending' ? '?status=pending' : '';
       const [rxRes, todayRes] = await Promise.all([
@@ -502,19 +518,31 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
   useEffect(() => { loadQueue(); }, [loadQueue]);
 
   useEffect(() => {
-    const drugs = [...new Set(prescriptions.map(rx => rx.medication.name))];
-    drugs.forEach(drug => {
-      api.get(`/inventory?drug=${encodeURIComponent(drug)}`).then(r => {
-        setStocks(prev => ({ ...prev, [drug]: r.data }));
-      }).catch(() => {});
+    let cancelled = false;
+    setStocks({});
+    const medicines = [...new Map(prescriptions.map(rx => [pharmacyStockKey(rx.medication), rx.medication])).values()];
+    medicines.forEach(med => {
+      const key = pharmacyStockKey(med);
+      const request = canAct && med.catalogueCode
+        ? api.get('/pharmacy-stock/dispense-plan', { params: { catalogueRef: med.catalogueCode, quantity: med.quantity || 1, baseUnit: med.quantityUnit || 'unit' } }).then(r => ({ quantity: r.data.available ?? 0, unit: r.data.baseUnit, tracked: r.data.tracked, unknown: r.data.tracked && (!med.quantityUnit || r.data.unitMatched === false) }))
+        : api.get(`/inventory?drug=${encodeURIComponent(med.name)}`).then(r => r.data);
+      request.then(data => { if (!cancelled) setStocks(prev => ({ ...prev, [key]: data })); }).catch(() => {});
     });
-  }, [prescriptions]);
+    return () => { cancelled = true; };
+  }, [prescriptions, canAct]);
+
+  async function checkStock(rx?:GlobalPrescription) {
+    if(reviewInFlight.current||!user)return;
+    reviewInFlight.current=true;setReviewBusy(true);
+    try{const{data}=await(rx?reviewStock(user.id,rx.id):retryStockReview(user.id));await loadQueue();setReviewResults(previous=>({...previous,[data.id]:data}));toast.success(stockReviewMessage(data))}catch(e:any){toast.error(e?.response?.data?.error??e?.message??'Couldn’t check stock.')}finally{reviewInFlight.current=false;setReviewBusy(false)}
+  }
 
   // Out of stock here: the client buys it elsewhere and is not charged for it
   async function setAvailability(rx: GlobalPrescription, notAvailable: boolean) {
     try {
       await api.patch(`/prescriptions/${rx.id}/availability`, { notAvailable });
       setPrescriptions(prev => prev.map(r => r.id === rx.id ? { ...r, notAvailable } : r));
+      setReviewResults(previous=>{const next={...previous};delete next[rx.id];return next});
       toast.success(notAvailable ? 'Marked not available here. The charge was removed.' : 'Back in stock. The charge was restored.');
     } catch (e: any) { toast.error(e?.response?.data?.error ?? 'Couldn’t update that.'); }
   }
@@ -538,6 +566,7 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
       {/* ── Section A: Prescription queue ── */}
+      {(reviewPending||reviewError)&&<div role="status" style={{...cardStyle,padding:'12px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12}}><span style={{fontSize:12,color:C.body}}>{reviewError||'A stock review is awaiting confirmation.'}</span>{reviewPending&&<button style={smallBtn()} disabled={reviewBusy} onClick={()=>void checkStock()}>{reviewBusy?'Checking…':'Retry stock review'}</button>}</div>}
       <div style={cardStyle}>
         <div style={cardHeaderStyle}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -587,15 +616,17 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
                           {rx.encounter.patient.nationalId ?? '—'}
                         </div>
                       </td>
-                      <td style={{ ...tdStyle, fontWeight: 500, color: C.title }}>{rx.medication.name}{order.substituteMedication && <div style={{ fontSize: 11, color: C.muted }}>Substituted: <s>{order.medication.name}</s></div>}{rx.medication.catalogueCode && <div style={{ marginTop: 5, fontSize: 12, fontWeight: 400 }}><CataloguePrice catalogueRef={rx.medication.catalogueCode} itemType="DRUG" name={rx.medication.name} patientId={rx.encounter.patient.id} suffix={" " + pricingUnit(rx.medication.priceBasis ?? 'ITEM', rx.medication.doseUnit || rx.medication.quantityUnit || 'unit')} editable={canAct && !rx.dispensed} unpricedLabel="Add price" /></div>}{rx.notAvailable && <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 500, color: 'var(--badge-amber-text)' }}>NOT AVAILABLE HERE</span>}</td>
+                      <td style={{ ...tdStyle, fontWeight: 500, color: C.title }}>{rx.medication.name}{rx.preferredStockProduct && <div style={{ fontSize: 11, color: C.muted, marginTop: 3 }}>{order.substituteMedication ? 'Original brand preference' : 'Preferred brand'}: {rx.preferredStockProduct.brand}</div>}{order.substituteMedication && <div style={{ fontSize: 11, color: C.muted }}>Substituted: <s>{order.medication.name}</s></div>}{rx.medication.catalogueCode && <div style={{ marginTop: 5, fontSize: 12, fontWeight: 400 }}><CataloguePrice catalogueRef={rx.medication.catalogueCode} itemType="DRUG" name={rx.medication.name} patientId={rx.encounter.patient.id} suffix={" " + pricingUnit(rx.medication.priceBasis ?? 'ITEM', rx.medication.doseUnit || rx.medication.quantityUnit || 'unit')} editable={canAct && !rx.dispensed} unpricedLabel="Add price" /></div>}{rx.notAvailable && <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 500, color: 'var(--badge-amber-text)' }}>NOT AVAILABLE HERE</span>}</td>
                       <td style={tdStyle}>
                         <div style={{ color: C.body }}>{rx.medication.dosage ?? '—'}</div>
                         <div style={{ fontSize: 11, color: C.faint }}>{rx.medication.frequency ?? '—'}{rx.medication.duration ? ' · ' + rx.medication.duration : ''}</div>{rx.medication.quantity != null && <div style={{ fontSize: 11, color: C.body }}>Qty {String(rx.medication.quantity)} {rx.medication.quantityUnit || 'units'}</div>}{rx.medication.endDate && <div style={{ fontSize: 11, color: C.faint }}>Ends {formatCourseDate(rx.medication.endDate)}</div>}
                       </td>
                       <td style={tdStyle}>
-                        {stocks[rx.medication.name] != null
-                          ? stockPill(stocks[rx.medication.name].quantity)
+                        {stocks[pharmacyStockKey(rx.medication)] != null
+                          ? (() => { const stock = stocks[pharmacyStockKey(rx.medication)]; return stock.unknown ? <span style={{fontSize:11,color:C.muted}}>Unit unverified</span> : stock.tracked === undefined ? stockPill(Number(stock.quantity)) : <span style={{ fontSize: 11, color: stock.tracked && Number(stock.quantity) === 0 ? 'var(--badge-red-text)' : C.muted }}>{stock.tracked ? `${stockQuantity(String(stock.quantity))} ${stock.unit}` : 'Untracked'}</span>; })()
                           : <span style={{ color: C.faint, fontSize: 11 }}>—</span>}
+                        {reviewResults[rx.id]?.state==='PARTIAL'&&<div style={{fontSize:11,color:C.muted,marginTop:4}}>Partial stock · review</div>}
+                        {['UNKNOWN','REVIEW'].includes(reviewResults[rx.id]?.state)&&<div style={{fontSize:11,color:C.muted,marginTop:4}}>Supply details need review</div>}
                       </td>
                       <td style={{ ...tdStyle, color: C.body }}>{rx.encounter.clinician.name}</td>
                       <td style={{ ...tdStyle, color: C.faint, fontSize: 11 }}>
@@ -609,17 +640,18 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
                             </span>
                           ) : (
                             <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
-                              <button onClick={() => setDispenseModal(rx)} style={smallBtn()}>
+                              <button disabled={reviewLocked} onClick={() => setDispenseModal(rx)} style={smallBtn()}>
                                 <Package size={10} /> Dispense
                               </button>
-                              <button onClick={() => setEditRow(editRow === rx.id ? null : rx.id)}
+                              <button disabled={reviewLocked} onClick={() => setEditRow(editRow === rx.id ? null : rx.id)}
                                 style={smallBtn()}>
                                 <Edit2 size={10} /> Edit
                               </button>
-                              <button onClick={() => setSubstituteModal(rx)} style={smallBtn()}>
+                              <button disabled={reviewLocked} onClick={() => setSubstituteModal(rx)} style={smallBtn()}>
                                 <RefreshCw size={10} /> Sub
                               </button>
-                              <button onClick={() => setAvailability(rx, !rx.notAvailable)} style={smallBtn()}
+                              {rx.medication.catalogueCode&&<button disabled={reviewLocked} onClick={()=>void checkStock(rx)} style={smallBtn()} title="Verify usable stock for this prescription and update only its availability charge">Check stock</button>}
+                              <button disabled={reviewLocked} onClick={() => setAvailability(rx, !rx.notAvailable)} style={smallBtn()}
                                 title={rx.notAvailable ? 'Put the charge back' : 'Not in stock: the client buys it elsewhere and is not charged'}>
                                 {rx.notAvailable ? 'In stock' : 'Not here'}
                               </button>
@@ -724,9 +756,9 @@ function PatientTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: bool
     finally { setLoading(false); }
   }
 
-  async function directDispense(draft: PrescriptionDraft) {
+  async function directDispense(draft: PrescriptionDraft, stock: StockSelection, userId: string) {
     if (!selected) return;
-    const { data } = await api.post('/dispensing', { patientId: selected.id, type: 'direct', dispensedDrug: draft.drugName, dispensedBy, medication: medicationBody(draft) });
+    const { data } = await sendDispensing({ patientId: selected.id, type: 'direct', dispensedDrug: draft.drugName, dispensedBy, medication: medicationBody(draft), stock }, userId);
     setHistory(h => [data, ...h]); setWalkInKey(k => k + 1); toast.success('Dispensed');
   }
 
@@ -788,7 +820,7 @@ function PatientTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: bool
           <div style={cardHeaderStyle}>
             <span style={cardTitleStyle}>Walk-in Direct Dispense</span>
           </div>
-          <div style={{ padding: '10px 18px' }}><PrescriptionForm key={selected.id + ':' + walkInKey} patientId={selected.id} onSave={directDispense} onCancel={() => setWalkInKey(k => k + 1)} submitLabel="Dispense" /></div>
+          <div style={{ padding: '10px 18px' }}><DispensingForm key={selected.id + ':' + walkInKey} patientId={selected.id} onSave={directDispense} onRecovered={data => { setHistory(h => [data, ...h]); setWalkInKey(k => k + 1); }} onCancel={() => setWalkInKey(k => k + 1)} submitLabel="Dispense" /></div>
         </div>
       )}
 
@@ -819,8 +851,9 @@ function PatientTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: bool
 export default function PharmacyPage() {
   const { user } = useAuth();
   const { activePatient } = usePatient();
-  const [tab, setTab] = useState<'queue' | 'patient'>('queue');
+  const [tab, setTab] = useState<'queue' | 'patient' | 'receiving' | 'stock' | 'adjustments'>('queue');
   const [encounters, setEncounters] = useState<Encounter[]>([]);
+  const [dispensingVersion,setDispensingVersion] = useState(0);
 
   useEffect(() => {
     if (!activePatient) { setEncounters([]); return; }
@@ -844,10 +877,10 @@ export default function PharmacyPage() {
   }
 
   return (
-    <div className="clinical-module clinical-workspace" data-has-summary={!!activePatient} style={{ fontFamily: C.font }}>
+    <div className="clinical-module clinical-workspace" data-has-summary={!!activePatient && (tab === 'queue' || tab === 'patient')} style={{ fontFamily: C.font }}>
 
       {/* ── Compact clinical summary (same component as Consultation) ── */}
-        {activePatient && (
+        {activePatient && (tab === 'queue' || tab === 'patient') && (
           <aside className="clinical-workspace-summary" aria-label="Clinical summary">
             <ConsultationSidebar
               patientId={activePatient.id}
@@ -882,10 +915,10 @@ export default function PharmacyPage() {
         {/* ── Tab bar ── */}
         <div style={{
           padding: 4, borderRadius: 999, border: '1px solid var(--border)',
-          display: 'flex', width: 'fit-content', gap: 4,
+          display: 'flex', width: 'fit-content', maxWidth: '100%', flexWrap: 'wrap', gap: 4,
           background: 'var(--bg-surface)',
         }}>
-          {(['queue', 'patient'] as const).map(t => (
+          {(['queue', 'patient', ...(canAct ? ['stock' as const, 'receiving' as const, 'adjustments' as const] : [])] as const).map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
               padding: '8px 18px', borderRadius: 999, border: 'none',
               background: tab === t ? 'var(--bg-card)' : 'transparent',
@@ -894,15 +927,19 @@ export default function PharmacyPage() {
               fontSize: 13, fontWeight: 500, cursor: 'pointer',
               transition: 'color 0.15s',
             }}>
-              {t === 'queue' ? 'Queue' : 'Patient'}
+              {t === 'queue' ? 'Queue' : t === 'patient' ? 'Patient' : t === 'stock' ? 'Stock' : t === 'receiving' ? 'Receive stock' : 'Adjust stock'}
             </button>
           ))}
         </div>
 
         {/* ── Tab content ── */}
         <div style={{ padding: '16px 0 0', flex: 1, overflowY: 'auto' }}>
-          {tab === 'queue' && <QueueTab dispensedBy={user.name} canAct={canAct} />}
-          {tab === 'patient' && <PatientTab dispensedBy={user.name} canAct={canAct} />}
+          {canAct && <DispensingRecovery onResolved={() => setDispensingVersion(value => value + 1)} />}
+          {tab === 'queue' && <QueueTab key={dispensingVersion} dispensedBy={user.name} canAct={canAct} />}
+          {tab === 'patient' && <PatientTab key={dispensingVersion} dispensedBy={user.name} canAct={canAct} />}
+          {tab === 'receiving' && canAct && <StockReceiving key={user.id} />}
+          {tab === 'stock' && canAct && <StockViews />}
+          {tab === 'adjustments' && canAct && <StockAdjustments key={user.id} />}
         </div>
 
       </div>
