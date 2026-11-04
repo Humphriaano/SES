@@ -284,11 +284,11 @@ export default function VitalsPage() {
             <div>
               <span className="v-l">BMI</span>
               <div className="v-in v-ro">
-                <span style={{ flex: 1, fontWeight: 600, color: bmi ? TONE_COLOR[bmiV.tone] : 'var(--text-subtle)' }}>{bmi ?? '—'}</span>
+                <span style={{ flex: 1, fontWeight: 500, color: bmi ? TONE_COLOR[bmiV.tone] : 'var(--text-subtle)' }}>{bmi ?? '—'}</span>
                 <span className="v-u">kg/m²</span>
               </div>
               {bmi
-                ? <span className="v-h" style={{ color: TONE_COLOR[bmiV.tone], fontWeight: 600 }}>
+                ? <span className="v-h" style={{ color: TONE_COLOR[bmiV.tone], fontWeight: 500 }}>
                     {bmiV.tone === 'ok' ? 'Normal' : `${bmiV.up ? '▲' : '▼'} ${bmiV.label}`} · normal 18.5–24.9
                   </span>
                 : <span className="v-h">Calculated from weight and height</span>}
@@ -381,13 +381,13 @@ export default function VitalsPage() {
           </div>
         ) : loadError ? (
           <div style={{ padding: '36px 20px 40px', textAlign: 'center' }}>
-            <p style={{ fontWeight: 600, marginBottom: 4, color: 'var(--text-heading)' }}>Couldn't load readings</p>
+            <p style={{ fontWeight: 500, marginBottom: 4, color: 'var(--text-heading)' }}>Couldn't load readings</p>
             <p className="vp-muted" style={{ marginBottom: 14 }}>Check your connection, then try again.</p>
             <button type="button" className="vp-btn2" onClick={load}>Try again</button>
           </div>
         ) : history.length === 0 ? (
           <div style={{ padding: '36px 20px 40px', textAlign: 'center' }}>
-            <p style={{ margin: '0 0 4px', fontSize: 14, fontWeight: 600, color: 'var(--text-heading)' }}>No previous readings</p>
+            <p style={{ margin: '0 0 4px', fontSize: 14, fontWeight: 500, color: 'var(--text-heading)' }}>No previous readings</p>
             <p className="vp-muted">Saved readings appear here as a table, with trends once there are two or more.</p>
           </div>
         ) : (
@@ -468,49 +468,49 @@ const CSS = `
   --vp-field: #FFFFFF; --vp-line2: #D5D9DE; }
 [data-theme="dark"] .vp { --vp-field: #1F2326; --vp-line2: #33383D; }
 .vp-title { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
-.vp-h1 { margin: 0 0 4px; font-weight: 700; font-size: 22px; letter-spacing: -0.2px; color: var(--text-heading); }
-.vp-h2 { margin: 0; font-family: var(--font-heading); font-size: 15px; font-weight: 700; color: var(--text-heading); }
+.vp-h1 { margin: 0 0 4px; font-weight:500; font-size: 22px; letter-spacing: -0.2px; color: var(--text-heading); }
+.vp-h2 { margin: 0; font-family: var(--font-heading); font-size: 15px; font-weight:500; color: var(--text-heading); }
 .vp-muted { margin: 0; color: var(--text-muted); }
 .vp-faint { color: var(--text-subtle); }
 .vp-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
 .vp-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border-light); }
 .v-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px 20px; }
-.v-l { display: block; font-size: 13px; font-weight: 600; color: var(--text-heading); margin-bottom: 6px; }
+.v-l { display: block; font-size: 13px; font-weight:500; color: var(--text-heading); margin-bottom: 6px; }
 .v-in { display: flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; border: 1px solid var(--vp-line2); border-radius: 10px;
   background: var(--vp-field); transition: border-color .15s, box-shadow .15s; }
 .v-in:focus-within { border-color: var(--ring); box-shadow: 0 0 0 4px var(--ring-glow); }
 .v-in.err { border-color: var(--st-bad); }
-.v-in input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 15px; font-weight: 600; color: var(--text-heading); font-variant-numeric: tabular-nums; }
+.v-in input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 15px; font-weight:500; color: var(--text-heading); font-variant-numeric: tabular-nums; }
 .v-in input:disabled { cursor: not-allowed; }
 .v-ro { background: var(--ws-chip); border-color: transparent; }
-.v-u { flex: none; font-size: 12px; font-weight: 600; color: var(--text-subtle); }
+.v-u { flex: none; font-size: 12px; font-weight:500; color: var(--text-subtle); }
 .v-h { display: block; margin-top: 6px; font-size: 12px; color: var(--text-subtle); }
-.v-err { color: var(--st-bad); font-weight: 600; }
-.vp-alert { margin: 18px 0 0; padding: 10px 14px; border-radius: 10px; background: var(--st-bad-bg); color: var(--st-bad); font-size: 13px; font-weight: 600; }
+.v-err { color: var(--st-bad); font-weight:500; }
+.vp-alert { margin: 18px 0 0; padding: 10px 14px; border-radius: 10px; background: var(--st-bad-bg); color: var(--st-bad); font-size: 13px; font-weight:500; }
 .vp-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border-light); }
-.vp-btn { height: 40px; padding: 0 18px; border: 0; border-radius: 10px; background: #C41E25; color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: filter .15s, opacity .15s; }
+.vp-btn { height: 40px; padding: 0 18px; border: 0; border-radius: 10px; background: var(--ses-red); color: #fff; font: inherit; font-size: 13px; font-weight:500; cursor: pointer; transition: filter .15s, opacity .15s; }
 .vp-btn:hover:not(:disabled) { filter: brightness(1.06); }
 .vp-btn:disabled { opacity: .5; cursor: not-allowed; }
-.vp-btn2 { height: 40px; padding: 0 16px; border: 1px solid var(--vp-line2); border-radius: 10px; background: var(--vp-field); color: var(--text-heading); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.vp-btn2 { height: 40px; padding: 0 16px; border: 1px solid var(--vp-line2); border-radius: 10px; background: var(--vp-field); color: var(--text-heading); font: inherit; font-size: 13px; font-weight:500; cursor: pointer; }
 .vp-btn2:hover:not(:disabled) { background: var(--ws-chip); }
 .vp-btn2:disabled { opacity: .5; cursor: not-allowed; }
-.vp-tab { height: 30px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+.vp-tab { height: 30px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; font-weight:500; cursor: pointer; }
 .vp-tab:hover { background: var(--ws-chip); }
 .vp-tab.on { background: var(--ws-chip-on); color: var(--ws-chip-on-text); }
 .vp-legend { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 6px; font-size: 12px; color: var(--text-muted); }
 .vp-legend > span { display: flex; align-items: center; gap: 6px; }
 .vp-legend > span > span { display: inline-block; }
 .vp-tip { min-width: 168px; padding: 10px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 6px 18px rgba(0,0,0,.12); font-size: 12px; }
-.vp-tip-h { font-weight: 700; color: var(--text-heading); margin-bottom: 6px; }
+.vp-tip-h { font-weight:500; color: var(--text-heading); margin-bottom: 6px; }
 .vp-tip-row { display: flex; align-items: center; gap: 6px; margin-top: 3px; color: var(--text-heading); }
 .vp-table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
 .vp-table th { padding: 10px 12px; text-align: left; background: var(--ws-head);
-  font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-subtle); white-space: nowrap; }
+  font-size: 11px; font-weight:500; letter-spacing: 1px; text-transform: uppercase; color: var(--text-subtle); white-space: nowrap; }
 .vp-unit { text-transform: none; letter-spacing: 0; font-weight: 400; }
 .vp-table td { padding: 12px; border-top: 1px solid var(--border-light); color: var(--text-heading); white-space: nowrap; }
 .vp-table tbody tr:hover { background: var(--ws-chip); }
-.vp-st { font-weight: 700; }
-.vp-tag { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.vp-st { font-weight:500; }
+.vp-tag { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight:500; white-space: nowrap; }
 .vp-tag-warn { color: var(--st-warn); background: var(--st-warn-bg); }
 .vp-tag-bad { color: var(--st-bad); background: var(--st-bad-bg); }
 .vp-key { display: flex; gap: 18px; flex-wrap: wrap; padding: 12px 20px; border-top: 1px solid var(--border-light); font-size: 12px; color: var(--text-muted); }

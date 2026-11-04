@@ -8,7 +8,7 @@ export async function listEncounters(req: Request, res: Response): Promise<void>
     where: { patientId },
     orderBy: { createdAt: 'desc' },
     include: {
-      clinician: { select: { id: true, name: true } },
+      clinician: { select: { id: true, name: true, designation: true } },
       diagnoses: { include: { icd11: true } },
       vitals: true,
     },
@@ -21,11 +21,11 @@ export async function getEncounter(req: Request, res: Response): Promise<void> {
   const encounter = await prisma.encounter.findUnique({
     where: { id },
     include: {
-      clinician: { select: { id: true, name: true } },
+      clinician: { select: { id: true, name: true, designation: true } },
       diagnoses: { include: { icd11: true } },
       vitals: true,
       labOrders: { include: { results: true } },
-      prescriptions: { include: { medication: true } },
+      prescriptions: { include: { medication: true, substituteMedication: true } },
       billingItems: true,
     },
   });
@@ -37,7 +37,7 @@ export async function createEncounter(req: AuthRequest, res: Response): Promise<
   const { patientId } = req.params;
   const encounter = await prisma.encounter.create({
     data: { patientId, clinicianId: req.userId! },
-    include: { clinician: { select: { id: true, name: true } } },
+    include: { clinician: { select: { id: true, name: true, designation: true } } },
   });
   res.status(201).json(encounter);
 }

@@ -7,6 +7,7 @@ import {
 import api from '../../../api/client';
 import { Patient, Vital } from '../../../types';
 import { CanvasNode } from '../../../types/consultation';
+import { HISTORY_SECTIONS, isHistoryNode } from '../../../lib/consultationHistory';
 
 const CDS_URL          = 'http://localhost:8000/cds/suggest';
 const DEFAULT_QUESTION = 'What are the guideline-based recommendations for this patient?';
@@ -71,7 +72,7 @@ const URGENCY_STYLE: Record<string, { bg: string; border: string; color: string;
 
 const RISK_STYLE: Record<string, { bg: string; text: string; dot: string; label: string }> = {
   'low':       { bg: 'var(--badge-green-bg)',    text: 'var(--badge-green-text)',    dot: 'var(--clinical-normal)',   label: 'Low'       },
-  'moderate':  { bg: 'var(--badge-amber-bg)',    text: 'var(--badge-amber-text)',    dot: 'var(--clinical-caution)',  label: 'Moderate'  },
+  'moderate':  { bg: 'var(--badge-green-bg)', text: 'var(--badge-green-text)', dot: 'var(--clinical-normal)',  label: 'Moderate'  },
   'high':      { bg: 'var(--clinical-abnormal-bg)', text: 'var(--clinical-abnormal)', dot: 'var(--clinical-abnormal)', label: 'High'      },
   'very high': { bg: 'var(--clinical-critical-bg)', text: 'var(--clinical-critical)', dot: 'var(--clinical-critical)', label: 'Very High' },
 };
@@ -89,8 +90,8 @@ const CONDITION_ORDER = ['hypertension', 'cardiovascular', 'diabetes', 'ckd'] as
 
 function extractEncounterNotes(nodes: CanvasNode[]): string {
   return nodes
-    .filter(n => n.type === 'text')
-    .map(n => (n as any).content as string)
+    .map(n => n.type === 'text' ? n.content : isHistoryNode(n) && n.data.content.trim()
+      ? `${HISTORY_SECTIONS[n.type].label}: ${n.data.content}` : '')
     .filter(Boolean)
     .join('\n')
     .slice(0, 1000);
@@ -359,10 +360,10 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div style={{
+    <div className="premium-panel" style={{
       maxWidth: 860,
-      background: 'var(--bg-card)', borderRadius: 14, border: '1px solid var(--border)',
-      boxShadow: '0 1px 6px rgba(0,0,0,0.05)',
+      background: 'var(--premium-panel-bg)', borderRadius: 22, border: '1px solid var(--border)',
+      boxShadow: 'var(--premium-panel-shadow)',
       overflow: 'hidden',
     }}>
       <style>{`
@@ -382,7 +383,7 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
           style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left' }}
         >
           <Brain size={15} color="var(--ses-red)" />
-          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-heading)', letterSpacing: '0.02em' }}>
+          <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-heading)', letterSpacing: '0.02em' }}>
             Clinical Decision Support
           </span>
           <span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 500 }}>AI · Guideline-based</span>
@@ -408,7 +409,7 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
             cursor: (loading || riskLoading) ? 'not-allowed' : 'pointer',
             color: (loading || riskLoading) ? 'var(--text-faint)' : 'var(--text-muted)',
             padding: '2px 4px', marginLeft: 8,
-            display: 'flex', alignItems: 'center', borderRadius: 4,
+            display: 'flex', alignItems: 'center', borderRadius: 999,
             transition: 'color 0.15s',
           }}
           onMouseEnter={e => { if (!loading && !riskLoading) e.currentTarget.style.color = 'var(--text-subtle)'; }}
@@ -434,7 +435,7 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                 <Activity size={13} color="var(--ses-red)" />
-                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-heading)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-heading)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Chronic Disease Risk
                 </span>
                 {riskLoading && (
@@ -496,18 +497,19 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
                             <span style={{ width: 8, height: 8, borderRadius: '50%', background: rs.dot, flexShrink: 0 }} />
 
                             {/* Condition name */}
-                            <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-heading)', flex: 1 }}>
+                            <span className="cds-risk-name">
                               {CONDITION_LABELS[key]}
+                              <span className="cds-risk-bar" aria-hidden="true"><i style={{ width: Math.min(100, Math.max(0, pct)) + '%', background: rs.dot }} /></span>
                             </span>
 
                             {/* Percentage */}
-                            <span style={{ fontSize: 12, fontWeight: 700, color: rs.text, minWidth: 30, textAlign: 'right' }}>
+                            <span style={{ fontSize: 24, fontWeight: 300, color: rs.text, minWidth: 46, textAlign: 'right' }}>
                               {pct}%
                             </span>
 
                             {/* Risk level badge */}
                             <span style={{
-                              fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
+                              fontSize: 10, fontWeight: 500, padding: '2px 8px', borderRadius: 10,
                               background: rs.bg, color: rs.text, flexShrink: 0,
                             }}>
                               {rs.label}
@@ -529,7 +531,7 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
 
                               {cond.top_factors.length > 0 && (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                  <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>
+                                  <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>
                                     Key Factors
                                   </div>
                                   {cond.top_factors.map((f, i) => {
@@ -541,7 +543,7 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
                                         background: isRisk ? 'var(--badge-red-bg)' : 'var(--badge-green-bg)',
                                       }}>
                                         <span style={{
-                                          fontSize: 11, fontWeight: 700, flexShrink: 0, marginTop: 1,
+                                          fontSize: 11, fontWeight: 500, flexShrink: 0, marginTop: 1,
                                           color: isRisk ? 'var(--badge-red-text)' : 'var(--badge-green-text)',
                                         }}>
                                           {isRisk ? '↑' : '↓'}
@@ -606,7 +608,7 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
               {response.summary && (
                 <div style={{ padding: '12px 16px', background: 'var(--ws-head)', borderRadius: 8, marginBottom: 12 }}>
                   <p style={{ fontSize: 13, color: 'var(--text-heading)', lineHeight: 1.6, margin: 0 }}>
-                    <span style={{ color: 'var(--text-subtle)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 4 }}>Clinical Impression</span>
+                    <span style={{ color: 'var(--text-subtle)', fontSize: 11, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 4 }}>Clinical Impression</span>
                     {response.summary}
                   </p>
                 </div>
@@ -625,7 +627,7 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
 
               {response.recommendations.length > 0 && (
                 <div style={{ marginBottom: 12 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
+                  <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
                     Recommendations
                   </div>
                   {response.recommendations.map((rec, i) => {
@@ -635,11 +637,11 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
                       <div key={i} style={{ background: u.bg, border: `1px solid ${u.border}`, borderRadius: 9, padding: '12px 16px', marginBottom: 8 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
                           <UIcon size={12} color={u.color} />
-                          <span style={{ fontSize: 10, fontWeight: 700, color: u.color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          <span style={{ fontSize: 10, fontWeight: 500, color: u.color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             {u.label}
                           </span>
                         </div>
-                        <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-heading)', margin: '0 0 4px' }}>{rec.action}</p>
+                        <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-heading)', margin: '0 0 4px' }}>{rec.action}</p>
                         <p style={{ fontSize: 12, color: 'var(--text-body2)', margin: '0 0 6px', lineHeight: 1.5 }}>{rec.rationale}</p>
                         {rec.source && (
                           <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -657,7 +659,7 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
                 <div style={{ marginBottom: 12, padding: '10px 14px', background: 'var(--badge-green-bg)', border: '1px solid var(--border)', borderRadius: 8 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
                     <FlaskConical size={12} color="var(--ses-blue-deep)" />
-                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ses-blue-deep)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Suggested Investigations</span>
+                    <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--ses-blue-deep)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Suggested Investigations</span>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {response.investigations_suggested.map((inv, i) => (
@@ -671,7 +673,7 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
 
               {response.retrieved_sources.length > 0 && (
                 <div style={{ marginBottom: 10 }}>
-                  <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, marginBottom: 4 }}>Sources</div>
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 500, marginBottom: 4 }}>Sources</div>
                   {response.retrieved_sources.map((s, i) => (
                     <div key={i} style={{ fontSize: 11, color: 'var(--text-body2)', display: 'flex', alignItems: 'center', gap: 5, marginBottom: 2 }}>
                       <BookOpen size={9} color="var(--text-muted)" />
@@ -683,7 +685,7 @@ export default function CdsPanel({ patientId, patient, nodes }: Props) {
 
               {response.direct_suggestion && (
                 <div style={{ marginBottom: 12, padding: '12px 14px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--ws-link)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
+                  <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--ws-link)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
                     Differential Diagnosis (AI)
                   </div>
                   <pre style={{ fontSize: 12.5, color: 'var(--text-body)', margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'inherit', lineHeight: 1.6 }}>

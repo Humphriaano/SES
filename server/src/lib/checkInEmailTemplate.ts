@@ -10,8 +10,8 @@ const CREAM = '#FBFAF7';
 const CLINICAL_NORMAL = '#16A34A'; // --clinical-normal
 const CLINICAL_INFO_BG = '#E8F1F7'; // --ses-blue-tint
 const CLINICAL_INFO_TEXT = '#206497'; // --ses-blue-deep
-const CLINICAL_ABNORMAL_BG = '#FDECE5'; // --clinical-abnormal-bg
-const CLINICAL_ABNORMAL = '#E0451F'; // --clinical-abnormal
+const CLINICAL_ABNORMAL_BG = '#FFF1F2'; // --clinical-abnormal-bg
+const CLINICAL_ABNORMAL = '#BE123C'; // --clinical-abnormal
 
 const TAG_COLORS: Record<string, { bg: string; text: string; label: string }> = {
   improving: { bg: '#e8f5e9', text: CLINICAL_NORMAL, label: 'Improving' },

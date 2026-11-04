@@ -1,17 +1,19 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
 import { requestMagicLink } from '../services/portalAuth.service';
+import { AuthRequest } from '../middleware/auth';
+import { canReadClinical, PATIENT_IDENTITY_SELECT } from '../lib/clinicalAccess';
 
 const PORTAL_URL = process.env['PORTAL_URL'] ?? 'http://localhost:5175';
 
-export async function listPatients(req: Request, res: Response): Promise<void> {
+export async function listPatients(req: AuthRequest, res: Response): Promise<void> {
   const { search, limit } = req.query as { search?: string; limit?: string };
   const term = search?.trim();
   const digits = term?.replace(/\D/g, '').replace(/^0+/, '');
   // "Mandy Kuma" → every word must match the first name, surname or NRC.
   const words = term ? term.split(/\s+/).filter(Boolean) : [];
   const take = Math.min(Math.max(Number(limit) || 50, 1), 200);
-  const patients = await prisma.patient.findMany({
+  const query = {
     where: term
       ? {
           OR: [
@@ -30,9 +32,11 @@ export async function listPatients(req: Request, res: Response): Promise<void> {
         }
       : undefined,
     take: term ? 200 : take, // wider net for ranking below, then trimmed
-    orderBy: { createdAt: 'desc' },
-    include: { diagnoses: { include: { icd11: true } } },
-  });
+    orderBy: { createdAt: 'desc' as const },
+  };
+  const patients = canReadClinical(req.userRole)
+    ? await prisma.patient.findMany({ ...query, include: { diagnoses: { include: { icd11: true } } } })
+    : await prisma.patient.findMany({ ...query, select: PATIENT_IDENTITY_SELECT });
 
   // Best matches first: a name that starts with the search beats one that merely contains it.
   if (term) {
@@ -49,8 +53,14 @@ export async function listPatients(req: Request, res: Response): Promise<void> {
   res.json(patients.slice(0, take));
 }
 
-export async function getPatient(req: Request, res: Response): Promise<void> {
+export async function getPatient(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
+  if (!canReadClinical(req.userRole)) {
+    const patient = await prisma.patient.findUnique({ where: { id: String(id) }, select: PATIENT_IDENTITY_SELECT });
+    if (!patient) { res.status(404).json({ error: 'Patient not found' }); return; }
+    res.json(patient);
+    return;
+  }
   const patient = await prisma.patient.findUnique({
     where: { id },
     include: {
@@ -61,7 +71,7 @@ export async function getPatient(req: Request, res: Response): Promise<void> {
       encounters: {
         orderBy: { createdAt: 'desc' },
         take: 10,
-        include: { clinician: { select: { id: true, name: true } }, diagnoses: { include: { icd11: true } } },
+        include: { clinician: { select: { id: true, name: true, designation: true } }, diagnoses: { include: { icd11: true } } },
       },
       billingItems: { orderBy: { createdAt: 'desc' } },
       appointments: { orderBy: { scheduledAt: 'desc' } },

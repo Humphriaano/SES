@@ -80,24 +80,24 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
   const sc = STATUS_CFG[data.status];
 
   return (
-    <div style={{
+    <div className="note-block" style={{
       border: '1px solid var(--border)',
-      background: 'var(--bg-card)',
-      borderRadius: 12,
+      background: 'var(--bg-surface)',
+      borderRadius: 18,
       padding: '10px 14px',
       margin: '16px 0',
       position: 'relative',
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 10, color: 'var(--text-muted)', background: 'var(--ws-chip)', padding: '0 6px', minWidth: 28, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 5, fontWeight: 800, letterSpacing: '0.3px', boxSizing: 'border-box', flexShrink: 0 }}>Dx</span>
+          <span style={{ fontSize: 10, color: 'var(--text-muted)', background: 'var(--ws-chip)', padding: '0 6px', minWidth: 28, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 5, fontWeight: 500, letterSpacing: '0.3px', boxSizing: 'border-box', flexShrink: 0 }}>Dx</span>
           {data.icd11Code ? (
             <>
-              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ses-blue-deep)', fontFamily: 'monospace' }}>{data.icd11Code}</span>
+              <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--ses-blue-deep)', fontFamily: 'monospace' }}>{data.icd11Code}</span>
               <span style={{ fontSize: 14, color: 'var(--text-heading)', fontWeight: 500 }}>{data.icd11Description}</span>
               {data.icd11Category && <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{data.icd11Category}</span>}
               {data.isPrimary && (
-                <span style={{ fontSize: 10, fontWeight: 700, background: 'var(--ses-blue-deep)', color: '#fff', padding: '2px 7px', borderRadius: 4 }}>PRIMARY</span>
+                <span style={{ fontSize: 10, fontWeight: 500, background: 'var(--ses-blue-deep)', color: '#fff', padding: '2px 7px', borderRadius: 4 }}>PRIMARY</span>
               )}
             </>
           ) : (
@@ -111,9 +111,9 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
               onClick={cycleStatus}
               title="Click to advance status"
               style={{
-                fontSize: 11, fontWeight: 600,
+                fontSize: 11, fontWeight: 500,
                 background: sc.bg, color: sc.text, border: `1px solid ${sc.border}`,
-                borderRadius: 5, padding: '3px 9px', cursor: readOnly ? 'default' : 'pointer',
+                borderRadius: 999, padding: '3px 9px', cursor: readOnly ? 'default' : 'pointer',
               }}
             >
               {sc.label}
@@ -144,8 +144,8 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
           onClick={onAddAnother}
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 8, padding: '4px 10px',
-            border: '1px dashed var(--border-input)', borderRadius: 7, background: 'transparent',
-            color: 'var(--ses-blue-deep)', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+            border: '1px dashed var(--border-input)', borderRadius: 999, background: 'transparent',
+            color: 'var(--ses-blue-deep)', fontSize: 12, fontWeight: 500, cursor: 'pointer',
           }}
         >
           <Plus size={12} /> Add another diagnosis
@@ -165,14 +165,14 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
               {onAddAnother && (
                 <button
                   onClick={() => { setSearching(false); setQuery(''); setResults([]); onAddAnother(); }}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 12.5, color: 'inherit', textDecoration: 'underline', padding: 0 }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500, fontSize: 12.5, color: 'inherit', textDecoration: 'underline', padding: 0 }}
                 >
                   Keep it and add another instead
                 </button>
               )}
               <button
                 onClick={() => { setSearching(false); setQuery(''); setResults([]); }}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 12.5, color: 'inherit', padding: 0 }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500, fontSize: 12.5, color: 'inherit', padding: 0 }}
               >
                 Cancel
               </button>
@@ -194,7 +194,7 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
               }}
               style={{
                 width: '100%', padding: '7px 10px 7px 30px',
-                border: '1.5px solid #BEDAEA', borderRadius: 7,
+                border: '1.5px solid #BEDAEA', borderRadius: 14,
                 fontSize: 13, outline: 'none', background: 'var(--bg-input)',
                 color: 'var(--text-heading)', boxSizing: 'border-box',
               }}
@@ -203,7 +203,7 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
           {results.length > 0 && (
             <div style={{
               position: 'absolute', zIndex: 100, background: 'var(--bg-card)',
-              border: '1.5px solid var(--border-input)', borderRadius: 10,
+              border: '1.5px solid var(--border-input)', borderRadius: 22,
               boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
               marginTop: 4, width: '100%', maxHeight: 220, overflowY: 'auto',
             }}>
@@ -219,7 +219,7 @@ export default function DiagnosisBlock({ data, onChange, onRemove, onConfirmed, 
                   onMouseEnter={e => (e.currentTarget.style.background = 'var(--ses-blue-tint)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                 >
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)', background: 'var(--ws-chip)', padding: '0 6px', minWidth: 28, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 5, fontWeight: 800, letterSpacing: '0.3px', boxSizing: 'border-box', flexShrink: 0 }}>{c.code}</span>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', background: 'var(--ws-chip)', padding: '0 6px', minWidth: 28, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 5, fontWeight: 500, letterSpacing: '0.3px', boxSizing: 'border-box', flexShrink: 0 }}>{c.code}</span>
                   <span style={{ fontSize: 13, color: 'var(--text-body)' }}>{c.description}</span>
                   {c.category && <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 'auto', flexShrink: 0 }}>{c.category}</span>}
                 </button>

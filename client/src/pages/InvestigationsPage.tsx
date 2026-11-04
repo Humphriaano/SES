@@ -1,34 +1,37 @@
 import { useEffect, useState, Fragment } from 'react';
-import { useParams } from 'react-router-dom';
-import { Plus, ChevronDown, ChevronRight, X, FlaskConical } from 'lucide-react';
+import { Navigate, useParams } from 'react-router-dom';
+import { Plus, ChevronDown, ChevronRight, X } from 'lucide-react';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { hasRole } from '../lib/money';
+import { moduleLanding } from '../lib/moduleAccess';
 import { usePatient } from '../context/PatientContext';
 import { Encounter } from '../types';
 import ConsultationSidebar from '../components/consultation/ConsultationSidebar';
+import '../components/consultation/ClinicalWorkspace.css';
 import catalogJson from '../data/investigationsCatalogue.json';
 import {
   searchCatalogue, CatalogueResult, CataloguePanel, CatalogueSingle,
-  getPanelById, getSingleById,
+  getPanelById, getSingleById, allPanels,
 } from '../data/investigationsCatalogue';
 
 const catalogue = catalogJson as { panels: CataloguePanel[]; singles: CatalogueSingle[] };
 
 function getPanelByName(name: string): CataloguePanel | undefined {
-  return catalogue.panels.find(p => p.panelName.toLowerCase() === name.toLowerCase());
+  return allPanels().find(p => p.panelName.toLowerCase() === name.toLowerCase());
 }
 import toast from 'react-hot-toast';
 
 // ── Design tokens (CSS var-based for dark mode support) ───────────────────────
 const T = {
   pageBg: 'var(--bg-page)',
-  cardBg: 'var(--bg-card)',
+  cardBg: 'var(--premium-panel-bg)',
   cardBorder: '1px solid var(--border)',
   title: 'var(--text-heading)',
   body: 'var(--text-body2)',
   muted: 'var(--text-muted)',
-  teal: 'var(--ses-red)',
-  font: "'Segoe UI', system-ui, sans-serif",
+  primary: 'var(--ses-red)',
+  font: 'var(--font-body)',
 };
 
 function statusBadge(status: string) {
@@ -40,7 +43,7 @@ function statusBadge(status: string) {
   };
   const s = map[status] ?? { bg: 'var(--badge-gray-bg)', color: 'var(--badge-gray-text)' };
   return (
-    <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: s.bg, color: s.color }}>
+    <span style={{ fontSize: 11, fontWeight: 500, padding: '2px 8px', borderRadius: 10, background: s.bg, color: s.color }}>
       {status}
     </span>
   );
@@ -95,9 +98,9 @@ function OrderBasket({ basket, setBasket }: {
               <div key={b.key} style={{
                 display: 'flex', alignItems: 'center', gap: 8,
                 background: 'var(--badge-green-bg)', border: '1px solid var(--border)',
-                borderRadius: 7, padding: '6px 10px', marginBottom: 5,
+                borderRadius: 10, padding: '6px 10px', marginBottom: 5,
               }}>
-                <span style={{ fontSize: 9, fontWeight: 700, background: isPanel ? 'var(--ses-blue-deep)' : 'var(--ses-blue)', color: '#fff', borderRadius: 3, padding: '1px 5px' }}>
+                <span style={{ fontSize: 9, fontWeight: 500, background: isPanel ? 'var(--ses-blue-deep)' : 'var(--ses-blue)', color: '#fff', borderRadius: 3, padding: '1px 5px' }}>
                   {isPanel ? 'Panel' : 'Test'}
                 </span>
                 <span style={{ flex: 1, fontSize: 13, color: 'var(--text-heading)', fontWeight: 500 }}>
@@ -124,7 +127,7 @@ function OrderBasket({ basket, setBasket }: {
           onBlur={() => setTimeout(() => setOpen(false), 200)}
           style={{
             width: '100%', boxSizing: 'border-box', padding: '8px 12px',
-            border: '1.5px solid var(--border-input)', borderRadius: 7, fontSize: 13,
+            border: '1.5px solid var(--border-input)', borderRadius: 14, fontSize: 13,
             outline: 'none', fontFamily: T.font, background: 'var(--bg-input)', color: 'var(--text-heading)',
           }}
         />
@@ -152,7 +155,7 @@ function OrderBasket({ basket, setBasket }: {
                   onMouseEnter={e => { if (!inBasket) e.currentTarget.style.background = 'var(--bg-surface)'; }}
                   onMouseLeave={e => { if (!inBasket) e.currentTarget.style.background = 'none'; }}
                 >
-                  <span style={{ fontSize: 9, fontWeight: 700, background: isPanel ? 'var(--ses-blue-deep)' : 'var(--ses-blue)', color: '#fff', borderRadius: 3, padding: '1px 5px', whiteSpace: 'nowrap' }}>
+                  <span style={{ fontSize: 9, fontWeight: 500, background: isPanel ? 'var(--ses-blue-deep)' : 'var(--ses-blue)', color: '#fff', borderRadius: 3, padding: '1px 5px', whiteSpace: 'nowrap' }}>
                     {isPanel ? 'Panel' : 'Test'}
                   </span>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -166,7 +169,7 @@ function OrderBasket({ basket, setBasket }: {
                       {isPanel ? `${panel!.specimen} · ${panel!.components.length} tests` : single!.specimen || ''}
                     </div>
                   </div>
-                  {inBasket && <span style={{ fontSize: 10, color: T.teal }}>Added</span>}
+                  {inBasket && <span style={{ fontSize: 10, color: T.primary }}>Added</span>}
                 </button>
               );
             })}
@@ -328,14 +331,14 @@ function InlineResultsForm({ item, isAmend, colSpan, onClose, onSaved }: {
 
   return (
     <td colSpan={colSpan} style={{ padding: '0 0 0 28px', background: 'var(--bg-surface)' }}>
-      <div style={{ borderLeft: `3px solid ${T.teal}`, paddingLeft: 16, paddingTop: 14, paddingBottom: 14 }}>
+      <div style={{ borderLeft: `3px solid ${T.primary}`, paddingLeft: 16, paddingTop: 14, paddingBottom: 14 }}>
         {/* Form header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <div>
-            <span style={{ fontSize: 13, fontWeight: 700, color: T.title }}>{item.name}</span>
+            <span style={{ fontSize: 13, fontWeight: 500, color: T.title }}>{item.name}</span>
             {item.specimen && <span style={{ fontSize: 12, color: T.muted, marginLeft: 8 }}>— {item.specimen}</span>}
             {isPanel && <span style={{ fontSize: 11, color: T.muted, marginLeft: 8 }}>{rows.length} components</span>}
-            {isAmend && <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--badge-amber-text)', marginLeft: 10 }}>Amending</span>}
+            {isAmend && <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--badge-amber-text)', marginLeft: 10 }}>Amending</span>}
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.muted, padding: 4 }}>
             <X size={14} />
@@ -347,15 +350,15 @@ function InlineResultsForm({ item, isAmend, colSpan, onClose, onSaved }: {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                <th style={{ textAlign: 'left', padding: '5px 8px 5px 0', color: T.muted, fontWeight: 600, fontSize: 10, textTransform: 'uppercase', width: '28%' }}>
+                <th style={{ textAlign: 'left', padding: '5px 8px 5px 0', color: T.muted, fontWeight: 500, fontSize: 10, textTransform: 'uppercase', width: '28%' }}>
                   {isPanel ? 'Component' : 'Test'}
                 </th>
                 {isPanel && (
-                  <th style={{ textAlign: 'left', padding: '5px 8px', color: T.muted, fontWeight: 600, fontSize: 10, textTransform: 'uppercase', width: '10%' }}>Abbr</th>
+                  <th style={{ textAlign: 'left', padding: '5px 8px', color: T.muted, fontWeight: 500, fontSize: 10, textTransform: 'uppercase', width: '10%' }}>Abbr</th>
                 )}
-                <th style={{ textAlign: 'left', padding: '5px 8px', color: T.muted, fontWeight: 600, fontSize: 10, textTransform: 'uppercase', width: '30%' }}>Result</th>
-                <th style={{ textAlign: 'left', padding: '5px 8px', color: T.muted, fontWeight: 600, fontSize: 10, textTransform: 'uppercase', width: '12%' }}>Units</th>
-                <th style={{ textAlign: 'left', padding: '5px 0', color: T.muted, fontWeight: 600, fontSize: 10, textTransform: 'uppercase', width: '20%' }}>Status</th>
+                <th style={{ textAlign: 'left', padding: '5px 8px', color: T.muted, fontWeight: 500, fontSize: 10, textTransform: 'uppercase', width: '30%' }}>Result</th>
+                <th style={{ textAlign: 'left', padding: '5px 8px', color: T.muted, fontWeight: 500, fontSize: 10, textTransform: 'uppercase', width: '12%' }}>Units</th>
+                <th style={{ textAlign: 'left', padding: '5px 0', color: T.muted, fontWeight: 500, fontSize: 10, textTransform: 'uppercase', width: '20%' }}>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -375,7 +378,7 @@ function InlineResultsForm({ item, isAmend, colSpan, onClose, onSaved }: {
                       <select
                         value={row.value}
                         onChange={e => updateRow(idx, 'value', e.target.value)}
-                        style={{ width: '100%', padding: '4px 7px', border: '1px solid var(--border)', borderRadius: 5, fontSize: 12, fontFamily: T.font, background: 'var(--bg-input)', color: 'var(--text-heading)' }}
+                        style={{ width: '100%', padding: '4px 7px', border: '1px solid var(--border)', borderRadius: 14, fontSize: 12, fontFamily: T.font, background: 'var(--bg-input)', color: 'var(--text-heading)' }}
                       >
                         <option value="">Select…</option>
                         {row.options.map(o => <option key={o} value={o}>{o}</option>)}
@@ -385,7 +388,7 @@ function InlineResultsForm({ item, isAmend, colSpan, onClose, onSaved }: {
                         type={row.dataType === 'float' || row.dataType === 'integer' ? 'number' : 'text'}
                         value={row.value}
                         onChange={e => updateRow(idx, 'value', e.target.value)}
-                        style={{ width: '100%', padding: '4px 7px', border: '1px solid var(--border)', borderRadius: 5, fontSize: 12, fontFamily: T.font, boxSizing: 'border-box', background: 'var(--bg-input)', color: 'var(--text-heading)' }}
+                        style={{ width: '100%', padding: '4px 7px', border: '1px solid var(--border)', borderRadius: 14, fontSize: 12, fontFamily: T.font, boxSizing: 'border-box', background: 'var(--bg-input)', color: 'var(--text-heading)' }}
                       />
                     )}
                   </td>
@@ -393,11 +396,11 @@ function InlineResultsForm({ item, isAmend, colSpan, onClose, onSaved }: {
                     {row.units ?? '—'}
                   </td>
                   <td style={{ padding: '7px 0', verticalAlign: 'middle' }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: resultColor(row.status), marginBottom: 3 }}>{row.status}</div>
+                    <div style={{ fontSize: 11, fontWeight: 500, color: resultColor(row.status), marginBottom: 3 }}>{row.status}</div>
                     <select
                       value={row.status}
                       onChange={e => updateRow(idx, 'status', e.target.value)}
-                      style={{ padding: '2px 5px', border: '1px solid var(--border)', borderRadius: 4, fontSize: 11, fontFamily: T.font, background: 'var(--bg-input)', color: 'var(--text-heading)' }}
+                      style={{ padding: '2px 5px', border: '1px solid var(--border)', borderRadius: 14, fontSize: 11, fontFamily: T.font, background: 'var(--bg-input)', color: 'var(--text-heading)' }}
                     >
                       {['Normal', 'High', 'Low', 'Abnormal', 'Positive', 'Negative', 'Indeterminate', 'Critical'].map(s => (
                         <option key={s} value={s}>{s}</option>
@@ -414,7 +417,7 @@ function InlineResultsForm({ item, isAmend, colSpan, onClose, onSaved }: {
         <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
           <button
             onClick={onClose}
-            style={{ padding: '6px 14px', border: T.cardBorder, borderRadius: 6, background: 'var(--bg-card)', color: T.body, fontSize: 12, cursor: 'pointer', fontFamily: T.font }}
+            style={{ padding: '6px 14px', border: T.cardBorder, borderRadius: 999, background: 'var(--bg-card)', color: T.body, fontSize: 12, cursor: 'pointer', fontFamily: T.font }}
           >
             Cancel
           </button>
@@ -422,9 +425,9 @@ function InlineResultsForm({ item, isAmend, colSpan, onClose, onSaved }: {
             onClick={save}
             disabled={saving}
             style={{
-              padding: '6px 16px', border: 'none', borderRadius: 6,
-              background: isAmend ? 'var(--clinical-caution)' : T.teal,
-              color: '#fff', fontSize: 12, fontWeight: 600,
+              padding: '6px 16px', border: 'none', borderRadius: 999,
+              background: isAmend ? 'var(--clinical-caution)' : T.primary,
+              color: '#fff', fontSize: 12, fontWeight: 500,
               cursor: saving ? 'not-allowed' : 'pointer', fontFamily: T.font,
             }}
           >
@@ -456,7 +459,7 @@ function InlineResultsView({ item, colSpan }: { item: any; colSpan: number }) {
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)' }}>
                 {['Component', 'Abbreviation', 'Result', 'Units', 'Status'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '5px 10px', fontSize: 10, fontWeight: 600, color: T.muted, textTransform: 'uppercase' }}>{h}</th>
+                  <th key={h} style={{ textAlign: 'left', padding: '5px 10px', fontSize: 10, fontWeight: 500, color: T.muted, textTransform: 'uppercase' }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -465,10 +468,10 @@ function InlineResultsView({ item, colSpan }: { item: any; colSpan: number }) {
                 <tr key={i} style={{ borderBottom: '1px solid var(--border-light)' }}>
                   <td style={{ padding: '6px 10px', color: T.title, fontWeight: 500 }}>{r.componentName}</td>
                   <td style={{ padding: '6px 10px', color: T.muted }}>{r.abbr ?? '—'}</td>
-                  <td style={{ padding: '6px 10px', fontWeight: 700, color: resultColor(r.status) }}>{r.value || '—'}</td>
+                  <td style={{ padding: '6px 10px', fontWeight: 500, color: resultColor(r.status) }}>{r.value || '—'}</td>
                   <td style={{ padding: '6px 10px', color: T.muted }}>{r.units ?? '—'}</td>
                   <td style={{ padding: '6px 10px' }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: resultColor(r.status) }}>{r.status}</span>
+                    <span style={{ fontSize: 11, fontWeight: 500, color: resultColor(r.status) }}>{r.status}</span>
                   </td>
                 </tr>
               ))}
@@ -499,7 +502,7 @@ function ActionCell({ item, onConfirm, onEnter, onAmend }: {
     <td style={{ padding: '10px 14px', whiteSpace: 'nowrap' }} onClick={e => e.stopPropagation()}>
       {item.status === 'Pending' && (
         <button onClick={onConfirm} style={{
-          padding: '4px 11px', border: '1px solid var(--border)', borderRadius: 6,
+          padding: '4px 11px', border: '1px solid var(--border)', borderRadius: 999,
           background: 'var(--bg-card)', color: 'var(--text-body2)', fontSize: 12, cursor: 'pointer', fontFamily: T.font,
         }}>
           Confirm Sample
@@ -507,16 +510,16 @@ function ActionCell({ item, onConfirm, onEnter, onAmend }: {
       )}
       {item.status === 'In Progress' && (
         <button onClick={onEnter} style={{
-          padding: '4px 11px', border: 'none', borderRadius: 6,
-          background: T.teal, color: '#fff', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: T.font,
+          padding: '4px 11px', border: 'none', borderRadius: 999,
+          background: T.primary, color: '#fff', fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: T.font,
         }}>
           Enter Results
         </button>
       )}
       {(item.status === 'Resulted' || item.status === 'Amended') && (
         <button onClick={onAmend} style={{
-          padding: '4px 11px', border: '1px solid var(--badge-amber-text)', borderRadius: 6,
-          background: 'var(--bg-card)', color: 'var(--badge-amber-text)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: T.font,
+          padding: '4px 11px', border: '1px solid var(--badge-amber-text)', borderRadius: 999,
+          background: 'var(--bg-card)', color: 'var(--badge-amber-text)', fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: T.font,
         }}>
           Amend
         </button>
@@ -540,9 +543,9 @@ export default function InvestigationsPage() {
   const { activeEncounterId, activePatient, setActivePatient } = usePatient();
 
   const role = user?.role ?? '';
-  const isDoctor = role === 'doctor' || role === 'admin';
-  const isLabTech = role === 'lab_technician';
-  const canAct = role === 'lab_technician' || role === 'admin';
+  const isDoctor = hasRole(role, 'doctor', 'clinician', 'admin');
+  const isLabTech = !isDoctor && hasRole(role, 'lab_tech', 'lab_technician');
+  const canAct = hasRole(role, 'lab_tech', 'lab_technician', 'admin');
 
   const [orders, setOrders] = useState<any[]>([]);
   const [worklist, setWorklist] = useState<any[]>([]);
@@ -679,33 +682,37 @@ export default function InvestigationsPage() {
     const allItems: any[] = orders.flatMap(o => (o.items ?? []).map((i: any) => ({ ...i, order: o })));
 
     return (
-      <div style={{ display: 'flex', flex: 1, minHeight: '100%', fontFamily: T.font }}>
+      <div className="clinical-module clinical-workspace" data-has-summary={!!activePatient} style={{ fontFamily: T.font }}>
 
-        {/* ── Dark clinical sidebar ── */}
-        <ConsultationSidebar
-          patientId={activePatient?.id ?? patientId ?? ''}
-          patient={activePatient}
-          encounters={encounters}
-          visible={!!activePatient}
-          currentNodes={[]}
-        />
+        {/* ── Compact clinical summary ── */}
+        {activePatient && (
+          <aside className="clinical-workspace-summary" aria-label="Clinical summary">
+            <ConsultationSidebar
+              patientId={activePatient.id}
+              patient={activePatient}
+              encounters={encounters}
+              visible
+              currentNodes={[]}
+            />
+          </aside>
+        )}
 
         {/* ── Main content ── */}
-        <div style={{ flex: 1, minWidth: 0, background: T.pageBg, padding: 'clamp(14px, 3vw, 24px)' }}>
+        <div style={{ flex: 1, minWidth: 0, background: T.pageBg }}>
 
         <div style={{ marginBottom: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: activePatient ? 4 : 0 }}>
-            <h1 style={{ fontSize: 20, fontWeight: 700, color: T.title, margin: 0 }}>Investigations</h1>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: activePatient ? 4 : 0 }}>
+            <h1 style={{ fontSize: 22, fontWeight: 500, color: T.title, margin: 0 }}>Investigations</h1>
             <button
               onClick={() => { setShowNewOrder(v => !v); setBasket([]); }}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, background: T.teal, color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: T.font }}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, background: T.primary, color: '#fff', border: 'none', borderRadius: 999, padding: '8px 16px', fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: T.font }}
             >
               <Plus size={14} /> New Order
             </button>
           </div>
           {activePatient && (
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-heading)' }}>
+              <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-heading)' }}>
                 {activePatient.firstName} {activePatient.lastName}
               </span>
               <span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>
@@ -719,7 +726,7 @@ export default function InvestigationsPage() {
         {showNewOrder && (
           <div style={{ background: T.cardBg, border: T.cardBorder, borderRadius: 10, padding: 20, marginBottom: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: T.title, margin: 0 }}>New Investigation Order</h3>
+              <h3 style={{ fontSize: 14, fontWeight: 500, color: T.title, margin: 0 }}>New Investigation Order</h3>
               <button onClick={() => setShowNewOrder(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.muted }}>
                 <X size={16} />
               </button>
@@ -727,11 +734,11 @@ export default function InvestigationsPage() {
             <OrderBasket basket={basket} setBasket={setBasket} />
             {basket.length > 0 && (
               <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-                <button onClick={() => setBasket([])} style={{ padding: '7px 16px', border: T.cardBorder, borderRadius: 7, background: 'var(--bg-card)', color: T.body, fontSize: 13, cursor: 'pointer', fontFamily: T.font }}>Clear</button>
+                <button onClick={() => setBasket([])} style={{ padding: '7px 16px', border: T.cardBorder, borderRadius: 999, background: 'var(--bg-card)', color: T.body, fontSize: 13, cursor: 'pointer', fontFamily: T.font }}>Clear</button>
                 <button
                   onClick={submitNewOrder}
                   disabled={submitting}
-                  style={{ padding: '7px 18px', border: 'none', borderRadius: 7, background: submitting ? '#94a3b8' : T.teal, color: '#fff', fontSize: 13, fontWeight: 600, cursor: submitting ? 'not-allowed' : 'pointer', fontFamily: T.font }}
+                  style={{ padding: '7px 18px', border: 'none', borderRadius: 999, background: submitting ? 'var(--border-input)' : T.primary, color: '#fff', fontSize: 13, fontWeight: 500, cursor: submitting ? 'not-allowed' : 'pointer', fontFamily: T.font }}
                 >
                   {submitting ? 'Submitting…' : `Submit Order (${basket.length} item${basket.length !== 1 ? 's' : ''})`}
                 </button>
@@ -740,20 +747,15 @@ export default function InvestigationsPage() {
           </div>
         )}
 
-        <div style={{ background: T.cardBg, border: T.cardBorder, borderRadius: 10, overflow: 'visible' }}>
+        <div style={{ display: !loading && allItems.length === 0 ? 'none' : undefined, background: T.cardBg, border: T.cardBorder, borderRadius: 14, overflowX: 'auto' }}>
           {loading ? (
             <div style={{ padding: 40, textAlign: 'center', color: T.muted }}>Loading…</div>
-          ) : allItems.length === 0 ? (
-            <div style={{ padding: 40, textAlign: 'center', color: T.muted }}>
-              <FlaskConical size={32} color="#94a3b8" style={{ marginBottom: 8 }} />
-              <div>No investigation orders yet</div>
-            </div>
-          ) : (
+          ) : allItems.length === 0 ? null : (
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ background: 'var(--bg-surface)', borderBottom: T.cardBorder }}>
                   {docHeaders.map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '10px 14px', fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{h}</th>
+                    <th key={h} style={{ textAlign: 'left', padding: '10px 14px', fontSize: 11, fontWeight: 500, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -775,7 +777,7 @@ export default function InvestigationsPage() {
                         </td>
                         <td style={{ padding: '10px 14px', fontWeight: 500, color: T.title }}>{item.name}</td>
                         <td style={{ padding: '10px 14px' }}>
-                          <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 10, background: item.type === 'panel' ? 'var(--badge-blue-bg)' : 'var(--badge-green-bg)', color: item.type === 'panel' ? 'var(--badge-blue-text)' : 'var(--badge-green-text)' }}>
+                          <span style={{ fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 10, background: item.type === 'panel' ? 'var(--badge-blue-bg)' : 'var(--badge-green-bg)', color: item.type === 'panel' ? 'var(--badge-blue-text)' : 'var(--badge-green-text)' }}>
                             {item.type === 'panel' ? 'Panel' : 'Single'}
                           </span>
                         </td>
@@ -824,22 +826,20 @@ export default function InvestigationsPage() {
   // ── Lab Technician View ───────────────────────────────────────────────────
   if (isLabTech) {
     return (
-      <div style={{ background: T.pageBg, minHeight: '100vh', padding: '24px', fontFamily: T.font }}>
+      <div className="clinical-module" style={{ background: T.pageBg, minHeight: '100%', padding: 'clamp(14px, 3vw, 24px)', fontFamily: T.font }}>
         <div style={{ marginBottom: 20 }}>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: T.title, margin: 0 }}>Investigations Worklist</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 500, color: T.title, margin: 0 }}>Investigations Worklist</h1>
         </div>
 
-        <div style={{ background: T.cardBg, border: T.cardBorder, borderRadius: 10, overflow: 'visible' }}>
+        <div style={{ display: !loading && worklist.length === 0 ? 'none' : undefined, background: T.cardBg, border: T.cardBorder, borderRadius: 14, overflowX: 'auto' }}>
           {loading ? (
             <div style={{ padding: 40, textAlign: 'center', color: T.muted }}>Loading worklist…</div>
-          ) : worklist.length === 0 ? (
-            <div style={{ padding: 40, textAlign: 'center', color: T.muted }}>No pending items</div>
-          ) : (
+          ) : worklist.length === 0 ? null : (
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ background: 'var(--bg-surface)', borderBottom: T.cardBorder }}>
                   {labHeaders.map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '10px 14px', fontSize: 11, fontWeight: 600, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{h}</th>
+                    <th key={h} style={{ textAlign: 'left', padding: '10px 14px', fontSize: 11, fontWeight: 500, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -902,9 +902,5 @@ export default function InvestigationsPage() {
     );
   }
 
-  return (
-    <div style={{ background: T.pageBg, minHeight: '100vh', padding: '24px', fontFamily: T.font }}>
-      <p style={{ color: T.muted }}>You don't have access to this module.</p>
-    </div>
-  );
+  return <Navigate to={moduleLanding(role)} replace />;
 }

@@ -46,7 +46,7 @@ export default function PatientsPage() {
       {/* Page header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-heading)', lineHeight: 1.2 }}>Patient Registry</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 500, color: 'var(--text-heading)', lineHeight: 1.2 }}>Patient Registry</h1>
           <p style={{ fontSize: 13, color: 'var(--text-subtle)', marginTop: 4 }}>
             {patients.length} {patients.length === 1 ? 'patient' : 'patients'} on record
           </p>
@@ -80,7 +80,7 @@ export default function PatientsPage() {
             }}>
               <Users size={24} color="var(--text-subtle)" />
             </div>
-            <p style={{ fontWeight: 600, color: 'var(--text-body)', marginBottom: 4 }}>No patients found</p>
+            <p style={{ fontWeight: 500, color: 'var(--text-body)', marginBottom: 4 }}>No patients found</p>
             <p style={{ fontSize: 13, color: 'var(--text-subtle)' }}>
               {search ? `No results for "${search}"` : 'Register your first patient to get started'}
             </p>
@@ -92,7 +92,7 @@ export default function PatientsPage() {
                 {['Patient', 'Age / Gender', 'National ID', 'Phone', 'HIV Status', ''].map((h) => (
                   <th key={h} style={{
                     textAlign: 'left', padding: '11px 16px',
-                    fontSize: 11, fontWeight: 700, color: 'var(--text-subtle)',
+                    fontSize: 11, fontWeight: 500, color: 'var(--text-subtle)',
                     letterSpacing: '0.06em', textTransform: 'uppercase',
                   }}>{h}</th>
                 ))}
@@ -117,14 +117,14 @@ export default function PatientsPage() {
                         width: 36, height: 36, borderRadius: '50%',
                         background: `hsl(${(p.firstName.charCodeAt(0) * 13) % 360}, 60%, 90%)`,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 13, fontWeight: 700,
+                        fontSize: 13, fontWeight: 500,
                         color: `hsl(${(p.firstName.charCodeAt(0) * 13) % 360}, 55%, 38%)`,
                         flexShrink: 0,
                       }}>
                         {p.firstName.charAt(0)}{p.lastName.charAt(0)}
                       </div>
                       <div>
-                        <div style={{ fontWeight: 600, color: 'var(--text-heading)', fontSize: 13.5 }}>
+                        <div style={{ fontWeight: 500, color: 'var(--text-heading)', fontSize: 13.5 }}>
                           {p.firstName} {p.lastName}
                         </div>
                         <div style={{ fontSize: 11.5, color: 'var(--text-subtle)', marginTop: 1, display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -136,7 +136,7 @@ export default function PatientsPage() {
                   </td>
 
                   <td style={{ padding: '13px 16px' }}>
-                    <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-body)' }}>{calcAge(p.dateOfBirth)}</span>
+                    <span style={{ fontWeight: 500, fontSize: 14, color: 'var(--text-body)' }}>{calcAge(p.dateOfBirth)}</span>
                     <span style={{ fontSize: 12, color: 'var(--text-subtle)', marginLeft: 4 }}>yrs</span>
                     <span style={{ marginLeft: 8, fontSize: 13, color: 'var(--text-muted)' }}>{genderIcon(p.gender)}</span>
                   </td>
@@ -168,7 +168,7 @@ export default function PatientsPage() {
                   <td style={{ padding: '13px 16px', textAlign: 'right' }}>
                     <div style={{
                       display: 'inline-flex', alignItems: 'center', gap: 4,
-                      fontSize: 12, color: 'var(--ses-red)', fontWeight: 600,
+                      fontSize: 12, color: 'var(--ses-red)', fontWeight: 500,
                     }}>
                       Open <ChevronRight size={13} />
                     </div>

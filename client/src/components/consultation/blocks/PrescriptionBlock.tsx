@@ -1,205 +1,13 @@
-import { useState } from 'react';
-import { Plus, X } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { PrescriptionBlockData, PrescriptionItem } from '../../../types/consultation';
-import { searchCatalog, DrugEntry } from '../../../data/drugCatalog';
+import { pricingUnit } from '../../../lib/prescriptionSupply';
+import PrescriptionForm from './PrescriptionForm';
+import { formatCourseDate } from '../../../lib/prescriptionCourse';
+import { useEffect, useState } from 'react';
 import api from '../../../api/client';
+import { Plus, X } from 'lucide-react';
+import { PrescriptionBlockData, PrescriptionItem } from '../../../types/consultation';
 
-const FREQUENCIES = ['OD', 'BD', 'TDS', 'QDS', 'PRN', 'Stat', 'Weekly', 'Monthly'];
-const ROUTES = ['Oral', 'IV', 'IM', 'IV/IM', 'SC', 'Topical', 'Inhaled', 'SL', 'PR', 'Nasal', 'Ophthalmic', 'Rectal', 'Vaginal', 'Transdermal'];
+import { CataloguePrice } from '../../billing/InlinePrice';
 
-function ItemForm({ onAdd, onCancel, patientId, encounterId }: {
-  onAdd: (item: Omit<PrescriptionItem, 'id'>) => void;
-  onCancel: () => void;
-  patientId?: string;
-  encounterId?: string;
-}) {
-  const [drug, setDrug] = useState('');
-  const [form, setForm] = useState({ dose: '', frequency: 'OD', duration: '', route: 'Oral', specialInstructions: '' });
-  const [suggestions, setSuggestions] = useState<DrugEntry[]>([]);
-  const [showDrugs, setShowDrugs] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const canAdd = drug.trim() && form.dose.trim() && !saving;
-
-  function handleDrugChange(value: string) {
-    setDrug(value);
-    if (value.length >= 2) {
-      const hits = searchCatalog(value, 10);
-      setSuggestions(hits);
-      setShowDrugs(hits.length > 0);
-    } else {
-      setSuggestions([]);
-      setShowDrugs(false);
-    }
-  }
-
-  function pickDrug(entry: DrugEntry) {
-    setDrug(entry.name);
-    setForm(f => ({
-      ...f,
-      dose: entry.dose || f.dose,
-      route: entry.route && ROUTES.includes(entry.route) ? entry.route : f.route,
-    }));
-    setShowDrugs(false);
-  }
-
-  const fieldStyle: React.CSSProperties = {
-    width: '100%', padding: '7px 10px',
-    border: '1.5px solid var(--border)', borderRadius: 6,
-    fontSize: 13, outline: 'none', boxSizing: 'border-box',
-    background: 'var(--bg-input)', color: 'var(--text-heading)',
-  };
-
-  return (
-    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8, padding: 12, marginTop: 8 }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-        {/* Drug search */}
-        <div style={{ gridColumn: '1/-1', position: 'relative' }}>
-          <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-body)', marginBottom: 3, display: 'block' }}>Drug</label>
-          <input
-            type="text"
-            placeholder="Search drug name…"
-            value={drug}
-            onChange={e => handleDrugChange(e.target.value)}
-            onFocus={() => { if (suggestions.length > 0) setShowDrugs(true); }}
-            onBlur={() => setTimeout(() => setShowDrugs(false), 150)}
-            style={fieldStyle}
-          />
-          {showDrugs && suggestions.length > 0 && (
-            <div style={{
-              position: 'absolute', zIndex: 100, background: 'var(--bg-card)',
-              border: '1px solid var(--border-input)', borderRadius: 8,
-              boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
-              width: '100%', maxHeight: 200, overflowY: 'auto', marginTop: 4,
-            }}>
-              {suggestions.map((entry, i) => (
-                <button
-                  key={`${entry.name}-${entry.sku}-${i}`}
-                  onMouseDown={() => pickDrug(entry)}
-                  style={{
-                    width: '100%', textAlign: 'left', padding: '7px 12px',
-                    background: 'none', border: 'none', borderBottom: '1px solid var(--border-light)',
-                    cursor: 'pointer',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-surface)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-                >
-                  <div style={{ fontSize: 13, color: 'var(--text-heading)', fontWeight: 500 }}>{entry.name}</div>
-                  {(entry.dose || entry.form) && (
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>
-                      {[entry.dose, entry.form, entry.route].filter(Boolean).join(' · ')}
-                    </div>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Dose */}
-        <div>
-          <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-body)', marginBottom: 3, display: 'block' }}>Dose</label>
-          <input
-            type="text" placeholder="e.g. 500mg"
-            value={form.dose} onChange={e => setForm(f => ({ ...f, dose: e.target.value }))}
-            style={fieldStyle}
-          />
-        </div>
-
-        {/* Frequency */}
-        <div>
-          <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-body)', marginBottom: 3, display: 'block' }}>Frequency</label>
-          <select
-            value={form.frequency} onChange={e => setForm(f => ({ ...f, frequency: e.target.value }))}
-            style={fieldStyle}
-          >
-            {FREQUENCIES.map(f => <option key={f}>{f}</option>)}
-          </select>
-        </div>
-
-        {/* Duration */}
-        <div>
-          <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-body)', marginBottom: 3, display: 'block' }}>Duration</label>
-          <input
-            type="text" placeholder="e.g. 7 days"
-            value={form.duration} onChange={e => setForm(f => ({ ...f, duration: e.target.value }))}
-            style={fieldStyle}
-          />
-        </div>
-
-        {/* Route */}
-        <div>
-          <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-body)', marginBottom: 3, display: 'block' }}>Route</label>
-          <select
-            value={form.route} onChange={e => setForm(f => ({ ...f, route: e.target.value }))}
-            style={fieldStyle}
-          >
-            {ROUTES.map(r => <option key={r}>{r}</option>)}
-          </select>
-        </div>
-
-        {/* Instructions */}
-        <div style={{ gridColumn: '1/-1' }}>
-          <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-body)', marginBottom: 3, display: 'block' }}>
-            Special Instructions <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>(optional)</span>
-          </label>
-          <input
-            type="text" placeholder="e.g. Take with food, avoid sunlight"
-            value={form.specialInstructions} onChange={e => setForm(f => ({ ...f, specialInstructions: e.target.value }))}
-            style={fieldStyle}
-          />
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', gap: 8, marginTop: 10, justifyContent: 'flex-end' }}>
-        <button
-          onClick={onCancel}
-          style={{ background: 'var(--bg-surface-2)', color: 'var(--text-body)', border: '1px solid var(--border)', borderRadius: 6, padding: '6px 14px', fontSize: 12, cursor: 'pointer' }}
-        >
-          Cancel
-        </button>
-        <button
-          onClick={async () => {
-            if (!canAdd) return;
-            const base: Omit<PrescriptionItem, 'id'> = {
-              drugName: drug.trim(), dose: form.dose, frequency: form.frequency,
-              duration: form.duration, route: form.route, specialInstructions: form.specialInstructions,
-            };
-            if (patientId && encounterId) {
-              setSaving(true);
-              try {
-                const medRes = await api.post(`/patients/${patientId}/medications`, {
-                  name: base.drugName, dosage: base.dose, frequency: base.frequency,
-                  route: base.route, startDate: new Date().toISOString(),
-                });
-                const rxRes = await api.post(`/encounters/${encounterId}/prescriptions`, {
-                  medicationId: medRes.data.id,
-                });
-                onAdd({ ...base, medicationId: medRes.data.id, prescriptionId: rxRes.data.id });
-              } catch {
-                toast.error('Saved locally — sync to server failed');
-                onAdd(base);
-              } finally {
-                setSaving(false);
-              }
-            } else {
-              onAdd(base);
-            }
-          }}
-          disabled={!canAdd}
-          style={{
-            background: canAdd ? 'var(--ses-red)' : 'var(--border-input)',
-            color: canAdd ? '#fff' : 'var(--text-subtle)',
-            border: 'none', borderRadius: 6, padding: '6px 14px',
-            fontSize: 12, fontWeight: 600, cursor: canAdd ? 'pointer' : 'not-allowed',
-          }}
-        >
-          {saving ? 'Saving…' : 'Add Drug'}
-        </button>
-      </div>
-    </div>
-  );
-}
 
 interface Props {
   data: PrescriptionBlockData;
@@ -212,19 +20,37 @@ interface Props {
 
 export default function PrescriptionBlock({ data, onChange, onRemove, readOnly, patientId, encounterId }: Props) {
   const [addingItem, setAddingItem] = useState(data.items.length === 0 && !readOnly);
+  const [live, setLive] = useState<Record<string, PrescriptionItem>>({});
+  useEffect(() => {
+    if (!encounterId) return;
+    let active = true;
+    const refresh = () => api.get(`/encounters/${encounterId}/prescriptions`).then(({ data: rows }) => {
+      if (!active) return;
+      const next: Record<string, PrescriptionItem> = {};
+      for (const rx of rows) if (rx.substituteMedication) {
+        const m = rx.substituteMedication;
+        next[rx.id] = { id: rx.id, drugName: m.name, drugCode: m.catalogueCode, dose: m.dosage ?? '', frequency: m.frequency ?? '', duration: m.duration ?? '', route: m.route ?? '', quantity: m.quantity == null ? undefined : Number(m.quantity), quantityUnit: m.quantityUnit, startDate: m.startDate, endDate: m.endDate, specialInstructions: m.notes, doseUnit: m.doseUnit, priceBasis: m.priceBasis, bottleSizeMl: m.bottleSizeMl == null ? undefined : Number(m.bottleSizeMl), courseQuantity: m.courseQuantity == null ? undefined : Number(m.courseQuantity), billingQuantity: m.billingQuantity == null ? undefined : Number(m.billingQuantity) };
+      }
+      setLive(next);
+    }).catch(() => {});
+    refresh(); const timer = setInterval(refresh, 30000); window.addEventListener('focus', refresh);
+    return () => { active = false; clearInterval(timer); window.removeEventListener('focus', refresh); };
+  }, [encounterId]);
+  const displayed = data.items.map(item => item.prescriptionId && live[item.prescriptionId] ? { ...item, ...live[item.prescriptionId], id: item.id } : item);
+
 
   return (
-    <div style={{
+    <div className="note-block" style={{
       border: '1px solid var(--border)',
-      background: 'var(--bg-card)',
-      borderRadius: 12,
+      background: 'var(--bg-surface)',
+      borderRadius: 18,
       padding: '10px 14px',
       margin: '16px 0',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: data.items.length > 0 ? 8 : 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 10, color: 'var(--text-muted)', background: 'var(--ws-chip)', padding: '0 6px', minWidth: 28, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 5, fontWeight: 800, letterSpacing: '0.3px', boxSizing: 'border-box' }}>Rx</span>
-          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-heading)' }}>Prescription</span>
+          <span style={{ fontSize: 10, color: 'var(--text-muted)', background: 'var(--ws-chip)', padding: '0 6px', minWidth: 28, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 5, fontWeight: 500, letterSpacing: '0.3px', boxSizing: 'border-box' }}>Rx</span>
+          <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-heading)' }}>Prescription</span>
         </div>
         {!readOnly && (
           <button onClick={onRemove} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
@@ -233,21 +59,24 @@ export default function PrescriptionBlock({ data, onChange, onRemove, readOnly, 
         )}
       </div>
 
-      {data.items.map((item, i) => (
+      {displayed.map((item, i) => (
         <div key={item.id} style={{
           background: 'var(--bg-surface)', border: '1px solid var(--border)',
           borderRadius: 8, padding: '8px 12px', marginBottom: 6,
           display: 'flex', alignItems: 'flex-start', gap: 10,
         }}>
           <div style={{ flex: 1 }}>
+            {data.items[i].prescriptionId && live[data.items[i].prescriptionId!] && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Substituted: <s>{data.items[i].drugName} {data.items[i].dose}</s></div>}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-heading)' }}>{item.drugName}</span>
+              <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-heading)' }}>{item.drugName}</span>
               <span style={{ fontSize: 12, color: 'var(--text-body)' }}>{item.dose}</span>
               <span style={{ fontSize: 11, background: 'var(--badge-blue-bg)', color: 'var(--badge-blue-text)', padding: '1px 7px', borderRadius: 4 }}>{item.frequency}</span>
               {item.duration && <span style={{ fontSize: 11, color: 'var(--text-body2)' }}>{item.duration}</span>}
               <span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>·</span>
               <span style={{ fontSize: 11, color: 'var(--text-body2)' }}>{item.route}</span>
+              {!readOnly && item.drugCode && <CataloguePrice catalogueRef={item.drugCode} itemType="DRUG" name={item.drugName} patientId={patientId} suffix={" " + pricingUnit(item.priceBasis ?? 'ITEM', item.doseUnit || item.quantityUnit || 'unit')} unpricedLabel="Add price" />}
             </div>
+            {(item.quantity != null || item.startDate) && <div style={{ fontSize: 11, color: 'var(--text-body2)', marginTop: 4 }}>{item.quantity != null ? `Qty ${item.quantity} ${item.quantityUnit || 'units'}` : ''}{item.startDate ? ` · ${formatCourseDate(item.startDate)}${item.endDate ? ' – ' + formatCourseDate(item.endDate) : ''}` : ''}</div>}
             {item.specialInstructions && (
               <p style={{ fontSize: 12, color: 'var(--text-body2)', margin: '3px 0 0', fontStyle: 'italic' }}>{item.specialInstructions}</p>
             )}
@@ -264,7 +93,7 @@ export default function PrescriptionBlock({ data, onChange, onRemove, readOnly, 
       ))}
 
       {addingItem && !readOnly ? (
-        <ItemForm
+        <PrescriptionForm
           patientId={patientId}
           encounterId={encounterId}
           onAdd={item => { onChange({ items: [...data.items, { ...item, id: `${Date.now()}` }] }); setAddingItem(false); }}
@@ -277,7 +106,7 @@ export default function PrescriptionBlock({ data, onChange, onRemove, readOnly, 
             style={{
               display: 'flex', alignItems: 'center', gap: 5,
               background: 'none', border: '1.5px dashed var(--border)',
-              borderRadius: 7, padding: '6px 12px', fontSize: 12,
+              borderRadius: 999, padding: '6px 12px', fontSize: 12,
               color: 'var(--badge-blue-text)', cursor: 'pointer', marginTop: data.items.length > 0 ? 4 : 0,
             }}
           >

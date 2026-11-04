@@ -13,24 +13,51 @@
   --ses-red-dark:     #B4181E;
   --ses-red-tint:     #FBE8E9;
   --ses-charcoal:     #252B2D;
-  --ses-blue:         #246FA8;
-  --ses-blue-deep:    #206497;
-  --ses-blue-tint:    #E8F1F7;
+  --ses-blue:         #2F81BD;
+  --ses-blue-deep:    #246B9D;
+  --ses-blue-tint:    #EAF4FB;
   --ses-text:         #333333;
   --ses-text-muted:   #6B7075;
   --ses-bg:           #FFFFFF;
   --ses-bg-subtle:    #F7F8F9;
 
+  /* Attention colours are shared by unpriced counts, pending states and caution highlights. */
+  --attention-text:   #246B9D;
+  --attention-bg:     #EAF4FB;
+  --attention-border: #BEDCF0;
+
+  /* Selected navigation and tabs use the logo blue family across both apps. */
+  --selection-text: var(--attention-text);
+  --selection-bg: var(--attention-bg);
+  --selection-border: var(--attention-border);
+  --selection-accent: var(--ses-blue);
+  --selection-on-dark: #B5DDFC;
+  --selection-on-dark-text: #173D59;
+  --selection-glow: rgba(47,129,189,.16);
+
   /* Clinical semantic tokens — for data only, never brand-interactive.
-     --clinical-abnormal is deliberately red-orange (not --ses-red) so a
+     --clinical-abnormal uses rose (distinct from --ses-red) so a
      brand-red button and an abnormal vitals chip are never confusable
      side by side on the same card. */
   --clinical-normal:      #16A34A;
   --clinical-normal-bg:   #F0FDF4;
-  --clinical-caution:     #D97706;
-  --clinical-caution-bg:  #FFFBEB;
-  --clinical-abnormal:    #E0451F;
-  --clinical-abnormal-bg: #FDECE5;
+  --clinical-caution:     var(--attention-text);
+  --clinical-caution-bg:  var(--attention-bg);
+  --clinical-abnormal:    #BE123C;
+  --clinical-abnormal-bg: #FFF1F2;
+  --clinical-abnormal-border: #FECDD3;
   --clinical-critical:    #9A1B1B;
   --clinical-critical-bg: #FDEEEE;
+}
+
+/* Theme-aware attention and abnormal values stay consistent across screens. */
+[data-theme="dark"] {
+  --selection-accent: #6BB6EC;
+  --selection-glow: rgba(107,182,236,.20);
+  --attention-text: #8AC7F2;
+  --attention-bg: #112D43;
+  --attention-border: #285775;
+  --clinical-abnormal: #FDA4AF;
+  --clinical-abnormal-bg: #361A25;
+  --clinical-abnormal-border: #6A2B3D;
 }

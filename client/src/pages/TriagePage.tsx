@@ -21,9 +21,9 @@ interface TriageRecord {
 }
 
 const PRIORITY_CONFIG = {
-  IMMEDIATE:   { label: 'Immediate',   color: 'var(--clinical-critical)', bg: 'var(--clinical-critical-bg)', border: '#F6C9B8', code: 'P1' },
-  URGENT:      { label: 'Urgent',      color: 'var(--clinical-abnormal)', bg: 'var(--clinical-abnormal-bg)', border: '#F6C9B8', code: 'P2' },
-  LESS_URGENT: { label: 'Less Urgent', color: 'var(--clinical-caution)',  bg: 'var(--clinical-caution-bg)',  border: '#fde68a', code: 'P3' },
+  IMMEDIATE:   { label: 'Immediate',   color: 'var(--clinical-critical)', bg: 'var(--clinical-critical-bg)', border: 'var(--clinical-abnormal-border)', code: 'P1' },
+  URGENT:      { label: 'Urgent',      color: 'var(--clinical-abnormal)', bg: 'var(--clinical-abnormal-bg)', border: 'var(--clinical-abnormal-border)', code: 'P2' },
+  LESS_URGENT: { label: 'Less Urgent', color: 'var(--clinical-caution)',  bg: 'var(--clinical-caution-bg)',  border: 'var(--attention-border)', code: 'P3' },
   NON_URGENT:  { label: 'Non-Urgent',  color: 'var(--clinical-normal)',   bg: 'var(--clinical-normal-bg)',   border: '#bbf7d0', code: 'P4' },
 };
 
@@ -123,8 +123,8 @@ export default function TriagePage() {
             <ClipboardCheck size={16} color="var(--clinical-caution)" />
           </div>
           <div>
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--ses-text)' }}>Triage</h2>
-            <p style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 1 }}>Initial patient assessment and priority assignment</p>
+            <h2 style={{ fontSize: 16, fontWeight: 500, color: 'var(--ses-text)' }}>Triage</h2>
+            <p style={{ fontSize: 11.5, color: 'var(--text-subtle)', marginTop: 1 }}>Initial patient assessment and priority assignment</p>
           </div>
         </div>
         <button className="btn-primary" onClick={() => setShowForm((v) => !v)}>
@@ -135,11 +135,11 @@ export default function TriagePage() {
       {/* Triage form */}
       {showForm && (
         <form onSubmit={submit} className="card" style={{ padding: '20px 22px', marginBottom: 18 }}>
-          <h3 style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ses-text)', marginBottom: 16 }}>Triage Assessment</h3>
+          <h3 style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--ses-text)', marginBottom: 16 }}>Triage Assessment</h3>
 
           {/* Priority selector */}
           <div style={{ marginBottom: 18 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 8 }}>
+            <label style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-body)', display: 'block', marginBottom: 8 }}>
               Triage Priority <span style={{ color: 'var(--ses-red)' }}>*</span>
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
@@ -150,14 +150,14 @@ export default function TriagePage() {
                   <button
                     key={p} type="button" onClick={() => set('priority', p)}
                     style={{
-                      padding: '10px 8px', borderRadius: 9, cursor: 'pointer', textAlign: 'center',
-                      border: `2px solid ${selected ? c.color : '#e8ecf0'}`,
-                      background: selected ? c.bg : '#f8fafc',
+                      padding: '10px 8px', borderRadius: 999, cursor: 'pointer', textAlign: 'center',
+                      border: `2px solid ${selected ? c.color : 'var(--border)'}`,
+                      background: selected ? c.bg : 'var(--bg-surface)',
                       transition: 'all 0.15s',
                     }}
                   >
-                    <div style={{ fontSize: 16, fontWeight: 800, color: c.color }}>{c.code}</div>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: selected ? c.color : '#94a3b8', marginTop: 2 }}>{c.label}</div>
+                    <div style={{ fontSize: 16, fontWeight: 500, color: c.color }}>{c.code}</div>
+                    <div style={{ fontSize: 11, fontWeight: 500, color: selected ? c.color : 'var(--text-subtle)', marginTop: 2 }}>{c.label}</div>
                   </button>
                 );
               })}
@@ -166,7 +166,7 @@ export default function TriagePage() {
 
           {/* Chief complaint */}
           <div style={{ marginBottom: 14 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>
+            <label style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-body)', display: 'block', marginBottom: 5 }}>
               Chief Complaint <span style={{ color: 'var(--ses-red)' }}>*</span>
             </label>
             <textarea
@@ -178,8 +178,8 @@ export default function TriagePage() {
 
           {/* Quick vitals */}
           <div style={{ marginBottom: 14 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 8 }}>
-              Quick Vitals <span style={{ fontSize: 11, fontWeight: 400, color: '#94a3b8' }}>(optional — also saved to Vitals)</span>
+            <label style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-body)', display: 'block', marginBottom: 8 }}>
+              Quick Vitals <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-subtle)' }}>(optional — also saved to Vitals)</span>
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
               {[
@@ -190,7 +190,7 @@ export default function TriagePage() {
                 { label: 'SpO₂', field: 'oxygenSat', placeholder: '%' },
               ].map(({ label, field, placeholder }) => (
                 <div key={field}>
-                  <div style={{ fontSize: 10.5, fontWeight: 600, color: '#64748b', marginBottom: 4 }}>{label}</div>
+                  <div style={{ fontSize: 10.5, fontWeight: 500, color: 'var(--text-muted)', marginBottom: 4 }}>{label}</div>
                   <input
                     type="number" step="any"
                     value={form[field as keyof typeof form] as string}
@@ -205,7 +205,7 @@ export default function TriagePage() {
 
           {/* Notes */}
           <div style={{ marginBottom: 18 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>Notes</label>
+            <label style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-body)', display: 'block', marginBottom: 5 }}>Notes</label>
             <textarea
               value={form.notes} onChange={(e) => set('notes', e.target.value)}
               rows={2} placeholder="Additional triage observations…"
@@ -213,7 +213,7 @@ export default function TriagePage() {
             />
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, borderTop: '1px solid #f1f5f9', paddingTop: 14 }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, borderTop: '1px solid var(--border-light)', paddingTop: 14 }}>
             <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">Cancel</button>
             <button type="submit" disabled={saving} className="btn-primary">
               <CheckCircle size={13} /> {saving ? 'Saving…' : 'Save Triage'}
@@ -232,13 +232,13 @@ export default function TriagePage() {
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span style={{
-                      fontSize: 13, fontWeight: 800, color: p.color,
+                      fontSize: 13, fontWeight: 500, color: p.color,
                       background: p.bg, border: `1px solid ${p.border}`,
                       padding: '3px 10px', borderRadius: 7,
                     }}>{p.code} — {p.label}</span>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ses-text)' }}>{rec.chiefComplaint}</span>
+                    <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--ses-text)' }}>{rec.chiefComplaint}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: '#94a3b8' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: 'var(--text-subtle)' }}>
                     <Clock size={11} /> {new Date(rec.createdAt).toLocaleString()}
                   </div>
                 </div>
@@ -253,7 +253,7 @@ export default function TriagePage() {
                 )}
 
                 {rec.notes && (
-                  <p style={{ marginTop: 8, fontSize: 12.5, color: '#64748b', fontStyle: 'italic' }}>{rec.notes}</p>
+                  <p style={{ marginTop: 8, fontSize: 12.5, color: 'var(--text-muted)', fontStyle: 'italic' }}>{rec.notes}</p>
                 )}
               </div>
             );
@@ -261,9 +261,9 @@ export default function TriagePage() {
         </div>
       ) : !showForm ? (
         <div className="card" style={{ padding: '60px 24px', textAlign: 'center' }}>
-          <AlertTriangle size={32} color="#e2e8f0" style={{ margin: '0 auto 12px' }} />
-          <p style={{ fontWeight: 600, color: '#374151', marginBottom: 6 }}>No triage records</p>
-          <p style={{ fontSize: 13, color: '#94a3b8', marginBottom: 20 }}>Record the initial triage assessment for this patient.</p>
+          <AlertTriangle size={32} color="var(--border-input)" style={{ margin: '0 auto 12px' }} />
+          <p style={{ fontWeight: 500, color: 'var(--text-body)', marginBottom: 6 }}>No triage records</p>
+          <p style={{ fontSize: 13, color: 'var(--text-subtle)', marginBottom: 20 }}>Record the initial triage assessment for this patient.</p>
           <button className="btn-primary" onClick={() => setShowForm(true)} style={{ margin: '0 auto' }}>
             <Plus size={14} /> Start Triage
           </button>
@@ -275,10 +275,10 @@ export default function TriagePage() {
 
 function VChip({ label, value, unit }: { label: string; value: string; unit: string }) {
   return (
-    <div style={{ background: '#f8fafc', border: '1px solid #e8ecf0', borderRadius: 7, padding: '5px 10px', display: 'flex', gap: 6, alignItems: 'center' }}>
-      <span style={{ fontSize: 11, fontWeight: 600, color: '#64748b' }}>{label}</span>
-      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ses-text)' }}>{value}</span>
-      <span style={{ fontSize: 11, color: '#94a3b8' }}>{unit}</span>
+    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 7, padding: '5px 10px', display: 'flex', gap: 6, alignItems: 'center' }}>
+      <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-muted)' }}>{label}</span>
+      <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--ses-text)' }}>{value}</span>
+      <span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>{unit}</span>
     </div>
   );
 }

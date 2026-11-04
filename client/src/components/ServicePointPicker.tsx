@@ -44,7 +44,7 @@ export default function ServicePointPicker({ variant = 'bar' }: { variant?: 'bar
                 {list.map((r) => (
                   <button key={r.id} type="button" role="option" aria-selected={room?.id === r.id} className={`sp-opt${room?.id === r.id ? ' on' : ''}`}
                     onClick={() => { setRoomId(r.id); setOpen(false); }}>
-                    <span style={{ flex: 1, textAlign: 'left', fontWeight: 600 }}>{r.name}</span>
+                    <span style={{ flex: 1, textAlign: 'left', fontWeight: 500 }}>{r.name}</span>
                     <span className="sp-n">{r.waitingCount} waiting</span>
                     {room?.id === r.id && <Check size={15} aria-hidden="true" />}
                   </button>
@@ -62,7 +62,7 @@ export default function ServicePointPicker({ variant = 'bar' }: { variant?: 'bar
           border: 1px solid var(--bar-line); background: transparent; color: var(--bar-text); transition: background .15s; }
         .sp-btn:hover { background: rgba(255,255,255,.08); }
         .sp-lbl { color: var(--bar-muted); }
-        .sp-val { font-weight: 600; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .sp-val { font-weight:500; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .sp-panel .sp-btn { width: 100%; height: 40px; border-color: var(--border); background: var(--bg-surface); color: var(--text-heading); }
         .sp-panel .sp-btn:hover { background: var(--ws-chip); }
         .sp-panel .sp-lbl { color: var(--text-muted); }
@@ -70,14 +70,14 @@ export default function ServicePointPicker({ variant = 'bar' }: { variant?: 'bar
         .sp-menu { position: absolute; top: calc(100% + 8px); right: 0; width: 320px; max-width: 92vw; z-index: 70; background: var(--bg-card); color: var(--text-heading);
           border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 18px 48px rgba(0,0,0,.28); overflow: hidden; }
         .sp-panel .sp-menu { left: 0; right: auto; width: 100%; }
-        .sp-h { padding: 12px 16px 8px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-subtle); }
-        .sp-tag { padding: 8px 16px 4px; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+        .sp-h { padding: 12px 16px 8px; font-size: 11px; font-weight:500; letter-spacing: 1px; text-transform: uppercase; color: var(--text-subtle); }
+        .sp-tag { padding: 8px 16px 4px; font-size: 12px; font-weight:500; color: var(--text-muted); }
         .sp-opt { width: 100%; display: flex; align-items: center; gap: 10px; padding: 10px 16px; border: 0; background: none; font: inherit; font-size: 14px; color: inherit; cursor: pointer; }
         .sp-opt:hover { background: var(--ws-chip); }
-        .sp-opt.on { background: var(--ws-chip); box-shadow: inset 3px 0 0 var(--ws-link); }
+        .sp-opt.on { background: var(--selection-bg); color: var(--selection-text); box-shadow: inset 3px 0 0 var(--selection-accent); }
         .sp-n { font-size: 12px; color: var(--text-subtle); }
         .sp-empty { padding: 8px 16px 16px; font-size: 13px; color: var(--text-muted); }
-        .sp-clear { width: 100%; padding: 11px 16px; border: 0; border-top: 1px solid var(--border-light); background: var(--ws-head); color: var(--text-muted); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; text-align: left; }
+        .sp-clear { width: 100%; padding: 11px 16px; border: 0; border-top: 1px solid var(--border-light); background: var(--ws-head); color: var(--text-muted); font: inherit; font-size: 13px; font-weight:500; cursor: pointer; text-align: left; }
         .sp-clear:hover { color: var(--text-heading); }
       `}</style>
     </div>

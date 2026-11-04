@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import prisma from '../lib/prisma';
+import { staffDisplayName } from '../lib/staffNames';
 import { AuthRequest } from '../middleware/auth';
 import { bumpPreference } from './user.room.preference.controller';
 
@@ -27,7 +28,7 @@ const PATIENT_SELECT = {
   gender: true, phone: true, address: true, nationalId: true,
   hivStatus: true, createdAt: true, updatedAt: true,
 };
-const STARTED_BY = { select: { id: true, name: true } };
+const STARTED_BY = { select: { id: true, name: true, designation: true } };
 const WITH_ROOM_PATIENT = { room: true, patient: { select: PATIENT_SELECT }, startedBy: STARTED_BY };
 
 interface Sortable { status: string; priority: string; queueNumber: number }
@@ -214,7 +215,7 @@ export async function startEntry(req: AuthRequest, res: Response): Promise<void>
   const entry = await prisma.queueEntry.findUnique({ where: { id: entryId }, include: WITH_ROOM_PATIENT });
   if (!entry) { res.status(404).json({ error: 'Queue entry not found' }); return; }
   if (!won && entry.status === 'In Progress' && entry.startedById && entry.startedById !== req.userId) {
-    res.status(409).json({ error: `${entry.startedBy?.name ?? 'Another staff member'} is already seeing ${entry.patientName}.` });
+    res.status(409).json({ error: `${entry.startedBy ? staffDisplayName(entry.startedBy.name, entry.startedBy.designation) : 'Another staff member'} is already seeing ${entry.patientName}.` });
     return;
   }
   if (!won && entry.status !== 'In Progress') {

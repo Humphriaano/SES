@@ -1,5 +1,7 @@
 import { X, History } from 'lucide-react';
 import { ImportedBlockData } from '../../../types/consultation';
+import { HISTORY_SECTIONS } from '../../../lib/consultationHistory';
+import { HistorySummary } from './HistoryBlock';
 
 // Section label conventions for pre-block text nodes (SOAP order)
 const PRE_BLOCK_LABELS = ['COMPLAINTS', 'SOCIAL HISTORY', 'EXAMINATION'];
@@ -7,12 +9,13 @@ const PRE_BLOCK_LABELS = ['COMPLAINTS', 'SOCIAL HISTORY', 'EXAMINATION'];
 interface Props {
   data: ImportedBlockData;
   onRemove: () => void;
+  readOnly?: boolean;
 }
 
 function SectionLabel({ text }: { text: string }) {
   return (
     <div style={{
-      fontSize: 10, fontWeight: 700, color: 'var(--text-subtle)',
+      fontSize: 10, fontWeight: 500, color: 'var(--text-subtle)',
       textTransform: 'uppercase', letterSpacing: '0.07em',
       marginBottom: 6,
     }}>
@@ -25,7 +28,7 @@ function Divider() {
   return <div style={{ height: 1, background: 'var(--border)', margin: '12px 0' }} />;
 }
 
-export default function ImportedBlock({ data, onRemove }: Props) {
+export default function ImportedBlock({ data, onRemove, readOnly }: Props) {
   const dateStr = new Date(data.encounterDate).toLocaleDateString('en-GB', {
     day: 'numeric', month: 'long', year: 'numeric',
   });
@@ -55,6 +58,20 @@ export default function ImportedBlock({ data, onRemove }: Props) {
     });
   });
 
+  // Explicit history sections retain their labels when a previous visit is imported.
+  (data.histories ?? []).forEach((history, i) => {
+    if (!(history.content.trim() || history.lmp || history.isObstetric || history.gravidity !== undefined || history.parity !== undefined) || !Object.prototype.hasOwnProperty.call(HISTORY_SECTIONS, history.type)) return;
+    sections.push({
+      key: `history-${i}`, label: HISTORY_SECTIONS[history.type].label,
+      content: <HistorySummary data={history} />,
+    });
+  });
+
+  (data.interBlockTexts ?? []).forEach((text, i) => {
+    if (!text.trim()) return;
+    sections.push({ key: `between-${i}`, label: 'NOTES', content: <p style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: 14, lineHeight: 1.7, color: 'var(--text-heading)' }}>{text}</p> });
+  });
+
   // Diagnoses
   if (data.diagnoses.length > 0) {
     sections.push({
@@ -65,18 +82,18 @@ export default function ImportedBlock({ data, onRemove }: Props) {
           {data.diagnoses.map((d, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
               <span style={{
-                fontSize: 9, fontWeight: 700, color: 'var(--ses-blue-deep)', background: 'var(--ses-blue-tint)',
+                fontSize: 9, fontWeight: 500, color: 'var(--ses-blue-deep)', background: 'var(--ses-blue-tint)',
                 padding: '1px 5px', borderRadius: 3, fontFamily: 'monospace', flexShrink: 0,
               }}>Dx</span>
               <span style={{
-                fontSize: 11, fontWeight: 700, color: 'var(--ses-blue-deep)',
+                fontSize: 11, fontWeight: 500, color: 'var(--ses-blue-deep)',
                 fontFamily: 'monospace', flexShrink: 0,
               }}>{d.code}</span>
               <span style={{
                 fontSize: 14, color: 'var(--text-heading, var(--text-heading))', flex: 1, fontWeight: 500,
               }}>{d.description}</span>
               <span style={{
-                fontSize: 10, color: 'var(--text-muted)', fontWeight: 600,
+                fontSize: 10, color: 'var(--text-muted)', fontWeight: 500,
                 background: 'var(--ws-chip)', padding: '1px 6px', borderRadius: 3, flexShrink: 0,
               }}>{d.status}</span>
             </div>
@@ -144,16 +161,16 @@ export default function ImportedBlock({ data, onRemove }: Props) {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
           <History size={13} color="var(--text-muted)" />
-          <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-body)' }}>
+          <span style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-body)' }}>
             Imported from {dateStr}
           </span>
         </div>
-        <button
+        {!readOnly && <button
           onClick={onRemove}
           title="Remove imported block"
           style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            color: 'var(--text-subtle)', padding: '2px 4px', borderRadius: 4,
+            color: 'var(--text-subtle)', padding: '2px 4px', borderRadius: 999,
             display: 'flex', alignItems: 'center',
             transition: 'color 0.12s',
           }}
@@ -161,7 +178,7 @@ export default function ImportedBlock({ data, onRemove }: Props) {
           onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-subtle)')}
         >
           <X size={13} />
-        </button>
+        </button>}
       </div>
 
       {/* Content area — white background */}

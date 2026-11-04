@@ -186,7 +186,7 @@ function MsgTable({ data }: { data: TableData }) {
               <th key={h} style={{
                 background: 'var(--bg-surface)', border: '1px solid var(--border)', padding: '6px 10px',
                 textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em',
-                fontWeight: 600, color: 'var(--text-body2)', fontSize: 11,
+                fontWeight: 500, color: 'var(--text-body2)', fontSize: 11,
               }}>{h}</th>
             ))}
           </tr>
@@ -268,11 +268,12 @@ export default function ReportsAIPanel() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const panel = messagesRef.current;
+    panel?.scrollTo({ top: panel.scrollHeight, behavior: 'smooth' });
   }, [messages, loading]);
 
   async function sendMessage(text: string) {
@@ -288,7 +289,11 @@ export default function ReportsAIPanel() {
       const history = [...messages, userMsg].map((m) => ({ role: m.role, content: m.content }));
       const res = await fetch(`${CDS_BASE}/cds/reports-chat`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          // The local AI reads billing through the same role-checked reports, using this login
+          ...(localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {}),
+        },
         body: JSON.stringify({ question: trimmed, history }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -331,7 +336,7 @@ export default function ReportsAIPanel() {
             <Bot size={16} color="var(--ses-red)" />
           </div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-heading)' }}>AI Analytics Assistant</div>
+            <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-heading)' }}>AI Analytics Assistant</div>
             <div style={{ fontSize: 11, color: 'var(--text-subtle)', marginTop: 1 }}>Ask anything about your patient population</div>
           </div>
         </div>
@@ -341,7 +346,7 @@ export default function ReportsAIPanel() {
               onClick={() => exportFullConversation(messages)}
               title="Export conversation as PDF"
               style={{
-                background: 'none', border: '1px solid var(--border)', borderRadius: 6,
+                background: 'none', border: '1px solid var(--border)', borderRadius: 999,
                 cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4,
                 fontSize: 11, padding: '4px 9px',
               }}
@@ -355,7 +360,7 @@ export default function ReportsAIPanel() {
             <button
               onClick={clearChat}
               title="Clear chat"
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-subtle)', display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, padding: '4px 8px', borderRadius: 6 }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-subtle)', display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, padding: '4px 8px', borderRadius: 999 }}
               onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-surface)')}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
             >
@@ -366,10 +371,10 @@ export default function ReportsAIPanel() {
       </div>
 
       {/* ── Messages ── */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div ref={messagesRef} style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {isEmpty && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, gap: 8, paddingTop: 24 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
+            <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
               Suggested questions
             </div>
             {STARTERS.map((s) => (
@@ -418,7 +423,7 @@ export default function ReportsAIPanel() {
                   style={{
                     position: 'absolute', top: 6, right: 6,
                     background: 'var(--bg-card)', border: '1px solid var(--border)',
-                    borderRadius: 5, padding: '3px 5px', cursor: 'pointer',
+                    borderRadius: 999, padding: '3px 5px', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', color: 'var(--text-muted)',
                     boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
                   }}
@@ -435,7 +440,7 @@ export default function ReportsAIPanel() {
             <TypingIndicator />
           </div>
         )}
-        <div ref={bottomRef} />
+
       </div>
 
       {/* ── Input bar ── */}
@@ -448,7 +453,7 @@ export default function ReportsAIPanel() {
             placeholder="Ask a question about your patients..."
             disabled={loading}
             style={{
-              flex: 1, border: '1px solid var(--border-input)', borderRadius: 8,
+              flex: 1, border: '1px solid var(--border-input)', borderRadius: 14,
               padding: '9px 12px', fontSize: 13, outline: 'none',
               background: loading ? 'var(--bg-surface)' : 'var(--bg-input)', color: 'var(--text-heading)',
               transition: 'border-color 0.15s', fontFamily: 'inherit',
@@ -461,7 +466,7 @@ export default function ReportsAIPanel() {
             disabled={loading || !input.trim()}
             style={{
               background: loading || !input.trim() ? 'var(--border-input)' : 'var(--ses-red)',
-              border: 'none', borderRadius: 8, padding: '9px 12px',
+              border: 'none', borderRadius: 999, padding: '9px 12px',
               cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               transition: 'background 0.15s', flexShrink: 0,

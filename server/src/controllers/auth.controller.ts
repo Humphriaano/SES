@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth';
+import { validateRegistrationPhone } from '../lib/registrationPhone';
 
 import { jwtSecret } from '../middleware/auth';
 
@@ -22,6 +23,17 @@ export async function register(req: Request, res: Response): Promise<void> {
       res.status(400).json({ error: 'Required fields missing' }); return;
     }
 
+    const noNrc = hasNoNrc === true;
+    const normalizedNrc = typeof nrc === 'string' ? nrc.trim() : '';
+    if (!noNrc && !/^\d{6}\/\d{2}\/\d$/.test(normalizedNrc)) {
+      res.status(400).json({ field: 'nrc', error: 'NRC must be 9 digits: 123456/78/9' }); return;
+    }
+
+    const phone = validateRegistrationPhone(countryCode || '+260', cellphone);
+    if (phone.error) {
+      res.status(400).json({ field: 'cellphone', error: phone.error }); return;
+    }
+
     const [existingEmail, existingUsername] = await Promise.all([
       prisma.user.findUnique({ where: { email } }),
       prisma.user.findUnique({ where: { username } }),
@@ -38,11 +50,11 @@ export async function register(req: Request, res: Response): Promise<void> {
         dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
         sex,
         designation,
-        nrc: hasNoNrc ? null : (nrc || null),
-        hasNoNrc: !!hasNoNrc,
+        nrc: noNrc ? null : normalizedNrc,
+        hasNoNrc: noNrc,
         address: address || null,
-        countryCode: countryCode || '+260',
-        cellphone: cellphone || null,
+        countryCode: phone.countryCode,
+        cellphone: phone.number,
         email,
         username,
         password: hashed,
@@ -58,10 +70,23 @@ export async function register(req: Request, res: Response): Promise<void> {
 
 export async function login(req: Request, res: Response): Promise<void> {
   try {
-    const { login: credential, password } = req.body as { login: string; password: string };
-    const user = credential.includes('@')
+    const { login: rawCredential, password } = req.body ?? {};
+    if (typeof rawCredential !== 'string' || !rawCredential.trim() || typeof password !== 'string' || !password) {
+      res.status(400).json({ error: 'Enter your email or username and password.' }); return;
+    }
+    const credential = rawCredential.trim();
+    const field = credential.includes('@') ? 'email' : 'username';
+    // Preserve exact matches for existing accounts; accept case variations only
+    // when they identify one account unambiguously.
+    let user = field === 'email'
       ? await prisma.user.findUnique({ where: { email: credential } })
       : await prisma.user.findUnique({ where: { username: credential } });
+    if (!user) {
+      const matches = await prisma.user.findMany({
+        where: { [field]: { equals: credential, mode: 'insensitive' } }, take: 2,
+      });
+      if (matches.length === 1) user = matches[0]!;
+    }
     if (!user) { res.status(401).json({ error: 'Invalid credentials' }); return; }
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) { res.status(401).json({ error: 'Invalid credentials' }); return; }
@@ -75,10 +100,17 @@ export async function login(req: Request, res: Response): Promise<void> {
       res.status(403).json({ error: 'Your account has been deactivated. Contact an administrator.' }); return;
     }
     const token = jwt.sign({ userId: user.id, role: user.role }, jwtSecret(), { expiresIn: '8h' });
-    res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+    res.json({ token, user: { id: user.id, name: user.name, firstName: user.firstName, designation: user.designation, email: user.email, role: user.role } });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
+}
+
+export async function getCurrentUser(req: AuthRequest, res: Response): Promise<void> {
+  if (!req.userId) { res.status(401).json({ error: 'Authentication required' }); return; }
+  const user = await prisma.user.findUnique({ where: { id: req.userId }, select: { id: true, name: true, firstName: true, designation: true, role: true } });
+  if (!user) { res.status(404).json({ error: 'User not found' }); return; }
+  res.json(user);
 }
 
 export async function checkUsername(req: Request, res: Response): Promise<void> {

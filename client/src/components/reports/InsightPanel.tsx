@@ -95,12 +95,12 @@ export default function InsightPanel({ title, question, renderAs }: Props) {
 
   return (
     <div style={{
-      background: 'var(--bg-card)', borderRadius: 10, border: '1px solid var(--border)',
+      background: 'var(--bg-card)', borderRadius: 22, border: '1px solid var(--border)',
       padding: '16px 18px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
       display: 'flex', flexDirection: 'column', gap: 10,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h3 style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-heading)', margin: 0 }}>{title}</h3>
+        <h3 style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-heading)', margin: 0 }}>{title}</h3>
         {!loading && !error && (
           <button onClick={load} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-subtle)', padding: 2, display: 'flex' }}>
             <RefreshCw size={13} />
@@ -114,7 +114,7 @@ export default function InsightPanel({ title, question, renderAs }: Props) {
         <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--text-subtle)' }}>
           <div style={{ fontSize: 13, marginBottom: 10 }}>Failed to load insight</div>
           <button onClick={load} style={{
-            background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 7,
+            background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 999,
             padding: '6px 16px', fontSize: 12, color: 'var(--text-body)', cursor: 'pointer',
             display: 'inline-flex', alignItems: 'center', gap: 6,
           }}>
@@ -157,7 +157,7 @@ export default function InsightPanel({ title, question, renderAs }: Props) {
                         <th key={h} style={{
                           background: 'var(--bg-surface)', border: '1px solid var(--border)',
                           padding: '6px 10px', textAlign: 'left', textTransform: 'uppercase',
-                          letterSpacing: '0.05em', fontWeight: 600, color: 'var(--text-body2)', fontSize: 11,
+                          letterSpacing: '0.05em', fontWeight: 500, color: 'var(--text-body2)', fontSize: 11,
                         }}>{h}</th>
                       ))}
                     </tr>

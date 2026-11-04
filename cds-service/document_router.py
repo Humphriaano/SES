@@ -16,9 +16,10 @@ from pathlib import Path
 from typing import Optional
 
 import ollama
+import httpx
 import psycopg2
 import psycopg2.extras
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Header, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
@@ -322,7 +323,27 @@ class SaveDocumentRequest(BaseModel):
 
 # ── router ────────────────────────────────────────────────────────────────────
 
-router = APIRouter(prefix="/api/documents", tags=["documents"])
+async def require_document_access(authorization: Optional[str] = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Sign in to access clinical documents.")
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            response = await client.get(
+                "http://127.0.0.1:5000/api/auth/me",
+                headers={"Authorization": authorization},
+            )
+    except httpx.RequestError:
+        raise HTTPException(status_code=503, detail="Could not verify document access. Try again.")
+    if response.status_code == 401:
+        raise HTTPException(status_code=401, detail="Sign in to access clinical documents.")
+    if response.status_code != 200:
+        raise HTTPException(status_code=503, detail="Could not verify document access. Try again.")
+    roles = {role.strip() for role in str(response.json().get("role", "")).split(",")}
+    if not roles.intersection({"admin", "clinician", "doctor", "nurse", "pharmacist", "lab_tech", "lab_technician", "paramedic"}):
+        raise HTTPException(status_code=403, detail="Clinical access is required for documents.")
+
+
+router = APIRouter(prefix="/api/documents", tags=["documents"], dependencies=[Depends(require_document_access)])
 
 
 @router.post("/upload")

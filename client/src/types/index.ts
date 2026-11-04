@@ -1,6 +1,8 @@
 export interface User {
   id: string;
   name: string;
+  firstName?: string | null;
+  designation?: string | null;
   email: string;
   role: string;
 }
@@ -128,6 +130,7 @@ export interface Prescription {
   encounterId: string;
   medicationId: string;
   medication: Medication;
+  substituteMedication?: Medication;
   dispensed: boolean;
   dispensedAt?: string;
 }

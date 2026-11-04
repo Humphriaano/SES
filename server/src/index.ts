@@ -1,4 +1,5 @@
 import express from 'express';
+import { staffJsonReplacer } from './lib/staffNames';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
@@ -9,6 +10,7 @@ import portalRoutes from './routes/portal.routes';
 import { startScheduledJobs } from './jobs';
 import { isTrustedOrigin } from './lib/trustedOrigins';
 import { ensureIcd11Seeded } from './lib/icd11Seed';
+import { ensureBuiltinPrices } from './lib/builtinPrices';
 
 dotenv.config();
 
@@ -18,6 +20,7 @@ if (!process.env['JWT_SECRET']) {
 }
 
 const app = express();
+app.set('json replacer', staffJsonReplacer);
 app.disable('x-powered-by');
 const PORT = process.env['PORT'] ?? 5000;
 
@@ -43,7 +46,7 @@ app.use((_req, res, next) => {
   res.setHeader('Referrer-Policy', 'no-referrer');
   next();
 });
-app.use(express.json());
+app.use(express.json({ limit: "2mb" }));
 app.use(cookieParser());
 app.use(idempotency);
 
@@ -52,10 +55,11 @@ app.use(idempotency);
 app.use('/api/portal', portalRoutes);
 app.use('/api', routes);
 
-app.get('/health', (_req, res) => res.json({ status: 'ok', version: 2 }));
+app.get('/health', (_req, res) => res.json({ status: 'ok', version: 4 }));
 
 app.listen(PORT, () => {
   console.log(`SES EHR API running on port ${PORT}`);
   startScheduledJobs();
   void ensureIcd11Seeded();
+  void ensureBuiltinPrices();
 });

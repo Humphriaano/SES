@@ -1,0 +1,393 @@
+{
+  "source": {
+    "scope": "Common outpatient, emergency and general hospital care additions",
+    "reviewedOn": "2026-11-03",
+    "rxnorm": "https://lhncbc.nlm.nih.gov/RxNav/APIs/RxNormAPIs.html",
+    "atc": "WHO Collaborating Centre for Drug Statistics Methodology, ATC classification index, 2026. ATC codes are classifications; defined daily doses are not imported as prescribing instructions."
+  },
+  "drugs": {
+    "Budesonide / Formoterol": [
+      {
+        "dose": "160/4.5 mcg per actuation",
+        "form": "Metered-dose inhaler (120 actuations)",
+        "route": "Inhaled",
+        "sku": "STD_RX1246304",
+        "rxCui": "1246304",
+        "rxnormName": "120 ACTUAT budesonide 0.16 MG/ACTUAT / formoterol fumarate 0.0045 MG/ACTUAT Metered Dose Inhaler",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "R03AK07",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1246304/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=R03AK07&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      },
+      {
+        "dose": "80/4.5 mcg per actuation",
+        "form": "Metered-dose inhaler (120 actuations)",
+        "route": "Inhaled",
+        "sku": "STD_RX1246288",
+        "rxCui": "1246288",
+        "rxnormName": "120 ACTUAT budesonide 0.08 MG/ACTUAT / formoterol fumarate 0.0045 MG/ACTUAT Metered Dose Inhaler",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "R03AK07",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1246288/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=R03AK07&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Empagliflozin": [
+      {
+        "dose": "10 mg",
+        "form": "Tablet",
+        "route": "Oral",
+        "sku": "STD_RX1545658",
+        "rxCui": "1545658",
+        "rxnormName": "empagliflozin 10 MG Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "A10BK03",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1545658/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=A10BK03&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      },
+      {
+        "dose": "25 mg",
+        "form": "Tablet",
+        "route": "Oral",
+        "sku": "STD_RX1545666",
+        "rxCui": "1545666",
+        "rxnormName": "empagliflozin 25 MG Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "A10BK03",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1545666/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=A10BK03&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Salbutamol (albuterol)": [
+      {
+        "dose": "90 mcg per actuation",
+        "form": "Metered-dose inhaler (60 actuations)",
+        "route": "Inhaled",
+        "sku": "STD_RX801092",
+        "rxCui": "801092",
+        "rxnormName": "NDA020983 60 ACTUAT albuterol 0.09 MG/ACTUAT Metered Dose Inhaler",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "R03AC02",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/801092/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=R03AC02&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Ipratropium bromide": [
+      {
+        "dose": "0.02%",
+        "form": "Nebuliser solution",
+        "route": "Inhaled",
+        "sku": "STD_RX836358",
+        "rxCui": "836358",
+        "rxnormName": "ipratropium bromide 0.2 MG/ML Inhalation Solution",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "R03BB01",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/836358/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=R03BB01&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Norepinephrine (noradrenaline)": [
+      {
+        "dose": "1 mg/mL",
+        "form": "Injection (4 mL)",
+        "route": "IV",
+        "sku": "STD_RX242969",
+        "rxCui": "242969",
+        "rxnormName": "4 ML norepinephrine 1 MG/ML Injection",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "C01CA03",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/242969/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=C01CA03&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Budesonide": [
+      {
+        "dose": "0.5 mg/2 mL",
+        "form": "Nebuliser suspension",
+        "route": "Inhaled",
+        "sku": "STD_RX351109",
+        "rxCui": "351109",
+        "rxnormName": "budesonide 0.25 MG/ML Inhalation Suspension",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "R03BA02",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/351109/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=R03BA02&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Pantoprazole": [
+      {
+        "dose": "20 mg",
+        "form": "Delayed-release tablet",
+        "route": "Oral",
+        "sku": "STD_RX251872",
+        "rxCui": "251872",
+        "rxnormName": "pantoprazole 20 MG Delayed Release Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "A02BC02",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/251872/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=A02BC02&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      },
+      {
+        "dose": "40 mg",
+        "form": "Delayed-release tablet",
+        "route": "Oral",
+        "sku": "STD_RX314200",
+        "rxCui": "314200",
+        "rxnormName": "pantoprazole 40 MG Delayed Release Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "A02BC02",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/314200/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=A02BC02&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Famotidine": [
+      {
+        "dose": "40 mg",
+        "form": "Tablet",
+        "route": "Oral",
+        "sku": "STD_RX284245",
+        "rxCui": "284245",
+        "rxnormName": "famotidine 40 MG Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "A02BA03",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/284245/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=A02BA03&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      },
+      {
+        "dose": "20 mg",
+        "form": "Tablet",
+        "route": "Oral",
+        "sku": "STD_RX310273",
+        "rxCui": "310273",
+        "rxnormName": "famotidine 20 MG Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "A02BA03",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/310273/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=A02BA03&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Fosfomycin": [
+      {
+        "dose": "3 g",
+        "form": "Granules for oral solution",
+        "route": "Oral",
+        "sku": "STD_RX808917",
+        "rxCui": "808917",
+        "rxnormName": "fosfomycin 3000 MG Granules for Oral Solution",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "J01XX01",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/808917/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=J01XX01&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Rivaroxaban": [
+      {
+        "dose": "10 mg",
+        "form": "Tablet",
+        "route": "Oral",
+        "sku": "STD_RX1114198",
+        "rxCui": "1114198",
+        "rxnormName": "rivaroxaban 10 MG Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "B01AF01",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1114198/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=B01AF01&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      },
+      {
+        "dose": "15 mg",
+        "form": "Tablet",
+        "route": "Oral",
+        "sku": "STD_RX1232082",
+        "rxCui": "1232082",
+        "rxnormName": "rivaroxaban 15 MG Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "B01AF01",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1232082/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=B01AF01&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      },
+      {
+        "dose": "20 mg",
+        "form": "Tablet",
+        "route": "Oral",
+        "sku": "STD_RX1232086",
+        "rxCui": "1232086",
+        "rxnormName": "rivaroxaban 20 MG Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "B01AF01",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1232086/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=B01AF01&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Apixaban": [
+      {
+        "dose": "5 mg",
+        "form": "Tablet",
+        "route": "Oral",
+        "sku": "STD_RX1364445",
+        "rxCui": "1364445",
+        "rxnormName": "apixaban 5 MG Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "B01AF02",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1364445/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=B01AF02&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      },
+      {
+        "dose": "2.5 mg",
+        "form": "Tablet",
+        "route": "Oral",
+        "sku": "STD_RX1364435",
+        "rxCui": "1364435",
+        "rxnormName": "apixaban 2.5 MG Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "B01AF02",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1364435/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=B01AF02&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Bisoprolol": [
+      {
+        "dose": "5 mg",
+        "form": "Tablet",
+        "route": "Oral",
+        "sku": "STD_RX854905",
+        "rxCui": "854905",
+        "rxnormName": "bisoprolol fumarate 5 MG Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "C07AB07",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/854905/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=C07AB07&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Loratadine": [
+      {
+        "dose": "10 mg",
+        "form": "Tablet",
+        "route": "Oral",
+        "sku": "STD_RX311372",
+        "rxCui": "311372",
+        "rxnormName": "loratadine 10 MG Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "R06AX13",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/311372/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=R06AX13&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Fluticasone propionate": [
+      {
+        "dose": "50 mcg per actuation",
+        "form": "Nasal spray",
+        "route": "Nasal",
+        "sku": "STD_RX1797907",
+        "rxCui": "1797907",
+        "rxnormName": "fluticasone propionate 0.05 MG/ACTUAT Metered Dose Nasal Spray",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "R01AD08",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1797907/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=R01AD08&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Cholecalciferol (Vitamin D3)": [
+      {
+        "dose": "25 mcg",
+        "form": "Tablet",
+        "route": "Oral",
+        "sku": "STD_RX199362",
+        "rxCui": "199362",
+        "rxnormName": "cholecalciferol 0.025 MG Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "A11CC05",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/199362/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=A11CC05&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Misoprostol": [
+      {
+        "dose": "200 mcg",
+        "form": "Tablet",
+        "route": "Oral",
+        "sku": "STD_RX317128",
+        "rxCui": "317128",
+        "rxnormName": "misoprostol 0.2 MG Oral Tablet",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "A02BB01",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/317128/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=A02BB01&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Hydroxocobalamin": [
+      {
+        "dose": "1 mg/mL",
+        "form": "Injection",
+        "route": "IM",
+        "sku": "STD_RX317106",
+        "rxCui": "317106",
+        "rxnormName": "hydroxocobalamin 1 MG/ML Injectable Solution",
+        "rxnormType": "SCD",
+        "codingScope": "clinical drug",
+        "atcCode": "B03BA03",
+        "source": "https://rxnav.nlm.nih.gov/REST/rxcui/317106/properties.json",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=B03BA03&showdescription=no",
+        "reviewedOn": "2026-11-03"
+      }
+    ],
+    "Oral rehydration salts (reduced osmolarity)": [
+      {
+        "dose": "20.5 g sachet",
+        "form": "Powder for oral solution (1 L)",
+        "route": "Oral",
+        "sku": "STD_ATC_A07CA_205",
+        "atcCode": "A07CA",
+        "codingScope": "ATC classification",
+        "source": "https://unicat.msf.org/cat/product/77416",
+        "atcSource": "https://atcddd.fhi.no/atc_ddd_index/?code=A07CA&showdescription=yes",
+        "reviewedOn": "2026-11-03"
+      }
+    ]
+  }
+}

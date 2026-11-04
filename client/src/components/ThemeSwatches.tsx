@@ -2,7 +2,7 @@ import { useTheme, Theme } from '../context/ThemeContext';
 
 const THEMES: { id: Theme; label: string; swatch: string }[] = [
   { id: 'light', label: 'Light', swatch: '#FFFFFF' },
-  { id: 'charcoal', label: 'Charcoal', swatch: '#181B1E' },
+  { id: 'charcoal', label: 'Noir', swatch: '#181B1E' },
   { id: 'blue', label: 'Blue', swatch: '#1F5F96' },
 ];
 

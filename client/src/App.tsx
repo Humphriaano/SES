@@ -15,8 +15,11 @@ import PharmacyPage from './pages/PharmacyPage';
 import InvestigationsPage from './pages/InvestigationsPage';
 import ReportsPage from './pages/ReportsPage';
 import BillingPage from './pages/BillingPage';
+import BillingDeskPage from './pages/BillingDeskPage';
+import BillingReportsPage from './pages/BillingReportsPage';
 import DashboardPage from './pages/DashboardPage';
 import DocumentsPage from './pages/DocumentsPage';
+import { canAccessModule, moduleLanding, ModuleId } from './lib/moduleAccess';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
@@ -28,6 +31,12 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
   if (!user) return <Navigate to="/login" replace />;
   if (user.role !== 'admin') return <Navigate to="/" replace />;
   return <>{children}</>;
+}
+
+export function ModuleRoute({ module, children }: { module: ModuleId; children: React.ReactNode }) {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  return canAccessModule(user.role, module) ? <>{children}</> : <Navigate to={moduleLanding(user.role)} replace />;
 }
 
 export default function App() {
@@ -49,15 +58,18 @@ export default function App() {
                 </PrivateRoute>
               }
             >
-              <Route index element={<DashboardPage />} />
-              <Route path="patients" element={<PatientsPage />} />
-              <Route path="patient/:patientId/consultation" element={<ConsultationPage />} />
-              <Route path="patient/:patientId/vitals" element={<VitalsPage />} />
-              <Route path="patient/:patientId/pharmacy" element={<PharmacyPage />} />
-              <Route path="patient/:patientId/investigations" element={<InvestigationsPage />} />
-              <Route path="patient/:patientId/reports" element={<ReportsPage />} />
-              <Route path="patient/:patientId/billing" element={<BillingPage />} />
-              <Route path="patient/:patientId/documents" element={<DocumentsPage />} />
+              <Route index element={<ModuleRoute module="home"><DashboardPage /></ModuleRoute>} />
+              <Route path="patients" element={<ModuleRoute module="home"><PatientsPage /></ModuleRoute>} />
+              <Route path="patient/:patientId/consultation" element={<ModuleRoute module="consultation"><ConsultationPage /></ModuleRoute>} />
+              <Route path="patient/:patientId/vitals" element={<ModuleRoute module="vitals"><VitalsPage /></ModuleRoute>} />
+              <Route path="patient/:patientId/pharmacy" element={<ModuleRoute module="pharmacy"><PharmacyPage /></ModuleRoute>} />
+              <Route path="patient/:patientId/investigations" element={<ModuleRoute module="investigations"><InvestigationsPage /></ModuleRoute>} />
+              <Route path="reports" element={<ModuleRoute module="reports"><ReportsPage /></ModuleRoute>} />
+              <Route path="patient/:patientId/reports" element={<Navigate to="/reports" replace />} />
+              <Route path="patient/:patientId/billing" element={<ModuleRoute module="billing"><BillingPage /></ModuleRoute>} />
+              <Route path="patient/:patientId/documents" element={<ModuleRoute module="documents"><DocumentsPage /></ModuleRoute>} />
+              <Route path="billing" element={<ModuleRoute module="billingDesk"><BillingDeskPage /></ModuleRoute>} />
+              <Route path="billing/reports" element={<ModuleRoute module="billingReports"><BillingReportsPage /></ModuleRoute>} />
               <Route
                 path="admin/users"
                 element={

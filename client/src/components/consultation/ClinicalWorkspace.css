@@ -1,0 +1,31 @@
+/* Match the compact patient-summary column used by Consultation. */
+.clinical-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+  width: 100%;
+  max-width: 1600px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 20px 24px 40px;
+  box-sizing: border-box;
+}
+.clinical-workspace[data-has-summary="true"] {
+  grid-template-columns: 270px minmax(0, 1fr);
+}
+.clinical-workspace-summary {
+  min-width: 0;
+  align-self: stretch;
+}
+@media (max-width: 767px) {
+  .clinical-workspace,
+  .clinical-workspace[data-has-summary="true"] {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 14px 14px 32px;
+  }
+  .clinical-workspace-summary {
+    width: 100%;
+    max-width: 340px;
+  }
+}

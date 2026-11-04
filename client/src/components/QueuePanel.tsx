@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useVisiblePolling } from '../hooks/useVisiblePolling';
 import { sortQueue, queueNo, priorityLabel, priorityStyle, useQueueChanged, notifyQueueChanged, arrivedAt, waitMinutes, formatWait, useNow } from '../lib/queue';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useServicePoint } from '../context/ServicePointContext';
 import ServicePointPicker from './ServicePointPicker';
@@ -12,6 +12,8 @@ import {
 import { useWindowSize } from '../hooks/useWindowSize';
 import api from '../api/client';
 import { usePatient } from '../context/PatientContext';
+import { useAuth } from '../context/AuthContext';
+import { patientSelectionPath } from '../lib/moduleAccess';
 import { Patient } from '../types';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -60,7 +62,7 @@ function CountBadge({ count, style }: { count: number; style?: React.CSSProperti
   return (
     <span style={{
       minWidth: 18, height: 18, borderRadius: 9, padding: '0 4px',
-      fontSize: 10, fontWeight: 800, lineHeight: '18px', textAlign: 'center',
+      fontSize: 10, fontWeight: 500, lineHeight: '18px', textAlign: 'center',
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
       background: count > 0 ? 'var(--ses-red)' : 'var(--bg-surface-2)',
       color: count > 0 ? '#fff' : 'var(--text-subtle)',
@@ -125,7 +127,7 @@ function RoomViewSwitch({
       {open && (
         <div style={{
           position: 'absolute', top: 'calc(100% - 2px)', left: 14, right: 14, zIndex: 20,
-          background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10,
+          background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 22,
           boxShadow: '0 8px 28px rgba(0,0,0,0.18)', overflow: 'hidden',
         }}>
           <div style={{ position: 'relative', padding: 8, borderBottom: '1px solid var(--border-light)' }}>
@@ -138,15 +140,15 @@ function RoomViewSwitch({
           <div style={{ maxHeight: 240, overflowY: 'auto' }}>
             {!term && selectedRoom && (
               <button onClick={() => pick(null)} style={rowBtn}>
-                <span style={{ flex: 1, fontWeight: 600 }}>All rooms</span>
+                <span style={{ flex: 1, fontWeight: 500 }}>All rooms</span>
               </button>
             )}
             {matches.length === 0 ? (
               <div style={{ padding: '14px 12px', fontSize: 12.5, color: 'var(--text-muted)', textAlign: 'center' }}>No room matches “{q}”.</div>
             ) : matches.map(r => (
               <button key={r.id} onClick={() => pick(r.id)} style={rowBtn}>
-                <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600 }}>
-                  {r.name}{r.id === myRoomId && <span style={{ color: 'var(--ws-link)', fontWeight: 600 }}> · yours</span>}
+                <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 500 }}>
+                  {r.name}{r.id === myRoomId && <span style={{ color: 'var(--ws-link)', fontWeight: 500 }}> · yours</span>}
                 </span>
                 <span style={{ fontSize: 11.5, color: 'var(--text-subtle)', whiteSpace: 'nowrap' }}>{r.tag} · {r.waitingCount} waiting</span>
               </button>
@@ -159,7 +161,7 @@ function RoomViewSwitch({
 }
 
 const linkBtn: React.CSSProperties = {
-  background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: 12.5, fontWeight: 600, color: 'var(--ws-link)', whiteSpace: 'nowrap',
+  background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: 12.5, fontWeight: 500, color: 'var(--ws-link)', whiteSpace: 'nowrap',
 };
 const rowBtn: React.CSSProperties = {
   width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', background: 'none', border: 'none',
@@ -199,7 +201,7 @@ function EntryCard({
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
           <span className="qd-no">{queueNum(entry.queueNumber)}</span>
-          <span style={{ fontWeight: 600, color: 'var(--text-heading)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{entry.patientName}</span>
+          <span style={{ fontWeight: 500, color: 'var(--text-heading)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{entry.patientName}</span>
         </div>
         <div className="qd-sub" style={{ marginTop: 3 }}>{entry.room.name}</div>
         <div className="qd-sub" style={{ marginTop: 2, fontVariantNumeric: 'tabular-nums' }}>
@@ -265,7 +267,7 @@ function EntryCard({
                 onBlur={() => setConfirmRemove(false)}
                 autoFocus
                 title="Click again to remove from the queue"
-                style={{ width: 'auto', padding: '0 8px', fontSize: 12, fontWeight: 700, color: 'var(--st-bad)', borderColor: 'var(--st-bad)' }}
+                style={{ width: 'auto', padding: '0 8px', fontSize: 12, fontWeight: 500, color: 'var(--st-bad)', borderColor: 'var(--st-bad)' }}
               >
                 Remove?
               </button>
@@ -321,7 +323,7 @@ function CheckinBar({ onCheckedIn }: { onCheckedIn: () => void }) {
 
   const fld: React.CSSProperties = {
     width: '100%', padding: '6px 10px', border: '1px solid var(--border)',
-    borderRadius: 6, fontSize: 12.5, outline: 'none',
+    borderRadius: 14, fontSize: 12.5, outline: 'none',
     background: 'var(--bg-input)', color: 'var(--text-heading)',
   };
 
@@ -339,7 +341,7 @@ function CheckinBar({ onCheckedIn }: { onCheckedIn: () => void }) {
               <button key={p.id} onClick={() => pickPatient(p)} style={{ width: '100%', textAlign: 'left', padding: '8px 12px', background: 'none', border: 'none', borderBottom: '1px solid var(--border-light)', cursor: 'pointer', fontSize: 12.5 }}
                 onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-surface)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'none')}>
-                <span style={{ fontWeight: 600, color: 'var(--text-heading)' }}>{p.firstName} {p.lastName}</span>
+                <span style={{ fontWeight: 500, color: 'var(--text-heading)' }}>{p.firstName} {p.lastName}</span>
                 {p.nationalId && <span style={{ color: 'var(--text-muted)', marginLeft: 8, fontSize: 11 }}>{p.nationalId}</span>}
               </button>
             ))}
@@ -367,8 +369,10 @@ interface Props { open: boolean; onClose: () => void; }
 
 export default function QueuePanel({ open, onClose }: Props) {
   const { isMobile } = useWindowSize();
-  const { setActivePatient } = usePatient();
+  const { setActivePatient, setActiveEncounterId } = usePatient();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const sp = useServicePoint();
   const [calling, setCalling] = useState(false);
   const [showDone, setShowDone] = useState(false);
@@ -472,10 +476,11 @@ export default function QueuePanel({ open, onClose }: Props) {
     try {
       const { data } = await api.post(`/queue/rooms/${sp.room.id}/next`);
       setActivePatient(data.patient as Patient);
+      setActiveEncounterId(null);
       toast.success(`Now seeing ${data.patientName}`);
       notifyQueueChanged();
       onClose();
-      navigate(`/patient/${data.patient.id}/vitals`);
+      navigate(patientSelectionPath(user?.role, data.patient.id, location.pathname));
     } catch (err: any) {
       if (err?.response) toast.error(err.response.data?.error ?? 'Could not call the next patient');
     } finally { setCalling(false); }
@@ -487,7 +492,7 @@ export default function QueuePanel({ open, onClose }: Props) {
     try {
       const { data } = await api.patch(`/queue/${id}/start`, elsewhere ? { roomId: sp.room!.id } : {});
       if (elsewhere) toast.success(`${entry!.patientName} moved from ${entry!.room.name} to ${sp.room!.name}`);
-      if (data.patient) { setActivePatient(data.patient as Patient); onClose(); navigate(`/patient/${data.patient.id}/vitals`); }
+      if (data.patient) { setActivePatient(data.patient as Patient); setActiveEncounterId(null); onClose(); navigate(patientSelectionPath(user?.role, data.patient.id, location.pathname)); }
       // Record preference for this user+room pair
       if (entry?.roomId) {
         api.post('/queue/user-room-preference', { roomId: entry.roomId }).catch(() => {});
@@ -507,7 +512,6 @@ export default function QueuePanel({ open, onClose }: Props) {
   const waitingList = visible.filter(e => e.status === 'Waiting');
   const withList = visible.filter(e => e.status === 'In Progress');
   const myRoom = sp.room;
-  const showingMine = !!myRoom && selectedRoom === myRoom.id;
 
   return (
     <>
@@ -523,8 +527,8 @@ export default function QueuePanel({ open, onClose }: Props) {
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 16px 12px 20px', flexShrink: 0 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-            <h2 id="qd-t" style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 17, fontWeight: 700, color: 'var(--text-heading)' }}>Queue</h2>
-            <span style={{ minWidth: 20, height: 20, padding: '0 6px', borderRadius: 10, background: '#C41E25', color: '#fff', fontSize: 12, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
+            <h2 id="qd-t" style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 17, fontWeight: 500, color: 'var(--text-heading)' }}>Queue</h2>
+            <span style={{ minWidth: 20, height: 20, padding: '0 6px', borderRadius: 10, background: 'var(--ses-red)', color: '#fff', fontSize: 12, fontWeight: 500, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
               {activeCount}
             </span>
             {lastUpdated && <span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Updated {secsAgo()}</span>}
@@ -557,14 +561,7 @@ export default function QueuePanel({ open, onClose }: Props) {
         <div style={{ flex: 1, overflow: 'auto', padding: '14px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
           {loading && entries.length === 0 ? (
             <div style={{ textAlign: 'center', paddingTop: 40, color: 'var(--text-muted)', fontSize: 13 }}>Loading…</div>
-          ) : visible.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '36px 0 8px' }}>
-              <div style={{ fontSize: 14, color: 'var(--text-heading)', fontWeight: 600 }}>
-                {showingMine ? `No one is waiting in ${myRoom!.name}` : 'The queue is empty'}
-              </div>
-              <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>Use “Find a patient to add” below, or assign from a patient’s page.</div>
-            </div>
-          ) : (
+          ) : visible.length === 0 ? null : (
             <>
               {waitingList.length > 0 && <div className="qd-h">Waiting · {waitingList.length}</div>}
               {waitingList.map(e => (
@@ -611,21 +608,21 @@ const DRAWER_CSS = `
 .qd-scrim { position: fixed; inset: 0; z-index: 59; background: rgba(10,12,14,.45); }
 .qd { position: fixed; left: 0; top: 0; height: 100vh; z-index: 60; background: var(--bg-card); color: var(--text-body); font-size: 14px;
   border-right: 1px solid var(--border); box-shadow: 16px 0 40px rgba(0,0,0,.25); display: flex; flex-direction: column; transition: transform .25s ease; }
-.qd-h { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-subtle); }
+.qd-h { font-size: 11px; font-weight:500; letter-spacing: 1px; text-transform: uppercase; color: var(--text-subtle); }
 .qd-x { width: 32px; height: 32px; border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex: none; }
 .qd-x:hover:not(:disabled) { background: var(--ws-chip); color: var(--text-heading); }
 .qd-bordered { border: 1px solid var(--btn2-line); }
-.qd-call { height: 42px; border: 0; border-radius: 10px; background: #C41E25; color: #fff; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: filter .15s; }
+.qd-call { height: 42px; border: 0; border-radius: 10px; background: var(--ses-red); color: #fff; font: inherit; font-size: 14px; font-weight:500; cursor: pointer; transition: filter .15s; }
 .qd-call:hover:not(:disabled) { filter: brightness(1.06); }
 .qd-call:disabled { opacity: .7; cursor: wait; }
 .qd-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card); }
-.qd-no { font-size: 12px; font-weight: 700; color: var(--text-muted); font-variant-numeric: tabular-nums; letter-spacing: .3px; }
+.qd-no { font-size: 12px; font-weight:500; color: var(--text-muted); font-variant-numeric: tabular-nums; letter-spacing: .3px; }
 .qd-sub { font-size: 12px; color: var(--text-muted); }
-.qd-sec { height: 32px; padding: 0 12px; border: 1px solid var(--btn2-line); border-radius: 8px; background: var(--btn2); color: var(--text-heading); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.qd-sec { height: 32px; padding: 0 12px; border: 1px solid var(--btn2-line); border-radius: 8px; background: var(--btn2); color: var(--text-heading); font: inherit; font-size: 13px; font-weight:500; cursor: pointer; white-space: nowrap; }
 .qd-sec:hover { background: var(--ws-chip); }
-.pr { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.pr { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight:500; color: var(--text-muted); }
 .pr i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
-.qd-link { width: 100%; padding: 8px 0; background: none; border: none; border-top: 1px solid var(--border-light); cursor: pointer; font: inherit; font-size: 12.5px; font-weight: 600; color: var(--text-muted); text-align: left; }
+.qd-link { width: 100%; padding: 8px 0; background: none; border: none; border-top: 1px solid var(--border-light); cursor: pointer; font: inherit; font-size: 12.5px; font-weight:500; color: var(--text-muted); text-align: left; }
 .qd-link:hover { color: var(--text-heading); }
 .qd-select { width: 100%; height: 34px; padding: 0 8px; font-size: 13px; border: 1px solid var(--btn2-line); border-radius: 8px; background: var(--btn2); color: var(--text-heading); outline: none; }
 .qd-find { display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 12px; border: 1px solid var(--btn2-line); border-radius: 10px; background: var(--btn2); color: var(--text-subtle); }

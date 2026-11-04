@@ -8,6 +8,6 @@ export const staffLoginRateLimit = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true,
-  keyGenerator: (req) => `${ipKeyGenerator(req.ip ?? '')}:${String(req.body?.login ?? '').toLowerCase()}`,
+  keyGenerator: (req) => `${ipKeyGenerator(req.ip ?? '')}:${String(req.body?.login ?? '').trim().toLowerCase()}`,
   message: { error: 'Too many sign-in attempts. Please wait 15 minutes and try again.' },
 });

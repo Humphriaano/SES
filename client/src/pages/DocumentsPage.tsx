@@ -3,9 +3,10 @@ import { useParams } from 'react-router-dom';
 import api from '../api/client';
 import {
   Upload, FileText, X, Check, Loader2, Eye, ChevronDown, ChevronRight,
-  AlertTriangle, FolderOpen,
+  AlertTriangle,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { apiError } from '../lib/money';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -114,7 +115,7 @@ function Section({
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}
       >
-        <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+        <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
           {title} <span style={{ color: 'var(--text-subtle)', fontWeight: 500 }}>({items.length})</span>
         </span>
         {open ? <ChevronDown size={13} color="var(--text-subtle)" /> : <ChevronRight size={13} color="var(--text-subtle)" />}
@@ -293,12 +294,12 @@ function ConfirmModal({
           display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
         }}>
           <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-heading)', marginBottom: 2 }}>
+            <div style={{ fontSize: 16, fontWeight: 500, color: 'var(--text-heading)', marginBottom: 2 }}>
               AI Extraction Results
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
               <span style={{
-                fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 20,
+                fontSize: 11, fontWeight: 500, padding: '2px 8px', borderRadius: 20,
                 background: 'var(--badge-blue-bg)', color: 'var(--badge-blue-text)',
               }}>
                 {data.document_type || 'Unknown Document Type'}
@@ -308,14 +309,14 @@ function ConfirmModal({
               </span>
             </div>
           </div>
-          <button onClick={onDiscard} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4, borderRadius: 6, display: 'flex' }}>
+          <button onClick={onDiscard} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4, borderRadius: 999, display: 'flex' }}>
             <X size={18} />
           </button>
         </div>
 
         {/* Select all / none */}
         <div style={{ padding: '10px 22px', background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-light)', display: 'flex', gap: 10 }}>
-          <button onClick={() => toggleAll(true)} style={{ fontSize: 12, color: 'var(--ses-red)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
+          <button onClick={() => toggleAll(true)} style={{ fontSize: 12, color: 'var(--ses-red)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500 }}>
             Select all
           </button>
           <span style={{ color: 'var(--text-subtle)' }}>·</span>
@@ -340,7 +341,7 @@ function ConfirmModal({
                   <span style={{ color: flagColor(lr.flag) }}>{lr.value}</span>
                   {lr.unit && <span style={{ color: 'var(--text-subtle)' }}> {lr.unit}</span>}
                   {lr.flag && (
-                    <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 600, color: flagColor(lr.flag) }}>
+                    <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 500, color: flagColor(lr.flag) }}>
                       [{lr.flag}]
                     </span>
                   )}
@@ -361,7 +362,7 @@ function ConfirmModal({
               return (
                 <span>
                   <strong>{pi.test_name}</strong>{' '}
-                  <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--badge-blue-text)' }}>[{pi.status || 'Pending'}]</span>
+                  <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--badge-blue-text)' }}>[{pi.status || 'Pending'}]</span>
                   {pi.notes && <span style={{ color: 'var(--text-subtle)' }}> — {pi.notes}</span>}
                 </span>
               );
@@ -376,7 +377,7 @@ function ConfirmModal({
                 <span>
                   <strong>{d.diagnosis}</strong>
                   {d.category && (
-                    <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 600, color: 'var(--text-subtle)' }}>
+                    <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 500, color: 'var(--text-subtle)' }}>
                       ({d.category})
                     </span>
                   )}
@@ -418,7 +419,7 @@ function ConfirmModal({
           {data.other_notes && (
             <div style={{ marginBottom: 16, border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
               <div style={{ padding: '8px 14px', background: 'var(--bg-surface)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Other Notes</span>
+                <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Other Notes</span>
               </div>
               <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 14px', cursor: 'pointer' }}>
                 <input
@@ -468,6 +469,21 @@ function ConfirmModal({
 function DocumentsList({ patientId, refreshKey }: { patientId: string; refreshKey: number }) {
   const [docs, setDocs] = useState<SavedDocument[]>([]);
   const [loading, setLoading] = useState(true);
+  const [opening, setOpening] = useState<string | null>(null);
+
+  async function openDocument(id: string) {
+    const preview = window.open('', '_blank');
+    if (!preview) { toast.error('Allow pop-ups for this site to view the document.'); return; }
+    preview.opener = null;
+    setOpening(id);
+    try {
+      const { data } = await api.get(`/documents/file/${id}`, { responseType: 'blob' });
+      const url = URL.createObjectURL(data);
+      preview.location.href = url;
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch (err) { preview.close(); toast.error(apiError(err, 'Couldn’t open the document.')); }
+    finally { setOpening(null); }
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -479,12 +495,7 @@ function DocumentsList({ patientId, refreshKey }: { patientId: string; refreshKe
 
   if (loading) return <div style={{ padding: '20px 0', color: 'var(--text-subtle)', fontSize: 13 }}>Loading documents…</div>;
 
-  if (docs.length === 0) return (
-    <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-subtle)' }}>
-      <FolderOpen size={32} style={{ marginBottom: 10, opacity: 0.4 }} />
-      <div style={{ fontSize: 13 }}>No documents uploaded yet</div>
-    </div>
-  );
+  if (docs.length === 0) return null;
 
   return (
     <div style={{ border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
@@ -492,7 +503,7 @@ function DocumentsList({ patientId, refreshKey }: { patientId: string; refreshKe
         <thead>
           <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border)' }}>
             {['Filename', 'Uploaded', 'Document Type', ''].map(h => (
-              <th key={h} style={{ textAlign: 'left', padding: '10px 16px', fontSize: 10.5, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <th key={h} style={{ textAlign: 'left', padding: '10px 16px', fontSize: 10.5, fontWeight: 500, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 {h}
               </th>
             ))}
@@ -514,26 +525,24 @@ function DocumentsList({ patientId, refreshKey }: { patientId: string; refreshKe
               </td>
               <td style={{ padding: '12px 16px' }}>
                 <span style={{
-                  fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 20,
+                  fontSize: 11, fontWeight: 500, padding: '2px 8px', borderRadius: 20,
                   background: 'var(--badge-blue-bg)', color: 'var(--badge-blue-text)',
                 }}>
                   {doc.document_type || 'Unknown'}
                 </span>
               </td>
               <td style={{ padding: '12px 16px' }}>
-                <a
-                  href={`/api/documents/file/${doc.id}`}
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  type="button" onClick={() => openDocument(doc.id)} disabled={opening === doc.id}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 5,
-                    fontSize: 12, fontWeight: 600, color: 'var(--ses-red)',
+                    fontSize: 12, fontWeight: 500, color: 'var(--ses-red)',
                     textDecoration: 'none', padding: '4px 10px',
-                    border: '1px solid rgba(215,29,36,0.3)', borderRadius: 6,
+                    border: '1px solid rgba(215,29,36,0.3)', borderRadius: 6, background: 'transparent', cursor: 'pointer',
                   }}
                 >
-                  <Eye size={12} /> View
-                </a>
+                  <Eye size={12} /> {opening === doc.id ? 'Opening…' : 'View'}
+                </button>
               </td>
             </tr>
           ))}
@@ -611,7 +620,7 @@ export default function DocumentsPage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-heading)', margin: 0, lineHeight: 1.2 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 500, color: 'var(--text-heading)', margin: 0, lineHeight: 1.2 }}>
             Documents
           </h1>
           <p style={{ fontSize: 13, color: 'var(--text-subtle)', marginTop: 4 }}>
@@ -649,13 +658,13 @@ export default function DocumentsPage() {
         {uploading ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
             <Loader2 size={32} color="var(--ses-red)" style={{ animation: 'spin 1s linear infinite' }} />
-            <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-heading)' }}>AI is reading document…</div>
+            <div style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-heading)' }}>AI is reading document…</div>
             <div style={{ fontSize: 13, color: 'var(--text-subtle)' }}>Extracting clinical data with Qwen 3</div>
           </div>
         ) : (
           <>
             <Upload size={28} color={dragOver ? 'var(--ses-blue-deep)' : 'var(--text-subtle)'} style={{ marginBottom: 10, opacity: dragOver ? 1 : 0.5 }} />
-            <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-heading)', marginBottom: 4 }}>
+            <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-heading)', marginBottom: 4 }}>
               Drop a file here or click to browse
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-subtle)' }}>
@@ -675,7 +684,7 @@ export default function DocumentsPage() {
 
       {/* Uploaded documents list */}
       <div style={{ marginBottom: 12 }}>
-        <h2 style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 14 }}>
+        <h2 style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 14 }}>
           Uploaded Documents
         </h2>
         {patientId && <DocumentsList patientId={patientId} refreshKey={refreshKey} />}

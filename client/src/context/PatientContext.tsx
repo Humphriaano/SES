@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, ReactNode } from 'react';
+import { useAuth } from './AuthContext';
 import { Patient } from '../types';
 import { addRecent } from '../lib/recentPatients';
 
@@ -12,8 +13,18 @@ interface PatientContextType {
 const PatientContext = createContext<PatientContextType | null>(null);
 
 export function PatientProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+  const identity = user ? `${user.id}|${user.role}` : null;
+  const previousIdentity = useRef(identity);
   const [activePatient, setActivePatientState] = useState<Patient | null>(null);
   const [activeEncounterId, setActiveEncounterId] = useState<string | null>(null);
+  useEffect(() => {
+    if (previousIdentity.current !== identity) {
+      setActivePatientState(null);
+      setActiveEncounterId(null);
+      previousIdentity.current = identity;
+    }
+  }, [identity]);
 
   function setActivePatient(p: Patient | null) {
     setActivePatientState(p);

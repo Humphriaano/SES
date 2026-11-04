@@ -1,0 +1,9 @@
+{
+  "system": "ICD-11 MMS",
+  "release": "2026-01",
+  "source": "https://icdcdn.who.int/static/releasefiles/2026-01/SimpleTabulation-ICD-11-MMS-en.zip",
+  "browser": "https://icd.who.int/browse/2026-01/mms/en",
+  "retrieved": "2026-11-03",
+  "included": "Coded categories in conventional-care chapters 01–25. Extension codes, functioning codes and traditional medicine are excluded from standalone diagnosis additions.",
+  "attribution": "World Health Organization, ICD-11 for Mortality and Morbidity Statistics, 2026-01"
+}

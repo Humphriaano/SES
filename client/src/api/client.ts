@@ -27,6 +27,9 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (r) => r,
   (err) => {
+    // Sign-in owns its error message. A rejected attempt must leave the form
+    // intact and must not discard any existing session in this browser.
+    if (err.config?.url === '/auth/login') return Promise.reject(err);
     if (err.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');

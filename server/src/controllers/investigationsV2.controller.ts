@@ -1,3 +1,4 @@
+import { chargeInvestigationOrder } from '../lib/billing';
 import { Request, Response } from 'express';
 import { LATEST_RESULT_FIRST } from '../lib/resultOrder';
 import prisma from '../lib/prisma';
@@ -25,6 +26,7 @@ export async function createInvestigationOrder(req: Request, res: Response) {
       },
       include: { items: true },
     });
+    void chargeInvestigationOrder(order.id, orderedById);   // one line per test, priced from the price list
     res.status(201).json(order);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -45,7 +47,7 @@ export async function getInvestigationOrders(req: Request, res: Response) {
           order: {
             include: {
               patient: { select: { id: true, firstName: true, lastName: true } },
-              orderedBy: { select: { id: true, name: true } },
+              orderedBy: { select: { id: true, name: true, designation: true } },
             },
           },
           results: { orderBy: LATEST_RESULT_FIRST, take: 1 },
@@ -63,7 +65,7 @@ export async function getInvestigationOrders(req: Request, res: Response) {
     const orders = await prisma.investigationOrder.findMany({
       where,
       include: {
-        orderedBy: { select: { id: true, name: true } },
+        orderedBy: { select: { id: true, name: true, designation: true } },
         items: {
           include: {
             results: { orderBy: LATEST_RESULT_FIRST },

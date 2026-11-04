@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { staffLoginRateLimit } from '../middleware/staffRateLimit';
-import { register, login, checkUsername, getRoles, listUsers, updateUser } from '../controllers/auth.controller';
+import { register, login, checkUsername, getRoles, listUsers, updateUser, getCurrentUser } from '../controllers/auth.controller';
 import { listPatients, getPatient, createPatient, updatePatient, resolveDiagnosis, addPatientDiagnosis, sendPortalInvitation } from '../controllers/patient.controller';
 import {
   listEncounters, getEncounter, createEncounter, updateEncounter,
@@ -24,6 +24,8 @@ import {
   amendInvestigationResult,
   getInvestigationResultHistory,
 } from '../controllers/investigationsV2.controller';
+import { listPrices, exportPrices, createPrice, updatePrice, syncCatalogue, importPrices, priceHistory, lookupPrices } from '../controllers/price.controller';
+import { setMissingPrice, savePointOfCarePrice } from '../controllers/pointOfCarePrice.controller';
 import { getBillingItems, createBillingItem, updateBillingStatus, getPatientBalance } from '../controllers/billing.controller';
 import { searchICD11, seedICD11 } from '../controllers/icd11.controller';
 import { importDocumentData } from '../controllers/documentImport.controller';
@@ -34,7 +36,15 @@ import { recordPreference, getPreferences } from '../controllers/user.room.prefe
 import { populationDiagnoses, populationVitals, populationMedications, populationInvestigations, populationPatients, populationKpis } from '../controllers/reports.controller';
 import { getRiskPrediction } from '../controllers/risk.controller';
 import { buildCdsPayload, getCdsSignature } from '../controllers/cdsContext.controller';
-import { authenticate } from '../middleware/auth';
+import { listCustom, createDrug, updateDrug, createTest, updateTest, createDiagnosis, updateDiagnosis } from '../controllers/catalogue.controller';
+import {
+  listPatientInvoices, patientBillingSummary, patientVisitHistory, getInvoice, getReceipt, addManualLine, editLine, voidLine, takePayment, voidPayment,
+  setDiscount, waiveInvoice, voidInvoice, releaseWithBalance, invoiceAudit, setPrescriptionAvailability,
+} from '../controllers/invoice.controller';
+import { mySession, openSession, closeSession, listSessions, deskOverview } from '../controllers/cashier.controller';
+import { runReport, reportCashiers } from '../controllers/billingReports.controller';
+import { authenticate, requireRoles } from '../middleware/auth';
+import { CLINICAL_ROLES } from '../lib/clinicalAccess';
 
 const router = Router();
 
@@ -42,9 +52,22 @@ const router = Router();
 router.post('/auth/register', register);
 router.post('/auth/login', staffLoginRateLimit, login);
 router.get('/auth/check-username', checkUsername);
+router.get('/auth/me', authenticate, getCurrentUser);
 router.get('/auth/roles', authenticate, getRoles);
 router.get('/auth/users', authenticate, listUsers);
 router.patch('/auth/users/:id', authenticate, updateUser);
+
+// Clinical records require a clinical role even when a URL is entered directly.
+// Keep this boundary before the individual handlers so denied requests never read or write a chart.
+router.use([
+  '/patients/:patientId/encounters', '/encounters',
+  '/patients/:patientId/diagnoses', '/patients/:patientId/vitals',
+  '/patients/:patientId/medications', '/medications', '/prescriptions',
+  '/inventory', '/dispensing', '/patients/:patientId/dispensing',
+  '/patients/:patientId/documents', '/patients/:patientId/lab-results',
+  '/investigations', '/patients/:patientId/risk-predict',
+  '/patients/:patientId/cds-payload', '/patients/:patientId/cds-signature',
+], authenticate, requireRoles(...CLINICAL_ROLES));
 
 // ICD-11
 router.get('/icd11/search', authenticate, searchICD11);
@@ -52,12 +75,12 @@ router.post('/icd11/seed', authenticate, seedICD11);
 
 // Patients
 router.get('/patients', authenticate, listPatients);
-router.post('/patients', authenticate, createPatient);
+router.post('/patients', authenticate, requireRoles(...CLINICAL_ROLES, 'receptionist'), createPatient);
 router.get('/patients/:id', authenticate, getPatient);
-router.patch('/patients/:id', authenticate, updatePatient);
+router.patch('/patients/:id', authenticate, requireRoles(...CLINICAL_ROLES, 'receptionist'), updatePatient);
 router.post('/patients/:patientId/diagnoses', authenticate, addPatientDiagnosis);
 router.patch('/patients/:patientId/diagnoses/:diagnosisId/resolve', authenticate, resolveDiagnosis);
-router.post('/patients/:id/portal-invite', authenticate, sendPortalInvitation);
+router.post('/patients/:id/portal-invite', authenticate, requireRoles(...CLINICAL_ROLES, 'receptionist'), sendPortalInvitation);
 
 // Encounters
 router.get('/patients/:patientId/encounters', authenticate, listEncounters);
@@ -77,11 +100,11 @@ router.post('/patients/:patientId/medications', authenticate, createMedication);
 router.patch('/medications/:id', authenticate, updateMedication);
 router.get('/encounters/:encounterId/prescriptions', authenticate, getPrescriptions);
 router.post('/encounters/:encounterId/prescriptions', authenticate, createPrescription);
-router.post('/prescriptions/:id/dispense', authenticate, dispensePrescription);
+router.post('/prescriptions/:id/dispense', authenticate, requireRoles('admin', 'pharmacist'), dispensePrescription);
 router.get('/prescriptions', authenticate, listGlobalPrescriptions);
 router.get('/inventory', authenticate, getInventory);
 router.get('/drugs', authenticate, searchDrugs);
-router.post('/dispensing', authenticate, createDispensing);
+router.post('/dispensing', authenticate, requireRoles('admin', 'pharmacist'), createDispensing);
 router.get('/dispensing', authenticate, getDispensing);
 router.patch('/dispensing/:id', authenticate, updateDispensing);
 router.get('/patients/:patientId/dispensing', authenticate, getPatientDispensing);
@@ -104,10 +127,65 @@ router.patch('/investigations/results/:resultId', authenticate, amendInvestigati
 router.get('/investigations/results', authenticate, getInvestigationResultHistory);
 
 // Billing
-router.get('/patients/:patientId/billing', authenticate, getBillingItems);
-router.post('/patients/:patientId/billing', authenticate, createBillingItem);
-router.patch('/billing/:id/status', authenticate, updateBillingStatus);
-router.get('/patients/:patientId/billing/balance', authenticate, getPatientBalance);
+// Earlier hand-entered billing records (kept readable; new billing runs through invoices below)
+router.get('/patients/:patientId/billing', authenticate, requireRoles('admin', 'billing', 'receptionist', 'clinician', 'pharmacist'), getBillingItems);
+router.post('/patients/:patientId/billing', authenticate, requireRoles('admin', 'billing', 'receptionist'), createBillingItem);
+router.patch('/billing/:id/status', authenticate, requireRoles('admin', 'billing', 'receptionist'), updateBillingStatus);
+router.get('/patients/:patientId/billing/balance', authenticate, requireRoles('admin', 'billing', 'receptionist', 'clinician', 'pharmacist'), getPatientBalance);
+
+// Billing — price list. Anyone signed in can read prices (clinicians see them while ordering);
+// only admin / billing can change them.
+const priceAdmin = requireRoles('admin', 'billing');
+
+// Invoices and charge lines (charges are created automatically as care happens)
+const billingViewers = requireRoles('admin', 'billing', 'receptionist', 'clinician', 'pharmacist');
+const billingStaff = requireRoles('admin', 'billing', 'receptionist');   // take payments, add missed charges
+const billingAdmin = requireRoles('admin');                                // approvals: adjustments, discounts, waivers, voids
+router.get('/patients/:patientId/invoices', authenticate, billingViewers, listPatientInvoices);
+router.get('/patients/:patientId/billing-summary', authenticate, billingViewers, patientBillingSummary);
+router.get('/patients/:patientId/visit-history', authenticate, billingViewers, patientVisitHistory);
+router.get('/invoices/:id', authenticate, billingViewers, getInvoice);
+router.get('/invoices/:id/audit', authenticate, billingAdmin, invoiceAudit);
+router.post('/patients/:patientId/invoice-lines', authenticate, billingStaff, addManualLine);
+router.patch('/charge-lines/:id', authenticate, billingStaff, editLine);
+router.post('/charge-lines/:id/void', authenticate, billingStaff, voidLine);
+router.post('/invoices/:id/payments', authenticate, billingStaff, takePayment);
+router.get('/payments/:id/receipt', authenticate, billingViewers, getReceipt);
+router.post('/payments/:id/void', authenticate, billingAdmin, voidPayment);
+router.post('/invoices/:id/discount', authenticate, billingAdmin, setDiscount);
+router.post('/invoices/:id/waive', authenticate, billingAdmin, waiveInvoice);
+router.post('/invoices/:id/void', authenticate, billingAdmin, voidInvoice);
+router.post('/invoices/:id/release', authenticate, billingAdmin, releaseWithBalance);
+router.patch('/prescriptions/:id/availability', authenticate, requireRoles('admin', 'pharmacist', 'clinician'), setPrescriptionAvailability);
+
+// Cashier sessions, the billing desk and billing reports (login + billing role required)
+router.get('/cashier/session', authenticate, billingStaff, mySession);
+router.post('/cashier/session/open', authenticate, billingStaff, openSession);
+router.post('/cashier/session/close', authenticate, billingStaff, closeSession);
+router.get('/cashier/sessions', authenticate, requireRoles('admin', 'billing'), listSessions);
+router.get('/billing/desk', authenticate, billingStaff, deskOverview);
+router.get('/billing/reports/cashiers', authenticate, requireRoles('admin', 'billing'), reportCashiers);
+router.get('/billing/reports/:name', authenticate, requireRoles('admin', 'billing'), runReport);
+
+// Items staff add to the built-in drug, test and diagnosis catalogues
+router.get('/catalogue/custom', authenticate, listCustom);
+router.post('/catalogue/drugs', authenticate, requireRoles('admin', 'pharmacist'), createDrug);
+router.patch('/catalogue/drugs/:id', authenticate, requireRoles('admin', 'pharmacist'), updateDrug);
+router.post('/catalogue/tests', authenticate, requireRoles('admin', 'lab_tech'), createTest);
+router.patch('/catalogue/tests/:id', authenticate, requireRoles('admin', 'lab_tech'), updateTest);
+router.post('/catalogue/diagnoses', authenticate, requireRoles('admin', 'clinician'), createDiagnosis);
+router.patch('/catalogue/diagnoses/:id', authenticate, requireRoles('admin', 'clinician'), updateDiagnosis);
+router.get('/price-list', authenticate, listPrices);
+router.get('/price-list/lookup', authenticate, lookupPrices);
+router.post('/price-list/set-missing', authenticate, requireRoles('admin', 'billing', 'clinician', 'pharmacist'), setMissingPrice);
+router.patch('/price-list/point-of-care', authenticate, requireRoles('admin', 'billing', 'clinician', 'pharmacist'), savePointOfCarePrice);
+router.get('/price-list/export', authenticate, priceAdmin, exportPrices);
+router.post('/price-list', authenticate, priceAdmin, createPrice);
+router.post('/price-list/sync', authenticate, priceAdmin, syncCatalogue);
+router.post('/price-list/import', authenticate, priceAdmin, importPrices);
+router.get('/price-list/:id/history', authenticate, priceAdmin, priceHistory);
+router.patch('/price-list/:id', authenticate, priceAdmin, updatePrice);
+
 
 // Queue — rooms (specific paths before param routes)
 router.get('/queue/rooms', authenticate, getActiveRooms);

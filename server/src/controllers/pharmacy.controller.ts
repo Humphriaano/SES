@@ -1,6 +1,10 @@
+import { saveDispensing, DispensingError } from '../lib/dispensing';
+import { chargePrescription } from '../lib/billing';
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth';
+import { parseMedicationDraft } from '../lib/medicationDraft';
+import { pricingUnit } from '../lib/prescriptionSupply';
 
 // ── Existing medication / prescription handlers ───────────────────────────────
 
@@ -12,27 +16,18 @@ export async function getMedications(req: Request, res: Response): Promise<void>
   });
   res.json(medications);
 }
-
 export async function createMedication(req: Request, res: Response): Promise<void> {
-  const { patientId } = req.params;
-  const data = req.body as {
-    name: string; dosage?: string; frequency?: string; route?: string;
-    startDate: string; endDate?: string; notes?: string;
-  };
-  const medication = await prisma.medication.create({
-    data: {
-      patientId,
-      name: data.name,
-      dosage: data.dosage,
-      frequency: data.frequency,
-      route: data.route,
-      startDate: new Date(data.startDate),
-      endDate: data.endDate ? new Date(data.endDate) : undefined,
-      notes: data.notes,
-    },
-  });
+  const parsed = parseMedicationDraft(req.body);
+  if ('error' in parsed) { res.status(400).json(parsed); return; }
+  if (parsed.data.catalogueCode && parsed.data.priceBasis) {
+    const price = await prisma.priceListItem.findUnique({ where: { itemType_catalogueRef: { itemType: 'DRUG', catalogueRef: parsed.data.catalogueCode } } });
+    if (!price?.active || price.unit !== pricingUnit(parsed.data.priceBasis, parsed.data.doseUnit || 'unit') || (parsed.data.priceBasis === 'BOTTLE' && parsed.data.bottleSizeMl != null && Number(price.bottleSizeMl) !== parsed.data.bottleSizeMl)) { res.status(409).json({ error: 'The drug pricing unit or bottle size changed. Refresh before prescribing.' }); return; }
+    if (price.unitPrice != null) parsed.data.unitPrice = Number(price.unitPrice);
+  }
+  const medication = await prisma.medication.create({ data: { patientId: String(req.params['patientId']), ...parsed.data } });
   res.status(201).json(medication);
 }
+
 
 export async function updateMedication(req: Request, res: Response): Promise<void> {
   const { id } = req.params;
@@ -48,29 +43,33 @@ export async function getPrescriptions(req: Request, res: Response): Promise<voi
   const { encounterId } = req.params;
   const prescriptions = await prisma.prescription.findMany({
     where: { encounterId },
-    include: { medication: true },
+    include: { medication: true, substituteMedication: true },
   });
   res.json(prescriptions);
 }
 
 export async function createPrescription(req: Request, res: Response): Promise<void> {
-  const { encounterId } = req.params;
+  const encounterId = String(req.params['encounterId']);
   const { medicationId } = req.body as { medicationId: string };
+  if (!medicationId) { res.status(400).json({ error: 'Medication is required.' }); return; }
+  const [encounter, medication] = await Promise.all([
+    prisma.encounter.findUnique({ where: { id: encounterId }, select: { patientId: true } }),
+    prisma.medication.findUnique({ where: { id: medicationId }, select: { patientId: true } }),
+  ]);
+  if (!encounter || !medication || encounter.patientId !== medication.patientId) { res.status(404).json({ error: 'Medication not found for this encounter.' }); return; }
   const prescription = await prisma.prescription.create({
     data: { encounterId, medicationId },
-    include: { medication: true },
+    include: { medication: true, substituteMedication: true },
   });
+  void chargePrescription(prescription.id, (req as any).userId);   // priced from the price list, once per prescription
   res.status(201).json(prescription);
 }
 
-export async function dispensePrescription(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
-  const prescription = await prisma.prescription.update({
-    where: { id },
-    data: { dispensed: true, dispensedAt: new Date() },
-    include: { medication: true },
-  });
-  res.json(prescription);
+export async function dispensePrescription(req: AuthRequest, res: Response): Promise<void> {
+  const rx = await prisma.prescription.findUnique({ where: { id: String(req.params['id']) }, include: { medication: true, encounter: true } });
+  if (!rx) { res.status(404).json({ error: 'Prescription not found.' }); return; }
+  req.body = { ...req.body, prescriptionId: rx.id, patientId: rx.encounter.patientId, type: 'prescription', dispensedDrug: rx.medication.name };
+  return createDispensing(req, res);
 }
 
 // ── New pharmacy module handlers ──────────────────────────────────────────────
@@ -85,13 +84,13 @@ export async function listGlobalPrescriptions(req: Request, res: Response): Prom
   const prescriptions = await prisma.prescription.findMany({
     where,
     include: {
-      medication: true,
+      medication: true, substituteMedication: true,
       encounter: {
         include: {
           patient: {
             select: { id: true, firstName: true, lastName: true, nationalId: true, dateOfBirth: true, gender: true },
           },
-          clinician: { select: { id: true, name: true } },
+          clinician: { select: { id: true, name: true, designation: true } },
         },
       },
     },
@@ -135,52 +134,8 @@ export async function searchDrugs(req: Request, res: Response): Promise<void> {
 
 /** POST /dispensing */
 export async function createDispensing(req: AuthRequest, res: Response): Promise<void> {
-  const body = req.body as {
-    prescriptionId?: string;
-    patientId: string;
-    type?: string;
-    dispensedDrug: string;
-    dispensedDose?: string;
-    dispensedFrequency?: string;
-    dispensedDuration?: string;
-    dispensedBy: string;
-    substitution?: object;
-    modifications?: object;
-  };
-
-  const dispensing = await prisma.dispensing.create({
-    data: {
-      prescriptionId: body.prescriptionId ?? null,
-      patientId: body.patientId,
-      type: body.type ?? 'direct',
-      dispensedDrug: body.dispensedDrug,
-      dispensedDose: body.dispensedDose ?? null,
-      dispensedFrequency: body.dispensedFrequency ?? null,
-      dispensedDuration: body.dispensedDuration ?? null,
-      dispensedBy: body.dispensedBy,
-      substitution: body.substitution ?? undefined,
-      modifications: body.modifications ?? undefined,
-    },
-    include: {
-      patient: { select: { firstName: true, lastName: true, nationalId: true } },
-    },
-  });
-
-  // Mark prescription as dispensed
-  if (body.prescriptionId) {
-    await prisma.prescription.update({
-      where: { id: body.prescriptionId },
-      data: { dispensed: true, dispensedAt: new Date() },
-    });
-  }
-
-  // Decrement inventory (ignore if no matching row)
-  await prisma.drugInventory.updateMany({
-    where: { drugName: { equals: body.dispensedDrug, mode: 'insensitive' } },
-    data: { quantity: { decrement: 1 } },
-  });
-
-  res.status(201).json(dispensing);
+  try { res.status(201).json(await saveDispensing(req.body, req.userId)); }
+  catch (error) { if (error instanceof DispensingError) { res.status(error.status).json({ error: error.message }); return; } throw error; }
 }
 
 /** GET /dispensing?date=today  or  GET /dispensing?patientId=:id */

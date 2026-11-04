@@ -22,9 +22,9 @@ function PanelTooltip({ active, payload, label, unit }: { active?: boolean; payl
       <p style={{ color: 'var(--text-muted)', fontSize: 10, margin: '0 0 2px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
         Recorded
       </p>
-      <p style={{ color: 'var(--text-heading)', fontSize: 12, fontWeight: 600, margin: '0 0 6px' }}>{label}</p>
+      <p style={{ color: 'var(--text-heading)', fontSize: 12, fontWeight: 500, margin: '0 0 6px' }}>{label}</p>
       {payload.map((p: any, i: number) => (
-        <p key={i} style={{ color: p.color, fontSize: 13, fontWeight: 600, margin: 0 }}>
+        <p key={i} style={{ color: p.color, fontSize: 13, fontWeight: 500, margin: 0 }}>
           {p.name}: {p.value} {unit}
         </p>
       ))}
@@ -70,7 +70,7 @@ export default function VitalsTrendsPanel({ open, patientName, history, onClose 
         flexShrink: 0,
       }}>
         <div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-heading)', letterSpacing: '-0.2px' }}>
+          <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-heading)', letterSpacing: '-0.2px' }}>
             Vital Trends
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{patientName}</div>
@@ -79,7 +79,7 @@ export default function VitalsTrendsPanel({ open, patientName, history, onClose 
           onClick={onClose}
           style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            color: 'var(--text-muted)', padding: 6, borderRadius: 6, display: 'flex', alignItems: 'center',
+            color: 'var(--text-muted)', padding: 6, borderRadius: 999, display: 'flex', alignItems: 'center',
             transition: 'background 0.15s',
           }}
           onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-surface)')}
@@ -100,9 +100,9 @@ export default function VitalsTrendsPanel({ open, patientName, history, onClose 
             onClick={() => setActiveTab(key)}
             style={{
               padding: '10px 12px 8px', border: 'none', background: 'transparent',
-              borderBottom: `2px solid ${activeTab === key ? 'var(--ses-blue-deep)' : 'transparent'}`,
-              color: activeTab === key ? 'var(--ses-blue-deep)' : 'var(--text-muted)',
-              fontSize: 12, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
+              borderBottom: `2px solid ${activeTab === key ? 'var(--selection-text)' : 'transparent'}`,
+              color: activeTab === key ? 'var(--selection-text)' : 'var(--text-muted)',
+              fontSize: 12, fontWeight: 500, cursor: 'pointer', whiteSpace: 'nowrap',
               transition: 'color 0.15s',
             }}
           >
@@ -116,7 +116,7 @@ export default function VitalsTrendsPanel({ open, patientName, history, onClose 
         {history.length < 2 ? (
           <div style={{ textAlign: 'center', paddingTop: 60, color: 'var(--text-muted)' }}>
             <div style={{ fontSize: 28, marginBottom: 10 }}>📈</div>
-            <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-heading)', marginBottom: 4 }}>
+            <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-heading)', marginBottom: 4 }}>
               Not enough data
             </p>
             <p style={{ fontSize: 12 }}>At least 2 readings are needed to show trends.</p>
@@ -129,7 +129,7 @@ export default function VitalsTrendsPanel({ open, patientName, history, onClose 
                 <span key={String(k)} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--text-body2)' }}>
                   <span style={{ width: 12, height: 3, borderRadius: 2, background: config.colors[i], display: 'inline-block' }} />
                   <span>{k === 'systolic' ? 'Systolic' : k === 'diastolic' ? 'Diastolic' : config.label}</span>
-                  <span style={{ fontWeight: 700, color: 'var(--text-heading)' }}>{latest?.[k] ?? '—'}</span>
+                  <span style={{ fontWeight: 500, color: 'var(--text-heading)' }}>{latest?.[k] ?? '—'}</span>
                   <span style={{ color: 'var(--text-muted)' }}>{config.unit}</span>
                 </span>
               ))}
@@ -190,7 +190,7 @@ export default function VitalsTrendsPanel({ open, patientName, history, onClose 
               display: 'flex', alignItems: 'center', gap: 8,
             }}>
               <span style={{ fontSize: 11, color: 'var(--text-body2)' }}>Trend (last 2 readings):</span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: trendDisplay.color }}>
+              <span style={{ fontSize: 13, fontWeight: 500, color: trendDisplay.color }}>
                 {trendDisplay.text}
               </span>
             </div>

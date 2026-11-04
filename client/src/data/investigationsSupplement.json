@@ -1,0 +1,2353 @@
+{
+  "source": {
+    "system": "http://loinc.org",
+    "retrieved": "2026-11-03",
+    "lookup": "https://clinicaltables.nlm.nih.gov/apidoc/loinc/v3/doc.html",
+    "copyright": "Copyright © Regenstrief Institute, Inc. and the LOINC Committee. All rights reserved.",
+    "licence": "https://loinc.org/license",
+    "scope": "Verified common outpatient, emergency and general hospital additions; legacy mappings require specimen, method, units and panel equivalence confirmation."
+  },
+  "panels": [
+    {
+      "id": "loinc_24321-2",
+      "panelName": "Basic metabolic panel (BMP)",
+      "searchNames": [
+        "Basic metabolic panel (BMP)",
+        "BMP",
+        "Basic metabolic",
+        "Metabolic panel"
+      ],
+      "specimen": "Serum or plasma",
+      "loinc": "24321-2",
+      "loincName": "Basic metabolic 2000 panel - Serum or Plasma",
+      "loincSource": "https://loinc.org/24321-2",
+      "components": [
+        {
+          "id": 1002,
+          "name": "Glucose [Mass/volume] in Serum or Plasma",
+          "abbr": "Glucose SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2345-7",
+          "loincName": "Glucose [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Glucose SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2345-7"
+        },
+        {
+          "id": 1001,
+          "name": "Urea nitrogen [Mass/volume] in Serum or Plasma",
+          "abbr": "BUN SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "3094-0",
+          "loincName": "Urea nitrogen [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "BUN SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/3094-0"
+        },
+        {
+          "id": 1000,
+          "name": "Creatinine [Mass/volume] in Serum or Plasma",
+          "abbr": "Creat SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2160-0",
+          "loincName": "Creatinine [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Creat SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2160-0"
+        },
+        {
+          "id": 1007,
+          "name": "Calcium [Mass/volume] in Serum or Plasma",
+          "abbr": "Calcium SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "17861-6",
+          "loincName": "Calcium [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Calcium SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/17861-6"
+        },
+        {
+          "id": 1003,
+          "name": "Sodium [Moles/volume] in Serum or Plasma",
+          "abbr": "Sodium SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2951-2",
+          "loincName": "Sodium [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "Sodium SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/2951-2"
+        },
+        {
+          "id": 1004,
+          "name": "Potassium [Moles/volume] in Serum or Plasma",
+          "abbr": "Potassium SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2823-3",
+          "loincName": "Potassium [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "Potassium SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/2823-3"
+        },
+        {
+          "id": 1006,
+          "name": "Chloride [Moles/volume] in Serum or Plasma",
+          "abbr": "Chloride SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2075-0",
+          "loincName": "Chloride [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "Chloride SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/2075-0"
+        },
+        {
+          "id": 1005,
+          "name": "Bicarbonate [Moles/volume] in Serum or Plasma",
+          "abbr": "HCO3 SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1963-8",
+          "loincName": "Bicarbonate [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "HCO3 SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/1963-8"
+        }
+      ]
+    },
+    {
+      "id": "loinc_24323-8",
+      "panelName": "Comprehensive metabolic panel (CMP)",
+      "searchNames": [
+        "Comprehensive metabolic panel (CMP)",
+        "CMP",
+        "Comprehensive metabolic"
+      ],
+      "specimen": "Serum or plasma",
+      "loinc": "24323-8",
+      "loincName": "Comprehensive metabolic 2000 panel - Serum or Plasma",
+      "loincSource": "https://loinc.org/24323-8",
+      "components": [
+        {
+          "id": 1002,
+          "name": "Glucose [Mass/volume] in Serum or Plasma",
+          "abbr": "Glucose SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2345-7",
+          "loincName": "Glucose [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Glucose SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2345-7"
+        },
+        {
+          "id": 1001,
+          "name": "Urea nitrogen [Mass/volume] in Serum or Plasma",
+          "abbr": "BUN SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "3094-0",
+          "loincName": "Urea nitrogen [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "BUN SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/3094-0"
+        },
+        {
+          "id": 1000,
+          "name": "Creatinine [Mass/volume] in Serum or Plasma",
+          "abbr": "Creat SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2160-0",
+          "loincName": "Creatinine [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Creat SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2160-0"
+        },
+        {
+          "id": 1007,
+          "name": "Calcium [Mass/volume] in Serum or Plasma",
+          "abbr": "Calcium SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "17861-6",
+          "loincName": "Calcium [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Calcium SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/17861-6"
+        },
+        {
+          "id": 1008,
+          "name": "Protein [Mass/volume] in Serum or Plasma",
+          "abbr": "Prot SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "g/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2885-2",
+          "loincName": "Protein [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Prot SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2885-2"
+        },
+        {
+          "id": 1009,
+          "name": "Albumin [Mass/volume] in Serum or Plasma",
+          "abbr": "Albumin SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "g/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1751-7",
+          "loincName": "Albumin [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Albumin SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/1751-7"
+        },
+        {
+          "id": 1013,
+          "name": "Bilirubin.total [Mass/volume] in Serum or Plasma",
+          "abbr": "Bilirub SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1975-2",
+          "loincName": "Bilirubin.total [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Bilirub SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/1975-2"
+        },
+        {
+          "id": 1012,
+          "name": "Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma",
+          "abbr": "ALP SerPl-cCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "U/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "6768-6",
+          "loincName": "Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma",
+          "searchNames": [
+            "ALP SerPl-cCnc"
+          ],
+          "loincSource": "https://loinc.org/6768-6"
+        },
+        {
+          "id": 1011,
+          "name": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+          "abbr": "ALT SerPl-cCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "U/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1742-6",
+          "loincName": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+          "searchNames": [
+            "ALT SerPl-cCnc"
+          ],
+          "loincSource": "https://loinc.org/1742-6"
+        },
+        {
+          "id": 1010,
+          "name": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+          "abbr": "AST SerPl-cCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "U/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1920-8",
+          "loincName": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+          "searchNames": [
+            "AST SerPl-cCnc"
+          ],
+          "loincSource": "https://loinc.org/1920-8"
+        },
+        {
+          "id": 1003,
+          "name": "Sodium [Moles/volume] in Serum or Plasma",
+          "abbr": "Sodium SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2951-2",
+          "loincName": "Sodium [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "Sodium SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/2951-2"
+        },
+        {
+          "id": 1004,
+          "name": "Potassium [Moles/volume] in Serum or Plasma",
+          "abbr": "Potassium SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2823-3",
+          "loincName": "Potassium [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "Potassium SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/2823-3"
+        },
+        {
+          "id": 1006,
+          "name": "Chloride [Moles/volume] in Serum or Plasma",
+          "abbr": "Chloride SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2075-0",
+          "loincName": "Chloride [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "Chloride SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/2075-0"
+        },
+        {
+          "id": 1005,
+          "name": "Bicarbonate [Moles/volume] in Serum or Plasma",
+          "abbr": "HCO3 SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1963-8",
+          "loincName": "Bicarbonate [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "HCO3 SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/1963-8"
+        }
+      ]
+    },
+    {
+      "id": "loinc_24325-3",
+      "panelName": "Hepatic function panel (standard)",
+      "searchNames": [
+        "Hepatic function panel (standard)",
+        "Hepatic panel",
+        "Liver function panel",
+        "LFT"
+      ],
+      "specimen": "Serum or plasma",
+      "loinc": "24325-3",
+      "loincName": "Hepatic function 2000 panel - Serum or Plasma",
+      "loincSource": "https://loinc.org/24325-3",
+      "components": [
+        {
+          "id": 1008,
+          "name": "Protein [Mass/volume] in Serum or Plasma",
+          "abbr": "Prot SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "g/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2885-2",
+          "loincName": "Protein [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Prot SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2885-2"
+        },
+        {
+          "id": 1009,
+          "name": "Albumin [Mass/volume] in Serum or Plasma",
+          "abbr": "Albumin SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "g/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1751-7",
+          "loincName": "Albumin [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Albumin SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/1751-7"
+        },
+        {
+          "id": 1013,
+          "name": "Bilirubin.total [Mass/volume] in Serum or Plasma",
+          "abbr": "Bilirub SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1975-2",
+          "loincName": "Bilirubin.total [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Bilirub SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/1975-2"
+        },
+        {
+          "id": 1014,
+          "name": "Bilirubin.direct [Mass/volume] in Serum or Plasma",
+          "abbr": "Bilirub Direct SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1968-7",
+          "loincName": "Bilirubin.direct [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Bilirub Direct SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/1968-7"
+        },
+        {
+          "id": 1012,
+          "name": "Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma",
+          "abbr": "ALP SerPl-cCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "U/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "6768-6",
+          "loincName": "Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma",
+          "searchNames": [
+            "ALP SerPl-cCnc"
+          ],
+          "loincSource": "https://loinc.org/6768-6"
+        },
+        {
+          "id": 1010,
+          "name": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+          "abbr": "AST SerPl-cCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "U/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1920-8",
+          "loincName": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+          "searchNames": [
+            "AST SerPl-cCnc"
+          ],
+          "loincSource": "https://loinc.org/1920-8"
+        },
+        {
+          "id": 1011,
+          "name": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+          "abbr": "ALT SerPl-cCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "U/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1742-6",
+          "loincName": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+          "searchNames": [
+            "ALT SerPl-cCnc"
+          ],
+          "loincSource": "https://loinc.org/1742-6"
+        }
+      ]
+    },
+    {
+      "id": "loinc_24326-1",
+      "panelName": "Electrolytes panel",
+      "searchNames": [
+        "Electrolytes panel",
+        "Electrolytes",
+        "Na K Cl bicarbonate"
+      ],
+      "specimen": "Serum or plasma",
+      "loinc": "24326-1",
+      "loincName": "Electrolytes 1998 panel - Serum or Plasma",
+      "loincSource": "https://loinc.org/24326-1",
+      "components": [
+        {
+          "id": 1003,
+          "name": "Sodium [Moles/volume] in Serum or Plasma",
+          "abbr": "Sodium SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2951-2",
+          "loincName": "Sodium [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "Sodium SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/2951-2"
+        },
+        {
+          "id": 1004,
+          "name": "Potassium [Moles/volume] in Serum or Plasma",
+          "abbr": "Potassium SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2823-3",
+          "loincName": "Potassium [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "Potassium SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/2823-3"
+        },
+        {
+          "id": 1006,
+          "name": "Chloride [Moles/volume] in Serum or Plasma",
+          "abbr": "Chloride SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2075-0",
+          "loincName": "Chloride [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "Chloride SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/2075-0"
+        },
+        {
+          "id": 1005,
+          "name": "Bicarbonate [Moles/volume] in Serum or Plasma",
+          "abbr": "HCO3 SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1963-8",
+          "loincName": "Bicarbonate [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "HCO3 SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/1963-8"
+        }
+      ]
+    },
+    {
+      "id": "loinc_24362-6",
+      "panelName": "Renal function panel (standard)",
+      "searchNames": [
+        "Renal function panel (standard)",
+        "Renal panel",
+        "Kidney function panel",
+        "RFT"
+      ],
+      "specimen": "Serum or plasma",
+      "loinc": "24362-6",
+      "loincName": "Renal function 2000 panel - Serum or Plasma",
+      "loincSource": "https://loinc.org/24362-6",
+      "components": [
+        {
+          "id": 1002,
+          "name": "Glucose [Mass/volume] in Serum or Plasma",
+          "abbr": "Glucose SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2345-7",
+          "loincName": "Glucose [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Glucose SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2345-7"
+        },
+        {
+          "id": 1001,
+          "name": "Urea nitrogen [Mass/volume] in Serum or Plasma",
+          "abbr": "BUN SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "3094-0",
+          "loincName": "Urea nitrogen [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "BUN SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/3094-0"
+        },
+        {
+          "id": 1000,
+          "name": "Creatinine [Mass/volume] in Serum or Plasma",
+          "abbr": "Creat SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2160-0",
+          "loincName": "Creatinine [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Creat SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2160-0"
+        },
+        {
+          "id": 1007,
+          "name": "Calcium [Mass/volume] in Serum or Plasma",
+          "abbr": "Calcium SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "17861-6",
+          "loincName": "Calcium [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Calcium SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/17861-6"
+        },
+        {
+          "id": 1015,
+          "name": "Phosphate [Mass/volume] in Serum or Plasma",
+          "abbr": "Phosphate SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2777-1",
+          "loincName": "Phosphate [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Phosphate SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2777-1"
+        },
+        {
+          "id": 1009,
+          "name": "Albumin [Mass/volume] in Serum or Plasma",
+          "abbr": "Albumin SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "g/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1751-7",
+          "loincName": "Albumin [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Albumin SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/1751-7"
+        },
+        {
+          "id": 1003,
+          "name": "Sodium [Moles/volume] in Serum or Plasma",
+          "abbr": "Sodium SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2951-2",
+          "loincName": "Sodium [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "Sodium SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/2951-2"
+        },
+        {
+          "id": 1004,
+          "name": "Potassium [Moles/volume] in Serum or Plasma",
+          "abbr": "Potassium SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2823-3",
+          "loincName": "Potassium [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "Potassium SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/2823-3"
+        },
+        {
+          "id": 1006,
+          "name": "Chloride [Moles/volume] in Serum or Plasma",
+          "abbr": "Chloride SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2075-0",
+          "loincName": "Chloride [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "Chloride SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/2075-0"
+        },
+        {
+          "id": 1005,
+          "name": "Bicarbonate [Moles/volume] in Serum or Plasma",
+          "abbr": "HCO3 SerPl-sCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1963-8",
+          "loincName": "Bicarbonate [Moles/volume] in Serum or Plasma",
+          "searchNames": [
+            "HCO3 SerPl-sCnc"
+          ],
+          "loincSource": "https://loinc.org/1963-8"
+        }
+      ]
+    },
+    {
+      "id": "loinc_24331-1",
+      "panelName": "Lipid panel (standard, calculated LDL)",
+      "searchNames": [
+        "Lipid panel (standard, calculated LDL)",
+        "Lipid panel",
+        "Cholesterol panel"
+      ],
+      "specimen": "Serum or plasma",
+      "loinc": "24331-1",
+      "loincName": "Lipid 1996 panel - Serum or Plasma",
+      "loincSource": "https://loinc.org/24331-1",
+      "components": [
+        {
+          "id": 1017,
+          "name": "Cholesterol [Mass/volume] in Serum or Plasma",
+          "abbr": "Cholest SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2093-3",
+          "loincName": "Cholesterol [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Cholest SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2093-3"
+        },
+        {
+          "id": 1016,
+          "name": "Triglyceride [Mass/volume] in Serum or Plasma",
+          "abbr": "Trigl SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2571-8",
+          "loincName": "Triglyceride [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Trigl SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2571-8"
+        },
+        {
+          "id": 1019,
+          "name": "Cholesterol in HDL [Mass/volume] in Serum or Plasma",
+          "abbr": "HDLc SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2085-9",
+          "loincName": "Cholesterol in HDL [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "HDLc SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2085-9"
+        },
+        {
+          "id": 1018,
+          "name": "Cholesterol in LDL [Mass/volume] in Serum or Plasma by calculation",
+          "abbr": "LDLc SerPl Calc-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "mg/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "13457-7",
+          "loincName": "Cholesterol in LDL [Mass/volume] in Serum or Plasma by calculation",
+          "method": "Calculated",
+          "searchNames": [
+            "LDLc SerPl Calc-mCnc"
+          ],
+          "loincSource": "https://loinc.org/13457-7"
+        }
+      ]
+    },
+    {
+      "id": "loinc_24336-0",
+      "panelName": "Arterial blood gas panel (ABG)",
+      "searchNames": [
+        "Arterial blood gas panel (ABG)",
+        "ABG",
+        "Arterial blood gas",
+        "Blood gases"
+      ],
+      "specimen": "Arterial blood",
+      "loinc": "24336-0",
+      "loincName": "Gas panel - Arterial blood",
+      "loincSource": "https://loinc.org/24336-0",
+      "components": [
+        {
+          "id": 1020,
+          "name": "pH of Arterial blood",
+          "abbr": "pH BldA",
+          "specimen": "Arterial blood",
+          "dataType": "enum",
+          "units": null,
+          "referenceRange": null,
+          "options": [
+            "Positive",
+            "Negative"
+          ],
+          "subType": "Biochemistry",
+          "loinc": "2744-1",
+          "loincName": "pH of Arterial blood",
+          "searchNames": [
+            "pH BldA"
+          ],
+          "loincSource": "https://loinc.org/2744-1"
+        },
+        {
+          "id": 1022,
+          "name": "Carbon dioxide [Partial pressure] in Arterial blood",
+          "abbr": "pCO2 BldA",
+          "specimen": "Arterial blood",
+          "dataType": "float",
+          "units": "mm[Hg]",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2019-8",
+          "loincName": "Carbon dioxide [Partial pressure] in Arterial blood",
+          "searchNames": [
+            "pCO2 BldA"
+          ],
+          "loincSource": "https://loinc.org/2019-8"
+        },
+        {
+          "id": 1021,
+          "name": "Oxygen [Partial pressure] in Arterial blood",
+          "abbr": "pO2 BldA",
+          "specimen": "Arterial blood",
+          "dataType": "float",
+          "units": "mm[Hg]",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2703-7",
+          "loincName": "Oxygen [Partial pressure] in Arterial blood",
+          "searchNames": [
+            "pO2 BldA"
+          ],
+          "loincSource": "https://loinc.org/2703-7"
+        },
+        {
+          "id": 1024,
+          "name": "Bicarbonate [Moles/volume] in Arterial blood",
+          "abbr": "HCO3 BldA-sCnc",
+          "specimen": "Arterial blood",
+          "dataType": "float",
+          "units": "mmol/L",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "1960-4",
+          "loincName": "Bicarbonate [Moles/volume] in Arterial blood",
+          "searchNames": [
+            "HCO3 BldA-sCnc"
+          ],
+          "loincSource": "https://loinc.org/1960-4"
+        },
+        {
+          "id": 1023,
+          "name": "Oxygen saturation in Arterial blood",
+          "abbr": "SaO2 % BldA",
+          "specimen": "Arterial blood",
+          "dataType": "float",
+          "units": "%",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2708-6",
+          "loincName": "Oxygen saturation in Arterial blood",
+          "searchNames": [
+            "SaO2 % BldA"
+          ],
+          "loincSource": "https://loinc.org/2708-6"
+        }
+      ]
+    },
+    {
+      "id": "loinc_50190-8",
+      "panelName": "Iron and TIBC panel",
+      "searchNames": [
+        "Iron and TIBC panel",
+        "Iron studies",
+        "Iron profile",
+        "TIBC panel"
+      ],
+      "specimen": "Serum or plasma",
+      "loinc": "50190-8",
+      "loincName": "Iron and Iron binding capacity panel - Serum or Plasma",
+      "loincSource": "https://loinc.org/50190-8",
+      "components": [
+        {
+          "id": 1025,
+          "name": "Iron [Mass/volume] in Serum or Plasma",
+          "abbr": "Iron SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "ug/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2498-4",
+          "loincName": "Iron [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "Iron SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2498-4"
+        },
+        {
+          "id": 1026,
+          "name": "Iron binding capacity [Mass/volume] in Serum or Plasma",
+          "abbr": "TIBC SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "ug/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2500-7",
+          "loincName": "Iron binding capacity [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "TIBC SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2500-7"
+        },
+        {
+          "id": 1027,
+          "name": "Iron saturation [Mass Fraction] in Serum or Plasma",
+          "abbr": "Iron Satn MFr SerPl",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "%",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2502-3",
+          "loincName": "Iron saturation [Mass Fraction] in Serum or Plasma",
+          "searchNames": [
+            "Iron Satn MFr SerPl"
+          ],
+          "loincSource": "https://loinc.org/2502-3"
+        },
+        {
+          "id": 1029,
+          "name": "Iron binding capacity.unsaturated [Mass/volume] in Serum or Plasma",
+          "abbr": "UIBC SerPl-mCnc",
+          "specimen": "Serum or plasma",
+          "dataType": "float",
+          "units": "ug/dL",
+          "referenceRange": null,
+          "subType": "Biochemistry",
+          "loinc": "2501-5",
+          "loincName": "Iron binding capacity.unsaturated [Mass/volume] in Serum or Plasma",
+          "searchNames": [
+            "UIBC SerPl-mCnc"
+          ],
+          "loincSource": "https://loinc.org/2501-5"
+        }
+      ]
+    },
+    {
+      "id": "widal_agglutination",
+      "panelName": "Widal test (TO, TH, AH, BH)",
+      "searchNames": [
+        "Widal",
+        "Widal test",
+        "Widal serology",
+        "Typhoid serology",
+        "Salmonella antibodies"
+      ],
+      "specimen": "Serum",
+      "loinc": null,
+      "codingNote": "Local four-analyte Widal order group. Individual observations carry verified LOINC codes; no equivalence to the broader Salmonella species panel is asserted.",
+      "components": [
+        {
+          "id": 1064,
+          "name": "Widal test — TO (Salmonella typhi O antibody titre)",
+          "abbr": "TO",
+          "specimen": "Serum",
+          "dataType": "text",
+          "units": "{titer}",
+          "referenceRange": null,
+          "subType": "Serology",
+          "method": "Agglutination",
+          "loinc": "34372-3",
+          "loincName": "Salmonella typhi O Ab [Titer] in Serum by Agglutination",
+          "loincSource": "https://loinc.org/34372-3",
+          "searchNames": [
+            "Widal TO",
+            "Widal test TO",
+            "Typhoid serology",
+            "Salmonella antibodies"
+          ]
+        },
+        {
+          "id": 1065,
+          "name": "Widal test — TH (Salmonella typhi H antibody titre)",
+          "abbr": "TH",
+          "specimen": "Serum",
+          "dataType": "text",
+          "units": "{titer}",
+          "referenceRange": null,
+          "subType": "Serology",
+          "method": "Agglutination",
+          "loinc": "34371-5",
+          "loincName": "Salmonella typhi H Ab [Titer] in Serum by Agglutination",
+          "loincSource": "https://loinc.org/34371-5",
+          "searchNames": [
+            "Widal TH",
+            "Widal test TH",
+            "Typhoid serology",
+            "Salmonella antibodies"
+          ]
+        },
+        {
+          "id": 1066,
+          "name": "Widal test — AH (Salmonella paratyphi A H antibody titre)",
+          "abbr": "AH",
+          "specimen": "Serum",
+          "dataType": "text",
+          "units": "{titer}",
+          "referenceRange": null,
+          "subType": "Serology",
+          "method": "Agglutination",
+          "loinc": "21511-1",
+          "loincName": "Salmonella paratyphi A H Ab [Titer] in Serum by Agglutination",
+          "loincSource": "https://loinc.org/21511-1",
+          "searchNames": [
+            "Widal AH",
+            "Widal test AH",
+            "Typhoid serology",
+            "Salmonella antibodies"
+          ]
+        },
+        {
+          "id": 1067,
+          "name": "Widal test — BH (Salmonella paratyphi B H antibody titre)",
+          "abbr": "BH",
+          "specimen": "Serum",
+          "dataType": "text",
+          "units": "{titer}",
+          "referenceRange": null,
+          "subType": "Serology",
+          "method": "Agglutination",
+          "loinc": "21513-7",
+          "loincName": "Salmonella paratyphi B H Ab [Titer] in Serum by Agglutination",
+          "loincSource": "https://loinc.org/21513-7",
+          "searchNames": [
+            "Widal BH",
+            "Widal test BH",
+            "Typhoid serology",
+            "Salmonella antibodies"
+          ]
+        }
+      ]
+    }
+  ],
+  "singles": [
+    {
+      "id": 1000,
+      "name": "Creatinine [Mass/volume] in Serum or Plasma",
+      "abbr": "Creat SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2160-0",
+      "loincName": "Creatinine [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Creat SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/2160-0"
+    },
+    {
+      "id": 1001,
+      "name": "Urea nitrogen [Mass/volume] in Serum or Plasma",
+      "abbr": "BUN SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "3094-0",
+      "loincName": "Urea nitrogen [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "BUN SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/3094-0"
+    },
+    {
+      "id": 1002,
+      "name": "Glucose [Mass/volume] in Serum or Plasma",
+      "abbr": "Glucose SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2345-7",
+      "loincName": "Glucose [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Glucose SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/2345-7"
+    },
+    {
+      "id": 1003,
+      "name": "Sodium [Moles/volume] in Serum or Plasma",
+      "abbr": "Sodium SerPl-sCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2951-2",
+      "loincName": "Sodium [Moles/volume] in Serum or Plasma",
+      "searchNames": [
+        "Sodium SerPl-sCnc"
+      ],
+      "loincSource": "https://loinc.org/2951-2"
+    },
+    {
+      "id": 1004,
+      "name": "Potassium [Moles/volume] in Serum or Plasma",
+      "abbr": "Potassium SerPl-sCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2823-3",
+      "loincName": "Potassium [Moles/volume] in Serum or Plasma",
+      "searchNames": [
+        "Potassium SerPl-sCnc"
+      ],
+      "loincSource": "https://loinc.org/2823-3"
+    },
+    {
+      "id": 1005,
+      "name": "Bicarbonate [Moles/volume] in Serum or Plasma",
+      "abbr": "HCO3 SerPl-sCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "1963-8",
+      "loincName": "Bicarbonate [Moles/volume] in Serum or Plasma",
+      "searchNames": [
+        "HCO3 SerPl-sCnc"
+      ],
+      "loincSource": "https://loinc.org/1963-8"
+    },
+    {
+      "id": 1006,
+      "name": "Chloride [Moles/volume] in Serum or Plasma",
+      "abbr": "Chloride SerPl-sCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2075-0",
+      "loincName": "Chloride [Moles/volume] in Serum or Plasma",
+      "searchNames": [
+        "Chloride SerPl-sCnc"
+      ],
+      "loincSource": "https://loinc.org/2075-0"
+    },
+    {
+      "id": 1007,
+      "name": "Calcium [Mass/volume] in Serum or Plasma",
+      "abbr": "Calcium SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "17861-6",
+      "loincName": "Calcium [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Calcium SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/17861-6"
+    },
+    {
+      "id": 1008,
+      "name": "Protein [Mass/volume] in Serum or Plasma",
+      "abbr": "Prot SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "g/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2885-2",
+      "loincName": "Protein [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Prot SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/2885-2"
+    },
+    {
+      "id": 1009,
+      "name": "Albumin [Mass/volume] in Serum or Plasma",
+      "abbr": "Albumin SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "g/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "1751-7",
+      "loincName": "Albumin [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Albumin SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/1751-7"
+    },
+    {
+      "id": 1010,
+      "name": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+      "abbr": "AST SerPl-cCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "1920-8",
+      "loincName": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+      "searchNames": [
+        "AST SerPl-cCnc"
+      ],
+      "loincSource": "https://loinc.org/1920-8"
+    },
+    {
+      "id": 1011,
+      "name": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+      "abbr": "ALT SerPl-cCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "1742-6",
+      "loincName": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+      "searchNames": [
+        "ALT SerPl-cCnc"
+      ],
+      "loincSource": "https://loinc.org/1742-6"
+    },
+    {
+      "id": 1012,
+      "name": "Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma",
+      "abbr": "ALP SerPl-cCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "6768-6",
+      "loincName": "Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma",
+      "searchNames": [
+        "ALP SerPl-cCnc"
+      ],
+      "loincSource": "https://loinc.org/6768-6"
+    },
+    {
+      "id": 1013,
+      "name": "Bilirubin.total [Mass/volume] in Serum or Plasma",
+      "abbr": "Bilirub SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "1975-2",
+      "loincName": "Bilirubin.total [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Bilirub SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/1975-2"
+    },
+    {
+      "id": 1014,
+      "name": "Bilirubin.direct [Mass/volume] in Serum or Plasma",
+      "abbr": "Bilirub Direct SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "1968-7",
+      "loincName": "Bilirubin.direct [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Bilirub Direct SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/1968-7"
+    },
+    {
+      "id": 1015,
+      "name": "Phosphate [Mass/volume] in Serum or Plasma",
+      "abbr": "Phosphate SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2777-1",
+      "loincName": "Phosphate [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Phosphate SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/2777-1"
+    },
+    {
+      "id": 1016,
+      "name": "Triglyceride [Mass/volume] in Serum or Plasma",
+      "abbr": "Trigl SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2571-8",
+      "loincName": "Triglyceride [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Trigl SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/2571-8"
+    },
+    {
+      "id": 1017,
+      "name": "Cholesterol [Mass/volume] in Serum or Plasma",
+      "abbr": "Cholest SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2093-3",
+      "loincName": "Cholesterol [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Cholest SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/2093-3"
+    },
+    {
+      "id": 1018,
+      "name": "Cholesterol in LDL [Mass/volume] in Serum or Plasma by calculation",
+      "abbr": "LDLc SerPl Calc-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "13457-7",
+      "loincName": "Cholesterol in LDL [Mass/volume] in Serum or Plasma by calculation",
+      "method": "Calculated",
+      "searchNames": [
+        "LDLc SerPl Calc-mCnc"
+      ],
+      "loincSource": "https://loinc.org/13457-7"
+    },
+    {
+      "id": 1019,
+      "name": "Cholesterol in HDL [Mass/volume] in Serum or Plasma",
+      "abbr": "HDLc SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mg/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2085-9",
+      "loincName": "Cholesterol in HDL [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "HDLc SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/2085-9"
+    },
+    {
+      "id": 1020,
+      "name": "pH of Arterial blood",
+      "abbr": "pH BldA",
+      "specimen": "Arterial blood",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "options": [
+        "Positive",
+        "Negative"
+      ],
+      "subType": "Biochemistry",
+      "loinc": "2744-1",
+      "loincName": "pH of Arterial blood",
+      "searchNames": [
+        "pH BldA"
+      ],
+      "loincSource": "https://loinc.org/2744-1"
+    },
+    {
+      "id": 1021,
+      "name": "Oxygen [Partial pressure] in Arterial blood",
+      "abbr": "pO2 BldA",
+      "specimen": "Arterial blood",
+      "dataType": "float",
+      "units": "mm[Hg]",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2703-7",
+      "loincName": "Oxygen [Partial pressure] in Arterial blood",
+      "searchNames": [
+        "pO2 BldA"
+      ],
+      "loincSource": "https://loinc.org/2703-7"
+    },
+    {
+      "id": 1022,
+      "name": "Carbon dioxide [Partial pressure] in Arterial blood",
+      "abbr": "pCO2 BldA",
+      "specimen": "Arterial blood",
+      "dataType": "float",
+      "units": "mm[Hg]",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2019-8",
+      "loincName": "Carbon dioxide [Partial pressure] in Arterial blood",
+      "searchNames": [
+        "pCO2 BldA"
+      ],
+      "loincSource": "https://loinc.org/2019-8"
+    },
+    {
+      "id": 1023,
+      "name": "Oxygen saturation in Arterial blood",
+      "abbr": "SaO2 % BldA",
+      "specimen": "Arterial blood",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2708-6",
+      "loincName": "Oxygen saturation in Arterial blood",
+      "searchNames": [
+        "SaO2 % BldA"
+      ],
+      "loincSource": "https://loinc.org/2708-6"
+    },
+    {
+      "id": 1024,
+      "name": "Bicarbonate [Moles/volume] in Arterial blood",
+      "abbr": "HCO3 BldA-sCnc",
+      "specimen": "Arterial blood",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "1960-4",
+      "loincName": "Bicarbonate [Moles/volume] in Arterial blood",
+      "searchNames": [
+        "HCO3 BldA-sCnc"
+      ],
+      "loincSource": "https://loinc.org/1960-4"
+    },
+    {
+      "id": 1025,
+      "name": "Iron [Mass/volume] in Serum or Plasma",
+      "abbr": "Iron SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ug/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2498-4",
+      "loincName": "Iron [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Iron SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/2498-4"
+    },
+    {
+      "id": 1026,
+      "name": "Iron binding capacity [Mass/volume] in Serum or Plasma",
+      "abbr": "TIBC SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ug/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2500-7",
+      "loincName": "Iron binding capacity [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "TIBC SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/2500-7"
+    },
+    {
+      "id": 1027,
+      "name": "Iron saturation [Mass Fraction] in Serum or Plasma",
+      "abbr": "Iron Satn MFr SerPl",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "%",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2502-3",
+      "loincName": "Iron saturation [Mass Fraction] in Serum or Plasma",
+      "searchNames": [
+        "Iron Satn MFr SerPl"
+      ],
+      "loincSource": "https://loinc.org/2502-3"
+    },
+    {
+      "id": 1028,
+      "name": "H. pylori stool antigen (immunoassay)",
+      "abbr": "H pylori",
+      "specimen": "Stool",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "options": [
+        "Positive",
+        "Negative"
+      ],
+      "subType": "Microbiology",
+      "loinc": "17780-8",
+      "loincName": "Helicobacter pylori Ag [Presence] in Stool by Immunoassay",
+      "method": "IA",
+      "searchNames": [
+        "H pylori",
+        "H.Pylori",
+        "Hpylori",
+        "Helicobacter pylori",
+        "HpSA"
+      ],
+      "loincSource": "https://loinc.org/17780-8"
+    },
+    {
+      "id": 1029,
+      "name": "Iron binding capacity.unsaturated [Mass/volume] in Serum or Plasma",
+      "abbr": "UIBC SerPl-mCnc",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ug/dL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2501-5",
+      "loincName": "Iron binding capacity.unsaturated [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "UIBC SerPl-mCnc"
+      ],
+      "loincSource": "https://loinc.org/2501-5"
+    },
+    {
+      "id": 1030,
+      "name": "H. pylori stool antigen (rapid immunoassay)",
+      "abbr": "H pylori",
+      "specimen": "Stool",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "options": [
+        "Positive",
+        "Negative"
+      ],
+      "subType": "Microbiology",
+      "loinc": "80373-4",
+      "loincName": "Helicobacter pylori Ag [Presence] in Stool by Rapid immunoassay",
+      "method": "IA.rapid",
+      "searchNames": [
+        "H pylori",
+        "H.Pylori",
+        "Hpylori",
+        "Helicobacter pylori",
+        "HpSA",
+        "H pylori rapid"
+      ],
+      "loincSource": "https://loinc.org/80373-4"
+    },
+    {
+      "id": 1031,
+      "name": "H. pylori IgG antibody (immunoassay)",
+      "abbr": "H pylori",
+      "specimen": "Serum or plasma",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "options": [
+        "Positive",
+        "Negative"
+      ],
+      "subType": "Serology",
+      "loinc": "17859-0",
+      "loincName": "Helicobacter pylori IgG Ab [Presence] in Serum or Plasma by Immunoassay",
+      "method": "IA",
+      "searchNames": [
+        "H pylori",
+        "H.Pylori",
+        "Hpylori",
+        "Helicobacter pylori",
+        "H pylori serology"
+      ],
+      "loincSource": "https://loinc.org/17859-0"
+    },
+    {
+      "id": 1032,
+      "name": "Vitamin B12",
+      "abbr": "B12",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "pg/mL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2132-9",
+      "loincName": "Cobalamin (Vitamin B12) [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "B12",
+        "Cobalamin"
+      ],
+      "loincSource": "https://loinc.org/2132-9"
+    },
+    {
+      "id": 1033,
+      "name": "Ferritin",
+      "abbr": "Ferritin",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ng/mL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2276-4",
+      "loincName": "Ferritin [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Ferritin"
+      ],
+      "loincSource": "https://loinc.org/2276-4"
+    },
+    {
+      "id": 1034,
+      "name": "H. pylori urea breath test (qualitative)",
+      "abbr": "H pylori",
+      "specimen": "Exhaled breath",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "options": [
+        "Positive",
+        "Negative"
+      ],
+      "subType": "Microbiology",
+      "loinc": "29891-9",
+      "loincName": "Helicobacter pylori [Presence] in Stomach by urea breath test",
+      "searchNames": [
+        "H pylori",
+        "H.Pylori",
+        "Hpylori",
+        "Helicobacter pylori",
+        "UBT",
+        "Urea breath test"
+      ],
+      "loincSource": "https://loinc.org/29891-9"
+    },
+    {
+      "id": 1035,
+      "name": "25-OH Vitamin D (total D2 + D3)",
+      "abbr": "Vitamin D",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ng/mL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "62292-8",
+      "loincName": "25-Hydroxyvitamin D3+25-Hydroxyvitamin D2 [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Vitamin D",
+        "25 hydroxy vitamin D",
+        "25OHD"
+      ],
+      "loincSource": "https://loinc.org/62292-8"
+    },
+    {
+      "id": 1036,
+      "name": "Free T3 (serum/plasma)",
+      "abbr": "FT3",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "pmol/L",
+      "referenceRange": null,
+      "subType": "Endocrinology",
+      "loinc": "14928-6",
+      "loincName": "Triiodothyronine (T3) Free [Moles/volume] in Serum or Plasma",
+      "searchNames": [
+        "FT3",
+        "Free triiodothyronine",
+        "Free T3"
+      ],
+      "loincSource": "https://loinc.org/14928-6"
+    },
+    {
+      "id": 1037,
+      "name": "Free T4 (serum/plasma)",
+      "abbr": "FT4",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "pmol/L",
+      "referenceRange": null,
+      "subType": "Endocrinology",
+      "loinc": "14920-3",
+      "loincName": "Thyroxine (T4) free [Moles/volume] in Serum or Plasma",
+      "searchNames": [
+        "FT4",
+        "Free thyroxine",
+        "Free T4"
+      ],
+      "loincSource": "https://loinc.org/14920-3"
+    },
+    {
+      "id": 1038,
+      "name": "Cardiac troponin I (serum/plasma)",
+      "abbr": "Troponin I",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ng/mL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "10839-9",
+      "loincName": "Troponin I.cardiac [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Troponin I",
+        "TnI",
+        "cTnI"
+      ],
+      "loincSource": "https://loinc.org/10839-9"
+    },
+    {
+      "id": 1039,
+      "name": "Procalcitonin",
+      "abbr": "PCT",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ng/mL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "33959-8",
+      "loincName": "Procalcitonin [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "PCT",
+        "Procalcitonin"
+      ],
+      "loincSource": "https://loinc.org/33959-8"
+    },
+    {
+      "id": 1040,
+      "name": "Beta-hCG (quantitative, serum/plasma)",
+      "abbr": "Beta hCG",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "m[IU]/mL",
+      "referenceRange": null,
+      "subType": "Endocrinology",
+      "loinc": "21198-7",
+      "loincName": "Choriogonadotropin.beta subunit [Units/volume] in Serum or Plasma",
+      "searchNames": [
+        "Beta hCG",
+        "BHCG",
+        "HCG quantitative",
+        "Pregnancy blood test"
+      ],
+      "loincSource": "https://loinc.org/21198-7"
+    },
+    {
+      "id": 1041,
+      "name": "D-dimer (FEU)",
+      "abbr": "D dimer",
+      "specimen": "Platelet-poor plasma",
+      "dataType": "float",
+      "units": "ng{FEU}/mL",
+      "referenceRange": null,
+      "subType": "Haematology",
+      "loinc": "48065-7",
+      "loincName": "Fibrin D-dimer FEU [Mass/volume] in Platelet poor plasma",
+      "method": "FEU",
+      "searchNames": [
+        "D dimer",
+        "D-dimer",
+        "DDimer",
+        "FEU"
+      ],
+      "loincSource": "https://loinc.org/48065-7"
+    },
+    {
+      "id": 1042,
+      "name": "High-sensitivity cardiac troponin T",
+      "abbr": "hsTnT",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ng/L",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "67151-1",
+      "loincName": "Troponin T.cardiac [Mass/volume] in Serum or Plasma by High sensitivity method",
+      "method": "High sensitivity",
+      "searchNames": [
+        "hsTnT",
+        "hs-TnT",
+        "Troponin T high sensitivity"
+      ],
+      "loincSource": "https://loinc.org/67151-1"
+    },
+    {
+      "id": 1043,
+      "name": "High-sensitivity cardiac troponin I",
+      "abbr": "hsTnI",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ng/L",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "89579-7",
+      "loincName": "Troponin I.cardiac [Mass/volume] in Serum or Plasma by High sensitivity method",
+      "method": "High sensitivity",
+      "searchNames": [
+        "hsTnI",
+        "hs-TnI",
+        "Troponin I high sensitivity"
+      ],
+      "loincSource": "https://loinc.org/89579-7"
+    },
+    {
+      "id": 1044,
+      "name": "Cardiac troponin T (serum/plasma)",
+      "abbr": "Troponin T",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ug/L",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "6598-7",
+      "loincName": "Troponin T.cardiac [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Troponin T",
+        "TnT",
+        "cTnT"
+      ],
+      "loincSource": "https://loinc.org/6598-7"
+    },
+    {
+      "id": 1045,
+      "name": "NT-proBNP",
+      "abbr": "NT pro BNP",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "pg/mL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "33762-6",
+      "loincName": "Natriuretic peptide.B prohormone N-Terminal [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "NT pro BNP",
+        "NTproBNP"
+      ],
+      "loincSource": "https://loinc.org/33762-6"
+    },
+    {
+      "id": 1046,
+      "name": "Urine microalbumin/creatinine ratio",
+      "abbr": "ACR",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "mg/g{creat}",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "14959-1",
+      "loincName": "Microalbumin/Creatinine [Mass Ratio] in Urine",
+      "method": "Detection limit <= 20 mg/L",
+      "searchNames": [
+        "ACR",
+        "UACR",
+        "Urine ACR",
+        "Microalbumin creatinine ratio"
+      ],
+      "loincSource": "https://loinc.org/14959-1"
+    },
+    {
+      "id": 1047,
+      "name": "Urine protein/creatinine ratio",
+      "abbr": "PCR urine",
+      "specimen": "Urine",
+      "dataType": "float",
+      "units": "g/mmol{creat}",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "34366-5",
+      "loincName": "Protein/Creatinine [Ratio] in Urine",
+      "searchNames": [
+        "PCR urine",
+        "UPCR",
+        "Urine PCR",
+        "Protein creatinine ratio"
+      ],
+      "loincSource": "https://loinc.org/34366-5"
+    },
+    {
+      "id": 1048,
+      "name": "BNP (B-type natriuretic peptide)",
+      "abbr": "BNP",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "pg/mL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "30934-4",
+      "loincName": "Natriuretic peptide B [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "BNP"
+      ],
+      "loincSource": "https://loinc.org/30934-4"
+    },
+    {
+      "id": 1049,
+      "name": "eGFR (CKD-EPI 2021, creatinine)",
+      "abbr": "eGFR",
+      "specimen": "Serum",
+      "dataType": "float",
+      "units": "mL/min/{1.73_m2}",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "98979-8",
+      "loincName": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI 2021)/1.73 sq M",
+      "method": "Creatinine-based formula (CKD-EPI 2021)/1.73 sq M",
+      "searchNames": [
+        "eGFR",
+        "Estimated glomerular filtration rate",
+        "CKD EPI 2021"
+      ],
+      "loincSource": "https://loinc.org/98979-8"
+    },
+    {
+      "id": 1050,
+      "name": "Beta-hydroxybutyrate (serum/plasma)",
+      "abbr": "Ketones blood",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "mmol/L",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "6873-4",
+      "loincName": "Beta hydroxybutyrate [Moles/volume] in Serum or Plasma",
+      "searchNames": [
+        "Ketones blood",
+        "BHB",
+        "Blood ketones",
+        "Beta hydroxybutyrate"
+      ],
+      "loincSource": "https://loinc.org/6873-4"
+    },
+    {
+      "id": 1051,
+      "name": "Cortisol (serum/plasma)",
+      "abbr": "Cortisol",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ug/dL",
+      "referenceRange": null,
+      "subType": "Endocrinology",
+      "loinc": "2143-6",
+      "loincName": "Cortisol [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Cortisol"
+      ],
+      "loincSource": "https://loinc.org/2143-6"
+    },
+    {
+      "id": 1052,
+      "name": "Chlamydia trachomatis DNA NAAT (urine)",
+      "abbr": "Chlamydia",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "options": [
+        "Positive",
+        "Negative"
+      ],
+      "subType": "Microbiology",
+      "loinc": "6357-8",
+      "loincName": "Chlamydia trachomatis DNA [Presence] in Urine by NAA with probe detection",
+      "method": "Probe.amp.tar",
+      "searchNames": [
+        "Chlamydia",
+        "CT NAAT",
+        "Chlamydia PCR"
+      ],
+      "loincSource": "https://loinc.org/6357-8"
+    },
+    {
+      "id": 1053,
+      "name": "Group A streptococcus throat antigen (rapid immunoassay)",
+      "abbr": "Strep A",
+      "specimen": "Throat swab",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "options": [
+        "Positive",
+        "Negative"
+      ],
+      "subType": "Microbiology",
+      "loinc": "78012-2",
+      "loincName": "Streptococcus pyogenes Ag [Presence] in Throat by Rapid immunoassay",
+      "method": "IA.rapid",
+      "searchNames": [
+        "Strep A",
+        "Group A strep",
+        "Strep throat antigen"
+      ],
+      "loincSource": "https://loinc.org/78012-2"
+    },
+    {
+      "id": 1054,
+      "name": "Neisseria gonorrhoeae DNA NAAT (urine)",
+      "abbr": "Gonorrhoea",
+      "specimen": "Urine",
+      "dataType": "enum",
+      "units": null,
+      "referenceRange": null,
+      "options": [
+        "Positive",
+        "Negative"
+      ],
+      "subType": "Microbiology",
+      "loinc": "21416-3",
+      "loincName": "Neisseria gonorrhoeae DNA [Presence] in Urine by NAA with probe detection",
+      "method": "Probe.amp.tar",
+      "searchNames": [
+        "Gonorrhoea",
+        "Gonorrhea",
+        "GC NAAT",
+        "Gonococcal PCR"
+      ],
+      "loincSource": "https://loinc.org/21416-3"
+    },
+    {
+      "id": 1055,
+      "name": "Alpha-fetoprotein (AFP, serum/plasma)",
+      "abbr": "AFP",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ng/mL",
+      "referenceRange": null,
+      "subType": "Tumour markers",
+      "loinc": "1834-1",
+      "loincName": "Alpha-1-Fetoprotein [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "AFP",
+        "Alpha fetoprotein"
+      ],
+      "loincSource": "https://loinc.org/1834-1"
+    },
+    {
+      "id": 1056,
+      "name": "Cancer antigen 125 (CA-125)",
+      "abbr": "CA125",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "[arb'U]/mL",
+      "referenceRange": null,
+      "subType": "Tumour markers",
+      "loinc": "10334-1",
+      "loincName": "Cancer Ag 125 [Units/volume] in Serum or Plasma",
+      "searchNames": [
+        "CA125",
+        "CA 125"
+      ],
+      "loincSource": "https://loinc.org/10334-1"
+    },
+    {
+      "id": 1057,
+      "name": "Cancer antigen 15-3 (CA 15-3)",
+      "abbr": "CA153",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "[arb'U]/mL",
+      "referenceRange": null,
+      "subType": "Tumour markers",
+      "loinc": "6875-9",
+      "loincName": "Cancer Ag 15-3 [Units/volume] in Serum or Plasma",
+      "searchNames": [
+        "CA153",
+        "CA 15 3"
+      ],
+      "loincSource": "https://loinc.org/6875-9"
+    },
+    {
+      "id": 1058,
+      "name": "Cancer antigen 19-9 (CA 19-9)",
+      "abbr": "CA199",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "[arb'U]/mL",
+      "referenceRange": null,
+      "subType": "Tumour markers",
+      "loinc": "24108-3",
+      "loincName": "Cancer Ag 19-9 [Units/volume] in Serum or Plasma",
+      "searchNames": [
+        "CA199",
+        "CA 19 9"
+      ],
+      "loincSource": "https://loinc.org/24108-3"
+    },
+    {
+      "id": 1059,
+      "name": "Myoglobin (serum/plasma)",
+      "abbr": "Myoglobin",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ng/mL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2639-3",
+      "loincName": "Myoglobin [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "Myoglobin"
+      ],
+      "loincSource": "https://loinc.org/2639-3"
+    },
+    {
+      "id": 1060,
+      "name": "CK-MB (mass, serum/plasma)",
+      "abbr": "CKMB",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ng/mL",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "13969-1",
+      "loincName": "Creatine kinase.MB [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "CKMB",
+        "CK MB",
+        "Creatine kinase MB"
+      ],
+      "loincSource": "https://loinc.org/13969-1"
+    },
+    {
+      "id": 1061,
+      "name": "Creatine kinase (CK, serum/plasma)",
+      "abbr": "CK",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "U/L",
+      "referenceRange": null,
+      "subType": "Biochemistry",
+      "loinc": "2157-6",
+      "loincName": "Creatine kinase [Enzymatic activity/volume] in Serum or Plasma",
+      "searchNames": [
+        "CK",
+        "CPK",
+        "Creatine kinase"
+      ],
+      "loincSource": "https://loinc.org/2157-6"
+    },
+    {
+      "id": 1062,
+      "name": "Carcinoembryonic antigen (CEA, serum/plasma)",
+      "abbr": "CEA",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ng/mL",
+      "referenceRange": null,
+      "subType": "Tumour markers",
+      "loinc": "2039-6",
+      "loincName": "Carcinoembryonic Ag [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "CEA",
+        "Carcino embryonic antigen"
+      ],
+      "loincSource": "https://loinc.org/2039-6"
+    },
+    {
+      "id": 1063,
+      "name": "Total prostate-specific antigen (PSA, serum/plasma)",
+      "abbr": "PSA",
+      "specimen": "Serum or plasma",
+      "dataType": "float",
+      "units": "ng/mL",
+      "referenceRange": null,
+      "subType": "Tumour markers",
+      "loinc": "2857-1",
+      "loincName": "Prostate specific Ag [Mass/volume] in Serum or Plasma",
+      "searchNames": [
+        "PSA",
+        "Prostate specific antigen"
+      ],
+      "loincSource": "https://loinc.org/2857-1"
+    },
+    {
+      "id": 1064,
+      "name": "Widal test — TO (Salmonella typhi O antibody titre)",
+      "abbr": "TO",
+      "specimen": "Serum",
+      "dataType": "text",
+      "units": "{titer}",
+      "referenceRange": null,
+      "subType": "Serology",
+      "method": "Agglutination",
+      "loinc": "34372-3",
+      "loincName": "Salmonella typhi O Ab [Titer] in Serum by Agglutination",
+      "loincSource": "https://loinc.org/34372-3",
+      "searchNames": [
+        "Widal TO",
+        "Widal test TO",
+        "Typhoid serology",
+        "Salmonella antibodies"
+      ]
+    },
+    {
+      "id": 1065,
+      "name": "Widal test — TH (Salmonella typhi H antibody titre)",
+      "abbr": "TH",
+      "specimen": "Serum",
+      "dataType": "text",
+      "units": "{titer}",
+      "referenceRange": null,
+      "subType": "Serology",
+      "method": "Agglutination",
+      "loinc": "34371-5",
+      "loincName": "Salmonella typhi H Ab [Titer] in Serum by Agglutination",
+      "loincSource": "https://loinc.org/34371-5",
+      "searchNames": [
+        "Widal TH",
+        "Widal test TH",
+        "Typhoid serology",
+        "Salmonella antibodies"
+      ]
+    },
+    {
+      "id": 1066,
+      "name": "Widal test — AH (Salmonella paratyphi A H antibody titre)",
+      "abbr": "AH",
+      "specimen": "Serum",
+      "dataType": "text",
+      "units": "{titer}",
+      "referenceRange": null,
+      "subType": "Serology",
+      "method": "Agglutination",
+      "loinc": "21511-1",
+      "loincName": "Salmonella paratyphi A H Ab [Titer] in Serum by Agglutination",
+      "loincSource": "https://loinc.org/21511-1",
+      "searchNames": [
+        "Widal AH",
+        "Widal test AH",
+        "Typhoid serology",
+        "Salmonella antibodies"
+      ]
+    },
+    {
+      "id": 1067,
+      "name": "Widal test — BH (Salmonella paratyphi B H antibody titre)",
+      "abbr": "BH",
+      "specimen": "Serum",
+      "dataType": "text",
+      "units": "{titer}",
+      "referenceRange": null,
+      "subType": "Serology",
+      "method": "Agglutination",
+      "loinc": "21513-7",
+      "loincName": "Salmonella paratyphi B H Ab [Titer] in Serum by Agglutination",
+      "loincSource": "https://loinc.org/21513-7",
+      "searchNames": [
+        "Widal BH",
+        "Widal test BH",
+        "Typhoid serology",
+        "Salmonella antibodies"
+      ]
+    }
+  ]
+}

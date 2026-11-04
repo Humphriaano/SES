@@ -1,15 +1,17 @@
 import { useState, useEffect, useRef, useCallback, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/client';
+import AuthLayout from '../components/auth/AuthLayout';
+import { formatRegistrationPhone, maxPhoneDigits, normalizeRegistrationPhone, validateRegistrationPhone } from '../lib/registrationPhone';
 import {
-  HeartPulse, Mail, Lock, Eye, EyeOff, User, Phone,
-  MapPin, ChevronDown, Check, X, AlertCircle, CheckCircle,
+  Eye, EyeOff, ChevronDown, Check, X, AlertCircle, CheckCircle,
 } from 'lucide-react';
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 const DESIGNATIONS = [
   'Medical Doctor',
+  'Surgeon',
   'Medical Licentiate Practitioner',
   'Clinical Officer General',
   'Registered Nurse',
@@ -29,6 +31,11 @@ const DESIGNATIONS = [
   'Record Clerk',
   'Counsellor',
   'Administration',
+  'Billing Clerk',
+  'Cashier',
+  'Billing Officer',
+  'Accounts Assistant',
+  'Accountant',
   'Dental Assistant',
   'Health Information Officer',
   'Health Information Technician',
@@ -126,13 +133,21 @@ const COUNTRY_CODES = [
 
 // ── Searchable dropdown ───────────────────────────────────────────────────────
 
+const registrationFieldStyle: React.CSSProperties = {
+  width: '100%', minWidth: 0, height: 44, padding: '0 14px',
+  border: '1px solid var(--border)', borderRadius: 14,
+  background: 'var(--bg-surface)', color: 'var(--text-heading)',
+  font: 'inherit', fontSize: 14, fontWeight: 400,
+  outline: 'none', boxSizing: 'border-box',
+};
+
 function SearchableSelect({
-  value, onChange, options, placeholder, error,
+  id, value, onChange, options, error,
 }: {
+  id: string;
   value: string;
   onChange: (v: string) => void;
   options: string[];
-  placeholder: string;
   error?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -152,17 +167,19 @@ function SearchableSelect({
   return (
     <div ref={ref} style={{ position: 'relative' }}>
       <button
+        id={id}
         type="button"
+        aria-expanded={open}
         onClick={() => { setOpen(o => !o); setSearch(''); }}
         style={{
+          ...registrationFieldStyle,
           width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '0 12px', height: 40, border: `1px solid ${error ? 'var(--badge-red-text)' : 'var(--border-input)'}`,
-          borderRadius: 8, background: 'var(--bg-input)', cursor: 'pointer', fontSize: 13.5,
-          color: value ? 'var(--text-heading)' : 'var(--text-subtle)', textAlign: 'left',
+          borderColor: error ? 'var(--badge-red-text)' : 'var(--border)',
+          cursor: 'pointer', textAlign: 'left',
         }}
       >
         <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {value || placeholder}
+          {value}
         </span>
         <ChevronDown size={14} color="var(--text-subtle)" style={{ flexShrink: 0, marginLeft: 4 }} />
       </button>
@@ -170,7 +187,7 @@ function SearchableSelect({
       {open && (
         <div style={{
           position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100,
-          background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: 8,
+          background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: 22,
           boxShadow: '0 8px 24px rgba(0,0,0,0.18)', marginTop: 4, overflow: 'hidden',
         }}>
           <div style={{ padding: '8px 8px 4px' }}>
@@ -181,7 +198,7 @@ function SearchableSelect({
               placeholder="Search…"
               style={{
                 width: '100%', padding: '6px 10px', border: '1px solid var(--border-input)',
-                borderRadius: 6, fontSize: 13, outline: 'none', boxSizing: 'border-box',
+                borderRadius: 14, fontSize: 13, outline: 'none', boxSizing: 'border-box',
                 background: 'var(--bg-input)', color: 'var(--text-heading)',
               }}
             />
@@ -237,11 +254,12 @@ function CountryCodePicker({ value, onChange }: { value: string; onChange: (v: s
     <div ref={ref} style={{ position: 'relative', flexShrink: 0 }}>
       <button
         type="button"
+        aria-label="Country code"
         onClick={() => { setOpen(o => !o); setSearch(''); }}
         style={{
           display: 'flex', alignItems: 'center', gap: 4, padding: '0 10px',
-          height: 40, border: '1px solid var(--border-input)', borderRadius: '8px 0 0 8px',
-          background: 'var(--bg-surface)', cursor: 'pointer', fontSize: 13, whiteSpace: 'nowrap',
+          height: 42, border: 0, borderRight: '1px solid var(--border)', borderRadius: '14px 0 0 14px',
+          background: 'transparent', cursor: 'pointer', fontSize: 14, whiteSpace: 'nowrap',
         }}
       >
         <span>{selected.flag}</span>
@@ -251,7 +269,7 @@ function CountryCodePicker({ value, onChange }: { value: string; onChange: (v: s
       {open && (
         <div style={{
           position: 'absolute', top: '100%', left: 0, zIndex: 100, width: 220,
-          background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: 8,
+          background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: 22,
           boxShadow: '0 8px 24px rgba(0,0,0,0.18)', marginTop: 4, overflow: 'hidden',
         }}>
           <div style={{ padding: '8px 8px 4px' }}>
@@ -262,7 +280,7 @@ function CountryCodePicker({ value, onChange }: { value: string; onChange: (v: s
               placeholder="Search country…"
               style={{
                 width: '100%', padding: '6px 10px', border: '1px solid var(--border-input)',
-                borderRadius: 6, fontSize: 13, outline: 'none', boxSizing: 'border-box',
+                borderRadius: 14, fontSize: 13, outline: 'none', boxSizing: 'border-box',
                 background: 'var(--bg-input)', color: 'var(--text-heading)',
               }}
             />
@@ -295,30 +313,23 @@ function CountryCodePicker({ value, onChange }: { value: string; onChange: (v: s
 
 // ── Field helpers ─────────────────────────────────────────────────────────────
 
-function FieldLabel({ children }: { children: React.ReactNode }) {
+function FieldLabel({ children, htmlFor }: { children: React.ReactNode; htmlFor: string }) {
   return (
-    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-body)', marginBottom: 6 }}>
+    <label htmlFor={htmlFor} style={{ display: 'block', fontSize: 12, fontWeight: 500, color: 'var(--text-muted)', marginBottom: 6 }}>
       {children}
     </label>
   );
 }
 
-function FieldInput({ error, icon, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { error?: string; icon?: React.ReactNode }) {
+function FieldInput({ error, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { error?: string }) {
   return (
     <div>
       <div style={{ position: 'relative' }}>
-        {icon && (
-          <span style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-subtle)', display: 'flex', alignItems: 'center' }}>
-            {icon}
-          </span>
-        )}
         <input
           {...props}
           style={{
-            width: '100%', height: 40, padding: icon ? '0 12px 0 38px' : '0 12px',
-            border: `1px solid ${error ? 'var(--badge-red-text)' : 'var(--border-input)'}`, borderRadius: 8,
-            fontSize: 13.5, color: 'var(--text-heading)', outline: 'none', boxSizing: 'border-box',
-            background: props.disabled ? 'var(--bg-surface)' : 'var(--bg-input)',
+            ...registrationFieldStyle,
+            borderColor: error ? 'var(--badge-red-text)' : 'var(--border)',
             ...props.style,
           }}
         />
@@ -331,13 +342,20 @@ function FieldInput({ error, icon, ...props }: React.InputHTMLAttributes<HTMLInp
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
     <div style={{
-      fontSize: 11, fontWeight: 700, color: 'var(--text-subtle)', textTransform: 'uppercase',
+      fontSize: 11, fontWeight: 500, color: 'var(--text-subtle)', textTransform: 'uppercase',
       letterSpacing: '0.07em', marginBottom: 14, paddingBottom: 8,
       borderBottom: '1px solid var(--border-light)',
     }}>
       {children}
     </div>
   );
+}
+
+const NRC_RE = /^\d{6}\/\d{2}\/\d$/;
+
+function formatNrc(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 9);
+  return [digits.slice(0, 6), digits.slice(6, 8), digits.slice(8)].filter(Boolean).join('/');
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -398,7 +416,9 @@ export default function SignupPage() {
     if (!form.sex) e.sex = 'Sex is required';
     if (!form.designation) e.designation = 'Designation is required';
     if (!form.hasNoNrc && !form.nrc.trim()) e.nrc = 'NRC is required (or check "I do not have NRC")';
-    if (!form.cellphone.trim()) e.cellphone = 'Phone number is required';
+    else if (!form.hasNoNrc && !NRC_RE.test(form.nrc)) e.nrc = 'NRC must be 9 digits: 123456/78/9';
+    const phone = validateRegistrationPhone(form.countryCode, form.cellphone);
+    if (phone.error) e.cellphone = phone.error;
     if (!form.email.trim()) e.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Invalid email address';
     if (!form.username.trim()) e.username = 'Username is required';
@@ -427,7 +447,7 @@ export default function SignupPage() {
         hasNoNrc: form.hasNoNrc,
         address: form.address.trim() || null,
         countryCode: form.countryCode,
-        cellphone: form.cellphone.trim(),
+        cellphone: normalizeRegistrationPhone(form.cellphone, form.countryCode),
         email: form.email.trim().toLowerCase(),
         username: form.username.trim().toLowerCase(),
         password: form.password,
@@ -436,6 +456,8 @@ export default function SignupPage() {
     } catch (err: any) {
       const data = err?.response?.data;
       if (data?.field === 'email') setErrors(prev => ({ ...prev, email: data.error }));
+      else if (data?.field === 'nrc') setErrors(prev => ({ ...prev, nrc: data.error }));
+      else if (data?.field === 'cellphone' || data?.field === 'countryCode') setErrors(prev => ({ ...prev, cellphone: data.error }));
       else if (data?.field === 'username') setErrors(prev => ({ ...prev, username: data.error }));
       else setErrors(prev => ({ ...prev, _global: data?.error ?? 'Registration failed. Please try again.' }));
     } finally {
@@ -446,50 +468,7 @@ export default function SignupPage() {
   // ── Layout shell ─────────────────────────────────────────────────────────────
 
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex',
-      background: 'linear-gradient(135deg, #252B2D 0%, #3D1F1F 50%, #252B2D 100%)',
-    }}>
-      {/* Left branding panel */}
-      <div style={{
-        flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        alignItems: 'center', padding: 48, color: '#fff',
-      }}>
-        <div style={{
-          width: 64, height: 64, borderRadius: 16, background: 'var(--ses-red)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 8px 24px rgba(215,29,36,0.4)', marginBottom: 24,
-        }}>
-          <HeartPulse size={32} color="#fff" />
-        </div>
-        <h1 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.5px', marginBottom: 8 }}>SES EHR</h1>
-        <p style={{ fontSize: 14, color: '#94a3b8', textAlign: 'center', maxWidth: 280, lineHeight: 1.6 }}>
-          Specialty Emergency Services<br />Chronic Disease Management System
-        </p>
-        <div style={{ marginTop: 48, display: 'flex', flexDirection: 'column', gap: 16, width: '100%', maxWidth: 280 }}>
-          {[
-            { label: 'Longitudinal patient care', desc: 'Track disease progression over time' },
-            { label: 'Integrated workflows', desc: 'Labs, pharmacy, billing in one place' },
-            { label: 'ICD-11 coded diagnoses', desc: 'Structured clinical documentation' },
-          ].map(f => (
-            <div key={f.label} style={{ display: 'flex', gap: 12 }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--ses-red)', flexShrink: 0, marginTop: 5 }} />
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#e2e8f0' }}>{f.label}</div>
-                <div style={{ fontSize: 12, color: '#64748b', marginTop: 1 }}>{f.desc}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Right form panel */}
-      <div style={{
-        width: 500, background: 'var(--bg-card)', display: 'flex', flexDirection: 'column',
-        overflowY: 'auto', boxShadow: '-4px 0 40px rgba(0,0,0,0.3)',
-      }}>
-        <div style={{ padding: '40px 40px 48px', flex: 1 }}>
-
+    <AuthLayout wide>
           {submitted ? (
             // ── Success state ──────────────────────────────────────────────
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 400, textAlign: 'center' }}>
@@ -499,7 +478,7 @@ export default function SignupPage() {
               }}>
                 <CheckCircle size={32} color="#16a34a" />
               </div>
-              <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-heading)', marginBottom: 10 }}>
+              <h2 style={{ fontSize: 20, fontWeight: 500, color: 'var(--text-heading)', marginBottom: 10 }}>
                 Account Request Submitted
               </h2>
               <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.7, maxWidth: 340, marginBottom: 28 }}>
@@ -511,7 +490,7 @@ export default function SignupPage() {
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 6,
                   padding: '10px 24px', background: 'var(--ses-red)', color: '#fff',
-                  borderRadius: 8, fontSize: 13.5, fontWeight: 600, textDecoration: 'none',
+                  borderRadius: 12, fontSize: 13.5, fontWeight: 500, textDecoration: 'none',
                 }}
               >
                 Back to Login
@@ -520,14 +499,14 @@ export default function SignupPage() {
           ) : (
             <>
               <div style={{ marginBottom: 28 }}>
-                <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-heading)', marginBottom: 6 }}>Create Account</h2>
-                <p style={{ fontSize: 13.5, color: 'var(--text-subtle)' }}>Complete the form to request access</p>
+                <h2 className="sl-form-title">Create account</h2>
+                <p className="sl-form-intro">Request a staff account. An administrator will review your details before granting access.</p>
               </div>
 
               {errors._global && (
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px',
-                  background: 'var(--badge-red-bg)', border: '1px solid var(--border)', borderRadius: 8, marginBottom: 20,
+                  background: 'var(--badge-red-bg)', border: '1px solid var(--border)', borderRadius: 12, marginBottom: 20,
                   fontSize: 13, color: 'var(--badge-red-text)',
                 }}>
                   <AlertCircle size={15} style={{ flexShrink: 0 }} />
@@ -535,38 +514,38 @@ export default function SignupPage() {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              <form onSubmit={handleSubmit} className="sl-signup">
 
                 {/* ── Personal Info ──────────────────────────────────────── */}
                 <SectionHeader>Personal Information</SectionHeader>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                <div className="sl-signup-grid">
                   <div>
-                    <FieldLabel>First Name <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
+                    <FieldLabel htmlFor="signup-first-name">First Name <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
                     <FieldInput
+                      id="signup-first-name"
                       value={form.firstName}
                       onChange={e => set('firstName', e.target.value)}
-                      placeholder="John"
                       error={errors.firstName}
-                      icon={<User size={14} />}
                     />
                   </div>
                   <div>
-                    <FieldLabel>Surname <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
+                    <FieldLabel htmlFor="signup-surname">Surname <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
                     <FieldInput
+                      id="signup-surname"
                       value={form.surname}
                       onChange={e => set('surname', e.target.value)}
-                      placeholder="Doe"
                       error={errors.surname}
                     />
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                <div className="sl-signup-grid">
                   <div>
-                    <FieldLabel>Date of Birth <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
+                    <FieldLabel htmlFor="signup-dob">Date of Birth <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
                     <FieldInput
                       type="date"
+                      id="signup-dob"
                       value={form.dateOfBirth}
                       onChange={e => set('dateOfBirth', e.target.value)}
                       max={new Date().toISOString().split('T')[0]}
@@ -574,18 +553,18 @@ export default function SignupPage() {
                     />
                   </div>
                   <div>
-                    <FieldLabel>Sex <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
+                    <FieldLabel htmlFor="signup-sex">Sex <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
                     <select
+                      id="signup-sex"
                       value={form.sex}
                       onChange={e => set('sex', e.target.value)}
                       style={{
-                        width: '100%', height: 40, padding: '0 12px',
-                        border: `1px solid ${errors.sex ? 'var(--badge-red-text)' : 'var(--border-input)'}`,
-                        borderRadius: 8, fontSize: 13.5, color: form.sex ? 'var(--text-heading)' : 'var(--text-subtle)',
-                        background: 'var(--bg-input)', outline: 'none', cursor: 'pointer',
+                        ...registrationFieldStyle,
+                        borderColor: errors.sex ? 'var(--badge-red-text)' : 'var(--border)',
+                        cursor: 'pointer',
                       }}
                     >
-                      <option value="">Select…</option>
+                      <option value="" />
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
                     </select>
@@ -594,12 +573,12 @@ export default function SignupPage() {
                 </div>
 
                 <div>
-                  <FieldLabel>Designation <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
+                  <FieldLabel htmlFor="signup-designation">Designation <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
                   <SearchableSelect
+                    id="signup-designation"
                     value={form.designation}
                     onChange={v => set('designation', v)}
                     options={DESIGNATIONS}
-                    placeholder="Search your designation…"
                     error={errors.designation}
                   />
                 </div>
@@ -608,11 +587,13 @@ export default function SignupPage() {
                 <SectionHeader>Contact Information</SectionHeader>
 
                 <div>
-                  <FieldLabel>NRC Number</FieldLabel>
+                  <FieldLabel htmlFor="signup-nrc">NRC Number</FieldLabel>
                   <FieldInput
+                    id="signup-nrc"
                     value={form.nrc}
-                    onChange={e => set('nrc', e.target.value)}
-                    placeholder="000000/00/0"
+                    onChange={e => set('nrc', formatNrc(e.target.value))}
+                    inputMode="numeric"
+                    maxLength={11}
                     disabled={form.hasNoNrc}
                     error={errors.nrc}
                   />
@@ -631,35 +612,41 @@ export default function SignupPage() {
                 </div>
 
                 <div>
-                  <FieldLabel>Address</FieldLabel>
+                  <FieldLabel htmlFor="signup-address">Address</FieldLabel>
                   <FieldInput
+                    id="signup-address"
                     value={form.address}
                     onChange={e => set('address', e.target.value)}
-                    placeholder="Street, City"
-                    icon={<MapPin size={14} />}
                   />
                 </div>
 
                 <div>
-                  <FieldLabel>Phone Number <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
-                  <div style={{ display: 'flex' }}>
+                  <FieldLabel htmlFor="signup-phone">Phone Number <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
+                  <div className="su-phone" style={{ ...registrationFieldStyle, padding: 0, display: 'flex', borderColor: errors.cellphone ? 'var(--badge-red-text)' : 'var(--border)' }}>
                     <CountryCodePicker
                       value={form.countryCode}
-                      onChange={v => set('countryCode', v)}
+                      onChange={v => { set('countryCode', v); set('cellphone', formatRegistrationPhone(form.cellphone, v)); }}
                     />
-                    <div style={{ flex: 1, position: 'relative' }}>
-                      <Phone size={14} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-subtle)' }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
                       <input
                         type="tel"
+                        id="signup-phone"
                         value={form.cellphone}
-                        onChange={e => set('cellphone', e.target.value)}
-                        placeholder="0977 000000"
+                        inputMode="numeric"
+                        maxLength={maxPhoneDigits(form.countryCode)}
+                        autoComplete="tel-national"
+                        onChange={e => set('cellphone', formatRegistrationPhone(e.target.value, form.countryCode))}
+                        onPaste={e => {
+                          e.preventDefault();
+                          const input = e.currentTarget;
+                          const start = input.selectionStart ?? input.value.length;
+                          const end = input.selectionEnd ?? input.value.length;
+                          const pasted = input.value.slice(0, start) + e.clipboardData.getData('text') + input.value.slice(end);
+                          set('cellphone', formatRegistrationPhone(pasted, form.countryCode));
+                        }}
                         style={{
-                          width: '100%', height: 40, paddingLeft: 38, paddingRight: 12,
-                          border: `1px solid ${errors.cellphone ? 'var(--badge-red-text)' : 'var(--border-input)'}`,
-                          borderLeft: 'none', borderRadius: '0 8px 8px 0', fontSize: 13.5,
-                          color: 'var(--text-heading)', outline: 'none', boxSizing: 'border-box',
-                          background: 'var(--bg-input)',
+                          ...registrationFieldStyle, height: 42, border: 0,
+                          borderRadius: '0 14px 14px 0', background: 'transparent',
                         }}
                       />
                     </div>
@@ -671,30 +658,26 @@ export default function SignupPage() {
                 <SectionHeader>Login Information</SectionHeader>
 
                 <div>
-                  <FieldLabel>Email Address <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
+                  <FieldLabel htmlFor="signup-email">Email Address <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
                   <FieldInput
                     type="email"
+                    id="signup-email"
                     value={form.email}
                     onChange={e => set('email', e.target.value)}
-                    placeholder="you@ses.zm"
-                    icon={<Mail size={14} />}
                     error={errors.email}
                   />
                 </div>
 
                 <div>
-                  <FieldLabel>Username <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
+                  <FieldLabel htmlFor="signup-username">Username <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
                   <div style={{ position: 'relative' }}>
-                    <User size={14} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-subtle)' }} />
                     <input
+                      id="signup-username"
                       value={form.username}
                       onChange={e => set('username', e.target.value.toLowerCase().replace(/[^a-z0-9._-]/g, ''))}
-                      placeholder="john.doe"
                       style={{
-                        width: '100%', height: 40, paddingLeft: 38, paddingRight: 36,
-                        border: `1px solid ${errors.username || usernameStatus === 'taken' ? 'var(--badge-red-text)' : usernameStatus === 'available' ? 'var(--badge-green-text)' : 'var(--border-input)'}`,
-                        borderRadius: 8, fontSize: 13.5, color: 'var(--text-heading)', outline: 'none', boxSizing: 'border-box',
-                        background: 'var(--bg-input)',
+                        ...registrationFieldStyle, paddingRight: 40,
+                        borderColor: errors.username || usernameStatus === 'taken' ? 'var(--badge-red-text)' : usernameStatus === 'available' ? 'var(--badge-green-text)' : 'var(--border)',
                       }}
                     />
                     <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', display: 'flex' }}>
@@ -717,25 +700,23 @@ export default function SignupPage() {
                 </div>
 
                 <div>
-                  <FieldLabel>Password <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
+                  <FieldLabel htmlFor="signup-password">Password <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
                   <div style={{ position: 'relative' }}>
-                    <Lock size={14} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-subtle)' }} />
                     <input
                       type={showPassword ? 'text' : 'password'}
+                      id="signup-password"
                       value={form.password}
                       onChange={e => set('password', e.target.value)}
-                      placeholder="••••••••"
                       style={{
-                        width: '100%', height: 40, paddingLeft: 38, paddingRight: 40,
-                        border: `1px solid ${errors.password ? 'var(--badge-red-text)' : 'var(--border-input)'}`,
-                        borderRadius: 8, fontSize: 13.5, color: 'var(--text-heading)', outline: 'none', boxSizing: 'border-box',
-                        background: 'var(--bg-input)',
+                        ...registrationFieldStyle, paddingRight: 46,
+                        borderColor: errors.password ? 'var(--badge-red-text)' : 'var(--border)',
                       }}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(p => !p)}
-                      style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: 'var(--text-subtle)', padding: 0 }}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      className="sl-eye"
                     >
                       {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                     </button>
@@ -744,25 +725,23 @@ export default function SignupPage() {
                 </div>
 
                 <div>
-                  <FieldLabel>Confirm Password <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
+                  <FieldLabel htmlFor="signup-confirm-password">Confirm Password <span style={{ color: 'var(--badge-red-text)' }}>*</span></FieldLabel>
                   <div style={{ position: 'relative' }}>
-                    <Lock size={14} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-subtle)' }} />
                     <input
                       type={showConfirm ? 'text' : 'password'}
+                      id="signup-confirm-password"
                       value={form.confirmPassword}
                       onChange={e => set('confirmPassword', e.target.value)}
-                      placeholder="••••••••"
                       style={{
-                        width: '100%', height: 40, paddingLeft: 38, paddingRight: 40,
-                        border: `1px solid ${errors.confirmPassword ? 'var(--badge-red-text)' : 'var(--border-input)'}`,
-                        borderRadius: 8, fontSize: 13.5, color: 'var(--text-heading)', outline: 'none', boxSizing: 'border-box',
-                        background: 'var(--bg-input)',
+                        ...registrationFieldStyle, paddingRight: 46,
+                        borderColor: errors.confirmPassword ? 'var(--badge-red-text)' : 'var(--border)',
                       }}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirm(p => !p)}
-                      style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: 'var(--text-subtle)', padding: 0 }}
+                      aria-label={showConfirm ? 'Hide confirm password' : 'Show confirm password'}
+                      className="sl-eye"
                     >
                       {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
                     </button>
@@ -773,27 +752,20 @@ export default function SignupPage() {
                 <button
                   type="submit"
                   disabled={loading || usernameStatus === 'taken' || usernameStatus === 'checking'}
-                  style={{
-                    width: '100%', height: 42, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    gap: 8, background: loading ? 'var(--border-input)' : 'var(--ses-red)', color: loading ? 'var(--text-subtle)' : '#fff',
-                    border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer',
-                    marginTop: 4, transition: 'background 0.15s',
-                  }}
+                  className="sl-btn"
                 >
                   {loading ? 'Submitting…' : 'Submit Registration'}
                 </button>
 
                 <div style={{ textAlign: 'center' }}>
                   <span style={{ fontSize: 12.5, color: 'var(--text-subtle)' }}>Already have an account? </span>
-                  <Link to="/login" style={{ fontSize: 12.5, color: 'var(--ses-red)', fontWeight: 600, textDecoration: 'none' }}>
+                  <Link to="/login" style={{ fontSize: 12.5, color: 'var(--link)', fontWeight: 500, textDecoration: 'none' }}>
                     Sign in here
                   </Link>
                 </div>
               </form>
             </>
           )}
-        </div>
-      </div>
-    </div>
+    </AuthLayout>
   );
 }

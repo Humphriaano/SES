@@ -4,6 +4,9 @@ import toast from 'react-hot-toast';
 import { Search, Plus, Pencil, Trash2 } from 'lucide-react';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { staffDisplayName, staffInitials } from '../lib/staffNames';
+import PriceListSection from './PriceListSection';
+import CatalogueSection from './CatalogueSection';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -23,7 +26,7 @@ interface AdminUser {
 
 interface FacilityRoom { id: string; name: string; tag: string; active: boolean; waitingCount: number; }
 
-type Section = 'pending' | 'users' | 'rooms';
+type Section = 'pending' | 'users' | 'rooms' | 'prices' | 'catalogue';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -49,12 +52,11 @@ function fmtDate(iso: string) {
 }
 
 function displayName(u: AdminUser) {
-  return u.firstName ? `${u.firstName} ${u.surname ?? ''}`.trim() : u.name;
+  return staffDisplayName(u.firstName ? `${u.firstName} ${u.surname ?? ''}`.trim() : u.name, u.designation);
 }
 
 function initials(u: AdminUser) {
-  const n = displayName(u).split(/\s+/);
-  return ((n[0]?.[0] ?? '') + (n[1]?.[0] ?? '')).toUpperCase();
+  return staffInitials(displayName(u));
 }
 
 function roleLabels(role: string | null) {
@@ -71,7 +73,7 @@ function Person({ u }: { u: AdminUser }) {
     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <span aria-hidden="true" className="a-av">{initials(u)}</span>
       <div>
-        <div style={{ fontWeight: 600, color: 'var(--text-heading)' }}>{displayName(u)}</div>
+        <div style={{ fontWeight: 500, color: 'var(--text-heading)' }}>{displayName(u)}</div>
         {u.username && <div className="a-faint" style={{ fontSize: 12 }}>@{u.username}</div>}
       </div>
     </div>
@@ -221,7 +223,7 @@ function UserRow({ user, isSelf, onDone }: { user: AdminUser; isSelf: boolean; o
       <td className={user.designation ? '' : 'a-faint'}>{user.designation ?? '—'}</td>
       <td className={user.role ? '' : 'a-faint'}>{roleLabels(user.role)}</td>
       <td>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 600, color: 'var(--text-heading)' }} title={user.rejectionReason ?? undefined}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 500, color: 'var(--text-heading)' }} title={user.rejectionReason ?? undefined}>
           <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: '50%', background: st.dot }} />{st.label}
         </span>
       </td>
@@ -373,14 +375,14 @@ function RoomRow({ room, tags, onChange }: { room: FacilityRoom; tags: string[];
 
   return (
     <tr>
-      <td style={{ paddingLeft: 20, fontWeight: 600, color: 'var(--text-heading)' }}>{room.name}</td>
+      <td style={{ paddingLeft: 20, fontWeight: 500, color: 'var(--text-heading)' }}>{room.name}</td>
       <td><span className="a-tag">{room.tag}</span></td>
       <td className="a-num">{room.waitingCount}</td>
       <td>
         <label style={{ display: 'inline-flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
           <button type="button" role="switch" aria-checked={room.active} aria-label={`${room.name} active`}
             className={`a-sw${room.active ? ' on' : ''}`} onClick={toggleActive} disabled={busy} />
-          <span style={{ fontWeight: 600, color: room.active ? 'var(--text-heading)' : 'var(--text-muted)' }}>{room.active ? 'Active' : 'Off'}</span>
+          <span style={{ fontWeight: 500, color: room.active ? 'var(--text-heading)' : 'var(--text-muted)' }}>{room.active ? 'Active' : 'Off'}</span>
         </label>
       </td>
       <td style={{ textAlign: 'right', paddingRight: 20, whiteSpace: 'nowrap' }}>
@@ -453,7 +455,7 @@ function Skeleton() {
 function Empty({ title, text }: { title: string; text: string }) {
   return (
     <div style={{ padding: '48px 20px 52px', textAlign: 'center' }}>
-      <p style={{ margin: '0 0 4px', fontSize: 14, fontWeight: 600, color: 'var(--text-heading)' }}>{title}</p>
+      <p style={{ margin: '0 0 4px', fontSize: 14, fontWeight: 500, color: 'var(--text-heading)' }}>{title}</p>
       <p className="a-muted" style={{ margin: 0 }}>{text}</p>
     </div>
   );
@@ -472,7 +474,7 @@ export default function AdminUsersPage() {
   const staff = useMemo(() => users.filter((u) => u.status !== 'pending'), [users]);
 
   const requested = params.get('section') as Section | null;
-  const section: Section = requested && ['pending', 'users', 'rooms'].includes(requested)
+  const section: Section = requested && ['pending', 'users', 'rooms', 'prices', 'catalogue'].includes(requested)
     ? requested
     : pending.length > 0 ? 'pending' : 'users';
 
@@ -491,10 +493,12 @@ export default function AdminUsersPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const NAV: { id: Section; label: string; count: number }[] = [
+  const NAV: { id: Section; label: string; count?: number }[] = [
     { id: 'pending', label: 'Pending approvals', count: pending.length },
     { id: 'users', label: 'Users', count: staff.length },
     { id: 'rooms', label: 'Rooms', count: rooms.length },
+    { id: 'catalogue', label: 'Catalogue' },
+    { id: 'prices', label: 'Price list' },
   ];
 
   return (
@@ -510,7 +514,7 @@ export default function AdminUsersPage() {
             <a key={n.id} href={`?section=${n.id}`} aria-current={section === n.id ? 'page' : undefined}
               onClick={(e) => { e.preventDefault(); setParams({ section: n.id }); }}>
               <span>{n.label}</span>
-              <span className={`a-n${n.id === 'pending' && n.count > 0 ? ' a-n-hot' : ''}`}>{loading ? '–' : n.count}</span>
+              {n.count !== undefined && <span className={`a-n${n.id === 'pending' && n.count > 0 ? ' a-n-hot' : ''}`}>{loading ? '–' : n.count}</span>}
             </a>
           ))}
         </nav>
@@ -521,7 +525,9 @@ export default function AdminUsersPage() {
               <Empty title="Couldn’t load administration data" text="Check your connection, then try again." />
               <div style={{ textAlign: 'center', paddingBottom: 28 }}><button type="button" className="a-q" onClick={load}>Try again</button></div>
             </section>
-          ) : section === 'pending' ? <PendingSection users={pending} loading={loading} onChange={load} />
+          ) : section === 'prices' ? <PriceListSection />
+            : section === 'catalogue' ? <CatalogueSection />
+            : section === 'pending' ? <PendingSection users={pending} loading={loading} onChange={load} />
             : section === 'users' ? <UsersSection users={staff} loading={loading} onChange={load} />
               : <RoomsSection rooms={rooms} loading={loading} onChange={load} />}
         </div>
@@ -534,20 +540,20 @@ export default function AdminUsersPage() {
 
 const CSS = `
 .adm { padding: 24px 24px 40px; max-width: 1600px; margin: 0 auto; font-size: 14px; color: var(--text-body); }
-.a-h1 { margin: 0 0 4px; font-weight: 700; font-size: 22px; letter-spacing: -0.2px; color: var(--text-heading); }
-.a-h2 { margin: 0; font-family: var(--font-heading); font-size: 16px; font-weight: 700; color: var(--text-heading); }
+.a-h1 { margin: 0 0 4px; font-weight:500; font-size: 22px; letter-spacing: -0.2px; color: var(--text-heading); }
+.a-h2 { margin: 0; font-family: var(--font-heading); font-size: 16px; font-weight:500; color: var(--text-heading); }
 .a-muted { color: var(--text-muted); }
 .a-faint { color: var(--text-subtle); }
 .a-num { font-variant-numeric: tabular-nums; }
-.a-k { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-subtle); }
+.a-k { font-size: 11px; font-weight:500; letter-spacing: 1px; text-transform: uppercase; color: var(--text-subtle); }
 .a-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; align-items: start; }
 .a-side { display: flex; flex-direction: column; gap: 4px; }
 .a-side a { display: flex; align-items: center; justify-content: space-between; height: 40px; padding: 0 12px; border-radius: 10px;
-  color: var(--text-muted); font-weight: 600; text-decoration: none; transition: background .15s, color .15s; }
+  color: var(--text-muted); font-weight:500; text-decoration: none; transition: background .15s, color .15s; }
 .a-side a:hover { background: var(--ws-chip); color: var(--text-heading); }
-.a-side a[aria-current="page"] { background: var(--bg-card); color: var(--text-heading); box-shadow: inset 3px 0 0 var(--ws-link), 0 0 0 1px var(--border); }
-.a-n { font-size: 12px; font-weight: 600; color: var(--text-subtle); font-variant-numeric: tabular-nums; }
-.a-n-hot { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--st-warn-bg); color: var(--st-warn); font-weight: 700;
+.a-side a[aria-current="page"] { background: var(--selection-bg); color: var(--selection-text); box-shadow: inset 3px 0 0 var(--selection-accent), 0 0 0 1px var(--selection-border); }
+.a-n { font-size: 12px; font-weight:500; color: var(--text-subtle); font-variant-numeric: tabular-nums; }
+.a-n-hot { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--st-warn-bg); color: var(--st-warn); font-weight:500;
   display: inline-flex; align-items: center; justify-content: center; }
 .a-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
 .a-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 14px 16px 14px 20px; border-bottom: 1px solid var(--border-light); }
@@ -557,21 +563,21 @@ const CSS = `
 .a-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 14px; color: var(--text-heading); }
 .a-search input::placeholder { color: var(--text-subtle); }
 .a-tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
-.a-tbl th { text-align: left; padding: 10px 16px; background: var(--ws-head); font-size: 11px; font-weight: 700; letter-spacing: 1px;
+.a-tbl th { text-align: left; padding: 10px 16px; background: var(--ws-head); font-size: 11px; font-weight:500; letter-spacing: 1px;
   text-transform: uppercase; color: var(--text-subtle); white-space: nowrap; }
 .a-tbl td { padding: 14px 16px; border-top: 1px solid var(--border-light); vertical-align: middle; color: var(--text-heading); }
 .a-tbl tr.a-expand td { border-top: 0; background: var(--ws-head); }
 .a-av { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--ws-chip); color: var(--text-heading);
-  font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  font-weight:500; font-size: 13px; display: flex; align-items: center; justify-content: center; }
 .a-q { height: 32px; padding: 0 12px; border: 1px solid var(--btn2-line); border-radius: 8px; background: transparent; color: var(--text-heading);
-  font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s, border-color .15s, color .15s; }
+  font: inherit; font-size: 13px; font-weight:500; cursor: pointer; transition: background .15s, border-color .15s, color .15s; }
 .a-q:hover:not(:disabled) { background: var(--ws-chip); }
 .a-q:disabled { opacity: .55; cursor: not-allowed; }
-.a-q-pri { background: #C41E25; border-color: #C41E25; color: #fff; }
-.a-q-pri:hover:not(:disabled) { background: #C41E25; filter: brightness(1.06); }
+.a-q-pri { background: var(--ses-red); border-color: var(--ses-red); color: #fff; }
+.a-q-pri:hover:not(:disabled) { background: var(--ses-red); filter: brightness(1.06); }
 .a-q-bad { color: var(--st-bad); border-color: var(--st-bad); }
 .a-q-bad:hover:not(:disabled) { background: var(--st-bad-bg); }
-.a-btn { height: 38px; padding: 0 16px; border: 0; border-radius: 10px; background: #C41E25; color: #fff; font: inherit; font-size: 13px; font-weight: 700;
+.a-btn { height: 38px; padding: 0 16px; border: 0; border-radius: 10px; background: var(--ses-red); color: #fff; font: inherit; font-size: 13px; font-weight:500;
   cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: filter .15s, opacity .15s; }
 .a-btn:hover:not(:disabled) { filter: brightness(1.06); }
 .a-btn:disabled { opacity: .5; cursor: not-allowed; }
@@ -581,7 +587,7 @@ const CSS = `
   display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
 .a-icon:hover { background: var(--ws-chip); color: var(--text-heading); }
 .a-del:hover { color: var(--st-bad); border-color: var(--st-bad); }
-.a-tag { display: inline-block; padding: 2px 10px; border: 1px solid var(--border); border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.a-tag { display: inline-block; padding: 2px 10px; border: 1px solid var(--border); border-radius: 999px; font-size: 12px; font-weight:500; color: var(--text-muted); }
 .a-sw { position: relative; width: 38px; height: 22px; border-radius: 11px; border: 0; padding: 0; cursor: pointer; background: var(--btn2-line); transition: background .2s; }
 .a-sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff;
   box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: left .2s; }
@@ -590,12 +596,12 @@ const CSS = `
 .a-sw:disabled { opacity: .6; cursor: wait; }
 .a-sw:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 .a-chip { height: 32px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--btn2-line); background: var(--btn2); color: var(--text-heading);
-  font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
-.a-chip.on { background: var(--ws-chip-on); border-color: var(--ws-chip-on); color: var(--ws-chip-on-text); }
+  font: inherit; font-size: 13px; font-weight:500; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.a-chip.on { background: var(--ws-chip-on); border-color: var(--selection-border); color: var(--ws-chip-on-text); }
 .a-field { width: 100%; min-height: 40px; padding: 9px 12px; border: 1px solid var(--btn2-line); border-radius: 10px; background: var(--btn2);
   font: inherit; font-size: 14px; color: var(--text-heading); outline: 0; resize: vertical; }
 .a-field:focus { border-color: var(--ring); box-shadow: 0 0 0 4px var(--ring-glow); }
-.a-err { margin: 10px 0 0; font-size: 13px; font-weight: 600; color: var(--st-bad); }
+.a-err { margin: 10px 0 0; font-size: 13px; font-weight:500; color: var(--st-bad); }
 .a-skel { height: 18px; border-radius: 6px; background: var(--ws-chip); animation: a-pulse 1.2s ease-in-out infinite; }
 @keyframes a-pulse { 50% { opacity: .5; } }
 @media (max-width: 900px) { .a-layout { grid-template-columns: 1fr; } .a-side { flex-direction: row; overflow-x: auto; } .a-side a { flex: none; gap: 10px; } }

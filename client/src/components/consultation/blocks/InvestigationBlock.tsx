@@ -5,6 +5,10 @@ import { X, Plus, FlaskConical } from 'lucide-react';
 import { InvestigationBlockData } from '../../../types/consultation';
 import { searchCatalogue, CatalogueResult, CataloguePanel, CatalogueSingle } from '../../../data/investigationsCatalogue';
 import api from '../../../api/client';
+import { usePrices, priceText } from '../../../lib/prices';
+import InlinePrice from '../../billing/InlinePrice';
+import { flushPriceEdits } from '../../../lib/priceEditing';
+import { zmw } from '../../../lib/money';
 import toast from 'react-hot-toast';
 
 interface BasketItem {
@@ -43,6 +47,12 @@ export default function InvestigationBlock({
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [live, setLive] = useState<Record<string, LiveStatus>>({});   // block item id → real status
+  const refOf = (r: { kind: 'panel' | 'single'; item: CataloguePanel | CatalogueSingle }) =>
+    r.kind === 'panel' ? `panel_${(r.item as CataloguePanel).id}` : `single_${(r.item as CatalogueSingle).id}`;
+  const prices = usePrices([...suggestions.map(refOf), ...basket.map(b => b.key), ...(!readOnly ? data.items.map(item => item.catalogCode ?? '') : [])]);
+  const basketTotal = basket.reduce((s, b) => s + (prices[b.key] ?? 0), 0);
+  const basketUnpriced = basket.filter(b => prices[b.key] === null).length;
+  const basketPricing = basket.some(b => prices[b.key] === undefined);
   const dataRef = useRef(data);
   dataRef.current = data;
   const onChangeRef = useRef(onChange);
@@ -131,6 +141,7 @@ export default function InvestigationBlock({
     if (patientId && encounterId) {
       setSubmitting(true);
       try {
+        if (!(await flushPriceEdits(basket.map(b => b.key)))) { toast.error('The price has not saved yet. Check the price field and try again.'); return; }
         const { data: order } = await api.post('/investigations/orders', { patientId, encounterId, items });
         const created: { id: string; type: string; catalogueId: string }[] = order?.items ?? [];
         const newItems = basket.map(b => ({
@@ -169,10 +180,10 @@ export default function InvestigationBlock({
   const canSubmit = basket.length > 0 && !readOnly;
 
   return (
-    <div style={{
+    <div className="note-block" style={{
       border: '1px solid var(--border)',
-      background: 'var(--bg-card)',
-      borderRadius: 12,
+      background: 'var(--bg-surface)',
+      borderRadius: 18,
       padding: '10px 14px',
       margin: '16px 0',
       fontFamily: "'Segoe UI', system-ui, sans-serif",
@@ -184,10 +195,10 @@ export default function InvestigationBlock({
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{
-            fontSize: 10, fontWeight: 700, color: 'var(--ses-blue-deep)',
+            fontSize: 10, fontWeight: 500, color: 'var(--ses-blue-deep)',
             background: 'var(--ses-blue-tint)', padding: '2px 7px', borderRadius: 4, fontFamily: 'monospace',
           }}>Inv</span>
-          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-heading)' }}>Investigations</span>
+          <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-heading)' }}>Investigations</span>
         </div>
         {!readOnly && (
           <button
@@ -208,6 +219,9 @@ export default function InvestigationBlock({
         }}>
           <FlaskConical size={12} color="var(--ses-blue-deep)" />
           <span style={{ flex: 1, fontSize: 13, color: 'var(--text-heading)' }}>{item.name}</span>
+          {!readOnly && item.catalogCode && (
+            <InlinePrice catalogueRef={item.catalogCode} itemType="INVESTIGATION" name={item.name} value={prices[item.catalogCode]} patientId={patientId} unpricedLabel="ZMW —" />
+          )}
           {(() => {
             const real = live[item.id];
             const done = real ? DONE.includes(real) : item.status === 'RESULTED';
@@ -215,7 +229,7 @@ export default function InvestigationBlock({
             const tone = done ? 'green' : inProgress ? 'blue' : 'amber';
             return (
               <span style={{
-                fontSize: 11, fontWeight: 600,
+                fontSize: 11, fontWeight: 500,
                 background: `var(--badge-${tone}-bg)`,
                 color: `var(--badge-${tone}-text)`,
                 border: `1px solid var(--badge-${tone}-text)`,
@@ -239,7 +253,7 @@ export default function InvestigationBlock({
       {/* Basket */}
       {!readOnly && basket.length > 0 && (
         <div style={{ marginBottom: 8 }}>
-          <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--ses-blue-deep)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+          <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--ses-blue-deep)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             Basket ({basket.length})
           </div>
           {basket.map(b => {
@@ -253,7 +267,7 @@ export default function InvestigationBlock({
                 borderRadius: 6, padding: '5px 10px', marginBottom: 4,
               }}>
                 <span style={{
-                  fontSize: 9, fontWeight: 700,
+                  fontSize: 9, fontWeight: 500,
                   background: isPanel ? 'var(--ses-blue-deep)' : 'var(--ses-blue)',
                   color: '#fff', borderRadius: 3, padding: '1px 5px',
                 }}>
@@ -270,6 +284,9 @@ export default function InvestigationBlock({
                 {!isPanel && single!.specimen && (
                   <span style={{ fontSize: 11, color: 'var(--ses-blue-deep)' }}>{single!.specimen}</span>
                 )}
+                {basket.length > 1 && prices[b.key] !== undefined && (
+                  <InlinePrice catalogueRef={b.key} itemType="INVESTIGATION" name={isPanel ? panel!.panelName : single!.name} value={prices[b.key]} patientId={patientId} editable={!readOnly} unpricedLabel="ZMW —" />
+                )}
                 <button
                   onClick={() => removeFromBasket(b.key)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 2 }}
@@ -279,6 +296,12 @@ export default function InvestigationBlock({
               </div>
             );
           })}
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-body2)', padding: '2px 4px' }}>
+            <span>Estimated cost{basketUnpriced > 0 ? ` · ${basketUnpriced} without a price yet` : ''}</span>
+            <b style={{ color: 'var(--text-heading)' }}>
+              {basket.length === 1 ? <InlinePrice catalogueRef={basket[0].key} itemType="INVESTIGATION" name={basket[0].kind === 'panel' ? (basket[0].item as CataloguePanel).panelName : (basket[0].item as CatalogueSingle).name} value={prices[basket[0].key]} patientId={patientId} unpricedLabel={zmw(0)} /> : basketPricing ? 'Checking prices…' : zmw(basketTotal)}
+            </b>
+          </div>
         </div>
       )}
 
@@ -296,7 +319,7 @@ export default function InvestigationBlock({
               onBlur={() => setTimeout(() => setDropdownOpen(false), 200)}
               style={{
                 flex: 1, padding: '6px 10px',
-                border: '1.5px solid var(--border)', borderRadius: 6,
+                border: '1.5px solid var(--border)', borderRadius: 14,
                 fontSize: 13, outline: 'none', background: 'var(--bg-input)',
                 color: 'var(--text-heading)',
                 fontFamily: "'Segoe UI', system-ui, sans-serif",
@@ -327,6 +350,7 @@ export default function InvestigationBlock({
                 return (
                   <button
                     key={key}
+                    title={(isPanel ? panel!.loinc : single!.loinc) ? `LOINC ${isPanel ? panel!.loinc : single!.loinc}` : undefined}
                     onMouseDown={() => !inBasket && addToBasket(result)}
                     style={{
                       width: '100%', textAlign: 'left', padding: '8px 12px',
@@ -339,7 +363,7 @@ export default function InvestigationBlock({
                     onMouseLeave={e => { if (!inBasket) e.currentTarget.style.background = 'none'; }}
                   >
                     <span style={{
-                      fontSize: 9, fontWeight: 700,
+                      fontSize: 9, fontWeight: 500,
                       background: isPanel ? 'var(--ses-blue-deep)' : 'var(--ses-blue)',
                       color: '#fff', borderRadius: 3, padding: '1px 5px', whiteSpace: 'nowrap',
                     }}>
@@ -362,6 +386,9 @@ export default function InvestigationBlock({
                           : single!.specimen || ''}
                       </div>
                     </div>
+                    {prices[key] !== undefined && (
+                      <span style={{ fontSize: 11.5, fontWeight: 500, whiteSpace: 'nowrap', color: prices[key] === null ? 'var(--text-subtle)' : 'var(--text-heading)' }}>{priceText(prices[key])}</span>
+                    )}
                     {inBasket && <span style={{ fontSize: 10, color: 'var(--ses-blue-deep)' }}>Added</span>}
                   </button>
                 );
@@ -380,10 +407,10 @@ export default function InvestigationBlock({
                 background: submitting ? 'var(--text-subtle)' : 'var(--ses-red)',
                 color: '#fff',
                 border: 'none',
-                borderRadius: 6,
+                borderRadius: 999,
                 padding: '7px 14px',
                 fontSize: 13,
-                fontWeight: 600,
+                fontWeight: 500,
                 cursor: submitting ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',

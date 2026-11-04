@@ -38,6 +38,21 @@ export interface PrescriptionItem {
   specialInstructions?: string;
   prescriptionId?: string;  // DB Prescription.id — set after API save
   medicationId?: string;    // DB Medication.id — set after API save
+  unitsPerDose?: number;
+  durationDays?: number;
+  durationCount?: number;
+  durationUnit?: string;
+  quantity?: number;
+  quantityUnit?: string;
+  quantityManual?: boolean;
+  startDate?: string;
+  endDate?: string;
+  unitPrice?: number;
+  doseUnit?: string;
+  priceBasis?: 'ITEM' | 'BOTTLE' | 'COURSE';
+  bottleSizeMl?: number;
+  courseQuantity?: number;
+  billingQuantity?: number;
 }
 
 export interface PrescriptionBlockData {
@@ -57,7 +72,22 @@ export interface PMHBlockData {
   entries: PMHEntry[];
 }
 
-export type BlockType = 'diagnosis' | 'investigation' | 'prescription' | 'pmh';
+export type HistoryType = 'drug-history' | 'gynae-history' | 'obstetric-history' | 'immunization-history' | 'procedure';
+
+export interface HistoryBlockData {
+  content: string;
+  lmp?: string;
+  isObstetric?: boolean;
+  datingAsOf?: string;
+  gravidity?: number;
+  parity?: number;
+}
+
+export interface HistorySnapshot extends HistoryBlockData {
+  type: HistoryType;
+}
+
+export type BlockType = 'diagnosis' | 'investigation' | 'prescription' | 'pmh' | HistoryType;
 
 export interface ImportedDiagnosis {
   code: string;
@@ -72,9 +102,12 @@ export interface ImportedBlockData {
   preBlockTexts: string[];
   // Text nodes after the last structural block (plan, management)
   postBlockTexts: string[];
+  // Narrative between structured sections must also survive encounter import.
+  interBlockTexts?: string[];
   diagnoses: ImportedDiagnosis[];
   prescriptionSummary: string;
   investigationSummary: string;
+  histories?: HistorySnapshot[];
 }
 
 export type CanvasNode =
@@ -83,4 +116,5 @@ export type CanvasNode =
   | { type: 'investigation'; id: string; data: InvestigationBlockData }
   | { type: 'prescription'; id: string; data: PrescriptionBlockData }
   | { type: 'pmh'; id: string; data: PMHBlockData }
+  | { type: HistoryType; id: string; data: HistoryBlockData }
   | { type: 'imported'; id: string; data: ImportedBlockData };

@@ -62,8 +62,8 @@ export const STATUS: Record<StatusKey, {
   badge: string; badgeText: string; dot: string; label: string;
 }> = {
   normal:  { bg: 'var(--clinical-normal-bg)',   border: '#bbf7d0', text: 'var(--clinical-normal)',   badge: 'var(--clinical-normal-bg)',   badgeText: 'var(--clinical-normal)',   dot: 'var(--clinical-normal)',   label: 'Normal'   },
-  caution: { bg: 'var(--clinical-caution-bg)',  border: '#fef08a', text: 'var(--clinical-caution)',  badge: 'var(--clinical-caution-bg)',  badgeText: 'var(--clinical-caution)',  dot: 'var(--clinical-caution)',  label: 'Elevated' },
-  warning: { bg: 'var(--clinical-abnormal-bg)', border: '#fed7aa', text: 'var(--clinical-abnormal)', badge: 'var(--clinical-abnormal-bg)', badgeText: 'var(--clinical-abnormal)', dot: 'var(--clinical-abnormal)', label: 'High'     },
+  caution: { bg: 'var(--clinical-caution-bg)',  border: 'var(--attention-border)', text: 'var(--clinical-caution)',  badge: 'var(--clinical-caution-bg)',  badgeText: 'var(--clinical-caution)',  dot: 'var(--clinical-caution)',  label: 'Elevated' },
+  warning: { bg: 'var(--clinical-abnormal-bg)', border: 'var(--clinical-abnormal-border)', text: 'var(--clinical-abnormal)', badge: 'var(--clinical-abnormal-bg)', badgeText: 'var(--clinical-abnormal)', dot: 'var(--clinical-abnormal)', label: 'High'     },
   danger:  { bg: 'var(--clinical-critical-bg)', border: '#fecaca', text: 'var(--clinical-critical)', badge: 'var(--clinical-critical-bg)', badgeText: 'var(--clinical-critical)', dot: 'var(--clinical-critical)', label: 'Critical' },
   neutral: { bg: '#f8fafc', border: '#e2e8f0', text: '#475569', badge: '#f1f5f9', badgeText: '#475569', dot: '#94a3b8', label: '—'        },
 };

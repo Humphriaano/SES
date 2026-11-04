@@ -14,7 +14,7 @@ from typing import Any, Optional
 
 import httpx
 import ollama
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -222,10 +222,50 @@ KEYWORD_MAP = {
 }
 
 
-async def fetch_population_data(question: str) -> dict:
+BILLING_WORDS = ["bill", "payment", "paid", "pay ", "revenue", "owe", "outstanding", "balance", "cash", "collect",
+                 "receipt", "invoice", "money", "kwacha", "zmw", "day book", "daybook", "income", "mobile money", "cashier"]
+
+
+async def fetch_billing_data(question: str, authorization: Optional[str]) -> dict:
+    """Billing answers come from the same report queries the Billing Reports screens use, fetched with the
+    asker's own login, so Express applies the billing-role check. No login or no billing role = no data."""
+    if not authorization:
+        return {"billing": "The user is not signed in, so billing information is not available."}
+    from datetime import date
+    today = date.today()
+    month_start = today.replace(day=1).isoformat()
+    calls = {
+        "daybook_today": ("daybook", {"from": today.isoformat(), "to": today.isoformat()}),
+        "revenue_this_month": ("revenue", {"from": month_start, "to": today.isoformat()}),
+        "collections_this_month": ("collections", {"from": month_start, "to": today.isoformat()}),
+        "outstanding_balances": ("outstanding", {}),
+    }
+    out: dict = {}
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        responses = await asyncio.gather(
+            *[client.get(f"{EXPRESS_BASE}/billing/reports/{name}", params=params, headers={"Authorization": authorization})
+              for name, params in calls.values()],
+            return_exceptions=True,
+        )
+        for key, resp in zip(calls.keys(), responses):
+            if isinstance(resp, Exception):
+                out[key] = None
+            elif resp.status_code in (401, 403):
+                return {"billing": "This user does not have access to billing information. Tell them so."}
+            else:
+                try:
+                    r = resp.json()
+                    out[key] = {"period": r.get("period"), "summary": r.get("summary"), "totals": r.get("totals"), "rows": (r.get("rows") or [])[:25]}
+                except Exception:
+                    out[key] = None
+    return out
+
+
+async def fetch_population_data(question: str, authorization: Optional[str] = None) -> dict:
     q = question.lower()
     needed = {ep for ep, kws in KEYWORD_MAP.items() if any(kw in q for kw in kws)}
-    if not needed:
+    wants_billing = any(w in q for w in BILLING_WORDS)
+    if not needed and not wants_billing:
         needed = set(KEYWORD_MAP.keys())  # general question → fetch all
 
     results = {}
@@ -240,6 +280,8 @@ async def fetch_population_data(question: str) -> dict:
                     results[ep] = resp.json()
                 except Exception:
                     results[ep] = None
+    if wants_billing:
+        results.update(await fetch_billing_data(question, authorization))
     return results
 
 
@@ -301,10 +343,10 @@ def build_render_data(fetched: dict, response_type: str, chart_type: Optional[st
 
 
 @app.post("/cds/reports-chat", response_model=ReportsChatResponse)
-async def reports_chat(req: ReportsChatRequest):
+async def reports_chat(req: ReportsChatRequest, authorization: Optional[str] = Header(None)):
     # 1. Fetch relevant population data
     try:
-        fetched = await fetch_population_data(req.question)
+        fetched = await fetch_population_data(req.question, authorization)
     except Exception as e:
         fetched = {}
 

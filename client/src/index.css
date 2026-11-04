@@ -28,7 +28,7 @@
      icon badge) or informational blue (e.g. diagnosis/session chips) use
      --ses-red-tint / --ses-blue-tint directly instead of this token. */
   --chip-red-bg:     var(--clinical-abnormal-bg);
-  --chip-red-border: #F6C9B8;
+  --chip-red-border: var(--clinical-abnormal-border);
   --chip-red-text:   var(--clinical-abnormal);
   --badge-red-bg:    var(--clinical-abnormal-bg); --badge-red-text:   var(--clinical-abnormal);
   --badge-green-bg:  var(--clinical-normal-bg);   --badge-green-text: var(--clinical-normal);
@@ -39,16 +39,16 @@
   --modal-overlay:   rgba(15,23,42,0.5);
   /* Workspace header bar (same dark bar in light mode, per design) */
   --bar:#1E2124; --bar-text:#FFFFFF; --bar-muted:#A3AAB1; --bar-line:rgba(255,255,255,.09);
-  --bar-field:rgba(255,255,255,.08); --nav-text:#A9B0B6; --nav-active-bg:rgba(255,255,255,.08); --nav-active-line:#E5484D;
+  --bar-field:rgba(255,255,255,.08); --nav-text:#A9B0B6; --nav-active-bg:var(--selection-bg); --nav-active-line:var(--selection-on-dark);
   /* Clinical status + chart series (vitals design) */
-  --st-ok:#15803D; --st-warn:#C2560A; --st-bad:#C0161E; --st-ok-bg:#E7F6EC; --st-warn-bg:#FFF1E6; --st-bad-bg:#FDECEC;
+  --st-ok:#15803D; --st-warn:var(--attention-text); --st-bad:#C0161E; --st-ok-bg:#E7F6EC; --st-warn-bg:var(--attention-bg); --st-bad-bg:#FDECEC;
   --s1:#1F5F96; --s2:#5B9BD5;
   --btn2:#FFFFFF; --btn2-line:#D5D9DE;
-  --ws-link:#1F5F96; --ws-chip:#F0F2F4; --ws-chip-on:#16181A; --ws-chip-on-text:#FFFFFF; --ws-head:#FAFBFC;
+  --ws-link:#1F5F96; --ws-chip:#F0F2F4; --ws-chip-on:var(--selection-bg); --ws-chip-on-text:var(--selection-text); --ws-head:#FAFBFC;
   --ws-tree:brightness(0); --ws-tree-op:.05;
-  --ws-amber:#B25E09; --ws-amber-bg:#FFF4E5; --ws-blue:#1F5F96; --ws-blue-bg:#EAF2FA; --ws-green:#1E7A46; --ws-green-bg:#E8F5EE;
-  --ring:            #2671AE;
-  --ring-glow:       rgba(38,113,174,.14);
+  --ws-amber:var(--attention-text); --ws-amber-bg:var(--attention-bg); --ws-blue:#1F5F96; --ws-blue-bg:#EAF2FA; --ws-green:#1E7A46; --ws-green-bg:#E8F5EE;
+  --ring:            var(--selection-accent);
+  --ring-glow:       var(--selection-glow);
   --font-body:       'Open Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-heading:    'Montserrat', 'Open Sans', system-ui, sans-serif;
   --radius-field:    12px;
@@ -59,14 +59,14 @@
 [data-theme="dark"] {
   color-scheme: dark;
   --bar:#181B1E; --bar-line:rgba(255,255,255,.08); --bar-field:rgba(255,255,255,.07);
-  --st-ok:#4ADE80; --st-warn:#FB923C; --st-bad:#FF6B70; --st-ok-bg:rgba(74,222,128,.12); --st-warn-bg:rgba(251,146,60,.14); --st-bad-bg:rgba(255,107,112,.14);
+  --st-ok:#4ADE80; --st-warn:var(--attention-text); --st-bad:#FF6B70; --st-ok-bg:rgba(74,222,128,.12); --st-warn-bg:var(--attention-bg); --st-bad-bg:rgba(255,107,112,.14);
   --s1:#5397DC; --s2:#2B65A3;
   --btn2:#1F2326; --btn2-line:#33383D;
-  --ws-link:#7DB4E6; --ws-chip:#23272B; --ws-chip-on:#F2F3F4; --ws-chip-on-text:#111315; --ws-head:#1C1F22;
+  --ws-link:#7DB4E6; --ws-chip:#23272B; --ws-chip-on:var(--selection-bg); --ws-chip-on-text:var(--selection-text); --ws-head:#1C1F22;
   --ws-tree:none; --ws-tree-op:.045;
-  --ws-amber:#F0A54A; --ws-amber-bg:rgba(240,165,74,.12); --ws-blue:#7DB4E6; --ws-blue-bg:rgba(125,180,230,.12); --ws-green:#4CC38A; --ws-green-bg:rgba(76,195,138,.12);
-  --ring:            #4A92D0;
-  --ring-glow:       rgba(74,146,208,.18);
+  --ws-amber:var(--attention-text); --ws-amber-bg:var(--attention-bg); --ws-blue:#7DB4E6; --ws-blue-bg:rgba(125,180,230,.12); --ws-green:#4CC38A; --ws-green-bg:rgba(76,195,138,.12);
+  --ring:            var(--selection-accent);
+  --ring-glow:       var(--selection-glow);
   --bg-page:         #111315;
   --bg-card:         #181B1E;
   --bg-surface:      #1A1D20;
@@ -86,13 +86,13 @@
   --text-faint:      #4A5056;
   --shadow-sm:       rgba(0,0,0,0.3);
   --shadow-md:       rgba(0,0,0,0.4);
-  --chip-red-bg:     #3a1f12;
-  --chip-red-border: #5c2f1c;
-  --chip-red-text:   #f4835a;
-  --badge-red-bg:    #3a1f12;  --badge-red-text:   #f4835a;
+  --chip-red-bg:     var(--clinical-abnormal-bg);
+  --chip-red-border: var(--clinical-abnormal-border);
+  --chip-red-text:   var(--clinical-abnormal);
+  --badge-red-bg:    var(--clinical-abnormal-bg);  --badge-red-text:   var(--clinical-abnormal);
   --badge-green-bg:  #0d2818;  --badge-green-text:  #4ade80;
   --badge-gray-bg:   #21262d;  --badge-gray-text:   #8b949e;
-  --badge-amber-bg:  #2d1f06;  --badge-amber-text:  #fbbf24;
+  --badge-amber-bg:  var(--attention-bg);  --badge-amber-text:  var(--attention-text);
   --badge-blue-bg:   #0d1f3c;  --badge-blue-text:   #60a5fa;
   --badge-charcoal-bg: #21262d; --badge-charcoal-text: #c9d1d9;
   --modal-overlay:   rgba(0,0,0,0.7);
@@ -110,7 +110,7 @@
   --border:     #262A2E;
   --border-input: #2C3135;
   --bar:#1F5F96; --bar-muted:#CFE0F0; --bar-line:rgba(255,255,255,.16); --bar-field:rgba(0,0,0,.18);
-  --nav-text:#D6E6F4; --nav-active-bg:rgba(255,255,255,.12); --nav-active-line:#FFFFFF;
+  --nav-text:#D6E6F4; --nav-active-bg:var(--selection-bg); --nav-active-line:var(--selection-on-dark);
 }
 
 /* ── Base ──────────────────────────────────────────────────────────── */
@@ -323,3 +323,10 @@ h1, h2, h3, h4 { font-family: var(--font-heading); }
     page-break-inside: avoid;
   }
 }
+
+/* Clinical modules share the application's field and keyboard-focus treatment. */
+.clinical-module :is(input,select,textarea,button){font-family:var(--font-body)}
+.clinical-module :is(input,select,textarea):focus-visible{outline:2px solid var(--ring);outline-offset:2px;box-shadow:0 0 0 4px var(--ring-glow)}
+.clinical-module button:focus-visible{outline:2px solid var(--ring);outline-offset:3px}
+.clinical-module button:disabled{opacity:.6}
+.clinical-module input::placeholder,.clinical-module textarea::placeholder{color:var(--text-subtle)}

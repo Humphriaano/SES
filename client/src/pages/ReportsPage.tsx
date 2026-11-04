@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Users, Activity, FlaskConical, CheckCircle, Package, Pill } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Users, Activity, FlaskConical, CheckCircle, Package, Pill, Wallet } from 'lucide-react';
 import api from '../api/client';
+import { useAuth } from '../context/AuthContext';
+import { hasRole } from '../lib/money';
 import ReportsAIPanel from '../components/reports/ReportsAIPanel';
 import InsightPanel from '../components/reports/InsightPanel';
+import './ReportsPage.css';
 
 const T = {
   pageBg: 'var(--bg-page)',
@@ -10,7 +14,7 @@ const T = {
   cardBorder: '1px solid var(--border)',
   title: 'var(--text-heading)',
   muted: 'var(--text-muted)',
-  font: "'Segoe UI', system-ui, sans-serif",
+  font: 'var(--font-body)',
 };
 
 interface KpiData {
@@ -37,17 +41,17 @@ function KpiCard({
 }) {
   return (
     <div style={{
-      background: T.cardBg, borderRadius: 10, border: T.cardBorder,
+      background: T.cardBg, borderRadius: 14, border: T.cardBorder,
       padding: '14px 16px', flex: 1, minWidth: 0,
-      boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+      boxShadow: '0 1px 3px var(--shadow-sm)',
     }}>
       <div style={{ color: 'var(--ses-red)', marginBottom: 6 }}>{icon}</div>
       {loading ? (
         <div style={{ height: 28, width: 48, borderRadius: 6, background: 'var(--bg-surface-2)', marginBottom: 6 }} />
       ) : (
-        <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--ses-red)', lineHeight: 1, marginBottom: 4 }}>{value}</div>
+        <div style={{ fontSize: 26, fontWeight: 500, color: 'var(--ses-red)', lineHeight: 1, marginBottom: 4 }}>{value}</div>
       )}
-      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-body)' }}>{label}</div>
+      <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-body)' }}>{label}</div>
       {subtitle && (
         <div style={{ fontSize: 11, color: 'var(--text-subtle)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{subtitle}</div>
       )}
@@ -56,6 +60,7 @@ function KpiCard({
 }
 
 export default function ReportsPage() {
+  const { user } = useAuth();
   const [kpi, setKpi] = useState<KpiData | null>(null);
   const [kpiLoading, setKpiLoading] = useState(true);
 
@@ -71,20 +76,23 @@ export default function ReportsPage() {
     : '';
 
   return (
-    <div style={{
-      display: 'flex', flexDirection: 'column',
-      height: 'calc(100vh - 56px)', overflow: 'hidden',
-      background: T.pageBg, fontFamily: T.font,
-    }}>
+    <div className="reports-page clinical-module">
 
       {/* ── Page header ── */}
-      <div style={{ padding: '20px 24px 12px', flexShrink: 0 }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: T.title, margin: '0 0 2px' }}>Reports & Analytics</h1>
-        <p style={{ fontSize: 13, color: T.muted, margin: 0 }}>Population level insights across all patients</p>
+      <div className="reports-header">
+        <div>
+          <h1 style={{ fontSize: 22, fontWeight: 500, color: T.title, margin: '0 0 2px' }}>Reports & Analytics</h1>
+          <p style={{ fontSize: 13, color: T.muted, margin: 0 }}>Population level insights across all patients</p>
+        </div>
+        {hasRole(user?.role, 'admin', 'billing') && (
+          <Link to="/billing/reports" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, height: 36, padding: '0 14px', borderRadius: 8, border: '1px solid var(--border)', background: T.cardBg, color: T.title, fontSize: 13, fontWeight: 500, textDecoration: 'none' }}>
+            <Wallet size={15} /> Billing reports
+          </Link>
+        )}
       </div>
 
       {/* ── KPI cards row ── */}
-      <div style={{ padding: '0 24px 14px', display: 'flex', gap: 10, flexShrink: 0 }}>
+      <div className="reports-kpis">
         <KpiCard
           icon={<Users size={18} />}
           value={kpi?.totalPatients ?? '—'}
@@ -129,17 +137,11 @@ export default function ReportsPage() {
       </div>
 
       {/* ── Two-column area ── */}
-      <div style={{
-        flex: 1, overflow: 'hidden', display: 'flex',
-        gap: 0, padding: '0 24px 20px', minHeight: 0,
-      }}>
+      <div className="reports-columns">
 
         {/* Left: auto-generated insight panels (60%) */}
-        <div style={{
-          flex: '0 0 60%', overflowY: 'auto', paddingRight: 14,
-          display: 'flex', flexDirection: 'column', gap: 14,
-        }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
+        <div className="reports-insights">
+          <p style={{ fontSize: 11, fontWeight: 500, color: T.muted, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
             AI-Generated Insights
           </p>
           <InsightPanel
@@ -160,17 +162,14 @@ export default function ReportsPage() {
         </div>
 
         {/* Vertical divider */}
-        <div style={{ width: 1, background: 'var(--border)', flexShrink: 0 }} />
+
 
         {/* Right: AI chatbot (40%) */}
-        <div style={{
-          flex: '0 0 calc(40% - 1px)', display: 'flex', flexDirection: 'column',
-          overflow: 'hidden', paddingLeft: 14,
-        }}>
+        <div className="reports-chat">
           <div style={{
             flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden',
-            background: T.cardBg, borderRadius: 10, border: T.cardBorder,
-            boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+            background: T.cardBg, borderRadius: 14, border: T.cardBorder,
+            boxShadow: '0 1px 4px var(--shadow-sm)',
           }}>
             <ReportsAIPanel />
           </div>

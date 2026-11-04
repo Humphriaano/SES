@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/client';
 import { Patient } from '../types';
 import { useAuth } from '../context/AuthContext';
+import { patientLanding } from '../lib/moduleAccess';
 import { usePatient } from '../context/PatientContext';
 import { getRecent, RecentPatient } from '../lib/recentPatients';
 import { UserPlus, UserCheck, ArrowRightLeft, Check, X, Play } from 'lucide-react';
@@ -85,7 +86,7 @@ export default function DashboardPage() {
   function openPatient(p: Patient) {
     setActivePatient(p);
     setActiveEncounterId(null);
-    navigate(`/patient/${p.id}/vitals`);
+    navigate(patientLanding(user?.role, p.id));
   }
 
   async function openPatientById(id: string) {
@@ -209,19 +210,7 @@ export default function DashboardPage() {
                 <span>No.</span><span>Patient</span><span>Age/Sex</span><span>NRC</span>
                 <span>Arrived</span><span>Wait</span><span>Service point</span><span>Status</span><span className="sr-only">Actions</span>
               </div>
-              {shown.length === 0 ? (
-                <div style={{ padding: '72px 18px 80px', textAlign: 'center' }}>
-                  <p style={{ fontSize: 15, fontWeight: 600, marginBottom: 6, color: 'var(--text-heading)' }}>
-                    {count('all') + summary.done === 0 ? (scopeRoom ? `No one is waiting in ${scopeRoom.name}` : 'No one checked in yet')
-                      : filter === 'all' ? 'The queue is clear' : 'No patients in this view'}
-                  </p>
-                  <p className="ws-muted">
-                    {count('all') + summary.done === 0
-                      ? 'Search for a patient above and use “Assign to room” to add them to the queue.'
-                      : filter === 'all' ? 'Everyone here has been seen. Seen patients are under the Done tab.' : 'Try another filter.'}
-                  </p>
-                </div>
-              ) : shown.map((e) => {
+              {shown.map((e) => {
                 const s = STATUS_STYLE[e.status] ?? STATUS_STYLE.Waiting;
                 const a = age(e.patient?.dateOfBirth);
                 const wait = waitMinutes(e, now);
@@ -230,7 +219,7 @@ export default function DashboardPage() {
                 const busy = busyId === e.id;
                 return (
                   <div key={e.id} className={`ws-cols ws-row${done ? ' ws-done' : ''}`}>
-                    <span style={{ fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{queueNo(e.queueNumber)}</span>
+                    <span style={{ fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>{queueNo(e.queueNumber)}</span>
                     <button type="button" className="ws-open" onClick={() => attend(e)} title={done ? 'Open patient'
                       : sp.room && e.roomId !== sp.room.id ? `Open chart — queued in ${e.room.name}. Use “Attend here” to take them into your room.`
                       : 'Open patient and start the visit'}>
@@ -238,13 +227,13 @@ export default function DashboardPage() {
                       <span className="ws-pill" style={{
                         marginLeft: 8,
                         color: e.priority === 'Emergency' ? '#fff' : priorityStyle(e.priority).color,
-                        background: e.priority === 'Emergency' ? '#C41E25' : priorityStyle(e.priority).bg,
+                        background: e.priority === 'Emergency' ? 'var(--ses-red)' : priorityStyle(e.priority).bg,
                       }}>{priorityLabel(e.priority)}</span>
                     </button>
                     <span>{a ?? '—'}{e.patient?.gender ? ` / ${e.patient.gender.charAt(0)}` : ''}</span>
                     <span className="ws-muted">{e.patient?.nationalId ?? '—'}</span>
                     <span className="ws-num2">{arrivedAt(e.checkedInAt)}</span>
-                    <span className="ws-num2" style={long ? { color: 'var(--ws-amber)', fontWeight: 700 } : undefined} title={long ? 'Waiting over 30 minutes' : undefined}>
+                    <span className="ws-num2" style={long ? { color: 'var(--ws-amber)', fontWeight: 500 } : undefined} title={long ? 'Waiting over 30 minutes' : undefined}>
                       {formatWait(wait)}
                     </span>
                     <span>{e.room?.name ?? '—'}</span>
@@ -294,14 +283,12 @@ export default function DashboardPage() {
 
           <section className="ws-card ws-pad" aria-labelledby="ws-rec">
             <h2 id="ws-rec" className="ws-h2" style={{ fontSize: 15, marginBottom: 8 }}>Recent patients</h2>
-            {recent.length === 0 ? (
-              <p className="ws-muted" style={{ lineHeight: 1.5, marginBottom: 10 }}>Patients you open will appear here.</p>
-            ) : (
+            {recent.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', marginBottom: 10 }}>
                 {recent.map((r) => (
                   <button key={r.id} type="button" className="ws-recent" onClick={() => openPatientById(r.id)}>
                     <UserCheck size={14} color="var(--text-muted)" />
-                    <span style={{ flex: 1, fontWeight: 600 }}>{r.firstName} {r.lastName}</span>
+                    <span style={{ flex: 1, fontWeight: 500 }}>{r.firstName} {r.lastName}</span>
                     {r.nationalId && <span className="ws-muted" style={{ fontSize: 12 }}>{r.nationalId}</span>}
                   </button>
                 ))}
@@ -354,51 +341,51 @@ export default function DashboardPage() {
 
       <style>{`
         .ws { position: relative; padding: 24px 24px 40px; max-width: 1600px; margin: 0 auto; font-size: 14px; color: var(--text-body); }
-        .ws a { color: var(--ws-link); font-weight: 600; text-decoration: none; }
+        .ws a { color: var(--ws-link); font-weight:500; text-decoration: none; }
         .ws a:hover { text-decoration: underline; }
         .ws-tree { position: absolute; right: 24px; top: 6px; width: 92px; opacity: var(--ws-tree-op); filter: var(--ws-tree); pointer-events: none; }
         .ws-titlerow { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px; padding-right: 116px; min-height: 48px; }
-        .ws-h1 { margin: 0 0 4px; font-weight: 700; font-size: 22px; letter-spacing: -0.2px; color: var(--text-heading); }
-        .ws-h2 { margin: 0; font-family: var(--font-heading); font-size: 16px; font-weight: 700; color: var(--text-heading); }
+        .ws-h1 { margin: 0 0 4px; font-weight:500; font-size: 22px; letter-spacing: -0.2px; color: var(--text-heading); }
+        .ws-h2 { margin: 0; font-family: var(--font-heading); font-size: 16px; font-weight:500; color: var(--text-heading); }
         .ws-muted { color: var(--text-muted); }
-        .ws-num { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-muted); }
+        .ws-num { font-weight:500; font-variant-numeric: tabular-nums; color: var(--text-muted); }
         .ws-grid { position: relative; display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: 20px; }
         .ws-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
         .ws-pad { padding: 14px 18px 16px; }
         .ws-cardhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 18px; border-bottom: 1px solid var(--border-light); }
-        .ws-tab { height: 30px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .ws-tab { height: 30px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; font-weight:500; cursor: pointer; }
         .ws-tab:hover { background: var(--ws-chip); }
         .ws-tab.on { background: var(--ws-chip-on); color: var(--ws-chip-on-text); }
         .ws-cols { display: grid; grid-template-columns: 56px 2fr 80px 1.2fr 70px 70px 1.2fr 1.1fr 146px; gap: 12px; align-items: center; }
         .ws-thead { padding: 10px 18px; background: var(--ws-head); border-bottom: 1px solid var(--border-light);
-          font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-subtle); }
+          font-size: 11px; font-weight:500; letter-spacing: 1px; text-transform: uppercase; color: var(--text-subtle); }
         .ws-num2 { font-variant-numeric: tabular-nums; }
         .ws-seg { display: inline-flex; padding: 3px; gap: 2px; border: 1px solid var(--border); border-radius: 10px; background: var(--ws-head); }
-        .ws-seg button { height: 28px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .ws-seg button { height: 28px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; font-weight:500; cursor: pointer; white-space: nowrap; }
         .ws-seg button.on { background: var(--ws-chip-on); color: var(--ws-chip-on-text); }
-        .ws-next { height: 34px; padding: 0 14px; border: 0; border-radius: 10px; background: #C41E25; color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+        .ws-next { height: 34px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--ses-red); color: #fff; font: inherit; font-size: 13px; font-weight:500; cursor: pointer;
           display: inline-flex; align-items: center; gap: 8px; transition: filter .15s; }
         .ws-next:hover:not(:disabled) { filter: brightness(1.06); }
         .ws-next:disabled { opacity: .6; cursor: wait; }
         .ws-nudge { padding: 10px 18px; background: var(--ws-blue-bg); color: var(--text-heading); font-size: 13px; border-bottom: 1px solid var(--border-light); }
         .ws-mine { background: var(--ws-chip); }
-        .ws-youhere { color: var(--ws-link); font-weight: 600; font-size: 12px; }
+        .ws-youhere { color: var(--ws-link); font-weight:500; font-size: 12px; }
         .ws-done { opacity: .6; }
-        .ws-open { border: 0; background: none; padding: 0; font: inherit; font-weight: 600; color: var(--text-heading); text-align: left; cursor: pointer; min-width: 0; }
+        .ws-open { border: 0; background: none; padding: 0; font: inherit; font-weight:500; color: var(--text-heading); text-align: left; cursor: pointer; min-width: 0; }
         .ws-open:hover { text-decoration: underline; text-decoration-color: var(--ws-link); text-underline-offset: 3px; }
         .ws-acts { display: flex; justify-content: flex-end; gap: 4px; }
         .ws-ic { width: 30px; height: 30px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--text-muted); cursor: pointer;
           display: inline-flex; align-items: center; justify-content: center; transition: background .15s, color .15s, border-color .15s; }
         .ws-ic:hover:not(:disabled) { background: var(--bg-card); border-color: var(--border); color: var(--text-heading); }
-        .ws-ic-go { color: #fff; background: #C41E25; border-color: #C41E25; }
-        .ws-ic-go:hover:not(:disabled) { background: #C41E25; color: #fff; border-color: #C41E25; filter: brightness(1.08); }
+        .ws-ic-go { color: #fff; background: var(--ses-red); border-color: var(--ses-red); }
+        .ws-ic-go:hover:not(:disabled) { background: var(--ses-red); color: #fff; border-color: var(--ses-red); filter: brightness(1.08); }
         .ws-ic-bad:hover:not(:disabled) { color: var(--st-bad); border-color: var(--st-bad); }
         .ws-ic:disabled, .ws-act:disabled { opacity: .5; cursor: wait; }
-        .ws-act { height: 28px; padding: 0 10px; border: 1px solid var(--btn2-line); border-radius: 8px; background: transparent; color: var(--text-heading); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .ws-act { height: 28px; padding: 0 10px; border: 1px solid var(--btn2-line); border-radius: 8px; background: transparent; color: var(--text-heading); font: inherit; font-size: 12px; font-weight:500; cursor: pointer; }
         .ws-act-bad { color: var(--st-bad); border-color: var(--st-bad); }
         .ws-row { width: 100%; padding: 12px 18px; border: 0; border-bottom: 1px solid var(--border-light); background: none; font: inherit; color: var(--text-body); text-align: left; cursor: pointer; }
         .ws-row:hover { background: var(--ws-chip); }
-        .ws-pill { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 11px; font-size: 11.5px; font-weight: 700; }
+        .ws-pill { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 11px; font-size: 11.5px; font-weight:500; }
         .ws-attn { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; color: var(--text-heading); font-weight: 500; border-bottom: 1px solid var(--border-light); }
         .ws-recent { display: flex; align-items: center; gap: 8px; padding: 7px 6px; margin: 0 -6px; border: 0; border-radius: 8px; background: none; font: inherit; color: var(--text-heading); text-align: left; cursor: pointer; }
         .ws-recent:hover { background: var(--ws-chip); }

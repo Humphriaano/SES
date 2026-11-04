@@ -1,0 +1,60 @@
+{
+  "panels": {
+    "panel_0": [
+      "RFT",
+      "U and E",
+      "U&E",
+      "Renal function"
+    ],
+    "panel_1": [
+      "LFT",
+      "Liver function"
+    ],
+    "panel_3": [
+      "CBC",
+      "Complete blood count",
+      "Full blood count",
+      "FBC"
+    ],
+    "panel_4": [
+      "Urinalysis",
+      "Urine dipstick"
+    ],
+    "panel_6": [
+      "Lipid profile",
+      "Cholesterol"
+    ],
+    "panel_7": [
+      "TFT",
+      "Thyroid function"
+    ],
+    "panel_10": [
+      "Clotting profile",
+      "Coagulation"
+    ]
+  },
+  "singles": {
+    "62": [
+      "HbA1c",
+      "A1c",
+      "Glycated haemoglobin"
+    ],
+    "76": [
+      "CRP"
+    ],
+    "82": [
+      "TSH"
+    ],
+    "150": [
+      "Malaria rapid test",
+      "MRDT"
+    ],
+    "227": [
+      "ABO blood group"
+    ],
+    "228": [
+      "Rhesus",
+      "RhD"
+    ]
+  }
+}

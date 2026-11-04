@@ -1,0 +1,3322 @@
+{
+  "source": {
+    "authority": "U.S. National Library of Medicine, RxNorm",
+    "api": "https://rxnav.nlm.nih.gov/REST",
+    "reviewedOn": "2026-11-03",
+    "scope": "Exact normalized ingredient-level matches only. These identifiers do not assert an exact strength, pack, local approval, availability or interchangeability."
+  },
+  "mappings": {
+    "Abiraterone acetate": {
+      "rxCui": "1100071",
+      "rxnormName": "abiraterone acetate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1100071/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Acamprosate": {
+      "rxCui": "82819",
+      "rxnormName": "acamprosate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/82819/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Acetaminophen+Tramadol HCL": {
+      "rxCui": "352362",
+      "rxnormName": "acetaminophen / tramadol",
+      "rxnormType": "MIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/352362/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Acetylcysteine": {
+      "rxCui": "197",
+      "rxnormName": "acetylcysteine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/197/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Acetylsalicylic acid": {
+      "rxCui": "1191",
+      "rxnormName": "aspirin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1191/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Acetylsalicylic Acid": {
+      "rxCui": "1191",
+      "rxnormName": "aspirin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1191/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Acyclovir": {
+      "rxCui": "281",
+      "rxnormName": "acyclovir",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/281/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Activated charcoal": {
+      "rxCui": "272",
+      "rxnormName": "activated charcoal",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/272/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Adrenaline acid tartrate": {
+      "rxCui": "203180",
+      "rxnormName": "epinephrine bitartrate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203180/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Albendazole": {
+      "rxCui": "430",
+      "rxnormName": "albendazole",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/430/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Allopurinol": {
+      "rxCui": "519",
+      "rxnormName": "allopurinol",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/519/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Alprazolam": {
+      "rxCui": "596",
+      "rxnormName": "alprazolam",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/596/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Amethocaine": {
+      "rxCui": "10391",
+      "rxnormName": "tetracaine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10391/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Amikacin": {
+      "rxCui": "641",
+      "rxnormName": "amikacin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/641/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Aminophylline": {
+      "rxCui": "689",
+      "rxnormName": "aminophylline",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/689/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Amiodarone HCl": {
+      "rxCui": "203114",
+      "rxnormName": "amiodarone hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203114/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Amisulpride": {
+      "rxCui": "46303",
+      "rxnormName": "amisulpride",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/46303/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Amlodipine": {
+      "rxCui": "17767",
+      "rxnormName": "amlodipine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/17767/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Amoxicillin": {
+      "rxCui": "723",
+      "rxnormName": "amoxicillin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/723/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Amoxicillin trihydrate/Clavulanate": {
+      "rxCui": "19711",
+      "rxnormName": "amoxicillin / clavulanate",
+      "rxnormType": "MIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/19711/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Amoxycillin": {
+      "rxCui": "723",
+      "rxnormName": "amoxicillin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/723/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Amoxycillin trihydrate": {
+      "rxCui": "723",
+      "rxnormName": "amoxicillin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/723/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Amphotericin B": {
+      "rxCui": "732",
+      "rxnormName": "amphotericin B",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/732/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ampicillin": {
+      "rxCui": "733",
+      "rxnormName": "ampicillin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/733/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ampicillin sodium": {
+      "rxCui": "81953",
+      "rxnormName": "ampicillin sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/81953/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Artemether + Lumefantrine": {
+      "rxCui": "282448",
+      "rxnormName": "artemether / lumefantrine",
+      "rxnormType": "MIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/282448/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Artesunate": {
+      "rxCui": "18346",
+      "rxnormName": "artesunate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/18346/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ascorbic Acid": {
+      "rxCui": "1151",
+      "rxnormName": "ascorbic acid",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1151/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Atenolol": {
+      "rxCui": "1202",
+      "rxnormName": "atenolol",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1202/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ascorbic acid": {
+      "rxCui": "1151",
+      "rxnormName": "ascorbic acid",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1151/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Atorvastatin": {
+      "rxCui": "83367",
+      "rxnormName": "atorvastatin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/83367/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Atomoxetine Hydrochloride": {
+      "rxCui": "353103",
+      "rxnormName": "atomoxetine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/353103/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Atracurium Besylate": {
+      "rxCui": "1219",
+      "rxnormName": "atracurium besylate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1219/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Atropine": {
+      "rxCui": "1223",
+      "rxnormName": "atropine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1223/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Azathioprine": {
+      "rxCui": "1256",
+      "rxnormName": "azathioprine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1256/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Atropine sulphate": {
+      "rxCui": "153971",
+      "rxnormName": "atropine sulfate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/153971/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Azithromycin": {
+      "rxCui": "18631",
+      "rxnormName": "azithromycin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/18631/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Bamlanivimab": {
+      "rxCui": "2463114",
+      "rxnormName": "bamlanivimab",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2463114/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Baricitinib": {
+      "rxCui": "2047232",
+      "rxnormName": "baricitinib",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2047232/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Beclomethasone": {
+      "rxCui": "1347",
+      "rxnormName": "beclomethasone",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1347/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Beclomethasone Dipropionate": {
+      "rxCui": "1348",
+      "rxnormName": "beclomethasone dipropionate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1348/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Bemiparin Sodium": {
+      "rxCui": "436195",
+      "rxnormName": "bemiparin sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/436195/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Benzocaine": {
+      "rxCui": "1399",
+      "rxnormName": "benzocaine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1399/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Benzylpenicillin": {
+      "rxCui": "7980",
+      "rxnormName": "penicillin G",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7980/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Benzyl Benzoate": {
+      "rxCui": "19044",
+      "rxnormName": "benzyl benzoate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/19044/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Betamethasone": {
+      "rxCui": "1514",
+      "rxnormName": "betamethasone",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1514/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Beractant": {
+      "rxCui": "46967",
+      "rxnormName": "beractant",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/46967/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Betamethasone Dipropionate": {
+      "rxCui": "19254",
+      "rxnormName": "betamethasone dipropionate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/19254/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Betamethasone Valerate": {
+      "rxCui": "227897",
+      "rxnormName": "betamethasone valerate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/227897/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Betaxolol": {
+      "rxCui": "1520",
+      "rxnormName": "betaxolol",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1520/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Bevacizumab": {
+      "rxCui": "253337",
+      "rxnormName": "bevacizumab",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/253337/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Bicalutamide": {
+      "rxCui": "83008",
+      "rxnormName": "bicalutamide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/83008/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Bleomycin": {
+      "rxCui": "1622",
+      "rxnormName": "bleomycin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1622/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Bortezomib": {
+      "rxCui": "358258",
+      "rxnormName": "bortezomib",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/358258/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Brimonidine /Timolol": {
+      "rxCui": "597142",
+      "rxnormName": "brimonidine / timolol",
+      "rxnormType": "MIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/597142/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Bupivacaine HCl": {
+      "rxCui": "267396",
+      "rxnormName": "bupivacaine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/267396/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Bupivacaine": {
+      "rxCui": "1815",
+      "rxnormName": "bupivacaine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1815/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Bupivacaine HCL": {
+      "rxCui": "267396",
+      "rxnormName": "bupivacaine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/267396/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Bupivacaine Hydrochloride": {
+      "rxCui": "267396",
+      "rxnormName": "bupivacaine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/267396/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Bupivacaine hydrochloride": {
+      "rxCui": "267396",
+      "rxnormName": "bupivacaine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/267396/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Buprenorphine": {
+      "rxCui": "1819",
+      "rxnormName": "buprenorphine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1819/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Busulfan": {
+      "rxCui": "1828",
+      "rxnormName": "busulfan",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1828/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Buprenorphine+Naloxone": {
+      "rxCui": "352364",
+      "rxnormName": "buprenorphine / naloxone",
+      "rxnormType": "MIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/352364/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Calcium Gluconate": {
+      "rxCui": "1908",
+      "rxnormName": "calcium gluconate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1908/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Calcium Folinate": {
+      "rxCui": "225852",
+      "rxnormName": "leucovorin calcium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/225852/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Calamine": {
+      "rxCui": "106212",
+      "rxnormName": "calamine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/106212/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Capecitabine": {
+      "rxCui": "194000",
+      "rxnormName": "capecitabine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/194000/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Captopril": {
+      "rxCui": "1998",
+      "rxnormName": "captopril",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1998/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Carbamazepine": {
+      "rxCui": "2002",
+      "rxnormName": "carbamazepine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2002/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Carbimazole": {
+      "rxCui": "2020",
+      "rxnormName": "carbimazole",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2020/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Carboplatin": {
+      "rxCui": "40048",
+      "rxnormName": "carboplatin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/40048/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Carvedilol": {
+      "rxCui": "20352",
+      "rxnormName": "carvedilol",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/20352/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Carfilzomib": {
+      "rxCui": "1302966",
+      "rxnormName": "carfilzomib",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1302966/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Carmustin": {
+      "rxCui": "2105",
+      "rxnormName": "carmustine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2105/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cefotaxime": {
+      "rxCui": "2186",
+      "rxnormName": "cefotaxime",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2186/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cefixime": {
+      "rxCui": "25033",
+      "rxnormName": "cefixime",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/25033/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cefepime": {
+      "rxCui": "20481",
+      "rxnormName": "cefepime",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/20481/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cefdinir": {
+      "rxCui": "25037",
+      "rxnormName": "cefdinir",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/25037/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cefotaxime Sodium": {
+      "rxCui": "203117",
+      "rxnormName": "cefotaxime sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203117/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ceftizoxime": {
+      "rxCui": "2192",
+      "rxnormName": "ceftizoxime",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2192/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ceftriaxone sodium": {
+      "rxCui": "203172",
+      "rxnormName": "ceftriaxone sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203172/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ceftriaxone Sodium": {
+      "rxCui": "203172",
+      "rxnormName": "ceftriaxone sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203172/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cefuroxime": {
+      "rxCui": "2194",
+      "rxnormName": "cefuroxime",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2194/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cephalexin": {
+      "rxCui": "2231",
+      "rxnormName": "cephalexin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2231/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ceritinib": {
+      "rxCui": "1535457",
+      "rxnormName": "ceritinib",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1535457/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cetirizine Dihydrochloride": {
+      "rxCui": "203150",
+      "rxnormName": "cetirizine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203150/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cetuximab": {
+      "rxCui": "318341",
+      "rxnormName": "cetuximab",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/318341/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Chloramphenicol": {
+      "rxCui": "2348",
+      "rxnormName": "chloramphenicol",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2348/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Chlorambucil": {
+      "rxCui": "2346",
+      "rxnormName": "chlorambucil",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2346/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Chlordiazepoxide": {
+      "rxCui": "2356",
+      "rxnormName": "chlordiazepoxide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2356/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Chloramphenicol Sodium Succinate": {
+      "rxCui": "47998",
+      "rxnormName": "chloramphenicol sodium succinate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/47998/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Chlorine": {
+      "rxCui": "1310122",
+      "rxnormName": "chlorine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1310122/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Chlorhexidine Gluconate": {
+      "rxCui": "20791",
+      "rxnormName": "chlorhexidine gluconate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/20791/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Chlorpheniramine": {
+      "rxCui": "2400",
+      "rxnormName": "chlorpheniramine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2400/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Chlorpheniramine Maleate": {
+      "rxCui": "142429",
+      "rxnormName": "chlorpheniramine maleate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/142429/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Chloroquine Phosphate": {
+      "rxCui": "20863",
+      "rxnormName": "chloroquine phosphate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/20863/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Chlorpromazine HCl": {
+      "rxCui": "104728",
+      "rxnormName": "chlorpromazine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/104728/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cimetidine": {
+      "rxCui": "2541",
+      "rxnormName": "cimetidine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2541/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ciprofloxacin": {
+      "rxCui": "2551",
+      "rxnormName": "ciprofloxacin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2551/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ciprofloxacin Lactate": {
+      "rxCui": "235851",
+      "rxnormName": "ciprofloxacin lactate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/235851/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ciprofloxacin Hydrochloride": {
+      "rxCui": "81981",
+      "rxnormName": "ciprofloxacin hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/81981/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cisplatin": {
+      "rxCui": "2555",
+      "rxnormName": "cisplatin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2555/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Clonidine": {
+      "rxCui": "2599",
+      "rxnormName": "clonidine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2599/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Clarithromycin": {
+      "rxCui": "21212",
+      "rxnormName": "clarithromycin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/21212/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Clotrimazole": {
+      "rxCui": "2623",
+      "rxnormName": "clotrimazole",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2623/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cloxacillin Sodium": {
+      "rxCui": "9864",
+      "rxnormName": "cloxacillin sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/9864/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cloxacillin": {
+      "rxCui": "2625",
+      "rxnormName": "cloxacillin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2625/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Clozapine": {
+      "rxCui": "2626",
+      "rxnormName": "clozapine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2626/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Coagulation Factor VIII": {
+      "rxCui": "4257",
+      "rxnormName": "factor VIII",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4257/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cocoa Butter": {
+      "rxCui": "21389",
+      "rxnormName": "cocoa butter",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/21389/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Codeine phosphate": {
+      "rxCui": "2672",
+      "rxnormName": "codeine phosphate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2672/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Colchicine": {
+      "rxCui": "2683",
+      "rxnormName": "colchicine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2683/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cyanocobalamin": {
+      "rxCui": "11248",
+      "rxnormName": "vitamin B12",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/11248/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cyclopentolate HCL": {
+      "rxCui": "106029",
+      "rxnormName": "cyclopentolate hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/106029/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cyclopentolate hydrochloride": {
+      "rxCui": "106029",
+      "rxnormName": "cyclopentolate hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/106029/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cyclophosphamide": {
+      "rxCui": "3002",
+      "rxnormName": "cyclophosphamide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3002/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cyclosporine": {
+      "rxCui": "3008",
+      "rxnormName": "cyclosporine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3008/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cyclosporin": {
+      "rxCui": "3008",
+      "rxnormName": "cyclosporine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3008/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Dacarbazine": {
+      "rxCui": "3098",
+      "rxnormName": "dacarbazine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3098/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Cytarabine": {
+      "rxCui": "3041",
+      "rxnormName": "cytarabine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3041/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Daptomycin": {
+      "rxCui": "22299",
+      "rxnormName": "daptomycin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/22299/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Dapagliflozin": {
+      "rxCui": "1488564",
+      "rxnormName": "dapagliflozin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1488564/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Daunorubicin": {
+      "rxCui": "3109",
+      "rxnormName": "daunorubicin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3109/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Deferasirox": {
+      "rxCui": "614373",
+      "rxnormName": "deferasirox",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/614373/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Dexamethasone": {
+      "rxCui": "3264",
+      "rxnormName": "dexamethasone",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3264/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Dexamethasone Sodium Phosphate": {
+      "rxCui": "48933",
+      "rxnormName": "dexamethasone sodium phosphate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/48933/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Dexamethasone sodium phosphate": {
+      "rxCui": "48933",
+      "rxnormName": "dexamethasone sodium phosphate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/48933/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Dextromethorphan Hydrobromide": {
+      "rxCui": "102490",
+      "rxnormName": "dextromethorphan hydrobromide",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/102490/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Diazepam": {
+      "rxCui": "3322",
+      "rxnormName": "diazepam",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3322/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Dextrose": {
+      "rxCui": "4850",
+      "rxnormName": "glucose",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4850/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Diclofenac Sodium": {
+      "rxCui": "203214",
+      "rxnormName": "diclofenac sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203214/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Digoxin": {
+      "rxCui": "3407",
+      "rxnormName": "digoxin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3407/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Disulfiram": {
+      "rxCui": "3554",
+      "rxnormName": "disulfiram",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3554/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Divalproex": {
+      "rxCui": "11118",
+      "rxnormName": "valproic acid",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/11118/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Docetaxel": {
+      "rxCui": "72962",
+      "rxnormName": "docetaxel",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/72962/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Dobutamine": {
+      "rxCui": "3616",
+      "rxnormName": "dobutamine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3616/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Dopamine": {
+      "rxCui": "3628",
+      "rxnormName": "dopamine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3628/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Doxorubicin HCl": {
+      "rxCui": "142433",
+      "rxnormName": "doxorubicin hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/142433/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Dorzolamide": {
+      "rxCui": "60207",
+      "rxnormName": "dorzolamide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/60207/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Doxycycline": {
+      "rxCui": "3640",
+      "rxnormName": "doxycycline",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3640/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Econazole": {
+      "rxCui": "3743",
+      "rxnormName": "econazole",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3743/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Doxorubicin liposomal": {
+      "rxCui": "214525",
+      "rxnormName": "doxorubicin liposome",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/214525/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Enalapril": {
+      "rxCui": "3827",
+      "rxnormName": "enalapril",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3827/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Enoxaparin": {
+      "rxCui": "67108",
+      "rxnormName": "enoxaparin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/67108/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Enoxaparin Sodium": {
+      "rxCui": "221095",
+      "rxnormName": "enoxaparin sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/221095/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Epirubicin": {
+      "rxCui": "3995",
+      "rxnormName": "epirubicin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3995/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Erythromycin Estolate": {
+      "rxCui": "4055",
+      "rxnormName": "erythromycin estolate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4055/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Erythromycin Ethyl Succinate": {
+      "rxCui": "4056",
+      "rxnormName": "erythromycin ethylsuccinate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4056/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Erythromycin Stearate": {
+      "rxCui": "24351",
+      "rxnormName": "erythromycin stearate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/24351/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Erythropoetin": {
+      "rxCui": "105694",
+      "rxnormName": "epoetin alfa",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/105694/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Escitalopram Oxalate": {
+      "rxCui": "353108",
+      "rxnormName": "escitalopram oxalate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/353108/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Esomeprazole": {
+      "rxCui": "283742",
+      "rxnormName": "esomeprazole",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/283742/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Esomeprazole Sodium": {
+      "rxCui": "1294569",
+      "rxnormName": "esomeprazole sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1294569/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Etoposide": {
+      "rxCui": "4179",
+      "rxnormName": "etoposide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4179/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Etesevimab": {
+      "rxCui": "2477854",
+      "rxnormName": "etesevimab",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2477854/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ethanol": {
+      "rxCui": "448",
+      "rxnormName": "ethanol",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/448/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Fenofibrate": {
+      "rxCui": "8703",
+      "rxnormName": "fenofibrate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8703/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ferrous Sulphate": {
+      "rxCui": "24947",
+      "rxnormName": "ferrous sulfate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/24947/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Fidaxomicin": {
+      "rxCui": "1111103",
+      "rxnormName": "fidaxomicin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1111103/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Filgrastim": {
+      "rxCui": "68442",
+      "rxnormName": "filgrastim",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/68442/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Fluconazole": {
+      "rxCui": "4450",
+      "rxnormName": "fluconazole",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4450/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Fluorescein sodium": {
+      "rxCui": "57789",
+      "rxnormName": "fluorescein sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/57789/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Flucytosine": {
+      "rxCui": "4451",
+      "rxnormName": "flucytosine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4451/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Fludarabine": {
+      "rxCui": "24698",
+      "rxnormName": "fludarabine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/24698/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Fluorometholone": {
+      "rxCui": "4491",
+      "rxnormName": "fluorometholone",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4491/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Fluoxetine": {
+      "rxCui": "4493",
+      "rxnormName": "fluoxetine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4493/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Fluorouracil": {
+      "rxCui": "4492",
+      "rxnormName": "fluorouracil",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4492/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Flupenthixol Decanoate": {
+      "rxCui": "25188",
+      "rxnormName": "flupenthixol decanoate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/25188/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Fluphenazine Decanoate": {
+      "rxCui": "25190",
+      "rxnormName": "fluphenazine decanoate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/25190/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Folic Acid": {
+      "rxCui": "4511",
+      "rxnormName": "folic acid",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4511/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Frusemide": {
+      "rxCui": "4603",
+      "rxnormName": "furosemide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4603/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Furosemide": {
+      "rxCui": "4603",
+      "rxnormName": "furosemide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4603/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Fulvestrant": {
+      "rxCui": "282357",
+      "rxnormName": "fulvestrant",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/282357/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Gabapentine": {
+      "rxCui": "25480",
+      "rxnormName": "gabapentin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/25480/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Gadodiamide": {
+      "rxCui": "41144",
+      "rxnormName": "gadodiamide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/41144/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Gancyclovir": {
+      "rxCui": "4678",
+      "rxnormName": "ganciclovir",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4678/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ganciclovir": {
+      "rxCui": "4678",
+      "rxnormName": "ganciclovir",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4678/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Gemcitabine": {
+      "rxCui": "12574",
+      "rxnormName": "gemcitabine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/12574/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Gentamycin": {
+      "rxCui": "1596450",
+      "rxnormName": "gentamicin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1596450/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Gentamycin Sulphate": {
+      "rxCui": "1596450",
+      "rxnormName": "gentamicin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1596450/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Gentamycin sulphate": {
+      "rxCui": "1596450",
+      "rxnormName": "gentamicin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1596450/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Gentamycine sulphate": {
+      "rxCui": "1596450",
+      "rxnormName": "gentamicin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1596450/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Gliclazide": {
+      "rxCui": "4816",
+      "rxnormName": "gliclazide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4816/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Glibenclamide": {
+      "rxCui": "4815",
+      "rxnormName": "glyburide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4815/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Glimepiride": {
+      "rxCui": "25789",
+      "rxnormName": "glimepiride",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/25789/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Glyceryl Trinitrate": {
+      "rxCui": "4917",
+      "rxnormName": "nitroglycerin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4917/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Glutaraldehyde": {
+      "rxCui": "4888",
+      "rxnormName": "glutaral",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/4888/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Glucagon Hydrochloride": {
+      "rxCui": "253170",
+      "rxnormName": "glucagon hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/253170/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Goserelin Acetate": {
+      "rxCui": "203146",
+      "rxnormName": "goserelin acetate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203146/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Goserelin acetate": {
+      "rxCui": "203146",
+      "rxnormName": "goserelin acetate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203146/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Glycopyrronium Bromide": {
+      "rxCui": "1546438",
+      "rxnormName": "glycopyrronium",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1546438/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Granisetron HCl": {
+      "rxCui": "142149",
+      "rxnormName": "granisetron hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/142149/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Griseofulvin": {
+      "rxCui": "5021",
+      "rxnormName": "griseofulvin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/5021/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Haloperidol": {
+      "rxCui": "5093",
+      "rxnormName": "haloperidol",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/5093/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Hydralazine": {
+      "rxCui": "5470",
+      "rxnormName": "hydralazine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/5470/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Human Albumin": {
+      "rxCui": "828529",
+      "rxnormName": "albumin human, USP",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/828529/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Hydrocortisone": {
+      "rxCui": "5492",
+      "rxnormName": "hydrocortisone",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/5492/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Hydrocortisone acetate": {
+      "rxCui": "27197",
+      "rxnormName": "hydrocortisone acetate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/27197/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Hydrocortisone Sodium Succinate": {
+      "rxCui": "235483",
+      "rxnormName": "hydrocortisone sodium succinate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/235483/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Hydrocortisone sodium succinate": {
+      "rxCui": "235483",
+      "rxnormName": "hydrocortisone sodium succinate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/235483/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Hydrogen Peroxide": {
+      "rxCui": "5499",
+      "rxnormName": "hydrogen peroxide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/5499/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Hydroxychloroquine": {
+      "rxCui": "5521",
+      "rxnormName": "hydroxychloroquine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/5521/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Hydroxyurea": {
+      "rxCui": "5552",
+      "rxnormName": "hydroxyurea",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/5552/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Hyoscine butylbromide": {
+      "rxCui": "1851",
+      "rxnormName": "butylscopolamine bromide",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1851/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Hyoscine Butylbromide": {
+      "rxCui": "1851",
+      "rxnormName": "butylscopolamine bromide",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1851/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ibuprofen": {
+      "rxCui": "5640",
+      "rxnormName": "ibuprofen",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/5640/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Hypromellose": {
+      "rxCui": "27334",
+      "rxnormName": "hypromellose",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/27334/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ifosfamide": {
+      "rxCui": "5657",
+      "rxnormName": "ifosfamide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/5657/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ifosfamide/Mesna": {
+      "rxCui": "352384",
+      "rxnormName": "ifosfamide / mesna",
+      "rxnormType": "MIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/352384/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Imipenem": {
+      "rxCui": "5690",
+      "rxnormName": "imipenem",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/5690/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Imatinib": {
+      "rxCui": "282388",
+      "rxnormName": "imatinib",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/282388/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Imipenem/Cilastatin": {
+      "rxCui": "34482",
+      "rxnormName": "cilastatin / imipenem",
+      "rxnormType": "MIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/34482/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Imipramine": {
+      "rxCui": "5691",
+      "rxnormName": "imipramine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/5691/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Imipramine HCl": {
+      "rxCui": "150816",
+      "rxnormName": "imipramine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/150816/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Indapamide": {
+      "rxCui": "5764",
+      "rxnormName": "indapamide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/5764/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Insulin": {
+      "rxCui": "253182",
+      "rxnormName": "insulin, regular, human",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/253182/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Insulin Detemir": {
+      "rxCui": "139825",
+      "rxnormName": "insulin detemir",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/139825/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Iodine": {
+      "rxCui": "5933",
+      "rxnormName": "iodine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/5933/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Iron sucrose": {
+      "rxCui": "24909",
+      "rxnormName": "iron sucrose",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/24909/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Irinotecan": {
+      "rxCui": "51499",
+      "rxnormName": "irinotecan",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/51499/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Iron Sucrose": {
+      "rxCui": "24909",
+      "rxnormName": "iron sucrose",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/24909/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Isoflurane": {
+      "rxCui": "6026",
+      "rxnormName": "isoflurane",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6026/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Isosorbide Mononitrate": {
+      "rxCui": "28004",
+      "rxnormName": "isosorbide mononitrate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/28004/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Isosorbide dinitrate": {
+      "rxCui": "6058",
+      "rxnormName": "isosorbide dinitrate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6058/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Isosorbide Dinitrate": {
+      "rxCui": "6058",
+      "rxnormName": "isosorbide dinitrate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6058/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Itraconazole": {
+      "rxCui": "28031",
+      "rxnormName": "itraconazole",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/28031/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ivermectin": {
+      "rxCui": "6069",
+      "rxnormName": "ivermectin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6069/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ketamine": {
+      "rxCui": "6130",
+      "rxnormName": "ketamine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6130/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ketamine HCl": {
+      "rxCui": "203184",
+      "rxnormName": "ketamine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203184/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "L-Asparaginase": {
+      "rxCui": "1156",
+      "rxnormName": "asparaginase",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1156/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Lactulose": {
+      "rxCui": "6218",
+      "rxnormName": "lactulose",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6218/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Lamotrigine": {
+      "rxCui": "28439",
+      "rxnormName": "lamotrigine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/28439/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Latanoprost": {
+      "rxCui": "43611",
+      "rxnormName": "latanoprost",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/43611/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Letrozole": {
+      "rxCui": "72965",
+      "rxnormName": "letrozole",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/72965/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Lenalidomide": {
+      "rxCui": "342369",
+      "rxnormName": "lenalidomide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/342369/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Levothyroxine Sodium": {
+      "rxCui": "40144",
+      "rxnormName": "levothyroxine sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/40144/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Lidocaine": {
+      "rxCui": "6387",
+      "rxnormName": "lidocaine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6387/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Lidocaine HCL": {
+      "rxCui": "142440",
+      "rxnormName": "lidocaine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/142440/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Lidocaine HCl": {
+      "rxCui": "142440",
+      "rxnormName": "lidocaine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/142440/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Lidocaine Hcl": {
+      "rxCui": "142440",
+      "rxnormName": "lidocaine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/142440/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Lignocaine": {
+      "rxCui": "6387",
+      "rxnormName": "lidocaine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6387/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Lisinopril": {
+      "rxCui": "29046",
+      "rxnormName": "lisinopril",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/29046/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Lomustine": {
+      "rxCui": "6466",
+      "rxnormName": "lomustine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6466/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Lithium Carbonate": {
+      "rxCui": "42351",
+      "rxnormName": "lithium carbonate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/42351/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Loperamide": {
+      "rxCui": "6468",
+      "rxnormName": "loperamide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6468/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Lorazepam": {
+      "rxCui": "6470",
+      "rxnormName": "lorazepam",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6470/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Losartan Potassium": {
+      "rxCui": "203160",
+      "rxnormName": "losartan potassium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203160/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Magnesium Sulfate": {
+      "rxCui": "6585",
+      "rxnormName": "magnesium sulfate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6585/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Magnesium Sulphate": {
+      "rxCui": "6585",
+      "rxnormName": "magnesium sulfate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6585/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Magnesium Trisilicate": {
+      "rxCui": "29170",
+      "rxnormName": "magnesium trisilicate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/29170/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Magnesium sulphate": {
+      "rxCui": "6585",
+      "rxnormName": "magnesium sulfate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6585/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Mannitol": {
+      "rxCui": "6628",
+      "rxnormName": "mannitol",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6628/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Mebendazole": {
+      "rxCui": "6672",
+      "rxnormName": "mebendazole",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6672/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Mefenamic acid": {
+      "rxCui": "6693",
+      "rxnormName": "mefenamic acid",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6693/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Meloxicam": {
+      "rxCui": "41493",
+      "rxnormName": "meloxicam",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/41493/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Mercaptopurine": {
+      "rxCui": "103",
+      "rxnormName": "mercaptopurine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/103/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Meropenem": {
+      "rxCui": "29561",
+      "rxnormName": "meropenem",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/29561/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Mesalamine": {
+      "rxCui": "52582",
+      "rxnormName": "mesalamine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/52582/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Mesna": {
+      "rxCui": "44",
+      "rxnormName": "mesna",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/44/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Metformin": {
+      "rxCui": "6809",
+      "rxnormName": "metformin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6809/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Metformin HCl": {
+      "rxCui": "235743",
+      "rxnormName": "metformin hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/235743/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Methotrexate": {
+      "rxCui": "6851",
+      "rxnormName": "methotrexate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6851/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Methylphenidate Hydrochloride": {
+      "rxCui": "203188",
+      "rxnormName": "methylphenidate hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203188/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Methylprednisolone": {
+      "rxCui": "6902",
+      "rxnormName": "methylprednisolone",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6902/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Methylprednisolone acetate": {
+      "rxCui": "155323",
+      "rxnormName": "methylprednisolone acetate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/155323/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Metoclopramide": {
+      "rxCui": "6915",
+      "rxnormName": "metoclopramide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6915/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Metoclopramide HCl": {
+      "rxCui": "267036",
+      "rxnormName": "metoclopramide hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/267036/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Metolazone": {
+      "rxCui": "6916",
+      "rxnormName": "metolazone",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6916/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Metronidazole": {
+      "rxCui": "6922",
+      "rxnormName": "metronidazole",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6922/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Metoprolol": {
+      "rxCui": "6918",
+      "rxnormName": "metoprolol",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6918/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Metronidazole benzoate": {
+      "rxCui": "103866",
+      "rxnormName": "metronidazole benzoate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/103866/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Metronidazole HCl": {
+      "rxCui": "82047",
+      "rxnormName": "metronidazole hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/82047/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Miconazole": {
+      "rxCui": "6932",
+      "rxnormName": "miconazole",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6932/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Miconazole Nitrate": {
+      "rxCui": "42790",
+      "rxnormName": "miconazole nitrate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/42790/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Midazolam Hcl": {
+      "rxCui": "203128",
+      "rxnormName": "midazolam hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203128/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Mirtazapine": {
+      "rxCui": "15996",
+      "rxnormName": "mirtazapine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/15996/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Mitomycin": {
+      "rxCui": "632",
+      "rxnormName": "mitomycin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/632/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Mitoxantrone": {
+      "rxCui": "7005",
+      "rxnormName": "mitoxantrone",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7005/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Montelukast Sodium": {
+      "rxCui": "115713",
+      "rxnormName": "montelukast sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/115713/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Morphine": {
+      "rxCui": "7052",
+      "rxnormName": "morphine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7052/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Moxifloxacin Hydrochloride": {
+      "rxCui": "228750",
+      "rxnormName": "moxifloxacin hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/228750/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Mupirocin": {
+      "rxCui": "42372",
+      "rxnormName": "mupirocin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/42372/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Mycophenolate": {
+      "rxCui": "265323",
+      "rxnormName": "mycophenolate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/265323/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Mycophenolate Mofetil": {
+      "rxCui": "68149",
+      "rxnormName": "mycophenolate mofetil",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/68149/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Nalidixic Acid": {
+      "rxCui": "7240",
+      "rxnormName": "nalidixic acid",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7240/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Naloxone": {
+      "rxCui": "7242",
+      "rxnormName": "naloxone",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7242/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Naphazoline Nitrate": {
+      "rxCui": "235810",
+      "rxnormName": "naphazoline nitrate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/235810/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Naltrexone": {
+      "rxCui": "7243",
+      "rxnormName": "naltrexone",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7243/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Naltrexone HCl": {
+      "rxCui": "105069",
+      "rxnormName": "naltrexone hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/105069/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Niclosamide": {
+      "rxCui": "7402",
+      "rxnormName": "niclosamide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7402/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Naproxen": {
+      "rxCui": "7258",
+      "rxnormName": "naproxen",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7258/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Natamycin": {
+      "rxCui": "7268",
+      "rxnormName": "natamycin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7268/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Nitrazepam": {
+      "rxCui": "7440",
+      "rxnormName": "nitrazepam",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7440/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Nitrofurantoin": {
+      "rxCui": "7454",
+      "rxnormName": "nitrofurantoin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7454/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Norethisterone Acetate": {
+      "rxCui": "31983",
+      "rxnormName": "norethindrone acetate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/31983/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ofloxacin": {
+      "rxCui": "7623",
+      "rxnormName": "ofloxacin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7623/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Olanzapine": {
+      "rxCui": "61381",
+      "rxnormName": "olanzapine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/61381/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Olopatadine": {
+      "rxCui": "135391",
+      "rxnormName": "olopatadine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/135391/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Omeprazole": {
+      "rxCui": "7646",
+      "rxnormName": "omeprazole",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7646/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ondansetron": {
+      "rxCui": "26225",
+      "rxnormName": "ondansetron",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/26225/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Omeprazole Sodium": {
+      "rxCui": "1792108",
+      "rxnormName": "omeprazole sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1792108/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ondansetron HCl": {
+      "rxCui": "203148",
+      "rxnormName": "ondansetron hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203148/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Oxaliplatin": {
+      "rxCui": "32592",
+      "rxnormName": "oxaliplatin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/32592/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Oseltamivir Phosphate": {
+      "rxCui": "259275",
+      "rxnormName": "oseltamivir phosphate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/259275/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Oxytocin": {
+      "rxCui": "7824",
+      "rxnormName": "oxytocin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7824/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Paclitaxel": {
+      "rxCui": "56946",
+      "rxnormName": "paclitaxel",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/56946/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Paracetamol": {
+      "rxCui": "161",
+      "rxnormName": "acetaminophen",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/161/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Pancuronium Bromide": {
+      "rxCui": "7884",
+      "rxnormName": "pancuronium bromide",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7884/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Pethidine": {
+      "rxCui": "6754",
+      "rxnormName": "meperidine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/6754/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Pegfilgrastim": {
+      "rxCui": "338036",
+      "rxnormName": "pegfilgrastim",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/338036/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Pemetrexed": {
+      "rxCui": "68446",
+      "rxnormName": "pemetrexed",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/68446/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Phenobarbiton": {
+      "rxCui": "8134",
+      "rxnormName": "phenobarbital",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8134/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Phenobarbitone": {
+      "rxCui": "8134",
+      "rxnormName": "phenobarbital",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8134/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Phenoxymethyl Penicillin": {
+      "rxCui": "7984",
+      "rxnormName": "penicillin V",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7984/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Phenytoin Sodium": {
+      "rxCui": "71227",
+      "rxnormName": "phenytoin sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/71227/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Phytomenadione": {
+      "rxCui": "8308",
+      "rxnormName": "vitamin K1",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8308/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Pilocarpine Nitrate": {
+      "rxCui": "103244",
+      "rxnormName": "pilocarpine nitrate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/103244/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Piperacillin/Tazobactam": {
+      "rxCui": "74169",
+      "rxnormName": "piperacillin / tazobactam",
+      "rxnormType": "MIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/74169/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Pilocarpine nitrate": {
+      "rxCui": "103244",
+      "rxnormName": "pilocarpine nitrate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/103244/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Potassium Chloride": {
+      "rxCui": "8591",
+      "rxnormName": "potassium chloride",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8591/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Potassium chloride": {
+      "rxCui": "8591",
+      "rxnormName": "potassium chloride",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8591/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Povidone Iodine": {
+      "rxCui": "8611",
+      "rxnormName": "povidone-iodine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8611/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Povidone iodine": {
+      "rxCui": "8611",
+      "rxnormName": "povidone-iodine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8611/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Prednisolone": {
+      "rxCui": "8638",
+      "rxnormName": "prednisolone",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8638/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Praziquantel": {
+      "rxCui": "8628",
+      "rxnormName": "praziquantel",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8628/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Prednisolone Acetate": {
+      "rxCui": "34372",
+      "rxnormName": "prednisolone acetate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/34372/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Prifinium Bromide": {
+      "rxCui": "9021",
+      "rxnormName": "pyrodifenium bromide",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/9021/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Procaine Penicillin": {
+      "rxCui": "7983",
+      "rxnormName": "penicillin G procaine",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/7983/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Procarbazine": {
+      "rxCui": "8702",
+      "rxnormName": "procarbazine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8702/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Promethazine": {
+      "rxCui": "8745",
+      "rxnormName": "promethazine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8745/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Promethazine HCL": {
+      "rxCui": "142445",
+      "rxnormName": "promethazine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/142445/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Promethazine HCl": {
+      "rxCui": "142445",
+      "rxnormName": "promethazine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/142445/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Promethazine Hydrochloride": {
+      "rxCui": "142445",
+      "rxnormName": "promethazine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/142445/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Propofol": {
+      "rxCui": "8782",
+      "rxnormName": "propofol",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8782/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Propranolol Hydrochloride": {
+      "rxCui": "82084",
+      "rxnormName": "propranolol hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/82084/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Propylthiouracil": {
+      "rxCui": "8794",
+      "rxnormName": "propylthiouracil",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/8794/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Pumice": {
+      "rxCui": "1989334",
+      "rxnormName": "pumice",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1989334/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Pyridoxine": {
+      "rxCui": "684879",
+      "rxnormName": "pyridoxine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/684879/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Quetiapine": {
+      "rxCui": "51272",
+      "rxnormName": "quetiapine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/51272/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Rabeprazole Sodium": {
+      "rxCui": "226868",
+      "rxnormName": "rabeprazole sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/226868/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ranitidine": {
+      "rxCui": "9143",
+      "rxnormName": "ranitidine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/9143/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Ranitidine HCl": {
+      "rxCui": "203136",
+      "rxnormName": "ranitidine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/203136/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Remdesivir": {
+      "rxCui": "2284718",
+      "rxnormName": "remdesivir",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/2284718/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Risperidone": {
+      "rxCui": "35636",
+      "rxnormName": "risperidone",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/35636/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Rituximab": {
+      "rxCui": "121191",
+      "rxnormName": "rituximab",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/121191/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Rizatriptan Benzoate": {
+      "rxCui": "237082",
+      "rxnormName": "rizatriptan benzoate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/237082/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Rosuvastatin": {
+      "rxCui": "301542",
+      "rxnormName": "rosuvastatin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/301542/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Salbutamol": {
+      "rxCui": "435",
+      "rxnormName": "albuterol",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/435/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sertraline HCl": {
+      "rxCui": "155137",
+      "rxnormName": "sertraline hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/155137/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sevelamer Carbonate": {
+      "rxCui": "660890",
+      "rxnormName": "sevelamer carbonate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/660890/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sevelamer Hydrochloride": {
+      "rxCui": "237125",
+      "rxnormName": "sevelamer hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/237125/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sildenafil": {
+      "rxCui": "136411",
+      "rxnormName": "sildenafil",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/136411/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Silver Sulfadiazine": {
+      "rxCui": "9793",
+      "rxnormName": "silver sulfadiazine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/9793/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Silver Sulfadiazine/Chlorhexidine": {
+      "rxCui": "1007858",
+      "rxnormName": "chlorhexidine / silver sulfadiazine",
+      "rxnormType": "MIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1007858/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Silver Sulphadiazine": {
+      "rxCui": "9793",
+      "rxnormName": "silver sulfadiazine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/9793/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Simvastatin": {
+      "rxCui": "36567",
+      "rxnormName": "simvastatin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/36567/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sitagliptin": {
+      "rxCui": "593411",
+      "rxnormName": "sitagliptin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/593411/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sodium Bicarbonate": {
+      "rxCui": "36676",
+      "rxnormName": "sodium bicarbonate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/36676/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sodium Chloride": {
+      "rxCui": "9863",
+      "rxnormName": "sodium chloride",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/9863/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sodium Dichloroisocyanurate": {
+      "rxCui": "1537575",
+      "rxnormName": "troclosene sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/1537575/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sodium Cromoglycate": {
+      "rxCui": "3538",
+      "rxnormName": "cromolyn sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/3538/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sodium Divalproex": {
+      "rxCui": "266856",
+      "rxnormName": "divalproex sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/266856/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sodium Hypochlorite": {
+      "rxCui": "9881",
+      "rxnormName": "sodium hypochlorite",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/9881/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sodium Valproate": {
+      "rxCui": "9919",
+      "rxnormName": "sodium valproate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/9919/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sorafenib": {
+      "rxCui": "495881",
+      "rxnormName": "sorafenib",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/495881/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Somatropin": {
+      "rxCui": "61148",
+      "rxnormName": "somatropin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/61148/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Spectinomycin": {
+      "rxCui": "270",
+      "rxnormName": "spectinomycin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/270/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Spironolactone": {
+      "rxCui": "9997",
+      "rxnormName": "spironolactone",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/9997/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sulfasalazine": {
+      "rxCui": "9524",
+      "rxnormName": "sulfasalazine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/9524/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Suramin": {
+      "rxCui": "10256",
+      "rxnormName": "suramin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10256/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Sunitinib": {
+      "rxCui": "357977",
+      "rxnormName": "sunitinib",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/357977/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Tacrolimus": {
+      "rxCui": "42316",
+      "rxnormName": "tacrolimus",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/42316/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Tamoxifen": {
+      "rxCui": "10324",
+      "rxnormName": "tamoxifen",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10324/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Tamsulosin HCL": {
+      "rxCui": "236495",
+      "rxnormName": "tamsulosin hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/236495/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Telmisartan": {
+      "rxCui": "73494",
+      "rxnormName": "telmisartan",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/73494/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Telmisartan + Hydrochlorothiazide": {
+      "rxCui": "284636",
+      "rxnormName": "hydrochlorothiazide / telmisartan",
+      "rxnormType": "MIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/284636/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Telmisartan/Hydrochlorothiazide": {
+      "rxCui": "284636",
+      "rxnormName": "hydrochlorothiazide / telmisartan",
+      "rxnormType": "MIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/284636/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Temozolamide": {
+      "rxCui": "37776",
+      "rxnormName": "temozolomide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/37776/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Temozolomide": {
+      "rxCui": "37776",
+      "rxnormName": "temozolomide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/37776/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Tetanus Toxoid": {
+      "rxCui": "798306",
+      "rxnormName": "tetanus toxoid vaccine, inactivated",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/798306/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Tetracaine HCl": {
+      "rxCui": "91189",
+      "rxnormName": "tetracaine hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/91189/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Tetracycline HCl": {
+      "rxCui": "142446",
+      "rxnormName": "tetracycline hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/142446/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Thalidomide": {
+      "rxCui": "10432",
+      "rxnormName": "thalidomide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10432/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Theophylline": {
+      "rxCui": "10438",
+      "rxnormName": "theophylline",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10438/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Thiamine": {
+      "rxCui": "10454",
+      "rxnormName": "thiamine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10454/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Thioguanine": {
+      "rxCui": "10485",
+      "rxnormName": "thioguanine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10485/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Thiopental Sodium": {
+      "rxCui": "282416",
+      "rxnormName": "thiopental sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/282416/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Thiopentone Sodium": {
+      "rxCui": "282416",
+      "rxnormName": "thiopental sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/282416/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Thioridazine": {
+      "rxCui": "10502",
+      "rxnormName": "thioridazine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10502/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Timolol": {
+      "rxCui": "10600",
+      "rxnormName": "timolol",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10600/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Tinidazole": {
+      "rxCui": "10612",
+      "rxnormName": "tinidazole",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10612/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Tobramycin": {
+      "rxCui": "10627",
+      "rxnormName": "tobramycin",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10627/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Tramadol": {
+      "rxCui": "10689",
+      "rxnormName": "tramadol",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10689/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Topotecan": {
+      "rxCui": "57308",
+      "rxnormName": "topotecan",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/57308/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Tranexamic Acid": {
+      "rxCui": "10691",
+      "rxnormName": "tranexamic acid",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10691/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Trifluoperazine": {
+      "rxCui": "10800",
+      "rxnormName": "trifluoperazine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10800/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Trastuzumab": {
+      "rxCui": "224905",
+      "rxnormName": "trastuzumab",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/224905/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Travoprost": {
+      "rxCui": "283809",
+      "rxnormName": "travoprost",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/283809/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Tropicamide": {
+      "rxCui": "10869",
+      "rxnormName": "tropicamide",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/10869/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Valaciclovir Hydrochloride": {
+      "rxCui": "236081",
+      "rxnormName": "valacyclovir hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/236081/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Vancomycin hydrochloride": {
+      "rxCui": "66955",
+      "rxnormName": "vancomycin hydrochloride",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/66955/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Verapamil": {
+      "rxCui": "11170",
+      "rxnormName": "verapamil",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/11170/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Vinblastine sulphate": {
+      "rxCui": "11199",
+      "rxnormName": "vinblastine sulfate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/11199/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Vincristine Sulphate": {
+      "rxCui": "11203",
+      "rxnormName": "vincristine sulfate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/11203/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Vincristine": {
+      "rxCui": "11202",
+      "rxnormName": "vincristine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/11202/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Vinorelbine": {
+      "rxCui": "39541",
+      "rxnormName": "vinorelbine",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/39541/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Vitamin B Complex": {
+      "rxCui": "11251",
+      "rxnormName": "vitamin B complex",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/11251/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Vitamin A": {
+      "rxCui": "11246",
+      "rxnormName": "vitamin A",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/11246/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Warfarin Sodium": {
+      "rxCui": "114194",
+      "rxnormName": "warfarin sodium",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/114194/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Zinc Sulfate": {
+      "rxCui": "39954",
+      "rxnormName": "zinc sulfate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/39954/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Zinc Sulphate": {
+      "rxCui": "39954",
+      "rxnormName": "zinc sulfate",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/39954/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Zoledronic Acid": {
+      "rxCui": "77655",
+      "rxnormName": "zoledronic acid",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/77655/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Zoledronic acid": {
+      "rxCui": "77655",
+      "rxnormName": "zoledronic acid",
+      "rxnormType": "IN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/77655/properties.json",
+      "reviewedOn": "2026-11-03"
+    },
+    "Zuclopenthixol Decanoate": {
+      "rxCui": "58339",
+      "rxnormName": "zuclopenthixol decanoate",
+      "rxnormType": "PIN",
+      "codingScope": "ingredient",
+      "source": "https://rxnav.nlm.nih.gov/REST/rxcui/58339/properties.json",
+      "reviewedOn": "2026-11-03"
+    }
+  }
+}

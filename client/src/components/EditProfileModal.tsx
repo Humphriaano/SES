@@ -107,12 +107,12 @@ export default function EditProfileModal({ patient, onClose, onSaved }: Props) {
               <Pencil size={15} color="var(--ses-red)" />
             </div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-heading)' }}>Edit Profile</div>
+              <div style={{ fontWeight: 500, fontSize: 15, color: 'var(--text-heading)' }}>Edit Profile</div>
               <div style={{ fontSize: 11.5, color: 'var(--text-subtle)', marginTop: 1 }}>Update registration details</div>
             </div>
           </div>
           <button onClick={onClose} style={{
-            width: 30, height: 30, borderRadius: 7, border: '1px solid var(--border)',
+            width: 30, height: 30, borderRadius: 999, border: '1px solid var(--border)',
             background: 'var(--bg-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center',
             cursor: 'pointer', color: 'var(--text-muted)',
           }}>
@@ -196,7 +196,7 @@ function FormField({ label, required, error, children }: {
 }) {
   return (
     <div>
-      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-body)', marginBottom: 5 }}>
+      <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: 'var(--text-body)', marginBottom: 5 }}>
         {label} {required && <span style={{ color: 'var(--ses-red)' }}>*</span>}
       </label>
       {children}

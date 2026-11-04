@@ -38,7 +38,7 @@ export default function FinalInvestigationResults({ items, encounterId }: { item
         return (
           <div key={item.id} className="print-block-card" style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-heading)' }}>{item.name}</span>
+              <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-heading)' }}>{item.name}</span>
               {s?.specimen && <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.specimen}</span>}
               <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-muted)' }}>
                 {done && latest
@@ -65,7 +65,7 @@ export default function FinalInvestigationResults({ items, encounterId }: { item
                         <td style={{ ...td, fontWeight: bold ? 800 : 600, color: flag.level === 'critical' ? 'var(--clinical-critical)' : 'var(--text-heading)' }}>{r.value || '—'}</td>
                         <td style={{ ...td, color: 'var(--text-muted)' }}>{r.units || ''}</td>
                         <td style={{ ...td, color: 'var(--text-muted)' }}>{r.referenceRange || ''}</td>
-                        <td style={{ ...td, fontWeight: 800, fontSize: 12, color: flag.level === 'critical' ? 'var(--clinical-critical)' : 'var(--badge-amber-text)' }}>{flag.text}</td>
+                        <td style={{ ...td, fontWeight: 500, fontSize: 12, color: flag.level === 'critical' ? 'var(--clinical-critical)' : 'var(--badge-amber-text)' }}>{flag.text}</td>
                       </tr>
                     );
                   })}
@@ -83,5 +83,5 @@ export default function FinalInvestigationResults({ items, encounterId }: { item
   );
 }
 
-const th: React.CSSProperties = { padding: '4px 8px 4px 0', fontWeight: 700 };
+const th: React.CSSProperties = { padding: '4px 8px 4px 0', fontWeight: 500 };
 const td: React.CSSProperties = { padding: '6px 8px 6px 0', verticalAlign: 'top', color: 'var(--text-body)' };

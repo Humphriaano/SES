@@ -220,7 +220,8 @@ a {
 }
 
 .bottom-nav a.active {
-  color: var(--orange);
+  color: var(--selection-text);
+  background: var(--selection-bg);
 }
 
 .offline-banner {

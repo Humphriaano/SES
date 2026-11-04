@@ -35,7 +35,7 @@ function fmtDate(iso: string): string {
 function StatusBadge({ status }: { status: string }) {
   return (
     <span style={{
-      fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 10,
+      fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 10,
       background: statusBg(status), color: statusColor(status),
       whiteSpace: 'nowrap',
     }}>
@@ -53,14 +53,14 @@ function SingleResultTable({ rows }: { rows: any[] }) {
       <thead>
         <tr style={{ borderBottom: '1px solid var(--border)' }}>
           {['Test', 'Result', 'Units', 'Ref Range', 'Status'].map(h => (
-            <th key={h} style={{ textAlign: 'left', padding: '5px 10px', fontSize: 10, fontWeight: 600, color: 'var(--text-body2)', textTransform: 'uppercase' }}>{h}</th>
+            <th key={h} style={{ textAlign: 'left', padding: '5px 10px', fontSize: 10, fontWeight: 500, color: 'var(--text-body2)', textTransform: 'uppercase' }}>{h}</th>
           ))}
         </tr>
       </thead>
       <tbody>
         <tr>
           <td style={{ padding: '9px 10px', color: 'var(--text-heading)', fontWeight: 500 }}>{r.componentName}</td>
-          <td style={{ padding: '9px 10px', fontWeight: 700, color: statusColor(r.status) }}>{r.value || '—'}</td>
+          <td style={{ padding: '9px 10px', fontWeight: 500, color: statusColor(r.status) }}>{r.value || '—'}</td>
           <td style={{ padding: '9px 10px', color: 'var(--text-body2)' }}>{r.units ?? '—'}</td>
           <td style={{ padding: '9px 10px', color: 'var(--text-body2)', fontSize: 12 }}>{r.referenceRange ?? '—'}</td>
           <td style={{ padding: '9px 10px' }}><StatusBadge status={r.status} /></td>
@@ -77,7 +77,7 @@ function PanelResultTable({ rows }: { rows: any[] }) {
       <thead>
         <tr style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
           {['Component', 'Abbr', 'Result', 'Units', 'Status'].map(h => (
-            <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 10, fontWeight: 600, color: 'var(--text-body2)', textTransform: 'uppercase' }}>{h}</th>
+            <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 10, fontWeight: 500, color: 'var(--text-body2)', textTransform: 'uppercase' }}>{h}</th>
           ))}
         </tr>
       </thead>
@@ -86,7 +86,7 @@ function PanelResultTable({ rows }: { rows: any[] }) {
           <tr key={i} style={{ borderBottom: '1px solid var(--border-light)' }}>
             <td style={{ padding: '7px 10px', color: 'var(--text-heading)', fontWeight: 500 }}>{r.componentName}</td>
             <td style={{ padding: '7px 10px', color: 'var(--text-body2)' }}>{r.abbr || '—'}</td>
-            <td style={{ padding: '7px 10px', fontWeight: 700, color: statusColor(r.status) }}>{r.value || '—'}</td>
+            <td style={{ padding: '7px 10px', fontWeight: 500, color: statusColor(r.status) }}>{r.value || '—'}</td>
             <td style={{ padding: '7px 10px', color: 'var(--text-body2)' }}>{r.units ?? '—'}</td>
             <td style={{ padding: '7px 10px' }}><StatusBadge status={r.status} /></td>
           </tr>
@@ -105,16 +105,16 @@ function AmendedComparison({ amendedRows, originalRows, amendedAt }: {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-        <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--badge-amber-text)', background: 'var(--badge-amber-bg)', padding: '2px 8px', borderRadius: 4 }}>
+        <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--badge-amber-text)', background: 'var(--badge-amber-bg)', padding: '2px 8px', borderRadius: 4 }}>
           Amended {fmtDate(amendedAt)}
         </span>
       </div>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
         <thead>
           <tr style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
-            <th style={{ textAlign: 'left', padding: '6px 10px', fontSize: 10, fontWeight: 600, color: 'var(--text-body2)', textTransform: 'uppercase' }}>Component</th>
-            <th style={{ textAlign: 'left', padding: '6px 10px', fontSize: 10, fontWeight: 600, color: 'var(--text-body2)', textTransform: 'uppercase' }}>Original</th>
-            <th style={{ textAlign: 'left', padding: '6px 10px', fontSize: 10, fontWeight: 600, color: 'var(--text-body2)', textTransform: 'uppercase' }}>Amended</th>
+            <th style={{ textAlign: 'left', padding: '6px 10px', fontSize: 10, fontWeight: 500, color: 'var(--text-body2)', textTransform: 'uppercase' }}>Component</th>
+            <th style={{ textAlign: 'left', padding: '6px 10px', fontSize: 10, fontWeight: 500, color: 'var(--text-body2)', textTransform: 'uppercase' }}>Original</th>
+            <th style={{ textAlign: 'left', padding: '6px 10px', fontSize: 10, fontWeight: 500, color: 'var(--text-body2)', textTransform: 'uppercase' }}>Amended</th>
           </tr>
         </thead>
         <tbody>
@@ -125,11 +125,11 @@ function AmendedComparison({ amendedRows, originalRows, amendedAt }: {
               <tr key={i} style={{ borderBottom: '1px solid var(--border-light)', background: changed ? 'var(--badge-amber-bg)' : 'transparent' }}>
                 <td style={{ padding: '7px 10px', color: 'var(--text-heading)', fontWeight: 500 }}>{aRow.componentName}</td>
                 <td style={{ padding: '7px 10px' }}>
-                  <span style={{ color: statusColor(oRow.status ?? ''), fontWeight: 600 }}>{oRow.value ?? '—'}</span>
+                  <span style={{ color: statusColor(oRow.status ?? ''), fontWeight: 500 }}>{oRow.value ?? '—'}</span>
                   {oRow.units && <span style={{ color: 'var(--text-muted)', fontSize: 11, marginLeft: 4 }}>{oRow.units}</span>}
                 </td>
                 <td style={{ padding: '7px 10px' }}>
-                  <span style={{ color: statusColor(aRow.status), fontWeight: 600 }}>{aRow.value || '—'}</span>
+                  <span style={{ color: statusColor(aRow.status), fontWeight: 500 }}>{aRow.value || '—'}</span>
                   {aRow.units && <span style={{ color: 'var(--text-muted)', fontSize: 11, marginLeft: 4 }}>{aRow.units}</span>}
                   <span style={{ marginLeft: 6 }}><StatusBadge status={aRow.status} /></span>
                 </td>
@@ -207,7 +207,7 @@ export default function InvestigationResultsPanel({ item, patientId, onClose }: 
         flexShrink: 0,
       }}>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-heading)', marginBottom: 2 }}>
+          <div style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-heading)', marginBottom: 2 }}>
             {item?.name ?? ''}
           </div>
           {item?.specimen && (
@@ -226,7 +226,7 @@ export default function InvestigationResultsPanel({ item, patientId, onClose }: 
           onClick={onClose}
           style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            color: 'var(--text-muted)', padding: 6, borderRadius: 6,
+            color: 'var(--text-muted)', padding: 6, borderRadius: 999,
             display: 'flex', alignItems: 'center', transition: 'background 0.15s',
             flexShrink: 0,
           }}
@@ -242,7 +242,7 @@ export default function InvestigationResultsPanel({ item, patientId, onClose }: 
 
         {/* ── Current result ─────────────────────────────────────────────── */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+          <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
             {isAmended ? 'Result (Amended)' : 'Result'}
           </div>
 
@@ -263,7 +263,7 @@ export default function InvestigationResultsPanel({ item, patientId, onClose }: 
 
         {/* ── Result history ─────────────────────────────────────────────── */}
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
+          <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
             Result History
           </div>
 
@@ -308,13 +308,13 @@ export default function InvestigationResultsPanel({ item, patientId, onClose }: 
                       {hResult ? fmtDate(hResult.resultedAt) : fmtDate(histItem.order?.orderedAt)}
                     </span>
                     {histItem.status === 'Amended' && (
-                      <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--badge-amber-text)', background: 'var(--badge-amber-bg)', padding: '1px 6px', borderRadius: 4 }}>
+                      <span style={{ fontSize: 10, fontWeight: 500, color: 'var(--badge-amber-text)', background: 'var(--badge-amber-bg)', padding: '1px 6px', borderRadius: 4 }}>
                         Amended
                       </span>
                     )}
                     {/* Quick summary for single tests */}
                     {!hIsPanel && hRows[0] && (
-                      <span style={{ fontSize: 12, fontWeight: 700, color: statusColor(hRows[0].status) }}>
+                      <span style={{ fontSize: 12, fontWeight: 500, color: statusColor(hRows[0].status) }}>
                         {hRows[0].value} {hRows[0].units ?? ''}
                       </span>
                     )}

@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
-import { seedIcd11FromFile } from '../lib/icd11Seed';
+import { commonCodes } from '../lib/icd11Common';
+import { seedIcd11FromFile, selectableIcd11Codes } from '../lib/icd11Seed';
+import { diagnosisSearchTerm } from '../lib/diagnosisSearch';
 
 const WHO_CLIENT_ID = process.env.WHO_ICD11_CLIENT_ID;
 const WHO_CLIENT_SECRET = process.env.WHO_ICD11_CLIENT_SECRET;
@@ -39,7 +41,7 @@ async function whoSearch(q: string): Promise<any[] | null> {
   if (!token) return null;
 
   try {
-    const url = new URL('https://id.who.int/icd/release/11/2024-01/mms/search');
+    const url = new URL('https://id.who.int/icd/release/11/2026-01/mms/search');
     url.searchParams.set('q', q);
     url.searchParams.set('flatResults', 'true');
     url.searchParams.set('highlightingEnabled', 'false');
@@ -87,17 +89,33 @@ function chapterLabel(chapter: string): string {
 
 export async function searchICD11(req: Request, res: Response): Promise<void> {
   const { q } = req.query as { q?: string };
-  if (!q || q.length < 2) { res.json([]); return; }
+  if (!q || q.trim().length < 2) { res.json([]); return; }
 
-  const whoResults = await whoSearch(q);
-  if (whoResults) { res.json(whoResults); return; }
+  const expanded = diagnosisSearchTerm(q);
+  if (!expanded) { res.json([]); return; }
+  const whoResults = await whoSearch(expanded);
+  if (whoResults?.length) {
+    // Diagnoses staff added aren't in the WHO list, so put any that match first.
+    const mine = await prisma.iCD11Code.findMany({
+      where: { isCustom: true, OR: [{ code: { contains: q.trim(), mode: 'insensitive' } }, { description: { contains: q.trim(), mode: 'insensitive' } }] },
+      take: 5,
+    });
+    // WHO entity URIs are not database IDs. Resolve verified codes to local rows before selection.
+    const selectable = selectableIcd11Codes();
+    const canonical = await Promise.all(whoResults.filter(c => c.code && !/^[XV]/.test(c.code) && (!selectable || selectable.has(c.code))).map(c => prisma.iCD11Code.upsert({
+      where: { code: c.code }, create: { code: c.code, description: c.description, category: c.category }, update: {},
+    })));
+    const unique = new Map([...mine, ...canonical].map(c => [c.code, c]));
+    res.json([...unique.values()].slice(0, 15)); return;
+  }
 
   // Local catalogue: every word must appear (in any order) in the code or the name,
   // so "diabetes type 2" finds "Type 2 diabetes mellitus".
-  const term = q.trim().toLowerCase();
+  const term = expanded.toLowerCase();
   const words = term.split(/\s+/).filter(Boolean);
   const found = await prisma.iCD11Code.findMany({
     where: {
+      NOT: [{ code: { startsWith: 'X' } }, { code: { startsWith: 'V' } }],
       AND: words.map((w) => ({
         OR: [
           { code: { contains: w, mode: 'insensitive' as const } },
@@ -118,56 +136,18 @@ export async function searchICD11(req: Request, res: Response): Promise<void> {
     if (words.every((w) => new RegExp(`(^|[^a-z0-9])${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(name))) return 3;
     return 4;
   };
-  res.json(found.sort((a, b) => rank(a) - rank(b) || a.description.length - b.description.length).slice(0, 15));
+  const selectable = selectableIcd11Codes();
+  // Retired/historical and extension codes remain in the database for old notes,
+  // while new selections use the current conventional-care MMS catalogue.
+  const current = selectable ? found.filter(c => c.isCustom || selectable.has(c.code)) : found;
+  res.json(current.sort((a, b) => rank(a) - rank(b) || a.description.length - b.description.length).slice(0, 15));
 }
 
 // Local fallback catalogue used whenever the WHO ICD-11 API isn't reachable
 // (no WHO_ICD11_CLIENT_ID/SECRET configured, or the API call fails) — see
 // whoSearch() above. Kept broad enough to cover common outpatient/ED
 // presentations so search stays usable without live WHO credentials.
-export const commonCodes = [
-  { code: '1C62.Z', description: 'HIV disease, unspecified', category: 'Infectious diseases' },
-  { code: 'BA80',   description: 'Essential hypertension', category: 'Cardiovascular' },
-  { code: '5A11',   description: 'Type 2 diabetes mellitus', category: 'Endocrine' },
-  { code: '5A10',   description: 'Type 1 diabetes mellitus', category: 'Endocrine' },
-  { code: 'BA41',   description: 'Heart failure, unspecified', category: 'Cardiovascular' },
-  { code: 'CB41',   description: 'Asthma', category: 'Respiratory' },
-  { code: 'DB94.Z', description: 'Chronic kidney disease, unspecified stage', category: 'Renal' },
-  { code: 'DC10',   description: 'Peptic ulcer disease', category: 'Gastrointestinal' },
-  { code: 'FA24.Z', description: 'Rheumatoid arthritis, unspecified', category: 'Musculoskeletal' },
-  { code: '6A70',   description: 'Depression, single episode', category: 'Mental health' },
-  { code: '8A00.0', description: 'Ischaemic stroke, unspecified', category: 'Neurological' },
-  { code: 'BA81',   description: 'Secondary hypertension', category: 'Cardiovascular' },
-  { code: '5A20',   description: 'Obesity', category: 'Endocrine' },
-  { code: 'KB21',   description: 'Malaria due to Plasmodium falciparum', category: 'Infectious diseases' },
-  { code: '1B10',   description: 'Pulmonary tuberculosis', category: 'Infectious diseases' },
-  { code: 'DB93',   description: 'Chronic hepatitis B', category: 'Hepatic' },
-  { code: 'DB94',   description: 'Chronic hepatitis C', category: 'Hepatic' },
-  { code: '5A71',   description: 'Hypothyroidism', category: 'Endocrine' },
-  { code: 'BA90',   description: 'Atrial fibrillation', category: 'Cardiovascular' },
-  { code: 'CB00',   description: 'COPD', category: 'Respiratory' },
-  { code: 'CA07',   description: 'Acute upper respiratory tract infection, unspecified', category: 'Respiratory' },
-  { code: 'CA40.Z', description: 'Pneumonia, unspecified', category: 'Respiratory' },
-  { code: 'CA03',   description: 'Acute bronchitis', category: 'Respiratory' },
-  { code: 'AB30',   description: 'Otitis media, unspecified', category: 'Ear/Mastoid' },
-  { code: '9A60.Z', description: 'Conjunctivitis, unspecified', category: 'Visual system' },
-  { code: 'GC08.0', description: 'Urinary tract infection, site not specified', category: 'Genitourinary' },
-  { code: '1A00',   description: 'Cholera', category: 'Infectious diseases' },
-  { code: '1A07',   description: 'Typhoid fever', category: 'Infectious diseases' },
-  { code: 'DD91.0', description: 'Acute gastroenteritis, unspecified', category: 'Gastrointestinal' },
-  { code: 'DA92',   description: 'Gastro-oesophageal reflux disease', category: 'Gastrointestinal' },
-  { code: '3A00',   description: 'Iron deficiency anaemia', category: 'Blood/Immune' },
-  { code: '3A70.0', description: 'Sickle cell disorder, unspecified', category: 'Blood/Immune' },
-  { code: '8A80.Z', description: 'Migraine, unspecified', category: 'Neurological' },
-  { code: '8B10',   description: 'Epilepsy', category: 'Neurological' },
-  { code: 'FA00.Z', description: 'Osteoarthritis, unspecified', category: 'Musculoskeletal' },
-  { code: 'ME84.2', description: 'Low back pain', category: 'Musculoskeletal' },
-  { code: 'EK90',   description: 'Cellulitis, unspecified', category: 'Skin' },
-  { code: '6B00',   description: 'Generalised anxiety disorder', category: 'Mental health' },
-  { code: '1A91',   description: 'Gonococcal infection, unspecified', category: 'Sexual health' },
-  { code: '1A65.1', description: 'Syphilis, unspecified stage', category: 'Sexual health' },
-  { code: '5C80.Z', description: 'Disorder of lipoprotein metabolism, unspecified', category: 'Endocrine' },
-];
+export { commonCodes } from '../lib/icd11Common';
 
 export async function seedICD11(_req: Request, res: Response): Promise<void> {
   try {

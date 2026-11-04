@@ -1,19 +1,30 @@
+import { pricingUnit, PriceBasis } from '../lib/prescriptionSupply';
+import PrescriptionForm, { PrescriptionDraft } from '../components/consultation/blocks/PrescriptionForm';
+import { formatCourseDate } from '../lib/prescriptionCourse';
 import { useEffect, useState, useRef, useCallback, Fragment } from 'react';
+import { Navigate } from 'react-router-dom';
 import { ChevronDown, ChevronRight, Package, Edit2, RefreshCw, Printer, User, Search, CheckCircle, AlertTriangle, X } from 'lucide-react';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { hasRole } from '../lib/money';
+import { canAccessModule, moduleLanding } from '../lib/moduleAccess';
+import { staffDisplayName, staffPosition } from '../lib/staffNames';
 import { usePatient } from '../context/PatientContext';
 import { Encounter } from '../types';
 import ConsultationSidebar from '../components/consultation/ConsultationSidebar';
+import '../components/consultation/ClinicalWorkspace.css';
 import { searchCatalog, DrugEntry } from '../data/drugCatalog';
+import { CataloguePrice } from '../components/billing/InlinePrice';
+
+import { flushPriceEdits } from '../lib/priceEditing';
 import toast from 'react-hot-toast';
 
 // ── Design tokens (CSS var-based for dark mode support) ───────────────────────
 const C = {
   pageBg:       'var(--bg-page)',
-  cardBg:       'var(--bg-card)',
+  cardBg: 'var(--premium-panel-bg)',
   cardBorder:   '1px solid var(--border)',
-  cardRadius:   12,
+  cardRadius:   22,
   divider:      '1px solid var(--border-light)',
   red:          'var(--ses-red)',
   redHover:     'var(--ses-red-dark)',
@@ -23,7 +34,7 @@ const C = {
   faint:        'var(--text-subtle)',
   inputBorder:  '1.5px solid var(--border-input)',
   inputBg:      'var(--bg-input)',
-  font:         "'Segoe UI', system-ui, sans-serif",
+  font:         'var(--font-body)',
 };
 
 const cardStyle: React.CSSProperties = {
@@ -40,12 +51,12 @@ const cardHeaderStyle: React.CSSProperties = {
 };
 
 const cardTitleStyle: React.CSSProperties = {
-  fontSize: 13, fontWeight: 700, color: C.title,
+  fontSize: 13, fontWeight: 500, color: C.title,
 };
 
 const inputStyle: React.CSSProperties = {
   width: '100%', boxSizing: 'border-box',
-  padding: '9px 12px', borderRadius: 7, fontSize: 13,
+  padding: '9px 12px', minHeight: 40, borderRadius: 12, fontSize: 13.5,
   border: C.inputBorder, background: C.inputBg,
   color: C.title, outline: 'none',
 };
@@ -53,28 +64,28 @@ const inputStyle: React.CSSProperties = {
 function primaryBtn(disabled = false): React.CSSProperties {
   return {
     display: 'flex', alignItems: 'center', gap: 6,
-    padding: '9px 18px', borderRadius: 8, border: 'none',
-    background: disabled ? '#e2e8f0' : C.red,
+    padding: '9px 18px', minHeight: 40, borderRadius: 999, border: 'none',
+    background: disabled ? 'var(--border-input)' : C.red,
     color: disabled ? C.faint : '#fff',
-    fontSize: 13, fontWeight: 600,
+    fontSize: 13, fontWeight: 500,
     cursor: disabled ? 'not-allowed' : 'pointer',
   };
 }
 
 function ghostBtn(): React.CSSProperties {
   return {
-    padding: '8px 16px', borderRadius: 7,
-    border: '1px solid #e2e8f0', background: '#fff',
+    padding: '8px 16px', minHeight: 40, borderRadius: 999,
+    border: '1px solid var(--border-input)', background: 'var(--bg-card)',
     color: C.body, fontSize: 13, cursor: 'pointer',
   };
 }
 
-function smallBtn(color: string): React.CSSProperties {
+function smallBtn(): React.CSSProperties {
   return {
     display: 'flex', alignItems: 'center', gap: 4,
-    padding: '5px 10px', borderRadius: 6, border: 'none',
-    background: color, color: '#fff', fontSize: 11,
-    fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' as const,
+    padding: '6px 12px', minHeight: 34, borderRadius: 999, border: '1px solid var(--btn2-line)',
+    background: 'var(--btn2)', color: C.title, fontSize: 12,
+    fontWeight: 500, cursor: 'pointer', whiteSpace: 'nowrap' as const,
   };
 }
 
@@ -85,10 +96,12 @@ interface RxPatient {
   nationalId?: string; dateOfBirth?: string; gender?: string;
 }
 
+interface RxMedication { name: string; dosage?: string; frequency?: string; route?: string; catalogueCode?: string; duration?: string; durationDays?: number; durationCount?: number; durationUnit?: string; unitsPerDose?: number | string; notes?: string; quantity?: number | string; quantityUnit?: string; startDate?: string; endDate?: string; unitPrice?: number | string; doseUnit?: string; priceBasis?: PriceBasis; bottleSizeMl?: number | string; courseQuantity?: number | string; billingQuantity?: number | string }
 interface GlobalPrescription {
   id: string; encounterId: string;
-  medication: { name: string; dosage?: string; frequency?: string; route?: string };
-  dispensed: boolean; dispensedAt?: string;
+  medication: RxMedication;
+  substituteMedication?: RxMedication;
+  dispensed: boolean; dispensedAt?: string; notAvailable?: boolean;
   encounter: { patient: RxPatient; clinician: { id: string; name: string } };
   createdAt: string;
 }
@@ -97,9 +110,9 @@ interface Dispensing {
   id: string; prescriptionId?: string; patientId: string;
   type: string; dispensedDrug: string;
   dispensedDose?: string; dispensedFrequency?: string; dispensedDuration?: string;
+  quantity?: number | string; unitPrice?: number | string; quantityUnit?: string; priceBasis?: PriceBasis; billingQuantity?: number | string;
   dispensedBy: string; dispensedAt: string;
   substitution?: Record<string, unknown>; modifications?: Record<string, unknown>;
-  collectedAt?: string; collectedBy?: string;
   patient: { firstName: string; lastName: string; nationalId?: string };
 }
 
@@ -114,7 +127,7 @@ function stockPill(qty: number) {
     qty < 10  ? ['var(--clinical-caution-bg)', 'var(--clinical-caution)'] :
                 ['var(--clinical-normal-bg)', 'var(--clinical-normal)'];
   return (
-    <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: bg, color }}>
+    <span style={{ fontSize: 11, fontWeight: 500, padding: '2px 8px', borderRadius: 10, background: bg, color }}>
       {qty} {qty <= 0 ? '— out of stock' : 'in stock'}
     </span>
   );
@@ -122,14 +135,14 @@ function stockPill(qty: number) {
 
 function typePill(type: string) {
   const map: Record<string, [string, string]> = {
-    substitution: ['#f5f3ff', '#6d28d9'],
-    modified:     ['#eff6ff', '#1d4ed8'],
-    direct:       ['#f8fafc', '#475569'],
-    prescription: ['#f0fdf4', '#166534'],
+    substitution: ['var(--badge-blue-bg)', 'var(--badge-blue-text)'],
+    modified:     ['var(--badge-blue-bg)', 'var(--ws-link)'],
+    direct:       ['var(--bg-surface)', 'var(--text-body2)'],
+    prescription: ['var(--badge-green-bg)', 'var(--badge-green-text)'],
   };
-  const [bg, color] = map[type] ?? ['#f8fafc', '#475569'];
+  const [bg, color] = map[type] ?? ['var(--bg-surface)', 'var(--text-body2)'];
   return (
-    <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 10, background: bg, color }}>
+    <span style={{ fontSize: 10, fontWeight: 500, padding: '2px 7px', borderRadius: 10, background: bg, color }}>
       {type === 'prescription' ? 'Rx' : type.charAt(0).toUpperCase() + type.slice(1)}
     </span>
   );
@@ -213,14 +226,14 @@ function DrugAutocomplete({ value, onChange, onSelect, placeholder }: DrugAutoco
       {open && suggestions.length > 0 && (
         <ul style={{
           position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50,
-          background: '#fff', border: C.cardBorder, borderRadius: 8,
+          background: 'var(--bg-card)', border: C.cardBorder, borderRadius: 8,
           maxHeight: 220, overflowY: 'auto',
           boxShadow: '0 4px 16px rgba(0,0,0,0.12)', margin: 0, padding: 0, listStyle: 'none',
         }}>
           {suggestions.map((entry, i) => (
             <li key={`${entry.name}-${entry.sku}-${i}`} onMouseDown={() => pick(entry)}
               style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: i < suggestions.length - 1 ? C.divider : 'none' }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#fef2f2')}
+              onMouseEnter={e => (e.currentTarget.style.background = 'var(--ws-chip)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
               <div style={{ fontSize: 13, fontWeight: 500, color: C.title }}>{entry.name}</div>
               {(entry.dose || entry.form) && (
@@ -246,7 +259,7 @@ function ModalOverlay({ children, onClose }: { children: React.ReactNode; onClos
     }} onClick={e => e.target === e.currentTarget && onClose()}>
       <div style={{
         background: 'var(--bg-card)', borderRadius: 14, padding: 24,
-        width: 500, maxWidth: '92vw', maxHeight: '90vh', overflowY: 'auto',
+        width: '100%', maxWidth: 500, maxHeight: '90vh', overflowY: 'auto',
         boxShadow: '0 24px 64px rgba(0,0,0,0.2)',
       }}>
         {children}
@@ -256,71 +269,36 @@ function ModalOverlay({ children, onClose }: { children: React.ReactNode; onClos
 }
 
 function ModalTitle({ children }: { children: React.ReactNode }) {
-  return <h3 style={{ margin: '0 0 16px', fontSize: 16, fontWeight: 700, color: C.title }}>{children}</h3>;
+  return <h3 style={{ margin: '0 0 16px', fontSize: 16, fontWeight: 500, color: C.title }}>{children}</h3>;
 }
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
-  return <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 5 }}>{children}</label>;
+  return <label style={{ display: 'block', fontSize: 11, fontWeight: 500, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 5 }}>{children}</label>;
 }
 
 // ── Dispense Modal ────────────────────────────────────────────────────────────
 
+function medicationBody(draft: PrescriptionDraft) {
+  return { name: draft.drugName, dosage: draft.dose, frequency: draft.frequency, route: draft.route, duration: draft.duration, catalogueCode: draft.drugCode, startDate: draft.startDate, endDate: draft.endDate, unitsPerDose: draft.unitsPerDose, durationDays: draft.durationDays, durationCount: draft.durationCount, durationUnit: draft.durationUnit, quantity: draft.quantity, quantityUnit: draft.quantityUnit, quantityManual: draft.quantityManual, doseUnit: draft.doseUnit, priceBasis: draft.priceBasis, bottleSizeMl: draft.bottleSizeMl, courseQuantity: draft.courseQuantity, billingQuantity: draft.billingQuantity, unitPrice: draft.unitPrice, notes: draft.specialInstructions };
+}
+function courseDraft(m: RxMedication): Partial<PrescriptionDraft> {
+  const legacy = m.duration?.match(/^(\d+)\s*(days?|weeks?|months?)$/i);
+  const durationUnit = m.durationUnit ?? (legacy ? legacy[2].toLowerCase().replace(/s?$/, 's') : undefined);
+  return { drugName: m.name, drugCode: m.catalogueCode, dose: m.dosage, frequency: m.frequency, route: m.route, duration: m.duration, durationDays: m.durationDays, durationCount: m.durationCount ?? (legacy ? Number(legacy[1]) : undefined), durationUnit, unitsPerDose: m.unitsPerDose != null ? Number(m.unitsPerDose) : undefined, quantity: m.quantity != null ? Number(m.quantity) : undefined, quantityUnit: m.quantityUnit, startDate: m.startDate, endDate: m.endDate, unitPrice: m.unitPrice != null ? Number(m.unitPrice) : undefined, specialInstructions: m.notes, doseUnit: m.doseUnit, priceBasis: m.priceBasis, bottleSizeMl: m.bottleSizeMl != null ? Number(m.bottleSizeMl) : undefined, courseQuantity: m.courseQuantity != null ? Number(m.courseQuantity) : undefined, billingQuantity: m.billingQuantity != null ? Number(m.billingQuantity) : undefined };
+}
+
 function DispenseModal({ rx, onClose, onDone, dispensedBy }: {
   rx: GlobalPrescription; onClose: () => void; onDone: (d: Dispensing) => void; dispensedBy: string;
 }) {
-  const [loading, setLoading] = useState(false);
-  const [stock, setStock] = useState<StockInfo | null>(null);
-  const { medication: med, encounter: { patient: pt } } = rx;
-
-  useEffect(() => {
-    api.get(`/inventory?drug=${encodeURIComponent(med.name)}`).then(r => setStock(r.data)).catch(() => {});
-  }, [med.name]);
-
-  async function confirm() {
-    setLoading(true);
-    try {
-      const { data } = await api.post('/dispensing', {
-        prescriptionId: rx.id, patientId: pt.id, type: 'prescription',
-        dispensedDrug: med.name, dispensedDose: med.dosage,
-        dispensedFrequency: med.frequency, dispensedBy,
-      });
-      printLabel(med.name, med.dosage ?? '', med.frequency ?? '', `${pt.firstName} ${pt.lastName}`, pt.nationalId ?? '');
-      onDone(data);
-    } catch { toast.error('Dispense failed'); }
-    finally { setLoading(false); }
+  const pt = rx.encounter.patient;
+  async function confirm(draft: PrescriptionDraft) {
+    const { data } = await api.post('/dispensing', { prescriptionId: rx.id, patientId: pt.id, type: 'prescription', dispensedDrug: draft.drugName, dispensedBy, medication: medicationBody(draft) });
+    onDone(data);
   }
-
-  const row = (label: string, value: string) => (
-    <div style={{ display: 'flex', gap: 8, padding: '6px 0', borderBottom: C.divider }}>
-      <span style={{ fontSize: 12, color: C.faint, width: 90, flexShrink: 0 }}>{label}</span>
-      <span style={{ fontSize: 13, color: C.title, fontWeight: 500 }}>{value || '—'}</span>
-    </div>
-  );
-
-  return (
-    <ModalOverlay onClose={onClose}>
-      <ModalTitle>Confirm Dispense</ModalTitle>
-      <div style={{ marginBottom: 20 }}>
-        {row('Patient', `${pt.firstName} ${pt.lastName}${pt.nationalId ? ` · ${pt.nationalId}` : ''}`)}
-        {row('Drug', med.name)}
-        {row('Dose', med.dosage ?? '')}
-        {row('Frequency', med.frequency ?? '')}
-        {row('Route', med.route ?? '')}
-        {stock && (
-          <div style={{ display: 'flex', gap: 8, padding: '8px 0', alignItems: 'center' }}>
-            <span style={{ fontSize: 12, color: C.faint, width: 90 }}>Stock</span>
-            {stockPill(stock.quantity)}
-          </div>
-        )}
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-        <button onClick={onClose} style={ghostBtn()}>Cancel</button>
-        <button onClick={confirm} disabled={loading} style={primaryBtn(loading)}>
-          <Printer size={13} /> {loading ? 'Dispensing…' : 'Dispense & Print'}
-        </button>
-      </div>
-    </ModalOverlay>
-  );
+  return <ModalOverlay onClose={onClose}><ModalTitle>Confirm Dispense</ModalTitle>
+    <p style={{ margin: '-10px 0 8px', fontSize: 12, color: C.muted }}>{pt.firstName} {pt.lastName}</p>
+    <PrescriptionForm initial={courseDraft(rx.medication)} lockDrug patientId={pt.id} encounterId={rx.encounterId} onSave={confirm} onCancel={onClose} submitLabel="Dispense" />
+  </ModalOverlay>;
 }
 
 // ── Substitute Modal ──────────────────────────────────────────────────────────
@@ -328,154 +306,55 @@ function DispenseModal({ rx, onClose, onDone, dispensedBy }: {
 function SubstituteModal({ rx, onClose, onDone, dispensedBy }: {
   rx: GlobalPrescription; onClose: () => void; onDone: (d: Dispensing) => void; dispensedBy: string;
 }) {
-  const [drug, setDrug] = useState('');
-  const [dose, setDose] = useState('');
-  const [freq, setFreq] = useState('');
-  const [duration, setDuration] = useState('');
   const [subType, setSubType] = useState('generic_equivalent');
   const [reason, setReason] = useState('');
-  const [loading, setLoading] = useState(false);
   const pt = rx.encounter.patient;
-
-  async function submit() {
-    if (!drug.trim()) { toast.error('Enter substitute drug name'); return; }
-    if (!reason.trim()) { toast.error('Reason is required'); return; }
-    setLoading(true);
-    try {
-      const { data } = await api.post('/dispensing', {
-        prescriptionId: rx.id, patientId: pt.id, type: 'substitution',
-        dispensedDrug: drug, dispensedDose: dose,
-        dispensedFrequency: freq, dispensedDuration: duration, dispensedBy,
-        substitution: { originalDrug: rx.medication.name, substituteType: subType, reason },
-      });
-      printLabel(drug, dose, freq, `${pt.firstName} ${pt.lastName}`, pt.nationalId ?? '');
-      onDone(data);
-    } catch { toast.error('Substitution failed'); }
-    finally { setLoading(false); }
+  async function substitute(draft: PrescriptionDraft) {
+    const { data } = await api.post('/dispensing', {
+      prescriptionId: rx.id, patientId: pt.id, type: 'substitution', dispensedDrug: draft.drugName, dispensedBy,
+      medication: { name: draft.drugName, dosage: draft.dose, frequency: draft.frequency, route: draft.route, duration: draft.duration, catalogueCode: draft.drugCode, startDate: draft.startDate, endDate: draft.endDate, unitsPerDose: draft.unitsPerDose, durationDays: draft.durationDays, durationCount: draft.durationCount, durationUnit: draft.durationUnit, quantity: draft.quantity, quantityUnit: draft.quantityUnit, quantityManual: draft.quantityManual, unitPrice: draft.unitPrice, notes: draft.specialInstructions },
+      substitution: { substituteType: subType, reason },
+    });
+    onDone(data);
   }
-
-  return (
-    <ModalOverlay onClose={onClose}>
-      <ModalTitle>Substitute Drug</ModalTitle>
-      <p style={{ margin: '-10px 0 16px', fontSize: 12, color: C.muted }}>
-        Prescribed: <strong style={{ color: C.title }}>{rx.medication.name}</strong>
-      </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <div>
-          <FieldLabel>Substitute Drug *</FieldLabel>
-          <DrugAutocomplete
-            value={drug} onChange={setDrug} placeholder="Search substitute drug…"
-            onSelect={e => { setDrug(e.name); if (e.dose) setDose(e.dose); }}
-          />
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
-          {([['Dose', dose, setDose], ['Frequency', freq, setFreq], ['Duration', duration, setDuration]] as const).map(([lbl, val, setter]) => (
-            <div key={lbl}>
-              <FieldLabel>{lbl}</FieldLabel>
-              <input value={val} onChange={e => setter(e.target.value)} style={inputStyle} />
-            </div>
-          ))}
-        </div>
-        <div>
-          <FieldLabel>Substitution Type</FieldLabel>
-          <select value={subType} onChange={e => setSubType(e.target.value)}
-            style={{ ...inputStyle, appearance: 'none' as const }}>
-            <option value="generic_equivalent">Generic Equivalent</option>
-            <option value="therapeutic_alternative">Therapeutic Alternative</option>
-            <option value="out_of_stock">Out of Stock — nearest equivalent</option>
-          </select>
-        </div>
-        <div>
-          <FieldLabel>Reason *</FieldLabel>
-          <textarea value={reason} onChange={e => setReason(e.target.value)} rows={2}
-            style={{ ...inputStyle, resize: 'none' }} />
-        </div>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 20 }}>
-        <button onClick={onClose} style={ghostBtn()}>Cancel</button>
-        <button onClick={submit} disabled={loading}
-          style={{ ...primaryBtn(loading), background: loading ? '#e2e8f0' : '#7c3aed' }}>
-          <Printer size={13} /> {loading ? 'Submitting…' : 'Substitute & Print'}
-        </button>
-      </div>
-    </ModalOverlay>
-  );
+  return <ModalOverlay onClose={onClose}>
+    <ModalTitle>Substitute Drug</ModalTitle>
+    <p style={{ margin: '-10px 0 8px', fontSize: 12, color: C.muted }}>Prescribed: <strong>{rx.medication.name} {rx.medication.dosage}</strong></p>
+    <PrescriptionForm patientId={pt.id} encounterId={rx.encounterId} onSave={substitute} onCancel={onClose} submitLabel="Substitute & Dispense" requirePrice>
+      <FieldLabel>Substitution type</FieldLabel>
+      <select aria-label="Substitution type" value={subType} onChange={e => setSubType(e.target.value)} style={inputStyle}>
+        <option value="generic_equivalent">Generic Equivalent</option><option value="therapeutic_alternative">Therapeutic Alternative</option><option value="out_of_stock">Out of Stock — nearest equivalent</option>
+      </select>
+      <div style={{ marginTop: 8 }}><FieldLabel>Reason (optional)</FieldLabel><textarea aria-label="Substitution reason" value={reason} onChange={e => setReason(e.target.value)} rows={2} style={inputStyle}/></div>
+    </PrescriptionForm>
+  </ModalOverlay>;
 }
 
 // ── Edit inline expand row ────────────────────────────────────────────────────
 
 function EditExpandRow({ rx, colSpan, onClose, onDone, dispensedBy }: {
-  rx: GlobalPrescription; colSpan: number;
-  onClose: () => void; onDone: (d: Dispensing) => void; dispensedBy: string;
+  rx: GlobalPrescription; colSpan: number; onClose: () => void; onDone: (d: Dispensing) => void; dispensedBy: string;
 }) {
-  const [drug, setDrug] = useState(rx.medication.name);
-  const [dose, setDose] = useState(rx.medication.dosage ?? '');
-  const [freq, setFreq] = useState(rx.medication.frequency ?? '');
-  const [duration, setDuration] = useState('');
-  const [loading, setLoading] = useState(false);
-  const pt = rx.encounter.patient;
-
-  async function submit() {
-    setLoading(true);
-    try {
-      const mods: Record<string, unknown> = {};
-      if (drug !== rx.medication.name) mods.drugChanged = { from: rx.medication.name, to: drug };
-      if (dose !== (rx.medication.dosage ?? '')) mods.doseChanged = { from: rx.medication.dosage, to: dose };
-      if (freq !== (rx.medication.frequency ?? '')) mods.freqChanged = { from: rx.medication.frequency, to: freq };
-      const { data } = await api.post('/dispensing', {
-        prescriptionId: rx.id, patientId: pt.id, type: 'modified',
-        dispensedDrug: drug, dispensedDose: dose,
-        dispensedFrequency: freq, dispensedDuration: duration, dispensedBy,
-        modifications: Object.keys(mods).length ? mods : undefined,
-      });
-      printLabel(drug, dose, freq, `${pt.firstName} ${pt.lastName}`, pt.nationalId ?? '');
-      onDone(data);
-    } catch { toast.error('Dispense failed'); }
-    finally { setLoading(false); }
+  async function submit(draft: PrescriptionDraft) {
+    const { data } = await api.post('/dispensing', { prescriptionId: rx.id, patientId: rx.encounter.patient.id, type: 'modified', dispensedDrug: draft.drugName, dispensedBy, medication: medicationBody(draft) });
+    onDone(data);
   }
-
-  return (
-    <tr>
-      <td colSpan={colSpan} style={{ padding: '14px 18px', background: 'var(--badge-blue-bg)', borderBottom: C.divider }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10, marginBottom: 12 }}>
-          <div>
-            <FieldLabel>Drug</FieldLabel>
-            <DrugAutocomplete
-              value={drug} onChange={setDrug}
-              onSelect={e => { setDrug(e.name); if (e.dose) setDose(e.dose); }}
-            />
-          </div>
-          {([['Dose', dose, setDose], ['Frequency', freq, setFreq], ['Duration', duration, setDuration]] as const).map(([lbl, val, setter]) => (
-            <div key={lbl}>
-              <FieldLabel>{lbl}</FieldLabel>
-              <input value={val} onChange={e => setter(e.target.value)} style={inputStyle} />
-            </div>
-          ))}
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-          <button onClick={onClose} style={ghostBtn()}>Cancel</button>
-          <button onClick={submit} disabled={loading} style={{ ...smallBtn('#1d4ed8'), padding: '7px 14px', fontSize: 12 }}>
-            <Printer size={11} /> {loading ? 'Dispensing…' : 'Dispense & Print'}
-          </button>
-        </div>
-      </td>
-    </tr>
-  );
+  return <tr><td colSpan={colSpan} style={{ padding: '10px 14px' }}><PrescriptionForm initial={courseDraft(rx.medication)} lockDrug patientId={rx.encounter.patient.id} encounterId={rx.encounterId} onSave={submit} onCancel={onClose} submitLabel="Dispense" /></td></tr>;
 }
 
 // ── Dispensing card ───────────────────────────────────────────────────────────
 
-function DispensingCard({ record, onCollect, canAct }: {
-  record: Dispensing; onCollect: (id: string) => void; canAct: boolean;
+function DispensingCard({ record, canAct }: {
+  record: Dispensing; canAct: boolean;
 }) {
   return (
     <div style={{
-      background: '#fff', borderRadius: 10, border: C.cardBorder,
+      background: 'var(--bg-card)', borderRadius: 22, border: C.cardBorder,
       padding: '12px 16px',
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
         <div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: C.title }}>{record.dispensedDrug}</div>
+          <div style={{ fontSize: 13, fontWeight: 500, color: C.title }}>{record.dispensedDrug}</div>
           <div style={{ fontSize: 11, color: C.faint, marginTop: 2 }}>
             {record.patient.firstName} {record.patient.lastName}
             {record.patient.nationalId ? ` · ${record.patient.nationalId}` : ''}
@@ -483,27 +362,27 @@ function DispensingCard({ record, onCollect, canAct }: {
         </div>
         <div style={{ display: 'flex', gap: 6, flexShrink: 0, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
           {typePill(record.type)}
-          {record.collectedAt
-            ? <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 10, background: 'var(--clinical-normal-bg)', color: 'var(--clinical-normal)' }}>Collected</span>
-            : <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 10, background: 'var(--clinical-caution-bg)', color: 'var(--clinical-caution)' }}>Pending</span>}
         </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 4, marginBottom: 6 }}>
-        {[['Dose', record.dispensedDose], ['Freq', record.dispensedFrequency], ['Duration', record.dispensedDuration]].map(([lbl, val]) => (
+      {Boolean(record.substitution?.originalDrug) && <div style={{ fontSize: 11, color: C.muted, marginBottom: 6 }}>Substituted: <s>{String(record.substitution!.originalDrug)}</s></div>}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 130px), 1fr))', gap: 4, marginBottom: 6 }}>
+        {[['Dosage', record.dispensedDose], ['Freq', record.dispensedFrequency], ['Duration', record.dispensedDuration], ['Qty', record.quantity != null ? String(record.quantity) + ' ' + (record.quantityUnit || 'items') : undefined], ['Price', record.unitPrice != null ? 'ZMW ' + Number(record.unitPrice).toFixed(2) + ' ' + pricingUnit(record.priceBasis ?? 'ITEM', record.quantityUnit || 'unit') : undefined]].map(([lbl, val]) => (
           <div key={lbl as string}>
             <span style={{ fontSize: 10, color: C.faint }}>{lbl as string}: </span>
             <span style={{ fontSize: 11, color: C.body, fontWeight: 500 }}>{val || '—'}</span>
           </div>
         ))}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
         <span style={{ fontSize: 11, color: C.faint }}>{new Date(record.dispensedAt).toLocaleString()}</span>
-        {!record.collectedAt && canAct && (
-          <button onClick={() => onCollect(record.id)}
-            style={{ ...smallBtn('#166534'), background: 'transparent', color: '#166534', border: '1px solid #bbf7d0' }}>
-            <CheckCircle size={11} /> Mark Collected
-          </button>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          {canAct && (
+            <button type="button" onClick={() => printLabel(record.dispensedDrug, record.dispensedDose ?? '', record.dispensedFrequency ?? '', `${record.patient.firstName} ${record.patient.lastName}`, record.patient.nationalId ?? '')}
+              style={smallBtn()}>
+              <Printer size={11} /> Print label
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -536,14 +415,6 @@ function PatientHistorySearch({ canAct }: { canAct: boolean }) {
     finally { setLoading(false); }
   }
 
-  async function collect(id: string) {
-    try {
-      await api.patch(`/dispensing/${id}`, {});
-      setHistory(h => h.map(r => r.id === id ? { ...r, collectedAt: new Date().toISOString() } : r));
-      toast.success('Marked collected');
-    } catch { toast.error('Failed'); }
-  }
-
   return (
     <div>
       <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
@@ -560,13 +431,13 @@ function PatientHistorySearch({ canAct }: { canAct: boolean }) {
 
       {results.length > 0 && (
         <ul style={{
-          background: '#fff', border: C.cardBorder, borderRadius: 8,
+          background: 'var(--bg-card)', border: C.cardBorder, borderRadius: 8,
           listStyle: 'none', margin: '0 0 12px', padding: 0, overflow: 'hidden',
         }}>
           {results.map(p => (
             <li key={p.id} onClick={() => selectPatient(p)}
               style={{ padding: '9px 14px', fontSize: 13, color: C.title, cursor: 'pointer', borderBottom: C.divider }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#fef2f2')}
+              onMouseEnter={e => (e.currentTarget.style.background = 'var(--ws-chip)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
               {p.firstName} {p.lastName} {p.nationalId ? `· ${p.nationalId}` : ''}
             </li>
@@ -577,7 +448,7 @@ function PatientHistorySearch({ canAct }: { canAct: boolean }) {
       {selected && (
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: C.title, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: 13, fontWeight: 500, color: C.title, display: 'flex', alignItems: 'center', gap: 6 }}>
               <User size={13} color={C.muted} />
               {selected.firstName} {selected.lastName}
             </span>
@@ -589,9 +460,9 @@ function PatientHistorySearch({ canAct }: { canAct: boolean }) {
           {loading
             ? <p style={{ textAlign: 'center', color: C.faint, fontSize: 13, padding: '16px 0' }}>Loading…</p>
             : history.length === 0
-              ? <p style={{ textAlign: 'center', color: C.faint, fontSize: 13, padding: '16px 0' }}>No dispensing records.</p>
+              ? null
               : <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {history.map(r => <DispensingCard key={r.id} record={r} onCollect={collect} canAct={canAct} />)}
+                  {history.map(r => <DispensingCard key={r.id} record={r} canAct={canAct} />)}
                 </div>}
         </div>
       )}
@@ -612,6 +483,7 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
   const [editRow, setEditRow] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const colSpan = canAct ? 7 : 6;
+
 
   const loadQueue = useCallback(async () => {
     setLoading(true);
@@ -638,12 +510,13 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
     });
   }, [prescriptions]);
 
-  async function collect(id: string) {
+  // Out of stock here: the client buys it elsewhere and is not charged for it
+  async function setAvailability(rx: GlobalPrescription, notAvailable: boolean) {
     try {
-      await api.patch(`/dispensing/${id}`, {});
-      setDispensedToday(d => d.map(r => r.id === id ? { ...r, collectedAt: new Date().toISOString() } : r));
-      toast.success('Marked collected');
-    } catch { toast.error('Failed'); }
+      await api.patch(`/prescriptions/${rx.id}/availability`, { notAvailable });
+      setPrescriptions(prev => prev.map(r => r.id === rx.id ? { ...r, notAvailable } : r));
+      toast.success(notAvailable ? 'Marked not available here. The charge was removed.' : 'Back in stock. The charge was restored.');
+    } catch (e: any) { toast.error(e?.response?.data?.error ?? 'Couldn’t update that.'); }
   }
 
   function handleDispensed(d: Dispensing) {
@@ -654,9 +527,9 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
   }
 
   const thStyle: React.CSSProperties = {
-    padding: '8px 12px', textAlign: 'left', fontSize: 10, fontWeight: 600,
+    padding: '8px 12px', textAlign: 'left', fontSize: 10, fontWeight: 500,
     color: C.faint, textTransform: 'uppercase', letterSpacing: '0.4px',
-    background: '#f8fafc', whiteSpace: 'nowrap',
+    background: 'var(--bg-surface)', whiteSpace: 'nowrap',
   };
 
   const tdStyle: React.CSSProperties = { padding: '10px 12px', verticalAlign: 'middle' };
@@ -669,7 +542,7 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
         <div style={cardHeaderStyle}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={cardTitleStyle}>Prescription Queue</span>
-            <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#fef2f2', color: C.red }}>
+            <span style={{ fontSize: 11, fontWeight: 500, padding: '2px 8px', borderRadius: 10, background: 'var(--ws-chip)', color: C.red }}>
               {prescriptions.length}
             </span>
           </div>
@@ -688,15 +561,7 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
 
         {loading ? (
           <p style={{ textAlign: 'center', color: C.faint, fontSize: 13, padding: '40px 0' }}>Loading…</p>
-        ) : prescriptions.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '48px 24px' }}>
-            <Package size={28} color="#e2e8f0" style={{ marginBottom: 10 }} />
-            <p style={{ fontSize: 14, fontWeight: 600, color: '#374151', margin: '0 0 4px' }}>
-              No {filter === 'pending' ? 'pending ' : ''}prescriptions
-            </p>
-            <p style={{ fontSize: 13, color: C.faint, margin: 0 }}>Prescriptions from encounters will appear here.</p>
-          </div>
-        ) : (
+        ) : prescriptions.length === 0 ? null : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
@@ -711,21 +576,21 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
                 </tr>
               </thead>
               <tbody>
-                {prescriptions.map(rx => (
+                {prescriptions.map(order => { const rx = { ...order, medication: order.substituteMedication ?? order.medication }; return (
                   <Fragment key={rx.id}>
                     <tr style={{ borderTop: C.divider, opacity: rx.dispensed ? 0.55 : 1 }}>
                       <td style={tdStyle}>
-                        <div style={{ fontWeight: 600, color: C.title }}>
+                        <div style={{ fontWeight: 500, color: C.title }}>
                           {rx.encounter.patient.firstName} {rx.encounter.patient.lastName}
                         </div>
                         <div style={{ fontSize: 11, color: C.faint }}>
                           {rx.encounter.patient.nationalId ?? '—'}
                         </div>
                       </td>
-                      <td style={{ ...tdStyle, fontWeight: 600, color: C.title }}>{rx.medication.name}</td>
+                      <td style={{ ...tdStyle, fontWeight: 500, color: C.title }}>{rx.medication.name}{order.substituteMedication && <div style={{ fontSize: 11, color: C.muted }}>Substituted: <s>{order.medication.name}</s></div>}{rx.medication.catalogueCode && <div style={{ marginTop: 5, fontSize: 12, fontWeight: 400 }}><CataloguePrice catalogueRef={rx.medication.catalogueCode} itemType="DRUG" name={rx.medication.name} patientId={rx.encounter.patient.id} suffix={" " + pricingUnit(rx.medication.priceBasis ?? 'ITEM', rx.medication.doseUnit || rx.medication.quantityUnit || 'unit')} editable={canAct && !rx.dispensed} unpricedLabel="Add price" /></div>}{rx.notAvailable && <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 500, color: 'var(--badge-amber-text)' }}>NOT AVAILABLE HERE</span>}</td>
                       <td style={tdStyle}>
                         <div style={{ color: C.body }}>{rx.medication.dosage ?? '—'}</div>
-                        <div style={{ fontSize: 11, color: C.faint }}>{rx.medication.frequency ?? '—'}</div>
+                        <div style={{ fontSize: 11, color: C.faint }}>{rx.medication.frequency ?? '—'}{rx.medication.duration ? ' · ' + rx.medication.duration : ''}</div>{rx.medication.quantity != null && <div style={{ fontSize: 11, color: C.body }}>Qty {String(rx.medication.quantity)} {rx.medication.quantityUnit || 'units'}</div>}{rx.medication.endDate && <div style={{ fontSize: 11, color: C.faint }}>Ends {formatCourseDate(rx.medication.endDate)}</div>}
                       </td>
                       <td style={tdStyle}>
                         {stocks[rx.medication.name] != null
@@ -739,20 +604,24 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
                       {canAct && (
                         <td style={{ ...tdStyle, textAlign: 'right' }}>
                           {rx.dispensed ? (
-                            <span style={{ fontSize: 11, color: '#166534', display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
+                            <span style={{ fontSize: 11, color: 'var(--badge-green-text)', display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
                               <CheckCircle size={11} /> Done
                             </span>
                           ) : (
                             <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
-                              <button onClick={() => setDispenseModal(rx)} style={smallBtn('#166534')}>
+                              <button onClick={() => setDispenseModal(rx)} style={smallBtn()}>
                                 <Package size={10} /> Dispense
                               </button>
                               <button onClick={() => setEditRow(editRow === rx.id ? null : rx.id)}
-                                style={smallBtn(editRow === rx.id ? '#1e40af' : '#1d4ed8')}>
+                                style={smallBtn()}>
                                 <Edit2 size={10} /> Edit
                               </button>
-                              <button onClick={() => setSubstituteModal(rx)} style={smallBtn('#6d28d9')}>
+                              <button onClick={() => setSubstituteModal(rx)} style={smallBtn()}>
                                 <RefreshCw size={10} /> Sub
+                              </button>
+                              <button onClick={() => setAvailability(rx, !rx.notAvailable)} style={smallBtn()}
+                                title={rx.notAvailable ? 'Put the charge back' : 'Not in stock: the client buys it elsewhere and is not charged'}>
+                                {rx.notAvailable ? 'In stock' : 'Not here'}
                               </button>
                             </div>
                           )}
@@ -768,7 +637,7 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
                       />
                     )}
                   </Fragment>
-                ))}
+                ); })}
               </tbody>
             </table>
           </div>
@@ -787,7 +656,7 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={cardTitleStyle}>Dispensed Today</span>
-            <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 10, background: '#f0fdf4', color: '#166534' }}>
+            <span style={{ fontSize: 11, fontWeight: 500, padding: '2px 8px', borderRadius: 10, background: 'var(--badge-green-bg)', color: 'var(--badge-green-text)' }}>
               {dispensedToday.length}
             </span>
           </div>
@@ -799,8 +668,8 @@ function QueueTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: boolea
         {sectionBOpen && (
           <div style={{ padding: '12px 18px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
             {dispensedToday.length === 0
-              ? <p style={{ textAlign: 'center', color: C.faint, fontSize: 13, padding: '16px 0', margin: 0 }}>Nothing dispensed today yet.</p>
-              : dispensedToday.map(r => <DispensingCard key={r.id} record={r} onCollect={collect} canAct={canAct} />)}
+              ? null
+              : dispensedToday.map(r => <DispensingCard key={r.id} record={r} canAct={canAct} />)}
           </div>
         )}
       </div>
@@ -833,8 +702,8 @@ function PatientTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: bool
   const [selected, setSelected] = useState<SimplePatient | null>(null);
   const [history, setHistory] = useState<Dispensing[]>([]);
   const [loading, setLoading] = useState(false);
-  const [walkIn, setWalkIn] = useState({ drug: '', dose: '', freq: '', duration: '' });
-  const [walkInLoading, setWalkInLoading] = useState(false);
+  const [walkInKey, setWalkInKey] = useState(0);
+
 
   async function search() {
     if (!query.trim()) return;
@@ -855,31 +724,10 @@ function PatientTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: bool
     finally { setLoading(false); }
   }
 
-  async function directDispense() {
-    if (!selected) { toast.error('Select a patient first'); return; }
-    if (!walkIn.drug.trim()) { toast.error('Enter drug name'); return; }
-    setWalkInLoading(true);
-    try {
-      const { data } = await api.post('/dispensing', {
-        patientId: selected.id, type: 'direct',
-        dispensedDrug: walkIn.drug, dispensedDose: walkIn.dose,
-        dispensedFrequency: walkIn.freq, dispensedDuration: walkIn.duration,
-        dispensedBy,
-      });
-      printLabel(walkIn.drug, walkIn.dose, walkIn.freq, `${selected.firstName} ${selected.lastName}`, selected.nationalId ?? '');
-      setHistory(h => [data, ...h]);
-      setWalkIn({ drug: '', dose: '', freq: '', duration: '' });
-      toast.success('Dispensed');
-    } catch { toast.error('Dispense failed'); }
-    finally { setWalkInLoading(false); }
-  }
-
-  async function collect(id: string) {
-    try {
-      await api.patch(`/dispensing/${id}`, {});
-      setHistory(h => h.map(r => r.id === id ? { ...r, collectedAt: new Date().toISOString() } : r));
-      toast.success('Marked collected');
-    } catch { toast.error('Failed'); }
+  async function directDispense(draft: PrescriptionDraft) {
+    if (!selected) return;
+    const { data } = await api.post('/dispensing', { patientId: selected.id, type: 'direct', dispensedDrug: draft.drugName, dispensedBy, medication: medicationBody(draft) });
+    setHistory(h => [data, ...h]); setWalkInKey(k => k + 1); toast.success('Dispensed');
   }
 
   return (
@@ -905,13 +753,13 @@ function PatientTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: bool
 
           {patients.length > 0 && (
             <ul style={{
-              background: '#fff', border: C.cardBorder, borderRadius: 8,
+              background: 'var(--bg-card)', border: C.cardBorder, borderRadius: 8,
               listStyle: 'none', margin: '0 0 10px', padding: 0, overflow: 'hidden',
             }}>
               {patients.map(p => (
                 <li key={p.id} onClick={() => selectPatient(p)}
                   style={{ padding: '9px 14px', fontSize: 13, color: C.title, cursor: 'pointer', borderBottom: C.divider, display: 'flex', alignItems: 'center', gap: 8 }}
-                  onMouseEnter={e => (e.currentTarget.style.background = '#fef2f2')}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--ws-chip)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                   <User size={13} color={C.faint} />
                   {p.firstName} {p.lastName} {p.nationalId ? `· ${p.nationalId}` : ''}
@@ -921,9 +769,9 @@ function PatientTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: bool
           )}
 
           {selected && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: '#fef2f2', borderRadius: 8, border: '1px solid #fecaca' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: 'var(--ws-chip)', borderRadius: 8, border: '1px solid var(--border)' }}>
               <User size={13} color={C.red} />
-              <span style={{ fontSize: 13, fontWeight: 600, color: C.title }}>{selected.firstName} {selected.lastName}</span>
+              <span style={{ fontSize: 13, fontWeight: 500, color: C.title }}>{selected.firstName} {selected.lastName}</span>
               {selected.nationalId && <span style={{ fontSize: 12, color: C.faint }}>· {selected.nationalId}</span>}
               <button onClick={() => { setSelected(null); setHistory([]); setQuery(''); }}
                 style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: C.faint, display: 'flex' }}>
@@ -940,33 +788,7 @@ function PatientTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: bool
           <div style={cardHeaderStyle}>
             <span style={cardTitleStyle}>Walk-in Direct Dispense</span>
           </div>
-          <div style={{ padding: '14px 18px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10, marginBottom: 14 }}>
-              <div>
-                <FieldLabel>Drug *</FieldLabel>
-                <DrugAutocomplete
-                  value={walkIn.drug}
-                  onChange={v => setWalkIn(w => ({ ...w, drug: v }))}
-                  onSelect={e => setWalkIn(w => ({ ...w, drug: e.name, dose: e.dose || w.dose }))}
-                />
-              </div>
-              {([['Dose', 'dose'], ['Frequency', 'freq'], ['Duration', 'duration']] as const).map(([lbl, key]) => (
-                <div key={key}>
-                  <FieldLabel>{lbl}</FieldLabel>
-                  <input
-                    value={walkIn[key]}
-                    onChange={e => setWalkIn(w => ({ ...w, [key]: e.target.value }))}
-                    style={inputStyle}
-                  />
-                </div>
-              ))}
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button onClick={directDispense} disabled={walkInLoading} style={primaryBtn(walkInLoading)}>
-                <Printer size={13} /> {walkInLoading ? 'Dispensing…' : 'Dispense & Print'}
-              </button>
-            </div>
-          </div>
+          <div style={{ padding: '10px 18px' }}><PrescriptionForm key={selected.id + ':' + walkInKey} patientId={selected.id} onSave={directDispense} onCancel={() => setWalkInKey(k => k + 1)} submitLabel="Dispense" /></div>
         </div>
       )}
 
@@ -981,9 +803,9 @@ function PatientTab({ dispensedBy, canAct }: { dispensedBy: string; canAct: bool
             {loading
               ? <p style={{ textAlign: 'center', color: C.faint, fontSize: 13, padding: '16px 0', margin: 0 }}>Loading…</p>
               : history.length === 0
-                ? <p style={{ textAlign: 'center', color: C.faint, fontSize: 13, padding: '16px 0', margin: 0 }}>No dispensing records for this patient.</p>
+                ? null
                 : <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {history.map(r => <DispensingCard key={r.id} record={r} onCollect={collect} canAct={canAct} />)}
+                    {history.map(r => <DispensingCard key={r.id} record={r} canAct={canAct} />)}
                   </div>}
           </div>
         </div>
@@ -1014,45 +836,42 @@ export default function PharmacyPage() {
   );
 
   const role = user.role;
-  const canAct = role === 'pharmacist' || role === 'admin';
-  const canView = canAct || role === 'clinician' || role === 'doctor' || role === 'nurse';
+  const canAct = hasRole(role, 'pharmacist', 'admin');
+  const canView = canAccessModule(role, 'pharmacy');
 
   if (!canView) {
-    return (
-      <div style={{ background: C.pageBg, minHeight: '100%', fontFamily: C.font, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center', padding: 40 }}>
-          <AlertTriangle size={32} color="var(--clinical-caution)" style={{ marginBottom: 12 }} />
-          <p style={{ fontSize: 14, color: C.body }}>You do not have access to the Pharmacy module.</p>
-        </div>
-      </div>
-    );
+    return <Navigate to={moduleLanding(role)} replace />;
   }
 
   return (
-    <div style={{ display: 'flex', flex: 1, minHeight: '100%', fontFamily: C.font }}>
+    <div className="clinical-module clinical-workspace" data-has-summary={!!activePatient} style={{ fontFamily: C.font }}>
 
-      {/* ── Dark clinical sidebar (same component as Consultation) ── */}
-      <ConsultationSidebar
-        patientId={activePatient?.id ?? ''}
-        patient={activePatient}
-        encounters={encounters}
-        visible={!!activePatient}
-        currentNodes={[]}
-      />
+      {/* ── Compact clinical summary (same component as Consultation) ── */}
+        {activePatient && (
+          <aside className="clinical-workspace-summary" aria-label="Clinical summary">
+            <ConsultationSidebar
+              patientId={activePatient.id}
+              patient={activePatient}
+              encounters={encounters}
+              visible
+              currentNodes={[]}
+            />
+          </aside>
+        )}
 
       {/* ── Main content ── */}
       <div style={{ flex: 1, minWidth: 0, background: C.pageBg, display: 'flex', flexDirection: 'column' }}>
 
         {/* ── Header ── */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'clamp(12px, 2vw, 20px) clamp(14px, 3vw, 24px) 16px', flexWrap: 'wrap', gap: 8 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 0 16px', flexWrap: 'wrap', gap: 8 }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: C.title, letterSpacing: '-0.3px' }}>
+            <h2 style={{ margin: 0, fontSize: 22, fontWeight: 500, color: C.title, letterSpacing: '-0.3px' }}>
               Pharmacy
             </h2>
             <p style={{ margin: '2px 0 0', fontSize: 13, color: C.muted }}>
-              {user.name} · {role}
+              {staffDisplayName(user.name, user.designation)} · {staffPosition(user.designation, role)}
               {!canAct && (
-                <span style={{ marginLeft: 10, fontSize: 11, fontWeight: 600, color: '#92400e', background: '#fffbeb', padding: '2px 8px', borderRadius: 10 }}>
+                <span style={{ marginLeft: 10, fontSize: 11, fontWeight: 500, color: 'var(--badge-amber-text)', background: 'var(--badge-amber-bg)', padding: '2px 8px', borderRadius: 10 }}>
                   View only
                 </span>
               )}
@@ -1062,19 +881,17 @@ export default function PharmacyPage() {
 
         {/* ── Tab bar ── */}
         <div style={{
-          borderBottom: '1px solid var(--border-light)',
-          padding: '0 24px',
-          display: 'flex',
-          gap: 2,
-          background: 'var(--bg-card)',
+          padding: 4, borderRadius: 999, border: '1px solid var(--border)',
+          display: 'flex', width: 'fit-content', gap: 4,
+          background: 'var(--bg-surface)',
         }}>
           {(['queue', 'patient'] as const).map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
-              padding: '12px 16px 10px',
-              border: 'none', background: 'transparent',
-              borderBottom: `2px solid ${tab === t ? C.red : 'transparent'}`,
-              color: tab === t ? C.red : C.faint,
-              fontSize: 13, fontWeight: 600, cursor: 'pointer',
+              padding: '8px 18px', borderRadius: 999, border: 'none',
+              background: tab === t ? 'var(--bg-card)' : 'transparent',
+              boxShadow: tab === t ? 'var(--premium-selected-shadow)' : 'none',
+              color: tab === t ? 'var(--selection-text)' : C.faint,
+              fontSize: 13, fontWeight: 500, cursor: 'pointer',
               transition: 'color 0.15s',
             }}>
               {t === 'queue' ? 'Queue' : 'Patient'}
@@ -1083,7 +900,7 @@ export default function PharmacyPage() {
         </div>
 
         {/* ── Tab content ── */}
-        <div style={{ padding: '16px 24px 24px', flex: 1, overflowY: 'auto' }}>
+        <div style={{ padding: '16px 0 0', flex: 1, overflowY: 'auto' }}>
           {tab === 'queue' && <QueueTab dispensedBy={user.name} canAct={canAct} />}
           {tab === 'patient' && <PatientTab dispensedBy={user.name} canAct={canAct} />}
         </div>

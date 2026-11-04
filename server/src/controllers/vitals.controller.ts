@@ -1,3 +1,4 @@
+import { chargeConsultationFee } from '../lib/billing';
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth';
@@ -20,7 +21,7 @@ const LIMITS = {
 } as const;
 type VitalField = keyof typeof LIMITS;
 
-const RECORDED_BY = { select: { id: true, name: true } };
+const RECORDED_BY = { select: { id: true, name: true, designation: true } };
 
 export async function getVitals(req: Request, res: Response): Promise<void> {
   const { patientId } = req.params as { patientId: string };
@@ -72,5 +73,6 @@ export async function createVital(req: AuthRequest, res: Response): Promise<void
     },
     include: { recordedBy: RECORDED_BY },
   });
+  void chargeConsultationFee(patientId, vital.encounterId, req.userId);   // visit started: consultation fee
   res.status(201).json({ ...vital, bmi: calcBmi(vital.weight, vital.height) });
 }

@@ -318,17 +318,17 @@ const CSS = `
 [data-skin="blue"] .rg-scrim { --rg-head-bg: #1F5F96; --rg-head-text: #FFFFFF; --rg-head-muted: #CFE0F0; --rg-head-line: #1F5F96; --rg-x-hover: rgba(255,255,255,.14); }
 .rg-card { width: 100%; max-width: 760px; margin: auto; background: var(--bg-card); border-radius: 18px; box-shadow: var(--rg-shadow); overflow: hidden; }
 .rg-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 28px 18px; background: var(--rg-head-bg); border-bottom: 1px solid var(--rg-head-line); }
-.rg-title { margin: 0 0 4px; font-family: var(--font-heading); font-size: 19px; font-weight: 700; color: var(--rg-head-text); }
+.rg-title { margin: 0 0 4px; font-family: var(--font-heading); font-size: 19px; font-weight:500; color: var(--rg-head-text); }
 .rg-sub { margin: 0; font-size: 13px; color: var(--rg-head-muted); }
 .rg-x { width: 36px; height: 36px; margin: -4px -8px 0 0; border: 0; border-radius: 8px; background: transparent; color: var(--rg-head-text); display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .rg-x:hover { background: var(--rg-x-hover); }
 .rg-body { padding: 24px 28px 8px; }
-.rg-sec { margin: 0 0 14px; font-size: 11px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--rg-faint); }
+.rg-sec { margin: 0 0 14px; font-size: 11px; font-weight:500; letter-spacing: 1.4px; text-transform: uppercase; color: var(--rg-faint); }
 .rg-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px 16px; }
 .rg-grid .s2 { grid-column: span 2; } .rg-grid .s3 { grid-column: span 3; } .rg-grid .s4 { grid-column: span 4; }
-.rg-l { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; font-weight: 600; color: var(--rg-label); margin-bottom: 6px; }
+.rg-l { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; font-weight:500; color: var(--rg-label); margin-bottom: 6px; }
 .rg-l small { font-size: 12px; font-weight: 400; color: var(--rg-faint); }
-.rg-req { color: var(--text-muted); font-weight: 600; }
+.rg-req { color: var(--text-muted); font-weight:500; }
 .rg-f { width: 100%; height: 44px; padding: 0 14px; border: 1px solid var(--rg-field-line); border-radius: 10px; background: var(--rg-field);
   font: inherit; font-size: 14px; color: var(--text-heading); outline: 0; appearance: none; -webkit-appearance: none; transition: border-color .15s, box-shadow .15s; }
 .rg-f::placeholder, .rg-phone input::placeholder { color: var(--rg-faint); }
@@ -347,11 +347,11 @@ select.rg-f { padding-right: 38px; cursor: pointer; }
 .rg-phone option, .rg-f option { color: #16181A; background: #fff; }
 .rg-err .rg-f, .rg-err .rg-phone { border-color: #E5484D; }
 .rg-msg { margin: 6px 0 0; font-size: 12px; color: #E5484D; }
-.rg-alert { margin: 0 0 16px; padding: 10px 14px; border-radius: 10px; background: var(--chip-red-bg); color: var(--chip-red-text); font-size: 13px; font-weight: 600; }
+.rg-alert { margin: 0 0 16px; padding: 10px 14px; border-radius: 10px; background: var(--chip-red-bg); color: var(--chip-red-text); font-size: 13px; font-weight:500; }
 .rg-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 28px; background: var(--rg-foot); border-top: 1px solid var(--border); }
-.rg-ghost { height: 44px; padding: 0 18px; border: 1px solid var(--rg-field-line); border-radius: 10px; background: transparent; color: var(--text-heading); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.rg-ghost { height: 44px; padding: 0 18px; border: 1px solid var(--rg-field-line); border-radius: 10px; background: transparent; color: var(--text-heading); font: inherit; font-size: 14px; font-weight:500; cursor: pointer; }
 .rg-ghost:hover { background: var(--rg-x-hover); }
-.rg-pri { height: 44px; padding: 0 20px; border: 0; border-radius: 10px; background: #C41E25; color: #fff; font-family: var(--font-heading); font-size: 14px; font-weight: 700; cursor: pointer; }
+.rg-pri { height: 44px; padding: 0 20px; border: 0; border-radius: 10px; background: var(--ses-red); color: #fff; font-family: var(--font-heading); font-size: 14px; font-weight:500; cursor: pointer; }
 .rg-pri:hover:not(:disabled) { filter: brightness(1.06); }
 .rg-pri:disabled { opacity: .7; cursor: default; }
 @media (max-width: 700px) {

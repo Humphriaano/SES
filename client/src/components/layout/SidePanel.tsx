@@ -17,7 +17,7 @@ function HIVBadge({ status }: { status: string }) {
     <div style={{
       display: 'inline-flex', alignItems: 'center', gap: 5,
       background: s.bg, color: s.color,
-      fontSize: 11.5, fontWeight: 600, padding: '3px 9px', borderRadius: 20,
+      fontSize: 11.5, fontWeight: 500, padding: '3px 9px', borderRadius: 20,
       border: `1px solid ${s.color}22`,
     }}>
       <Shield size={10} />
@@ -109,11 +109,11 @@ export default function SidePanel() {
         padding: '12px 14px', background: 'var(--bg-nav)', position: 'sticky', top: 0, zIndex: 1,
         transition: 'background-color 0.2s',
       }}>
-        <span style={{ fontSize: 10.5, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+        <span style={{ fontSize: 10.5, fontWeight: 500, color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
           Patient Summary
         </span>
         <button onClick={() => setCollapsed(true)} style={{
-          background: 'rgba(255,255,255,0.08)', border: 'none', borderRadius: 5,
+          background: 'rgba(255,255,255,0.08)', border: 'none', borderRadius: 999,
           padding: '3px 5px', cursor: 'pointer', color: '#9ca3af', display: 'flex',
         }}>
           <ChevronRight size={13} />
@@ -128,7 +128,7 @@ export default function SidePanel() {
           <Section icon={Smartphone} label="Portal Access">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
               <span style={{
-                fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 20,
+                fontSize: 11, fontWeight: 500, padding: '2px 8px', borderRadius: 20,
                 background: patient.portalEnabled ? 'var(--badge-green-bg)' : 'var(--bg-surface)',
                 color: patient.portalEnabled ? 'var(--badge-green-text)' : 'var(--text-muted)',
               }}>
@@ -138,8 +138,8 @@ export default function SidePanel() {
                 onClick={togglePortalAccess}
                 disabled={togglingPortal}
                 style={{
-                  fontSize: 10.5, fontWeight: 600, background: 'none', border: '1px solid var(--border)',
-                  borderRadius: 6, padding: '3px 8px', cursor: 'pointer', color: 'var(--text-body)',
+                  fontSize: 10.5, fontWeight: 500, background: 'none', border: '1px solid var(--border)',
+                  borderRadius: 999, padding: '3px 8px', cursor: 'pointer', color: 'var(--text-body)',
                 }}
               >
                 {patient.portalEnabled ? 'Disable' : 'Enable'}
@@ -156,7 +156,7 @@ export default function SidePanel() {
               title={!patient.email ? 'Add an email address to send a portal invitation' : undefined}
               style={{
                 display: 'flex', alignItems: 'center', gap: 6, width: '100%', justifyContent: 'center',
-                fontSize: 11.5, fontWeight: 600, padding: '6px 10px', borderRadius: 7,
+                fontSize: 11.5, fontWeight: 500, padding: '6px 10px', borderRadius: 999,
                 background: patient.email ? 'var(--ses-red-tint)' : 'var(--bg-surface)',
                 color: patient.email ? 'var(--ses-red)' : 'var(--text-muted)',
                 border: 'none', cursor: patient.email ? 'pointer' : 'not-allowed',
@@ -209,7 +209,7 @@ export default function SidePanel() {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 3 }}>
                       <span style={{
-                        fontSize: 10, fontWeight: 600, padding: '1px 6px', borderRadius: 10,
+                        fontSize: 10, fontWeight: 500, padding: '1px 6px', borderRadius: 10,
                         background: a.status === 'CONFIRMED' || a.status === 'COMPLETED' ? 'var(--badge-green-bg)' : 'var(--bg-card)',
                         color: a.status === 'CONFIRMED' || a.status === 'COMPLETED' ? 'var(--badge-green-text)' : 'var(--text-muted)',
                       }}>{a.status}</span>
@@ -234,7 +234,7 @@ export default function SidePanel() {
                     background: 'var(--ses-blue-tint)', border: '1px solid #BEDAEA',
                     borderRadius: 7, padding: '5px 8px',
                   }}>
-                    <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--badge-red-text)', letterSpacing: '0.03em' }}>{d.icd11.code}</div>
+                    <div style={{ fontSize: 10.5, fontWeight: 500, color: 'var(--badge-red-text)', letterSpacing: '0.03em' }}>{d.icd11.code}</div>
                     <div style={{ fontSize: 11.5, color: 'var(--text-body)', lineHeight: 1.3 }}>{d.icd11.description}</div>
                   </div>
                 ))}
@@ -248,7 +248,7 @@ export default function SidePanel() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
                 {activeMeds.slice(0, 5).map((m) => (
                   <div key={m.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-body)' }}>{m.name}</span>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-body)' }}>{m.name}</span>
                     {m.dosage && <span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>{m.dosage}</span>}
                   </div>
                 ))}
@@ -264,7 +264,7 @@ export default function SidePanel() {
                   <div key={l.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: 11.5, color: 'var(--text-body)' }}>{l.testName}</span>
                     <span style={{
-                      fontSize: 11.5, fontWeight: 700,
+                      fontSize: 11.5, fontWeight: 500,
                       color: l.isAbnormal ? 'var(--badge-red-text)' : 'var(--badge-green-text)',
                     }}>
                       {l.result} {l.unit}
@@ -291,7 +291,7 @@ export default function SidePanel() {
                       </div>
                     )}
                     <span style={{
-                      fontSize: 10, fontWeight: 600, padding: '1px 6px', borderRadius: 10,
+                      fontSize: 10, fontWeight: 500, padding: '1px 6px', borderRadius: 10,
                       background: e.status === 'OPEN' ? 'var(--badge-green-bg)' : 'var(--badge-gray-bg)',
                       color: e.status === 'OPEN' ? 'var(--badge-green-text)' : 'var(--badge-gray-text)',
                       display: 'inline-block', marginTop: 3,
@@ -314,7 +314,7 @@ function Section({ icon: Icon, label, children }: { icon: any; label: string; ch
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 8 }}>
         <Icon size={11} color="var(--text-subtle)" />
-        <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>{label}</span>
+        <span style={{ fontSize: 10, fontWeight: 500, color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>{label}</span>
       </div>
       {children}
     </div>
@@ -325,7 +325,7 @@ function VitalRow({ label, value, unit }: { label: string; value: string; unit: 
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <span style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{label}</span>
-      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-heading)' }}>
+      <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-heading)' }}>
         {value} <span style={{ fontSize: 10.5, fontWeight: 400, color: 'var(--text-subtle)' }}>{unit}</span>
       </span>
     </div>

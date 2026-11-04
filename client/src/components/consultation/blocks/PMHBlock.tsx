@@ -114,22 +114,22 @@ export default function PMHBlock({ data, onChange, onRemove, onResolve, readOnly
   const canAdd = !readOnly && !!patientId;
 
   return (
-    <div style={{
+    <div className="note-block" style={{
       border: '1px solid var(--border)',
-      background: 'var(--bg-card)',
-      borderRadius: 12,
+      background: 'var(--bg-surface)',
+      borderRadius: 18,
       padding: '10px 14px',
       margin: '16px 0',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 10, color: 'var(--text-muted)', background: 'var(--ws-chip)', padding: '0 6px', minWidth: 28, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 5, fontWeight: 800, letterSpacing: '0.3px', boxSizing: 'border-box' }}>PMH</span>
-          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-heading)' }}>Past Medical History</span>
+          <span style={{ fontSize: 10, color: 'var(--text-muted)', background: 'var(--ws-chip)', padding: '0 6px', minWidth: 28, height: 20, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 5, fontWeight: 500, letterSpacing: '0.3px', boxSizing: 'border-box' }}>PMH</span>
+          <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-heading)' }}>Past Medical History</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           {canAdd && !adding && (
             <button onClick={() => { setAdding(true); setTimeout(() => inputRef.current?.focus(), 0); }}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, height: 26, padding: '0 10px', borderRadius: 7, border: '1px solid var(--border-input)', background: 'var(--bg-surface)', color: 'var(--text-heading)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, height: 26, padding: '0 10px', borderRadius: 999, border: '1px solid var(--border-input)', background: 'var(--bg-surface)', color: 'var(--text-heading)', fontSize: 12, fontWeight: 500, cursor: 'pointer' }}>
               <Plus size={12} /> Add condition
             </button>
           )}
@@ -170,10 +170,10 @@ export default function PMHBlock({ data, onChange, onRemove, onResolve, readOnly
                   return (
                     <button key={r.id} onClick={() => choose(r)} onMouseEnter={() => setActive(i)}
                       style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '9px 14px', border: 'none', borderBottom: '1px solid var(--border-light)', background: i === active ? 'var(--bg-surface-2)' : 'transparent', cursor: 'pointer', textAlign: 'left', color: 'var(--text-heading)' }}>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ses-blue-deep)', fontFamily: 'monospace', flexShrink: 0, minWidth: 54 }}>{r.code}</span>
+                      <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--ses-blue-deep)', fontFamily: 'monospace', flexShrink: 0, minWidth: 54 }}>{r.code}</span>
                       <span style={{ flex: 1, fontSize: 13, fontWeight: 500 }}>{r.description}</span>
                       {already
-                        ? <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-subtle)', flexShrink: 0 }}>on record</span>
+                        ? <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-subtle)', flexShrink: 0 }}>on record</span>
                         : r.category && <span style={{ fontSize: 11, color: 'var(--text-subtle)', flexShrink: 0 }}>{r.category}</span>}
                     </button>
                   );
@@ -183,12 +183,12 @@ export default function PMHBlock({ data, onChange, onRemove, onResolve, readOnly
           ) : (
             <div style={{ padding: 12 }}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 10 }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ses-blue-deep)', fontFamily: 'monospace' }}>{picked.code}</span>
-                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-heading)', flex: 1 }}>{picked.description}</span>
-                <button onClick={() => { setPicked(null); setError(''); }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, color: 'var(--ws-link)' }}>Change</button>
+                <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--ses-blue-deep)', fontFamily: 'monospace' }}>{picked.code}</span>
+                <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-heading)', flex: 1 }}>{picked.description}</span>
+                <button onClick={() => { setPicked(null); setError(''); }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 500, color: 'var(--ws-link)' }}>Change</button>
               </div>
               <div style={{ display: 'flex', gap: 14, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-                <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, fontWeight: 600, color: 'var(--text-muted)' }}>
+                <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, fontWeight: 500, color: 'var(--text-muted)' }}>
                   Year diagnosed <span style={{ fontWeight: 400, color: 'var(--text-subtle)' }}>(optional)</span>
                   <input value={year} onChange={e => { setYear(e.target.value.replace(/\D/g, '').slice(0, 4)); setError(''); }}
                     inputMode="numeric" placeholder={String(thisYear)} aria-label="Year diagnosed"
@@ -197,20 +197,20 @@ export default function PMHBlock({ data, onChange, onRemove, onResolve, readOnly
                 <div role="radiogroup" aria-label="Current status" style={{ display: 'inline-flex', padding: 3, gap: 2, border: '1px solid var(--border)', borderRadius: 9, background: 'var(--bg-card)' }}>
                   {[{ v: false, l: 'Still active' }, { v: true, l: 'Resolved' }].map(o => (
                     <button key={o.l} role="radio" aria-checked={resolved === o.v} onClick={() => setResolved(o.v)}
-                      style={{ height: 28, padding: '0 12px', border: 'none', borderRadius: 6, fontSize: 12.5, fontWeight: 600, cursor: 'pointer', background: resolved === o.v ? 'var(--ses-blue-deep)' : 'transparent', color: resolved === o.v ? '#fff' : 'var(--text-muted)' }}>
+                      style={{ height: 28, padding: '0 12px', border: 'none', borderRadius: 999, fontSize: 12.5, fontWeight: 500, cursor: 'pointer', background: resolved === o.v ? 'var(--ses-blue-deep)' : 'transparent', color: resolved === o.v ? '#fff' : 'var(--text-muted)' }}>
                       {o.l}
                     </button>
                   ))}
                 </div>
                 <div style={{ flex: 1 }} />
                 <button onClick={reset} disabled={saving}
-                  style={{ height: 36, padding: '0 14px', borderRadius: 8, border: '1px solid var(--border-input)', background: 'var(--bg-card)', color: 'var(--text-heading)', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+                  style={{ height: 36, padding: '0 14px', borderRadius: 999, border: '1px solid var(--border-input)', background: 'var(--bg-card)', color: 'var(--text-heading)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>Cancel</button>
                 <button onClick={save} disabled={saving}
-                  style={{ height: 36, padding: '0 16px', borderRadius: 8, border: 'none', background: 'var(--ses-red)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+                  style={{ height: 36, padding: '0 16px', borderRadius: 999, border: 'none', background: 'var(--ses-red)', color: '#fff', fontSize: 13, fontWeight: 500, cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.7 : 1 }}>
                   {saving ? 'Saving…' : 'Add to history'}
                 </button>
               </div>
-              {error && <p role="alert" style={{ margin: '8px 0 0', fontSize: 12.5, fontWeight: 600, color: 'var(--badge-red-text)' }}>{error}</p>}
+              {error && <p role="alert" style={{ margin: '8px 0 0', fontSize: 12.5, fontWeight: 500, color: 'var(--badge-red-text)' }}>{error}</p>}
             </div>
           )}
         </div>
@@ -234,12 +234,12 @@ export default function PMHBlock({ data, onChange, onRemove, onResolve, readOnly
                   opacity: entry.status === 'RESOLVED' ? 0.55 : 1,
                 }}
               >
-                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ses-blue-deep)', fontFamily: 'monospace', flexShrink: 0 }}>{entry.icd11Code}</span>
+                <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--ses-blue-deep)', fontFamily: 'monospace', flexShrink: 0 }}>{entry.icd11Code}</span>
                 <span style={{ flex: 1, fontSize: 13, color: 'var(--text-body)' }}>{entry.icd11Description}</span>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0 }}>
                   {entry.diagnosedYear ?? new Date(entry.dateFirstConfirmed).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}
                 </span>
-                <span style={{ fontSize: 11, fontWeight: 600, background: sc.bg, color: sc.color, padding: '2px 7px', borderRadius: 4, flexShrink: 0 }}>
+                <span style={{ fontSize: 11, fontWeight: 500, background: sc.bg, color: sc.color, padding: '2px 7px', borderRadius: 4, flexShrink: 0 }}>
                   {sc.label}
                 </span>
                 {!readOnly && entry.status !== 'RESOLVED' && (
