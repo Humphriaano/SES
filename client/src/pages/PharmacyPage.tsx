@@ -8,6 +8,7 @@ import StockReceiving from '../components/pharmacy/StockReceiving';
 import StockViews from '../components/pharmacy/StockViews';
 import StockAdjustments from '../components/pharmacy/StockAdjustments';
 import StockReports from '../components/pharmacy/StockReports';
+import StockAlerts, { ReportStart } from '../components/pharmacy/StockAlerts';
 import { formatCourseDate } from '../lib/prescriptionCourse';
 import { useEffect, useState, useRef, useCallback, Fragment } from 'react';
 import { Navigate } from 'react-router-dom';
@@ -855,6 +856,7 @@ export default function PharmacyPage() {
   const [tab, setTab] = useState<'queue' | 'patient' | 'receiving' | 'stock' | 'adjustments' | 'reports'>('queue');
   const [encounters, setEncounters] = useState<Encounter[]>([]);
   const [dispensingVersion,setDispensingVersion] = useState(0);
+  const [reportStart, setReportStart] = useState<ReportStart | undefined>();
 
   useEffect(() => {
     if (!activePatient) { setEncounters([]); return; }
@@ -920,7 +922,7 @@ export default function PharmacyPage() {
           background: 'var(--bg-surface)',
         }}>
           {(['queue', 'patient', ...(canAct ? ['stock' as const, 'receiving' as const, 'adjustments' as const, 'reports' as const] : [])] as const).map(t => (
-            <button key={t} onClick={() => setTab(t)} style={{
+            <button key={t} onClick={() => { setReportStart(undefined); setTab(t); }} style={{
               padding: '8px 18px', borderRadius: 999, border: 'none',
               background: tab === t ? 'var(--bg-card)' : 'transparent',
               boxShadow: tab === t ? 'var(--premium-selected-shadow)' : 'none',
@@ -933,6 +935,8 @@ export default function PharmacyPage() {
           ))}
         </div>
 
+        {canAct && <StockAlerts onOpen={start => { setReportStart(start); setTab('reports'); }} />}
+
         {/* ── Tab content ── */}
         <div style={{ padding: '16px 0 0', flex: 1, overflowY: 'auto' }}>
           {canAct && <DispensingRecovery onResolved={() => setDispensingVersion(value => value + 1)} />}
@@ -941,7 +945,7 @@ export default function PharmacyPage() {
           {tab === 'receiving' && canAct && <StockReceiving key={user.id} />}
           {tab === 'stock' && canAct && <StockViews />}
           {tab === 'adjustments' && canAct && <StockAdjustments key={user.id} />}
-          {tab === 'reports' && canAct && <StockReports />}
+          {tab === 'reports' && canAct && <StockReports key={JSON.stringify(reportStart ?? null)} initial={reportStart} />}
         </div>
 
       </div>

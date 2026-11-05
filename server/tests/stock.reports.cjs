@@ -163,6 +163,21 @@ async function main() {
     assert.equal(rwb.worksheets[0].getCell(2, 2).value, 'Reorder suggestions'); ok();
     assert.equal((await get('reorder', billing)).status, 403); assert.equal(await movementCount(), before, 'reading reorder suggestions writes nothing'); ok();
 
+    // Alerts strip: the same calculations as the reports, summarised.
+    const alertGet = (user = staff) => fetch(origin + '/api/pharmacy-stock/alerts', { headers: { Authorization: 'Bearer ' + jwt.sign({ userId: user.id }, process.env.JWT_SECRET) } });
+    const beforeAlerts = await movementCount();
+    const alertRes = await alertGet(); assert.equal(alertRes.status, 200); const al = await alertRes.json();
+    assert.equal(al.attention, true);
+    assert.equal(al.reorder.out, 1); assert.equal(al.reorder.reorderNow, 0);
+    assert.equal(al.reorder.items.length, 1); assert.equal(al.reorder.items[0].status, 'Out of stock'); assert.equal(al.reorder.items[0].unit, 'tablet'); assert.equal(al.reorder.items[0].suggested, 2200);
+    assert.equal(al.expiry.withinDays, 90); assert.equal(al.expiry.batches, 1, 'only the usable batch expiring within 90 days'); assert.equal(al.expiry.soonest[0].lot, 'SOON'); assert.equal(al.expiry.soonest[0].days, 20);
+    assert.equal(al.expiry.expiredWithStock, 1, 'the expired batch that still holds stock');
+    const expiryReport = await json('expiry?state=USABLE&within=90'), actionReport = await json('reorder?status=ACTION');
+    assert.equal(al.expiry.batches, expiryReport.rows.length, 'counts match the report rows'); assert.equal(al.reorder.out + al.reorder.reorderNow, actionReport.rows.length); ok();
+    assert.equal((await alertGet(billing)).status, 403); assert.equal((await alertGet(boss)).status, 200);
+    assert.equal((await fetch(origin + '/api/pharmacy-stock/alerts')).status, 401);
+    assert.equal(await movementCount(), beforeAlerts, 'reading alerts writes nothing'); ok();
+
     console.log(checks + '/' + checks + ' stock report check groups passed. All writes used a disposable schema.');
   } finally {
     if (server) await new Promise(resolve => server.close(resolve));

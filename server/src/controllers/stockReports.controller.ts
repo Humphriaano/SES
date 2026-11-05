@@ -267,6 +267,27 @@ export async function buildStockReport(name: string, q: Query): Promise<Report> 
   throw new StockError(404, 'Unknown stock report.');
 }
 
+// GET /pharmacy-stock/alerts: what needs attention now, for the strip on the Pharmacy page. Built from the same
+// reorder and expiry calculations as the reports (default settings), so its counts match the report rows.
+const ALERT_EXPIRY_DAYS = 90;
+export async function stockAlerts(): Promise<Record<string, unknown>> {
+  const [need, soon, expired] = await Promise.all([reorder({ status: 'ACTION' }), expiry({ state: 'USABLE', within: String(ALERT_EXPIRY_DAYS) }), expiry({ state: 'EXPIRED' })]);
+  const out = need.rows.filter(r => r['status'] === REORDER_STATUS['OUT']), reorderNow = need.rows.filter(r => r['status'] === REORDER_STATUS['REORDER']);
+  return {
+    asOf: new Date().toISOString(),
+    attention: need.rows.length + soon.rows.length + expired.rows.length > 0,
+    reorder: { out: out.length, reorderNow: reorderNow.length, items: need.rows.slice(0, 5).map(r => ({ item: r['item'], unit: r['unit'], available: r['available'], coverDays: r['coverDays'], suggested: r['suggested'], status: r['status'] })) },
+    expiry: { withinDays: ALERT_EXPIRY_DAYS, batches: soon.rows.length, expiredWithStock: expired.rows.length,
+      soonest: soon.rows.slice(0, 3).map(r => ({ item: r['item'], brand: r['brand'], lot: r['lot'], days: r['days'], quantity: r['quantity'], unit: r['unit'] })) },
+  };
+}
+export async function runStockAlerts(_req: AuthRequest, res: Response): Promise<void> {
+  try { res.json(await stockAlerts()); } catch (error) {
+    if (error instanceof StockError) { res.status(error.status).json({ error: error.message }); return; }
+    throw error;
+  }
+}
+
 // GET /pharmacy-stock/reports/:name?format=xlsx — admin and pharmacist only (router guard)
 export async function runStockReport(req: AuthRequest, res: Response): Promise<void> {
   try {

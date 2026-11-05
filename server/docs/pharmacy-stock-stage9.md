@@ -48,7 +48,24 @@ Invalid values return 400 rather than being guessed. Rows are ordered most urgen
 ## Not built (by design)
 
 - **Stock value at cost.** Needs a cost price at receiving, which the ledger does not hold today.
-- **Minimum stock level per item and low-stock alerts.** An open question in the approach notes (section 11). A scheduled alert (for example a daily list of items that need reordering) would use this same calculation.
+- **Minimum stock level per item.** An open question in the approach notes (section 11); the reorder report works from actual use instead. The in-app alerts strip below covers low stock; a scheduled email digest is not built.
 - **Rounding the order to whole packs, and per-supplier ordering.** The suggestion is in base units.
 - **Seasonal patterns, and multi-store transfers.**
 - **A safety stock on top of delivery time.** The default is delivery time only; increase "Delivery takes" to build in a margin.
+
+## Alerts strip (stage 9 addition)
+
+A slim strip at the top of **Pharmacy**, shown to admin and pharmacist users on every tab, says what needs doing now and links to the matching report:
+
+- medicines **out of stock** or **to reorder** (the reorder report's "Needs action" rows, default settings);
+- usable batches **expiring within 90 days**;
+- **expired batches that still hold stock**.
+
+`GET /api/pharmacy-stock/alerts` returns the counts and the top few items (same guard as the reports; billing gets 403). It calls the reorder and expiry calculations directly, so its counts equal the report rows; a test checks this. It is read-only.
+
+- Nothing shows when nothing needs attention, or if the call fails (the strip is informational; the reports remain the record).
+- It loads when the page opens and when the window regains focus (at most every 30 seconds), not on a timer, to spare batteries and weak networks.
+- The 90 day expiry window is a default; the approach notes left the near-expiry window as an open question.
+- A scheduled email or SMS digest was not built: it needs recipients chosen and an outbound service switched on, which is a decision for the owner.
+
+`npm run test:stock-reports` now has 27 groups.

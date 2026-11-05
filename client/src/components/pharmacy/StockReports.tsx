@@ -34,13 +34,13 @@ function cell(c: Col, v: any): string {
 
 // Same layout as the billing reports. The server builds every report from the stock ledger,
 // so these screens, the Excel file and the stock views always agree.
-export default function StockReports() {
-  const [name, setName] = useState<ReportId>('on-hand');
+export default function StockReports({ initial }: { initial?: { report: ReportId; within?: string; state?: string } } = {}) {
+  const [name, setName] = useState<ReportId>(initial?.report ?? 'on-hand');
   const [range, setRange] = useState<'today' | 'week' | 'month' | 'custom'>('week');
   const [dates, setDates] = useState(preset('week'));
   const [level, setLevel] = useState('ALL');
-  const [state, setState] = useState('ALL');
-  const [within, setWithin] = useState('');
+  const [state, setState] = useState(initial?.state ?? 'ALL');
+  const [within, setWithin] = useState(initial?.within ?? '');
   const [type, setType] = useState('ALL');
   const [status, setStatus] = useState('ALL');
   // Reorder suggestions: needs-action first, 90 days of use, 14 day delivery, ordering 30 days of stock.
