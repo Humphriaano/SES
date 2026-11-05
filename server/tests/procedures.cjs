@@ -23,6 +23,8 @@ async function main() {
     const dr = await db.user.create({ data: { name: 'Synthetic doctor', email: 'proc-dr@example.test', password: 'x', role: 'clinician' } });
     const other = await db.user.create({ data: { name: 'Other doctor', email: 'proc-other@example.test', password: 'x', role: 'clinician' } });
     const boss = await db.user.create({ data: { name: 'Synthetic admin', email: 'proc-admin@example.test', password: 'x', role: 'admin' } });
+    const nurse = await db.user.create({ data: { name: 'Synthetic nurse', email: 'proc-nurse@example.test', password: 'x', role: 'nurse' } });
+    const pharm = await db.user.create({ data: { name: 'Synthetic pharmacist', email: 'proc-pharm@example.test', password: 'x', role: 'pharmacist' } });
     const patient = await db.patient.create({ data: { firstName: 'Test', lastName: 'Patient', dateOfBirth: new Date('1990-01-01'), gender: 'FEMALE' } });
     const enc = await db.encounter.create({ data: { patientId: patient.id, clinicianId: dr.id } });
     const closed = await db.encounter.create({ data: { patientId: patient.id, clinicianId: dr.id, status: 'CLOSED' } });
@@ -35,14 +37,21 @@ async function main() {
     ] });
 
     const express = require(root + '/node_modules/express');
-    const { recordProcedure, removeProcedure } = require(root + '/src/controllers/procedures.controller');
+    const { recordProcedure, removeProcedure, listProcedures } = require(root + '/src/controllers/procedures.controller');
+    const { listTreatmentProcedures, completeTreatmentProcedure, returnTreatmentProcedure } = require(root + '/src/controllers/treatmentRoom.controller');
+    const { requireRoles } = require(root + '/src/middleware/auth');
     const { lookupPrices } = require(root + '/src/controllers/price.controller');
-    const users = Object.fromEntries([dr, other, boss].map(u => [u.id, u]));
+    const users = Object.fromEntries([dr, other, boss, nurse, pharm].map(u => [u.id, u]));
     const app = express(); app.use(express.json());
     app.use((req, _res, next) => { const u = users[req.header('x-user')]; if (u) { req.userId = u.id; req.userRole = u.role; } next(); });
     app.post('/encounters/:encounterId/procedures', recordProcedure);
     app.delete('/encounters/:encounterId/procedures/:id', removeProcedure);
     app.get('/price-list/lookup', lookupPrices);
+    app.get('/encounters/:encounterId/procedures', listProcedures);
+    const room = requireRoles('admin', 'clinician', 'doctor', 'nurse', 'paramedic');   // the same guard the real routes use
+    app.get('/treatment-room/procedures', room, listTreatmentProcedures);
+    app.post('/treatment-room/procedures/:id/complete', room, completeTreatmentProcedure);
+    app.post('/treatment-room/procedures/:id/return', room, returnTreatmentProcedure);
     server = await new Promise(resolve => { const s = app.listen(0, '127.0.0.1', () => resolve(s)); });
     const origin = 'http://127.0.0.1:' + server.address().port;
     const call = (method, p, body, user = dr) => fetch(origin + p, { method, headers: { 'content-type': 'application/json', 'x-user': user.id }, body: body ? JSON.stringify(body) : undefined });
@@ -110,6 +119,81 @@ async function main() {
     // The price lookup used by the ordering screens now knows procedures.
     const found = await (await call('GET', `/price-list/lookup?refs=${cannula},${suture},DRUG_X,procedure_old_thing`)).json();
     assert.equal(found[cannula], 50); assert.equal(found[suture], null); assert.equal(found['DRUG_X'], 5); assert.ok(!('procedure_old_thing' in found), 'switched off items are absent'); ok();
+
+    // ── Sent to the treatment room ────────────────────────────────────────────────────────────────────────────────
+    // Nothing is charged when a doctor only orders a procedure; the nurse's "done" creates the charge.
+    const enc2 = await db.encounter.create({ data: { patientId: patient.id, clinicianId: dr.id } });
+    const order = (clientId, extra = {}, encId = enc.id, user = dr) => post({ clientId, mode: 'ORDER', ...extra }, encId, user);
+    const chargesBefore = (await lines()).length;
+    res = await order('o1', { catalogueRef: cannula, site: 'Right hand', instructions: 'Use a small cannula', priority: 'URGENT' }); assert.equal(res.status, 201); const o1 = await res.json();
+    assert.equal(o1.status, 'ORDERED'); assert.equal(o1.charged, false); assert.equal(o1.price, null); assert.equal(o1.expectedPrice, 50, 'the expected price is shown, not charged'); assert.equal(o1.priority, 'URGENT'); assert.equal(o1.instructions, 'Use a small cannula');
+    assert.match(o1.orderedBy, /Synthetic doctor/); assert.equal(o1.performedAt, null); assert.equal(o1.performedBy, null);
+    assert.equal((await lines()).length, chargesBefore, 'ordering creates no charge');
+    res = await order('o1', { catalogueRef: cannula }); assert.equal(res.status, 200); assert.equal((await res.json()).replayed, true); assert.equal(await db.encounterProcedure.count({ where: { clientId: 'o1' } }), 1);
+    res = await order('o2', { catalogueRef: suture, site: 'Chin' }); const o2 = await res.json();        // routine, ordered after o1
+    res = await order('o3', { name: 'Ear piercing removal' }); const o3 = await res.json();                  // typed in by hand: no price list item
+    assert.equal((await order('o9', { catalogueRef: cannula }, closed.id)).status, 409, 'a closed encounter takes no new orders');
+    assert.equal((await order('o9', { catalogueRef: 'DRUG_X' })).status, 400); ok();
+
+    // The nurse's worklist: urgent first, then oldest first, with who and why.
+    const roomGet = async (query = '', user = nurse) => { const x = await call('GET', '/treatment-room/procedures' + query, undefined, user); return { status: x.status, body: await x.json() }; };
+    let wl = await roomGet(); assert.equal(wl.status, 200);
+    assert.deepEqual(wl.body.items.map(x => x.id), [o1.id, o2.id, o3.id], 'urgent first, then in the order they were sent');
+    assert.equal(wl.body.counts.waiting, 3); assert.equal(wl.body.counts.urgent, 1);
+    assert.equal(wl.body.items[0].patient.name, 'Test Patient'); assert.equal(wl.body.items[0].patient.gender, 'FEMALE'); assert.equal(wl.body.items[0].instructions, 'Use a small cannula'); assert.equal(wl.body.items[0].expectedPrice, 50);
+    assert.equal((await roomGet('', pharm)).status, 403, 'pharmacy staff do not see the treatment room'); assert.equal((await roomGet('', dr)).status, 200);
+    const counted = await roomGet('?view=count'); assert.deepEqual(counted.body, { counts: { waiting: 3, urgent: 1 } }, 'the badge needs only the numbers'); ok();
+
+    // The doctor's note can ask what has happened to each procedure.
+    const mine = await (await call('GET', '/encounters/' + enc.id + '/procedures')).json();
+    assert.equal(mine.find(x => x.id === o1.id).status, 'ORDERED'); assert.ok(mine.find(x => x.id === first.id) === undefined, 'a procedure that was taken back is not listed'); ok();
+
+    // Only the ordering doctor (or an admin) can withdraw a waiting order; once withdrawn the nurse cannot do it.
+    const o4 = await (await order('o4', { catalogueRef: suture })).json();
+    del = await call('DELETE', '/encounters/' + enc.id + '/procedures/' + o4.id, {}, other); assert.equal(del.status, 403);
+    del = await call('DELETE', '/encounters/' + enc.id + '/procedures/' + o4.id, {}, dr); assert.equal(del.status, 200);
+    assert.equal((await db.encounterProcedure.findUnique({ where: { id: o4.id } })).status, 'CANCELLED');
+    res = await call('POST', '/treatment-room/procedures/' + o4.id + '/complete', {}, nurse); assert.equal(res.status, 409);
+    assert.equal((await roomGet()).body.counts.waiting, 3); assert.equal((await lines()).length, chargesBefore); ok();
+
+    // The nurse records it done: charged once, at the price list's price, to the nurse's name, on the patient's open invoice.
+    res = await call('POST', '/treatment-room/procedures/' + o1.id + '/complete', { site: 'Right hand, dorsum', note: 'Flushed well' }, nurse); assert.equal(res.status, 200); const d1 = await res.json();
+    assert.equal(d1.status, 'ACTIVE'); assert.equal(d1.charged, true); assert.equal(d1.price, 50); assert.equal(d1.site, 'Right hand, dorsum'); assert.equal(d1.note, 'Flushed well'); assert.match(d1.performedBy, /Synthetic nurse/); assert.match(d1.orderedBy, /Synthetic doctor/); assert.equal(d1.replayed, false);
+    let line1 = await db.chargeLine.findFirst({ where: { sourceId: o1.id } }); assert.equal(Number(line1.unitPrice), 50); assert.equal(line1.createdById, nurse.id); assert.equal(line1.detail, 'Right hand, dorsum'); assert.equal(line1.encounterId, enc.id); assert.equal(line1.patientId, patient.id);
+    res = await call('POST', '/treatment-room/procedures/' + o1.id + '/complete', {}, nurse); assert.equal((await res.json()).replayed, true); assert.equal(await db.chargeLine.count({ where: { sourceId: o1.id } }), 1, 'pressing done twice charges once');
+    // Two nurses pressing done at the same moment: one record, one charge.
+    const racing = await Promise.all([nurse, boss, dr, nurse, boss].map(u => call('POST', '/treatment-room/procedures/' + o2.id + '/complete', { site: 'Chin' }, u)));
+    assert.ok(racing.every(x => x.status === 200)); assert.equal(await db.chargeLine.count({ where: { sourceId: o2.id } }), 1);
+    const performers = new Set((await Promise.all(racing.map(x => x.json()))).map(x => x.performedBy)); assert.equal(performers.size, 1, 'everyone sees the same person did it');
+    // A hand-typed order has no price list item, so doing it creates no charge.
+    res = await call('POST', '/treatment-room/procedures/' + o3.id + '/complete', {}, nurse); assert.equal((await res.json()).charged, false); assert.equal(await db.chargeLine.count({ where: { sourceId: o3.id } }), 0);
+    assert.equal((await roomGet()).body.counts.waiting, 0); ok();
+
+    // The doctor sees the result on the note; the nurse's work can be removed only by the nurse (or an admin), not the doctor.
+    const after = await (await call('GET', '/encounters/' + enc.id + '/procedures')).json();
+    assert.equal(after.find(x => x.id === o1.id).status, 'ACTIVE'); assert.match(after.find(x => x.id === o1.id).performedBy, /Synthetic nurse/);
+    del = await call('DELETE', '/encounters/' + enc.id + '/procedures/' + o1.id, {}, dr); assert.equal(del.status, 403); ok();
+    // Done today: only procedures that came through the treatment room.
+    const doneToday = await roomGet('?view=done'); assert.deepEqual(new Set(doneToday.body.items.map(x => x.id)), new Set([o1.id, o2.id, o3.id]), 'what the doctor recorded directly is not in the nurse list');
+    assert.ok(doneToday.body.items.every(x => x.status === 'ACTIVE' && x.performedAt)); ok();
+
+    // Sent back: needs a reason, is never charged, and the doctor sees why.
+    const o5 = await (await order('o5', { catalogueRef: cannula })).json();
+    res = await call('POST', '/treatment-room/procedures/' + o5.id + '/return', {}, nurse); assert.equal(res.status, 400); res = await call('POST', '/treatment-room/procedures/' + o5.id + '/return', { reason: 'ok' }, nurse); assert.equal(res.status, 400, 'a reason of a couple of letters is not enough');
+    res = await call('POST', '/treatment-room/procedures/' + o5.id + '/return', { reason: 'Patient refused; needs a doctor to explain' }, nurse); assert.equal(res.status, 200); const r5 = await res.json();
+    assert.equal(r5.status, 'RETURNED'); assert.equal(r5.returnReason, 'Patient refused; needs a doctor to explain'); assert.equal(await db.chargeLine.count({ where: { sourceId: o5.id } }), 0);
+    assert.equal((await (await call('POST', '/treatment-room/procedures/' + o5.id + '/return', { reason: 'Patient refused again' }, nurse)).json()).replayed, true);
+    res = await call('POST', '/treatment-room/procedures/' + o5.id + '/complete', {}, nurse); assert.equal(res.status, 409, 'a returned procedure cannot be done');
+    const seen = (await (await call('GET', '/encounters/' + enc.id + '/procedures')).json()).find(x => x.id === o5.id); assert.equal(seen.status, 'RETURNED'); assert.equal(seen.returnReason, 'Patient refused; needs a doctor to explain');
+    del = await call('DELETE', '/encounters/' + enc.id + '/procedures/' + o5.id, {}, dr); assert.equal((await del.json()).dismissed, true, 'the doctor can dismiss a returned order');
+    assert.equal((await roomGet()).body.counts.waiting, 0); ok();
+
+    // Done after the doctor has closed the encounter: still charged to the patient, but the doctor can no longer change it.
+    const o6 = await (await order('o6', { catalogueRef: cannula }, enc2.id)).json();
+    await db.encounter.update({ where: { id: enc2.id }, data: { status: 'CLOSED' } });
+    res = await call('POST', '/treatment-room/procedures/' + o6.id + '/complete', { site: 'Left hand' }, nurse); assert.equal(res.status, 200); assert.equal((await res.json()).charged, true);
+    assert.equal((await db.chargeLine.findFirst({ where: { sourceId: o6.id } })).encounterId, enc2.id);
+    del = await call('DELETE', '/encounters/' + enc2.id + '/procedures/' + o6.id, {}, nurse); assert.equal(del.status, 409); ok();
 
     // The starter catalogue: loads as unpriced price-list items and never touches a price an admin already set.
     const builtin = JSON.parse(fs.readFileSync(root + '/data/builtin-price-items.json', 'utf8')).filter(x => x.itemType === 'PROCEDURE');

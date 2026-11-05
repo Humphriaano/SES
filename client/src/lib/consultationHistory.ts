@@ -30,9 +30,14 @@ export function isHistoryNode(node: CanvasNode): node is Extract<CanvasNode, { t
   return Object.prototype.hasOwnProperty.call(HISTORY_SECTIONS, node.type);
 }
 
-// One readable line per recorded procedure, e.g. "Peripheral IV cannulation · left forearm".
+// One readable line per procedure, e.g. "Peripheral IV cannulation · left forearm (done by Nurse Banda)".
 export function procedureLines(data: Pick<HistoryBlockData, 'procedures'>): string[] {
-  return (data.procedures ?? []).map(p => [p.name, p.site, p.note].filter(Boolean).join(' · '));
+  return (data.procedures ?? []).map(p => {
+    const base = [p.name, p.site, p.note].filter(Boolean).join(' · ');
+    if (p.status === 'ORDERED') return `${base} (sent to the treatment room, waiting)`;
+    if (p.status === 'RETURNED') return `${base} (sent back by the nurse${p.returnReason ? `: ${p.returnReason}` : ''})`;
+    return p.ordered && p.performedBy ? `${base} (done by ${p.performedBy})` : base;
+  });
 }
 
 export function historySnapshots(nodes: CanvasNode[]) {

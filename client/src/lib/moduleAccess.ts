@@ -8,6 +8,7 @@ const ACCESS = {
   billingDesk: ['admin', 'billing', 'receptionist'],
   billingReports: ['admin', 'billing'],
   vitals: ['admin', 'clinician', 'doctor', 'nurse', 'paramedic'],
+  treatment: ['admin', 'clinician', 'doctor', 'nurse', 'paramedic'],
   consultation: ['admin', 'clinician', 'doctor'],
   documents: ['admin', 'clinician', 'doctor', 'nurse', 'pharmacist', 'lab_tech', 'lab_technician', 'paramedic'],
   reports: ['admin', 'clinician', 'doctor', 'nurse', 'pharmacist', 'lab_tech', 'lab_technician', 'receptionist', 'paramedic'],

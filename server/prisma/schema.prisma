@@ -1011,8 +1011,11 @@ model CashierSession {
   @@index([openedAt])
 }
 
-// A procedure recorded during an encounter (cannulation, suturing, ...). Billed through a PROCEDURE charge line
-// whose sourceId is this row's id. Taking one back off the note is a status change, never a delete.
+// A procedure on a patient's note (cannulation, suturing, ...). Either the clinician did it and recorded it (ACTIVE at once),
+// or ordered it for the treatment room (ORDERED) for a nurse to record as done (ACTIVE) or return with a reason (RETURNED).
+// Billed through a PROCEDURE charge line whose sourceId is this row's id, created when it is recorded as done (never when
+// only ordered). Taking one back is a status change, never a delete: CANCELLED (ordered, then withdrawn), RETURNED
+// (nurse sent it back) and REMOVED (recorded as done, then taken back) all fill removedAt/removedById/removeReason.
 model EncounterProcedure {
   id            String    @id @default(uuid())
   encounterId   String
@@ -1022,9 +1025,13 @@ model EncounterProcedure {
   name          String
   site          String?
   note          String?
-  performedById String
-  performedAt   DateTime  @default(now())
-  status        String    @default("ACTIVE")    // ACTIVE | REMOVED
+  orderedById   String?                         // set when sent to the treatment room; null when the clinician did it directly
+  orderedAt     DateTime?
+  instructions  String?                         // the doctor's instructions to the nurse
+  priority      String    @default("ROUTINE")   // ROUTINE | URGENT
+  performedById String?                         // who did it (the nurse, or the clinician who recorded it)
+  performedAt   DateTime?
+  status        String    @default("ACTIVE")    // ORDERED | ACTIVE | RETURNED | CANCELLED | REMOVED
   removedAt     DateTime?
   removedById   String?
   removeReason  String?
@@ -1032,4 +1039,5 @@ model EncounterProcedure {
 
   @@unique([encounterId, clientId])
   @@index([patientId, performedAt])
+  @@index([status, orderedAt])
 }

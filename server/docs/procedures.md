@@ -29,7 +29,7 @@ One additive migration (`20261105010000_encounter_procedures`) adds the `Encount
 
 ## Verification
 
-- `npm run test:procedures` (server, 10 groups, disposable schema): priced and unpriced list items, repeat and concurrent requests charging once, hand-typed procedures with no charge, bad input refused, who may remove one and when, the audit entry, and that loading the catalogue never overwrites an existing price.
+- `npm run test:procedures` (server, 19 groups, disposable schema): priced and unpriced list items, repeat and concurrent requests charging once, hand-typed procedures with no charge, bad input refused, who may remove one and when, the audit entry, and that loading the catalogue never overwrites an existing price.
 - `npm run test:procedure-search` (client): the search words above, any-order matching, ranking, custom procedures, and the shipped list.
 - The block was driven in a browser against sample server answers: search, record, a failed save and retry with the same entry id, removal, a hand-typed procedure, and the read-only view.
 
@@ -39,3 +39,45 @@ One additive migration (`20261105010000_encounter_procedures`) adds the `Encount
 - Quantity above one (for example several injections): record each, or set the quantity at the billing desk.
 - Procedures carried into reports or the patient's procedure history beyond the encounter note.
 - A standard classification (ICHI, ICD-10-PCS or SNOMED CT). These carry licence terms to confirm first.
+
+## Sending a procedure to the treatment room
+
+A doctor does not always do a procedure; often the patient is sent to the nurse in the treatment room. When the doctor picks a procedure there are two choices, remembered for next time:
+
+- **I did it**: recorded and charged at once, as above.
+- **Send to treatment room**: the doctor adds the site, instructions for the nurse and an urgent flag if needed. **Nothing is charged yet.** The note shows it as "Waiting in treatment room" with the price expected "when done".
+
+### The nurse's screen (Treatment room)
+
+A new **Treatment** screen for nurses, paramedics, clinicians and admins (`/treatment-room`), with a count of waiting procedures on its navigation link (the count turns red when any is urgent).
+
+- **Waiting**: urgent first, then oldest first. Each card shows the patient (name, sex, age), the procedure, site, the doctor's instructions, who sent it, how long it has waited and the expected price.
+- **Record done**: the nurse confirms the site and adds a note. The procedure is recorded as done by that nurse and **its charge is created then**, at the price list's price, on the patient's open invoice. A procedure never done is never billed, so nothing has to be voided.
+- **Send back to doctor**: needs a reason. Nothing is charged; the doctor sees "Sent back by the nurse: …" on the note and can dismiss it or send a new order.
+- **Done in the last 24 hours**: what has been recorded from this list, and by whom.
+- The list refreshes when opened, every 30 seconds while the tab is visible, and when the connection returns.
+
+### What the doctor sees
+
+While any procedure is waiting, the note checks the treatment room every 30 seconds and updates by itself: **Done by Nurse …** with the time and the nurse's site and note, or the reason it was sent back. A waiting order can be **withdrawn** by the doctor who sent it, until a nurse has dealt with it.
+
+### Rules
+
+- Only an open encounter takes new orders. A nurse can still record one done after the doctor has closed the encounter; the charge is added to the patient's invoice, and from then on only the nurse who did it, an admin, or the billing desk can change it.
+- Two nurses pressing done together record it once and charge once. Pressing it twice does the same.
+- A procedure typed in by hand (not on the price list) can be ordered and done, with no charge.
+
+### API
+
+`POST /api/encounters/:encounterId/procedures` takes `mode: "ORDER"` with optional `instructions` and `priority` (`ROUTINE` or `URGENT`). `GET /api/encounters/:encounterId/procedures` returns the live state of the encounter's procedures. For the treatment room (roles `nurse`, `paramedic`, `clinician`, `doctor`, `admin`): `GET /api/treatment-room/procedures?view=waiting|done|count`, `POST /api/treatment-room/procedures/:id/complete` `{ site?, note? }` and `POST /api/treatment-room/procedures/:id/return` `{ reason }`.
+
+### Data
+
+A second additive migration (`20261105020000_procedure_orders`) lets a procedure be ordered before it is done: it adds who ordered it and when, the instructions and priority, makes the performer and time optional until it is done, and widens the status to `ORDERED`, `ACTIVE` (done), `RETURNED`, `CANCELLED` and `REMOVED`, with database checks that keep each status consistent. Existing rows are unchanged.
+
+### Not built
+
+- Sending a procedure to a specific nurse or room; the list is shared.
+- Notifying the nurse beyond the count on the navigation link and the list itself.
+- Quantity above one.
+- Asking for payment before the procedure is done.

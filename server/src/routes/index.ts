@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import stockRoutes from './stock.routes';
 import prescribingStockRoutes from './prescribingStock.routes';
-import { recordProcedure, removeProcedure } from '../controllers/procedures.controller';
+import { recordProcedure, removeProcedure, listProcedures } from '../controllers/procedures.controller';
+import { listTreatmentProcedures, completeTreatmentProcedure, returnTreatmentProcedure } from '../controllers/treatmentRoom.controller';
 import { staffLoginRateLimit } from '../middleware/staffRateLimit';
 import { register, login, checkUsername, getRoles, listUsers, updateUser, getCurrentUser } from '../controllers/auth.controller';
 import { listPatients, getPatient, createPatient, updatePatient, resolveDiagnosis, addPatientDiagnosis, sendPortalInvitation } from '../controllers/patient.controller';
@@ -103,6 +104,7 @@ router.post('/patients/:patientId/vitals', authenticate, createVital);
 router.get('/patients/:patientId/medications', authenticate, getMedications);
 router.post('/patients/:patientId/medications', authenticate, createMedication);
 router.patch('/medications/:id', authenticate, updateMedication);
+router.get('/encounters/:encounterId/procedures', authenticate, listProcedures);
 router.post('/encounters/:encounterId/procedures', authenticate, recordProcedure);
 router.delete('/encounters/:encounterId/procedures/:id', authenticate, removeProcedure);
 router.get('/encounters/:encounterId/prescriptions', authenticate, getPrescriptions);
@@ -182,6 +184,12 @@ router.post('/catalogue/tests', authenticate, requireRoles('admin', 'lab_tech'),
 router.patch('/catalogue/tests/:id', authenticate, requireRoles('admin', 'lab_tech'), updateTest);
 router.post('/catalogue/diagnoses', authenticate, requireRoles('admin', 'clinician'), createDiagnosis);
 router.patch('/catalogue/diagnoses/:id', authenticate, requireRoles('admin', 'clinician'), updateDiagnosis);
+// The treatment room: procedures doctors sent for a nurse to do. Nurses, clinicians and admins only.
+const treatmentRoom = requireRoles('admin', 'clinician', 'doctor', 'nurse', 'paramedic');
+router.get('/treatment-room/procedures', authenticate, treatmentRoom, listTreatmentProcedures);
+router.post('/treatment-room/procedures/:id/complete', authenticate, treatmentRoom, completeTreatmentProcedure);
+router.post('/treatment-room/procedures/:id/return', authenticate, treatmentRoom, returnTreatmentProcedure);
+
 router.get('/price-list', authenticate, listPrices);
 router.get('/price-list/lookup', authenticate, lookupPrices);
 router.post('/price-list/set-missing', authenticate, requireRoles('admin', 'billing', 'clinician', 'pharmacist'), setMissingPrice);

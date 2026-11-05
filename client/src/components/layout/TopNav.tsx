@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTreatmentCount } from '../../hooks/useTreatmentCount';
 import { staffDisplayName, staffInitials, staffPosition } from '../../lib/staffNames';
 import { hasRole } from '../../lib/money';
 import { billingHref, canAccessModule, patientSelectionPath } from '../../lib/moduleAccess';
@@ -244,6 +245,7 @@ function QueueButton({ iconOnly }: { iconOnly?: boolean }) {
 
 export default function TopNav() {
   const { user, logout } = useAuth();
+  const treatment = useTreatmentCount(canAccessModule(user?.role, 'treatment'));
   const { activePatient } = usePatient();
   const { isMobile } = useWindowSize();
   const navigate = useNavigate();
@@ -306,6 +308,11 @@ export default function TopNav() {
       <nav className="tn-nav module-nav" aria-label="Modules" style={{ padding: isMobile ? '0 4px' : '0 12px' }}>
         {canAccessModule(user?.role, 'home') && <NavLink to="/" end className="tn-link">Home</NavLink>}
         {canAccessModule(user?.role, 'reports') && <NavLink to="/reports" className="tn-link">Reports</NavLink>}
+        {canAccessModule(user?.role, 'treatment') && (
+          <NavLink to="/treatment-room" className="tn-link" aria-label={treatment.waiting ? `Treatment room, ${treatment.waiting} waiting${treatment.urgent ? `, ${treatment.urgent} urgent` : ''}` : 'Treatment room'}>
+            Treatment{treatment.waiting > 0 && <span className="tn-count" style={treatment.urgent ? { background: 'var(--badge-red-text)' } : undefined}>{treatment.waiting}</span>}
+          </NavLink>
+        )}
         {!activePatient && canAccessModule(user?.role, 'pharmacy') && <NavLink to="/pharmacy" className="tn-link">Pharmacy</NavLink>}
         {/* Patient modules only appear once a patient is open, so there is nothing to click that can't work. */}
         {activePatient && NAV_ITEMS.filter(item => canAccessModule(user?.role, item.path)).map(({ label, path }) => (
@@ -327,6 +334,7 @@ export default function TopNav() {
         .tn-search input { border: 0; outline: 0; background: transparent; font: inherit; font-size: 14px; color: #fff; flex: 1; min-width: 0; }
         .tn-search input::placeholder { color: var(--bar-muted); }
         .tn-search input::-webkit-search-cancel-button { display: none; }
+        .tn-count { display: inline-block; min-width: 18px; margin-left: 6px; padding: 0 5px; border-radius: 9px; background: var(--ses-blue-deep); color: #fff; font-size: 11px; font-weight: 500; line-height: 18px; text-align: center; }
         .tn-kbd { font-family: inherit; font-size: 11px; color: var(--bar-muted); border: 1px solid rgba(255,255,255,.18); border-radius: 5px; padding: 1px 6px; }
         .tn-clear { width: 24px; height: 24px; border: 0; border-radius: 6px; background: transparent; color: var(--bar-muted); cursor: pointer;
           display: flex; align-items: center; justify-content: center; padding: 0; }

@@ -87,6 +87,14 @@ export interface ProcedureItem {
   site?: string;
   note?: string;
   performedAt?: string;
+  // Where it is: ORDERED (waiting in the treatment room), ACTIVE (done; also what older notes without a status mean) or
+  // RETURNED (the nurse sent it back). The recorder keeps these in step with the server.
+  status?: 'ORDERED' | 'ACTIVE' | 'RETURNED';
+  ordered?: boolean;   // sent to the treatment room, not done by the clinician
+  priority?: 'ROUTINE' | 'URGENT';
+  instructions?: string;
+  performedBy?: string;
+  returnReason?: string;
 }
 
 export interface HistoryBlockData {
