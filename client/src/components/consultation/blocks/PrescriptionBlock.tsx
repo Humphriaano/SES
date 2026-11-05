@@ -1,4 +1,5 @@
 import { pricingUnit } from '../../../lib/prescriptionSupply';
+import { usePrescribingAvailability, itemStockStatus, StockLevel } from '../../../lib/prescribingStock';
 import PrescriptionForm from './PrescriptionForm';
 import { formatCourseDate } from '../../../lib/prescriptionCourse';
 import { useEffect, useState } from 'react';
@@ -21,12 +22,16 @@ interface Props {
 export default function PrescriptionBlock({ data, onChange, onRemove, readOnly, patientId, encounterId }: Props) {
   const [addingItem, setAddingItem] = useState(data.items.length === 0 && !readOnly);
   const [live, setLive] = useState<Record<string, PrescriptionItem>>({});
+  const [dispensedIds, setDispensedIds] = useState<Record<string, boolean>>({});
+  const [unavailableIds, setUnavailableIds] = useState<Record<string, boolean>>({});
   useEffect(() => {
     if (!encounterId) return;
     let active = true;
     const refresh = () => api.get(`/encounters/${encounterId}/prescriptions`).then(({ data: rows }) => {
       if (!active) return;
       const next: Record<string, PrescriptionItem> = {};
+      setDispensedIds(Object.fromEntries(rows.map((rx: { id: string; dispensed: boolean }) => [rx.id, Boolean(rx.dispensed)])));
+      setUnavailableIds(Object.fromEntries(rows.map((rx: { id: string; notAvailable: boolean }) => [rx.id, Boolean(rx.notAvailable)])));
       for (const rx of rows) if (rx.substituteMedication) {
         const m = rx.substituteMedication;
         next[rx.id] = { id: rx.id, drugName: m.name, drugCode: m.catalogueCode, dose: m.dosage ?? '', frequency: m.frequency ?? '', duration: m.duration ?? '', route: m.route ?? '', quantity: m.quantity == null ? undefined : Number(m.quantity), quantityUnit: m.quantityUnit, startDate: m.startDate, endDate: m.endDate, specialInstructions: m.notes, doseUnit: m.doseUnit, priceBasis: m.priceBasis, bottleSizeMl: m.bottleSizeMl == null ? undefined : Number(m.bottleSizeMl), courseQuantity: m.courseQuantity == null ? undefined : Number(m.courseQuantity), billingQuantity: m.billingQuantity == null ? undefined : Number(m.billingQuantity) };
@@ -37,6 +42,8 @@ export default function PrescriptionBlock({ data, onChange, onRemove, readOnly, 
     return () => { active = false; clearInterval(timer); window.removeEventListener('focus', refresh); };
   }, [encounterId]);
   const displayed = data.items.map(item => item.prescriptionId && live[item.prescriptionId] ? { ...item, ...live[item.prescriptionId], id: item.id } : item);
+  const stock = usePrescribingAvailability(displayed.map(item => item.drugCode ?? '').filter(Boolean).slice(0, 20), !readOnly);
+  const stockColour: Record<StockLevel, string> = { ok: 'var(--badge-green-text)', low: 'var(--badge-amber-text)', out: 'var(--badge-red-text)', unregistered: 'var(--badge-amber-text)' };
 
 
   return (
@@ -77,6 +84,10 @@ export default function PrescriptionBlock({ data, onChange, onRemove, readOnly, 
               {!readOnly && item.drugCode && <CataloguePrice catalogueRef={item.drugCode} itemType="DRUG" name={item.drugName} patientId={patientId} suffix={" " + pricingUnit(item.priceBasis ?? 'ITEM', item.doseUnit || item.quantityUnit || 'unit')} unpricedLabel="Add price" />}
             </div>
             {(item.quantity != null || item.startDate) && <div style={{ fontSize: 11, color: 'var(--text-body2)', marginTop: 4 }}>{item.quantity != null ? `Qty ${item.quantity} ${item.quantityUnit || 'units'}` : ''}{item.startDate ? ` · ${formatCourseDate(item.startDate)}${item.endDate ? ' – ' + formatCourseDate(item.endDate) : ''}` : ''}</div>}
+            {!readOnly && !dispensedIds[item.prescriptionId ?? ''] && (() => {
+              const status = itemStockStatus(item.drugCode ? stock.items[item.drugCode] : undefined, item.quantityUnit, item.quantity, unavailableIds[item.prescriptionId ?? '']);
+              return status && <div role={status.level === 'ok' ? undefined : 'alert'} style={{ fontSize: 11, fontWeight: status.level === 'ok' ? 400 : 600, color: stockColour[status.level], marginTop: 4 }}>{status.level === 'out' ? '⚠ ' : ''}{status.text}</div>;
+            })()}
             {item.preferredStockBrand && !(item.prescriptionId && live[item.prescriptionId]) && <div style={{ fontSize: 11, color: 'var(--text-body2)', marginTop: 4 }}>Preferred brand: {item.preferredStockBrand}</div>}
             {item.specialInstructions && (
               <p style={{ fontSize: 12, color: 'var(--text-body2)', margin: '3px 0 0', fontStyle: 'italic' }}>{item.specialInstructions}</p>

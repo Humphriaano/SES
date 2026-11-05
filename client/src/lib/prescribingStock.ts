@@ -16,6 +16,23 @@ export function availabilityText(item: PrescribingAvailability | undefined, base
   }
   return [...totals].map(([unit,cents]) => `${stockQuantity(`${cents/100n}.${String(cents%100n).padStart(2,'0')}`)} ${unit}`).join(' · ');
 }
+export type StockLevel = 'ok' | 'low' | 'out' | 'unregistered';
+export interface ItemStockStatus { level: StockLevel; text: string }
+const hundredths = (value: string) => { const [whole,fraction=''] = value.split('.'); return BigInt(whole)*100n + BigInt(fraction.padEnd(2,'0').slice(0,2)); };
+// Flag for a medicine that has been prescribed. The pharmacy still confirms at
+// dispensing; this only tells the prescriber early. null = nothing to say yet.
+export function itemStockStatus(item: PrescribingAvailability | undefined, unit?: string | null, required?: number | null, markedUnavailable = false): ItemStockStatus | null {
+  if (markedUnavailable) return { level: 'out', text: 'Not available at the pharmacy' };
+  if (!item) return null;
+  if (!item.tracked) return { level: 'unregistered', text: 'Not in the pharmacy stock register: pharmacy will confirm' };
+  const matching = item.products.filter(product => !unit || product.baseUnit === unit);
+  const have = matching.reduce((sum, product) => sum + hundredths(product.available), 0n);
+  const label = unit ?? 'units';
+  if (have <= 0n) return { level: 'out', text: `Out of stock${unit ? ` (${unit})` : ''}` };
+  const shown = availabilityText(item, unit ?? undefined);
+  if (required != null && Number.isFinite(required) && required > 0 && have < BigInt(Math.round(required * 100))) return { level: 'low', text: `Low stock: ${shown} available, ${required} ${label} needed` };
+  return { level: 'ok', text: `In stock: ${shown}` };
+}
 export function usePrescribingAvailability(refs: string[], enabled: boolean) {
   const signature = [...new Set(refs.filter(Boolean))].sort().join(',');
   const [items,setItems] = useState<Record<string,PrescribingAvailability>>({}), [loading,setLoading] = useState(false), [error,setError] = useState('');
