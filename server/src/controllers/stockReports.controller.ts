@@ -187,7 +187,79 @@ async function adjustments(q: Query): Promise<Report> {
   };
 }
 
+function whole(v: unknown, min: number, max: number, fallback: number, what: string): number {
+  if (v === undefined || v === '') return fallback;
+  const n = typeof v === 'string' && /^\d{1,4}$/.test(v) ? Number(v) : NaN;
+  if (!Number.isInteger(n) || n < min || n > max) throw new StockError(400, `${what} must be a whole number from ${min} to ${max}.`);
+  return n;
+}
+const REORDER_STATUS: Record<string, string> = { OUT: 'Out of stock', REORDER: 'Reorder now', OK: 'OK', NO_USE: 'No recent use' };
+
+// Reorder suggestions: how fast each medicine is dispensed against what is usable now. Use is read from the
+// ledger (issues, less any issue that was reversed); losses, expiry write-offs and counts are not use. Brands of
+// the same item and unit are added together, since they substitute for each other when ordering. Read-only.
+async function reorder(q: Query): Promise<Report> {
+  const days = whole(q['days'], 7, 365, 90, 'Days of use to look at'), lead = whole(q['lead'], 0, 120, 14, 'Delivery time'), cover = whole(q['cover'], 1, 365, 30, 'Days of stock to order');
+  const status = choice(q['status'], ['ALL', 'ACTION', 'OUT', 'REORDER', 'OK', 'NO_USE'], 'ALL');
+  const text = search(q['q']);
+  const today = todayInput(), horizon = lead + cover;
+  const r = range({ from: dayText(new Date(Date.parse(today) - (days - 1) * 86_400_000)), to: today });
+  const rows = await prisma.$queryRaw<{ name: string; detail: string | null; baseUnit: string; products: number; available: Prisma.Decimal; expired: Prisma.Decimal; used: Prisma.Decimal; expiring: Prisma.Decimal; firstAt: Date | null }[]>(Prisma.sql`
+    WITH ${batchTotals()}, item_stock AS (
+      SELECT pt."catalogueRef", pt."baseUnit", MIN(pt."name") AS "name", MIN(pt."detail") AS "detail", COUNT(*)::integer AS "products",
+        SUM(pt."available") AS "available", SUM(pt."expired") AS "expired"
+      FROM product_totals pt WHERE pt."active" AND pt."catalogueActive" GROUP BY pt."catalogueRef", pt."baseUnit"
+    ), expiring AS (
+      SELECT bt."catalogueRef", bt."baseUnit", SUM(bt."physical") AS "quantity" FROM batch_totals bt
+      WHERE bt."state" = 'USABLE' AND bt."expiryDate" <= (${today}::date + ${horizon}::integer) GROUP BY bt."catalogueRef", bt."baseUnit"
+    ), usage AS (
+      SELECT p."catalogueRef", m."baseUnit", -SUM(m."quantity") AS "used"
+      FROM "StockMovement" m JOIN "StockBatch" b ON b."id" = m."batchId" JOIN "PharmacyProduct" p ON p."id" = b."productId"
+      LEFT JOIN "StockMovement" o ON o."id" = m."reversalOfId"
+      WHERE m."createdAt" >= ${r.start}::timestamp AND m."createdAt" < ${r.end}::timestamp AND (m."type" = 'ISSUED' OR (m."type" = 'REVERSAL' AND o."type" = 'ISSUED'))
+      GROUP BY p."catalogueRef", m."baseUnit"
+    ), first_seen AS (
+      SELECT p."catalogueRef", MIN(m."createdAt") AS "firstAt" FROM "StockMovement" m JOIN "StockBatch" b ON b."id" = m."batchId" JOIN "PharmacyProduct" p ON p."id" = b."productId" GROUP BY p."catalogueRef"
+    )
+    SELECT s."name", s."detail", s."baseUnit", s."products", s."available", s."expired", COALESCE(u."used", 0) AS "used", COALESCE(e."quantity", 0) AS "expiring", f."firstAt"
+    FROM item_stock s LEFT JOIN usage u ON u."catalogueRef" = s."catalogueRef" AND u."baseUnit" = s."baseUnit"
+    LEFT JOIN expiring e ON e."catalogueRef" = s."catalogueRef" AND e."baseUnit" = s."baseUnit" LEFT JOIN first_seen f ON f."catalogueRef" = s."catalogueRef"
+    WHERE TRUE ${likeAll(text, [Prisma.sql`s."name"`, Prisma.sql`s."detail"`])}`);
+  const RANK: Record<string, number> = { OUT: 0, REORDER: 1, OK: 2, NO_USE: 3 };
+  const all = rows.map(x => {
+    const available = Math.max(0, num(x.available)), used = Math.max(0, num(x.used));
+    // A medicine first received last week has only a week of history, so its rate uses that week and not the whole window.
+    const firstDay = x.firstAt ? new Date(x.firstAt.getTime() + 2 * 3_600_000).toISOString().slice(0, 10) : today;
+    const observed = Math.min(days, Math.max(1, Math.round((Date.parse(today) - Date.parse(firstDay)) / 86_400_000) + 1));
+    const perDay = used / observed, coverDays = perDay > 0 ? available / perDay : null;
+    const code = used <= 0 ? 'NO_USE' : available <= 0 ? 'OUT' : coverDays! <= lead ? 'REORDER' : 'OK';
+    const suggested = (code === 'OUT' || code === 'REORDER') ? Math.max(0, Math.ceil(perDay * horizon - available)) : null;
+    return { code, item: item(x.name, x.detail), unit: x.baseUnit, products: x.products, available, used, perDay: Math.round(perDay * 100) / 100, coverDays: coverDays === null ? null : Math.round(coverDays * 10) / 10,
+      expiring: num(x.expiring), suggested, status: REORDER_STATUS[code], observed };
+  });
+  const keep = (c: string) => status === 'ALL' || c === status || (status === 'ACTION' && (c === 'OUT' || c === 'REORDER'));
+  const data = all.filter(d => keep(d.code)).sort((a, b) => RANK[a.code] - RANK[b.code] || (a.coverDays ?? Infinity) - (b.coverDays ?? Infinity) || b.perDay - a.perDay || a.item.localeCompare(b.item));
+  const count = (c: string) => all.filter(d => d.code === c).length;
+  return {
+    name: 'stock-reorder', title: 'Reorder suggestions',
+    period: `Use over the last ${days} days · delivery ${lead} days · order to cover ${cover} days · as at ${niceDay(today)}`,
+    columns: [
+      { key: 'item', header: 'Item', type: 'text', width: 36 }, { key: 'unit', header: 'Unit', type: 'text', width: 11 },
+      { key: 'available', header: 'Usable now', type: 'number', width: 12 }, { key: 'used', header: `Used, last ${days} days`, type: 'number', width: 16 },
+      { key: 'perDay', header: 'Used per day', type: 'number', width: 13 }, { key: 'coverDays', header: 'Days of stock left', type: 'number', width: 17 },
+      { key: 'expiring', header: `Expires within ${horizon} days`, type: 'number', width: 20 }, { key: 'suggested', header: 'Suggested order', type: 'number', width: 16 },
+      { key: 'status', header: 'Status', type: 'text', width: 16 },
+    ],
+    rows: data, totals: null, // units differ across rows, so no column total
+    summary: [
+      { label: 'Items listed', value: data.length }, { label: 'Out of stock (in use)', value: count('OUT') },
+      { label: 'Reorder now', value: count('REORDER') }, { label: 'No recent use', value: count('NO_USE') },
+    ],
+  };
+}
+
 export async function buildStockReport(name: string, q: Query): Promise<Report> {
+  if (name === 'reorder') return reorder(q);
   if (name === 'on-hand') return onHand(q);
   if (name === 'expiry') return expiry(q);
   if (name === 'movements') return movements(q);

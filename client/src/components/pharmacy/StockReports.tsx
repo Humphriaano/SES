@@ -11,6 +11,7 @@ interface Report { name: string; title: string; period: string; columns: Col[]; 
 const REPORTS = [
   { id: 'on-hand', label: 'Stock on hand' }, { id: 'expiry', label: 'Batches by expiry' },
   { id: 'movements', label: 'Stock movements' }, { id: 'adjustments', label: 'Losses and adjustments' },
+  { id: 'reorder', label: 'Reorder suggestions' },
 ] as const;
 type ReportId = typeof REPORTS[number]['id'];
 const HAS_PERIOD: ReportId[] = ['movements', 'adjustments'];
@@ -42,6 +43,11 @@ export default function StockReports() {
   const [within, setWithin] = useState('');
   const [type, setType] = useState('ALL');
   const [status, setStatus] = useState('ALL');
+  // Reorder suggestions: needs-action first, 90 days of use, 14 day delivery, ordering 30 days of stock.
+  const [need, setNeed] = useState('ACTION');
+  const [days, setDays] = useState('90');
+  const [lead, setLead] = useState('14');
+  const [cover, setCover] = useState('30');
   const [text, setText] = useState('');
   const [query, setQuery] = useState('');
   const [report, setReport] = useState<Report | null>(null);
@@ -58,7 +64,8 @@ export default function StockReports() {
     ...(name === 'expiry' && state !== 'ALL' ? { state } : {}), ...(name === 'expiry' && within ? { within } : {}),
     ...(name === 'movements' && type !== 'ALL' ? { type } : {}),
     ...(name === 'adjustments' && status !== 'ALL' ? { status } : {}),
-  }), [name, query, dates, level, state, within, type, status]);
+    ...(name === 'reorder' ? { days, lead, cover, ...(need !== 'ALL' ? { status: need } : {}) } : {}),
+  }), [name, query, dates, level, state, within, type, status, need, days, lead, cover]);
 
   useEffect(() => {
     let live = true;
@@ -106,7 +113,8 @@ export default function StockReports() {
     if (c.key === 'days' && Number(r['days']) < 0) return { color: 'var(--badge-red-text)', fontWeight: 500 };
     if (c.key === 'expired' && Number(r[c.key]) > 0) return { color: 'var(--badge-red-text)', fontWeight: 500 };
     if (c.key === 'available' && Number(r[c.key]) <= 0) return { color: 'var(--badge-amber-text)', fontWeight: 500 };
-    if (c.key === 'status' && r['status'] === 'Awaiting approval') return { color: 'var(--badge-amber-text)', fontWeight: 500 };
+    if (c.key === 'status' && r['status'] === 'Out of stock') return { color: 'var(--badge-red-text)', fontWeight: 500 };
+    if (c.key === 'status' && (r['status'] === 'Reorder now' || r['status'] === 'Awaiting approval')) return { color: 'var(--badge-amber-text)', fontWeight: 500 };
     return undefined;
   };
 
@@ -161,6 +169,18 @@ export default function StockReports() {
             <div><label className="bl-k" htmlFor="sr-status">Status</label><select id="sr-status" className="bl-in" style={{ width: 190 }} value={status} onChange={e => setStatus(e.target.value)}>
               <option value="ALL">All requests</option><option value="PENDING">Awaiting approval</option><option value="POSTED">Approved</option><option value="REJECTED">Rejected</option><option value="CANCELLED">Cancelled</option></select></div>
           )}
+          {name === 'reorder' && (
+            <>
+              <div><label className="bl-k" htmlFor="sr-need">Show</label><select id="sr-need" className="bl-in" style={{ width: 190 }} value={need} onChange={e => setNeed(e.target.value)}>
+                <option value="ACTION">Needs action</option><option value="ALL">All items</option><option value="OUT">Out of stock</option><option value="REORDER">Reorder now</option><option value="OK">Enough stock</option><option value="NO_USE">No recent use</option></select></div>
+              <div><label className="bl-k" htmlFor="sr-days">Use measured over</label><select id="sr-days" className="bl-in" style={{ width: 150 }} value={days} onChange={e => setDays(e.target.value)}>
+                <option value="30">30 days</option><option value="60">60 days</option><option value="90">90 days</option><option value="180">180 days</option></select></div>
+              <div><label className="bl-k" htmlFor="sr-lead">Delivery takes</label><select id="sr-lead" className="bl-in" style={{ width: 150 }} value={lead} onChange={e => setLead(e.target.value)}>
+                <option value="7">7 days</option><option value="14">14 days</option><option value="21">21 days</option><option value="30">30 days</option><option value="60">60 days</option></select></div>
+              <div><label className="bl-k" htmlFor="sr-cover">Order enough for</label><select id="sr-cover" className="bl-in" style={{ width: 150 }} value={cover} onChange={e => setCover(e.target.value)}>
+                <option value="14">14 days</option><option value="30">30 days</option><option value="60">60 days</option><option value="90">90 days</option></select></div>
+            </>
+          )}
         </div>
       </div>
 
@@ -185,11 +205,11 @@ export default function StockReports() {
           <div className="bl-card" style={{ overflow: 'hidden' }}>
             <div style={{ padding: '10px 12px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
               <Search size={15} aria-hidden="true" style={{ color: 'var(--text-subtle)', flex: 'none' }} />
-              <input className="bl-in" style={{ maxWidth: 320 }} placeholder="Search item, brand or batch…" aria-label="Search this report" value={text} onChange={e => setText(e.target.value)} maxLength={160} />
+              <input className="bl-in" style={{ maxWidth: 320 }} placeholder={name === 'reorder' ? 'Search item…' : 'Search item, brand or batch…'} aria-label="Search this report" value={text} onChange={e => setText(e.target.value)} maxLength={160} />
               <span className="bl-muted" style={{ fontSize: 12.5 }}>{report.rows.length.toLocaleString('en-US')} {report.rows.length === 1 ? 'row' : 'rows'}</span>
             </div>
             {report.rows.length === 0 ? (
-              <p className="bl-muted" style={{ margin: 0, padding: '36px 16px', textAlign: 'center' }}>{query ? `Nothing matches “${query}”.` : 'Nothing to show.'}</p>
+              <p className="bl-muted" style={{ margin: 0, padding: '36px 16px', textAlign: 'center' }}>{query ? `Nothing matches “${query}”.` : name === 'reorder' && need === 'ACTION' ? 'Nothing needs reordering with these settings.' : 'Nothing to show.'}</p>
             ) : (
               <div style={{ overflowX: 'auto', maxHeight: '60vh' }}>
                 <table className="bl-tbl" style={{ minWidth: 720 }}>

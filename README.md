@@ -113,7 +113,7 @@ Commit the new folder under `server/prisma/migrations`. Other machines pick it u
 ## Known issues
 
 - Money is stored in ZMW; invoice numbers (`INV-YYYY-000001`) and receipt numbers (`RCT-…`) are sequential and never reused.
-- Pharmacy stock control (receiving, dispensing, adjustments, reports) is built (see `server/docs/pharmacy-stock-stage*.md`). Facility products, batches and opening balances still have to be entered. Reorder suggestions, stock value and multi-store transfers are not built.
+- Pharmacy stock control (receiving, dispensing, adjustments, reports, reorder suggestions) is built (see `server/docs/pharmacy-stock-stage*.md`). Facility products, batches and opening balances still have to be entered. Stock value, low-stock alerts and multi-store transfers are not built.
 
 ## Further reading
 

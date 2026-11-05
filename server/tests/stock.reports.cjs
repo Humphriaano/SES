@@ -112,6 +112,57 @@ async function main() {
     assert.equal((await fetch(origin + '/api/pharmacy-stock/reports/on-hand')).status, 401);
     assert.deepEqual(await counts(), c0); ok();
 
+    // Reorder suggestions (stage nine). Fixtures are written after the earlier groups so those stay untouched. The ledger
+    // is immutable, so receipt dates are moved back by switching its guard off briefly, in this disposable schema only.
+    const dayAt = n => { const d = new Date(today + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() - n); return d; };
+    const idleItem = catalogue.find(x => x.itemType === 'DRUG' && ![ors.catalogueRef, tablet.catalogueRef].includes(x.catalogueRef));
+    await db.priceListItem.create({ data: { ...idleItem, unitPrice: null } });
+    await receiving.receiveStock(db, actor, 'rep-receive-idle', { kind: 'DELIVERY', receivedDate: today, reference: 'REP-DN-2', source: 'Fixture supplier', lines: [
+      { newProduct: { catalogueRef: idleItem.catalogueRef, brand: 'Idle brand', baseUnit: 'tablet', packSize: 10, packLabel: 'strip' }, lotNumber: 'IDLE1', expiryDate: expiry(200), packCount: '3' }] });
+    await db.$executeRawUnsafe('ALTER TABLE "StockMovement" DISABLE TRIGGER "StockMovement_immutable"');
+    await db.$executeRawUnsafe(`UPDATE "StockMovement" SET "createdAt" = '${dayAt(100).toISOString().replace('Z', '')}'::timestamp WHERE "type" = 'RECEIVED' AND "batchId" IN ('${lot.SOON.id}', '${lot.LATER.id}', '${lot.GONE.id}')`);
+    await db.$executeRawUnsafe('ALTER TABLE "StockMovement" ENABLE TRIGGER "StockMovement_immutable"');
+    const op = await db.stockOperation.create({ data: { actorId: staff.id, key: 'rep-fixture-use', kind: 'FIXTURE', requestHash: 'x' } });
+    const issue = (batch, quantity, ago, unit) => db.stockMovement.create({ data: { operationId: op.id, batchId: batch.id, type: 'ISSUED', quantity: -quantity, baseUnit: unit, reference: 'REP-USE', actorId: staff.id, createdAt: dayAt(ago) } });
+    await issue(lot.LATER, 60, 10, 'sachet'); await issue(lot.SOON, 30, 5, 'sachet');
+    const cancelled = await issue(lot.SOON, 20, 3, 'sachet'); // issued then reversed: not use
+    await db.stockMovement.create({ data: { operationId: op.id, batchId: lot.SOON.id, type: 'REVERSAL', quantity: 20, baseUnit: 'sachet', reference: 'REP-USE', reason: 'Fixture correction', actorId: staff.id, reversalOfId: cancelled.id, createdAt: dayAt(2) } });
+    await issue(lot.PARA1, 50, 0, 'tablet');
+    const movementCount = async () => (await db.$queryRawUnsafe('SELECT count(*)::text AS n FROM "StockMovement"'))[0].n;
+    const before = await movementCount();
+
+    rep = await json('reorder');
+    assert.deepEqual(rep.rows.map(x => x.status), ['Out of stock', 'OK', 'No recent use'], 'out of stock first, then by days left, no-use last');
+    const sachets = rep.rows.find(x => x.unit === 'sachet'), outRow = rep.rows[0], idleRow = rep.rows[2];
+    assert.equal(sachets.available, 206); assert.equal(sachets.used, 90, 'a reversed issue and the 4 lost sachets are not use');
+    assert.equal(sachets.perDay, 1); assert.equal(sachets.coverDays, 206); assert.equal(sachets.expiring, 66, 'usable stock expiring within delivery plus cover days');
+    assert.equal(sachets.suggested, null, 'no suggestion while there is enough');
+    assert.equal(outRow.unit, 'tablet'); assert.equal(outRow.available, 0); assert.equal(outRow.used, 50);
+    assert.equal(outRow.perDay, 50, 'first received today, so one day of history and not the whole window');
+    assert.equal(outRow.suggested, 2200, 'rate x (delivery + cover days) less usable stock');
+    assert.equal(idleRow.available, 30); assert.equal(idleRow.used, 0); assert.equal(idleRow.coverDays, null); assert.equal(idleRow.suggested, null);
+    assert.equal(rep.totals, null);
+    assert.equal(rep.summary.find(x => x.label.startsWith('Out of stock')).value, 1); assert.equal(rep.summary.find(x => x.label === 'Reorder now').value, 0); assert.equal(rep.summary.find(x => x.label === 'No recent use').value, 1);
+    assert.match(rep.period, /last 90 days/); ok();
+
+    rep = await json('reorder?days=7&lead=60');
+    const late = rep.rows.find(x => x.unit === 'sachet'); assert.equal(late.status, 'Reorder now', 'about 48 days left is under a 60 day delivery'); assert.equal(late.suggested, 180, 'ceil(30/7 x (60 + 30) - 206)'); ok();
+    rep = await json('reorder?days=7');
+    const week = rep.rows.find(x => x.unit === 'sachet'); assert.equal(week.used, 30, 'only the last 7 days are counted'); assert.equal(week.perDay, 4.29); assert.equal(week.coverDays, 48.1); ok();
+    rep = await json('reorder?status=ACTION'); assert.deepEqual(rep.rows.map(x => x.status), ['Out of stock']); ok();
+    rep = await json('reorder?status=ACTION&days=7&lead=60'); assert.deepEqual(rep.rows.map(x => x.status), ['Out of stock', 'Reorder now'], 'action lists both, most urgent first'); ok();
+    rep = await json('reorder?status=NO_USE'); assert.equal(rep.rows.length, 1); assert.equal(rep.rows[0].available, 30); ok();
+    rep = await json('reorder?q=nothing-matches-this'); assert.equal(rep.rows.length, 0); ok();
+
+    for (const bad of ['reorder?days=3', 'reorder?days=abc', 'reorder?days=9999', 'reorder?lead=-1', 'reorder?cover=0', 'reorder?status=NOPE']) {
+      const res = await get(bad); assert.equal(res.status, 400, bad + ' -> ' + res.status);
+    }
+    ok();
+    const rx = await get('reorder?format=xlsx'); assert.equal(rx.status, 200); assert.match(rx.headers.get('content-disposition'), /ses-stock-reorder-\d{4}-\d{2}-\d{2}\.xlsx/);
+    const rwb = new ExcelJS.Workbook(); await rwb.xlsx.load(Buffer.from(await rx.arrayBuffer()));
+    assert.equal(rwb.worksheets[0].getCell(2, 2).value, 'Reorder suggestions'); ok();
+    assert.equal((await get('reorder', billing)).status, 403); assert.equal(await movementCount(), before, 'reading reorder suggestions writes nothing'); ok();
+
     console.log(checks + '/' + checks + ' stock report check groups passed. All writes used a disposable schema.');
   } finally {
     if (server) await new Promise(resolve => server.close(resolve));
