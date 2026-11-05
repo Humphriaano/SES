@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react';
 import vocabularyJson from '../data/clinicalAbbreviations.draft.json';
 import phrasesJson from '../data/clinicalPhrases.json';
 import wordsJson from '../data/clinicalWords.json';
+import generalWordsJson from '../data/generalWords.json';
 import { activeVocabulary, ActiveVocabulary, PhraseEntry, Vocabulary, WordEntry } from './clinicalAutocomplete';
 
 // Per-browser switches. `off` turns suggestions off for this user. `preview`
@@ -40,7 +41,7 @@ const cache = new Map<boolean, ActiveVocabulary>();
 export function vocabularyFor(settings: AutocompleteSettings): ActiveVocabulary {
   if (!settings.enabled) return EMPTY;
   let active = cache.get(settings.preview);
-  if (!active) { active = activeVocabulary({ ...(vocabularyJson as Vocabulary), phrases: (phrasesJson as { phrases: PhraseEntry[] }).phrases, words: (wordsJson as { words: WordEntry[] }).words }, settings.preview); cache.set(settings.preview, active); }
+  if (!active) { active = activeVocabulary({ ...(vocabularyJson as Vocabulary), phrases: (phrasesJson as { phrases: PhraseEntry[] }).phrases, words: (wordsJson as { words: WordEntry[] }).words, generalWords: (generalWordsJson as { words: WordEntry[] }).words }, settings.preview); cache.set(settings.preview, active); }
   return active;
 }
 const EMPTY: ActiveVocabulary = { abbreviations: new Map(), warnings: new Map(), phrases: [], words: [] };

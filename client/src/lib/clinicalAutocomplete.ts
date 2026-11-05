@@ -6,9 +6,9 @@ export interface AbbreviationEntry { abbr: string; meanings: string[]; matchCapi
 export interface DoNotUseEntry { written: string; risk: string; writeInstead: string; tokens?: string[]; reviewed?: boolean }
 export interface PhraseEntry { text: string; reviewed?: boolean }
 export interface WordEntry { text: string; reviewed?: boolean }
-export interface Vocabulary { entries: AbbreviationEntry[]; doNotUse: DoNotUseEntry[]; phrases?: PhraseEntry[]; words?: WordEntry[] }
+export interface Vocabulary { entries: AbbreviationEntry[]; doNotUse: DoNotUseEntry[]; phrases?: PhraseEntry[]; words?: WordEntry[]; generalWords?: WordEntry[] }
 
-export interface ActiveVocabulary { abbreviations: Map<string, AbbreviationEntry>; warnings: Map<string, DoNotUseEntry>; phrases: { text: string; lower: string }[]; words: { text: string; lower: string }[] }
+export interface ActiveVocabulary { abbreviations: Map<string, AbbreviationEntry>; warnings: Map<string, DoNotUseEntry>; phrases: { text: string; lower: string }[]; words: { text: string; lower: string; general: boolean }[] }
 // An abbreviation suggestion replaces the typed word (start..end) with one of
 // its meanings. A phrase suggestion only adds text after the caret: options[0]
 // is the rest of the phrase, and start === end. A word completion is the same
@@ -81,7 +81,8 @@ export function activeVocabulary(vocabulary: Vocabulary, includeUnreviewed = fal
   const phrases: ActiveVocabulary['phrases'] = [];
   for (const entry of vocabulary.phrases ?? []) if ((includeUnreviewed || entry.reviewed) && entry.text.trim()) phrases.push({ text: entry.text, lower: entry.text.toLowerCase() });
   const words: ActiveVocabulary['words'] = [];
-  for (const entry of vocabulary.words ?? []) if ((includeUnreviewed || entry.reviewed) && entry.text.trim()) words.push({ text: entry.text, lower: entry.text.toLowerCase() });
+  for (const entry of vocabulary.words ?? []) if ((includeUnreviewed || entry.reviewed) && entry.text.trim()) words.push({ text: entry.text, lower: entry.text.toLowerCase(), general: false });
+  for (const entry of vocabulary.generalWords ?? []) if ((includeUnreviewed || entry.reviewed) && entry.text.trim()) words.push({ text: entry.text, lower: entry.text.toLowerCase(), general: true });
   return { abbreviations, warnings, phrases, words };
 }
 
@@ -130,8 +131,10 @@ function suggestPhrase(text: string, caret: number, selectionEnd: number, vocabu
 // Completes the single clinical word being typed (coug -> cough). Quiet by
 // design: three letters minimum, caret at the end of the line, never when the
 // word is already complete, never for capitals (those are abbreviations) and
-// never mid-word or after a digit or hyphen. The shortest match wins unless
-// this doctor has accepted another more often.
+// never mid-word or after a digit or hyphen. A clinical word always beats an
+// everyday one. Among clinical words the shortest match wins; among everyday
+// words the one listed first (the more common) wins. This doctor's own most
+// accepted word beats both.
 function suggestWord(text: string, caret: number, selectionEnd: number, vocabulary: ActiveVocabulary, learned?: Learned): Suggestion | null {
   if (!vocabulary.words.length || caret !== selectionEnd || caret < 1 || caret > text.length) return null;
   const rest = text.slice(caret);
@@ -143,9 +146,9 @@ function suggestWord(text: string, caret: number, selectionEnd: number, vocabula
   let hit: ActiveVocabulary['words'][number] | undefined, best = -1;
   for (const word of vocabulary.words) {
     if (word.lower === typed) return null;
-    if (word.lower.length <= typed.length || !word.lower.startsWith(typed)) continue;
+    if (word.lower.length <= typed.length || !word.lower.startsWith(typed) ) continue;
     const used = learned?.words[word.lower] ?? 0;
-    if (!hit || used > best || (used === best && word.lower.length < hit.lower.length)) { hit = word; best = used; }
+    if (!hit || used > best || (used === best && (hit.general && !word.general || !hit.general && !word.general && word.lower.length < hit.lower.length))) { hit = word; best = used; }
   }
   return hit ? { start: caret, end: caret, abbr: typed, options: [hit.text.slice(typed.length)], phrase: true, word: true, key: hit.lower } : null;
 }

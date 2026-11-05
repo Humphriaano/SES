@@ -1,0 +1,3048 @@
+{
+  "version": 1,
+  "status": "ACTIVE. Everyday words that sit between medical terms in notes; clinical words always come first.",
+  "reviewer": null,
+  "reviewedOn": null,
+  "rules": [
+    "Lower-case everyday words of five letters or more, written for this app.",
+    "Offered from the third typed letter, after any clinical word that fits; the more common word is listed first.",
+    "No drug names, dosing or numbers."
+  ],
+  "words": [
+    {
+      "text": "following",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "followed",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "forward",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "formerly",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "former",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "forgot",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "forgotten",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "formal",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "fortnight",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "however",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "whenever",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "whatever",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "whoever",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "wherever",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "there",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "therefore",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "thereafter",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "these",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "those",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "their",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "though",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "thought",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "thoroughly",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "another",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "anyone",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "anything",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "anywhere",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "anyway",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "nothing",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "normally",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "nowhere",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "having",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "happened",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "happening",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "happens",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "handled",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "historical",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "herbal",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "hereditary",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "shortly",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "sharing",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "whole",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "whose",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "within",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "without",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "withdrawn",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "withdrawal",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "witnessed",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "allergic",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "allowed",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "alone",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "always",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "almost",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "already",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "although",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "cannot",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "cancer",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "outside",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "outcome",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "output",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "outbreak",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "offered",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "official",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "twice",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "single",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "double",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "triple",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "getting",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "gotten",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "using",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "useful",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "person",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "persons",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "personal",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "perform",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "performed",
+      "category": "Longer words from short ones",
+      "reviewed": true
+    },
+    {
+      "text": "patient",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "patients",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "presented",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "presents",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "presenting",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "complains",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "complained",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "complaining",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "reports",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "reported",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "reporting",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "states",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "stated",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "denies",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "denied",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "admits",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "noticed",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "noticing",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "started",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "starting",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "began",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "beginning",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "stopped",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "stopping",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "continued",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "continuing",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "worsened",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "developed",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "developing",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "experienced",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "experiencing",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "suffered",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "suffering",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "attended",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "attending",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "visited",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "visiting",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "returned",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "returning",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "taking",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "taken",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "given",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "giving",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "received",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "receiving",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "advising",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "explained",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "explaining",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "agreed",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "agrees",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "understood",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "understands",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "refused",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "refuses",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "declined",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "requested",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "requests",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "wanted",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "wants",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "needs",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "needed",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "tried",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "trying",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "managed",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "managing",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "feels",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "feeling",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "looks",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "looked",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "appears",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "appeared",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "seems",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "seemed",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "remains",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "remained",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "brought",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "bringing",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "carried",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "carrying",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "worried",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "worry",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "worrying",
+      "category": "Reporting and narrative",
+      "reviewed": true
+    },
+    {
+      "text": "today",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "yesterday",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "tomorrow",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "tonight",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "morning",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "afternoon",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "evening",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "midnight",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "weekend",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "weekday",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "daily",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "weekly",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "monthly",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "yearly",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "annually",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "recently",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "previously",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "currently",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "presently",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "immediately",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "suddenly",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "gradually",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "slowly",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "quickly",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "earlier",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "later",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "lately",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "since",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "before",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "after",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "during",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "while",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "until",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "about",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "around",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "approximately",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "nearly",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "several",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "couple",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "often",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "sometimes",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "usually",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "never",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "rarely",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "occasionally",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "frequently",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "regularly",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "again",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "still",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "weeks",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "months",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "years",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "hours",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "minutes",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "seconds",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "moment",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "period",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "duration",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "onset",
+      "category": "Time and frequency",
+      "reviewed": true
+    },
+    {
+      "text": "really",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "quite",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "slightly",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "mildly",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "moderately",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "severely",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "extremely",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "markedly",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "significantly",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "somewhat",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "mostly",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "mainly",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "partly",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "partially",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "completely",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "totally",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "entirely",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "fully",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "hardly",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "barely",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "actually",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "basically",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "generally",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "specifically",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "particularly",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "especially",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "exactly",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "directly",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "possibly",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "probably",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "perhaps",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "maybe",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "certainly",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "definitely",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "unfortunately",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "fortunately",
+      "category": "Degree and manner",
+      "reviewed": true
+    },
+    {
+      "text": "because",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "whereas",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "whether",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "unless",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "between",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "against",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "among",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "through",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "throughout",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "towards",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "toward",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "under",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "above",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "below",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "behind",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "beside",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "beyond",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "across",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "along",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "otherwise",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "instead",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "besides",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "other",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "others",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "different",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "similar",
+      "category": "Connecting words",
+      "reviewed": true
+    },
+    {
+      "text": "mother",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "father",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "brother",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "sister",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "husband",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "daughter",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "children",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "child",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "infant",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "toddler",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "grandmother",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "grandfather",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "grandparents",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "uncle",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "cousin",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "nephew",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "niece",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "relative",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "relatives",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "neighbour",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "neighbours",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "friend",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "friends",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "partner",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "spouse",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "parents",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "family",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "household",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "caregiver",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "guardian",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "teacher",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "student",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "pupil",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "worker",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "farmer",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "driver",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "trader",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "miner",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "nurse",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "doctor",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "clinician",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "pharmacist",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "visitor",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "himself",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "herself",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "themselves",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "someone",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "something",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "everything",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "everyone",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "nobody",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "somewhere",
+      "category": "People",
+      "reviewed": true
+    },
+    {
+      "text": "house",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "village",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "clinic",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "hospital",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "pharmacy",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "school",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "church",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "market",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "office",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "workplace",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "community",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "district",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "province",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "compound",
+      "category": "Places and settings",
+      "reviewed": true
+    },
+    {
+      "text": "eating",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "drinking",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "sleeping",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "walking",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "running",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "working",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "resting",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "playing",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "sitting",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "standing",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "bathing",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "dressing",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "cooking",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "cleaning",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "smoking",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "alcohol",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "cigarettes",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "tobacco",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "traditional",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "medicine",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "medicines",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "tablets",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "injection",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "injections",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "treatment",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "treated",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "therapy",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "surgery",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "operation",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "operated",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "procedure",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "procedures",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "appointment",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "appointments",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "review",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "reviewed",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "result",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "results",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "report",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "tests",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "scans",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "sample",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "samples",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "blood",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "urine",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "stool",
+      "category": "Daily life and habits",
+      "reviewed": true
+    },
+    {
+      "text": "shoulder",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "shoulders",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "breast",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "stomach",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "belly",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "waist",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "groin",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "thigh",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "thighs",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "knees",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "ankle",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "ankles",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "elbow",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "wrist",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "wrists",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "fingers",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "thumb",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "nails",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "bones",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "joints",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "muscles",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "heart",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "lungs",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "liver",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "kidney",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "kidneys",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "bladder",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "bowel",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "bowels",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "brain",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "spine",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "genitals",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "tongue",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "teeth",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "forehead",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "cheek",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "eyelid",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "eyelids",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "armpit",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "armpits",
+      "category": "Body parts",
+      "reviewed": true
+    },
+    {
+      "text": "better",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "worse",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "worst",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "usual",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "unusual",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "recent",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "previous",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "initial",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "further",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "additional",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "overall",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "general",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "specific",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "particular",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "certain",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "possible",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "probable",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "likely",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "unlikely",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "unclear",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "unknown",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "known",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "unable",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "difficult",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "painful",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "painless",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "sharp",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "burning",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "throbbing",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "stabbing",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "aching",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "cramping",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "squeezing",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "pressing",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "tight",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "heavy",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "loose",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "watery",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "bloody",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "yellow",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "white",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "black",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "brown",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "green",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "clear",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "cloudy",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "smelling",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "itchy",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "stiff",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "tired",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "sleepy",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "dizzy",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "thirsty",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "hungry",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "nauseous",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "breathless",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "flushed",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "sweaty",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "anxious",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "afraid",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "scared",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "stressed",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "upset",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "angry",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "tearful",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "lonely",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "hopeless",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "sleepless",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "restless",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "agitated",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "cooperative",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "coherent",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "relevant",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "appropriate",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "adequate",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "sufficient",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "enough",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "continuous",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "lasting",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "lasted",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "continues",
+      "category": "Descriptions",
+      "reviewed": true
+    },
+    {
+      "text": "symptoms",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "symptom",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "problem",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "problems",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "complaint",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "complaints",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "concern",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "concerns",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "condition",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "conditions",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "diagnosis",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "diagnoses",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "diagnosed",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "disease",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "diseases",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "illness",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "illnesses",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "episode",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "episodes",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "attack",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "attacks",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "seizure",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "history",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "medical",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "surgical",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "social",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "allergy",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "allergies",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "reaction",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "reactions",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "sensitivity",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "delivery",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "delivered",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "breastfeeding",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "immunisation",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "vaccinated",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "vaccination",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "vaccine",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "growth",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "development",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "weight",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "height",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "temperature",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "pressure",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "pulse",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "breathing",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "respiratory",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "saturation",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "oxygen",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "examination",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "examined",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "inspection",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "palpation",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "percussion",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "auscultation",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "findings",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "finding",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "impression",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "advice",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "counselling",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "education",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "compliance",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "referral",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "admission",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "emergency",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "urgent",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "routine",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "outpatient",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "inpatient",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "theatre",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "laboratory",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "radiology",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "ultrasound",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "radiograph",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "investigation",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "medication",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "medications",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "prescribed",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "prescription",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "dispensed",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "dosage",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "tolerated",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "tolerating",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "response",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "responded",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "improvement",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "deterioration",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "stable",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "unstable",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "health",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "healthy",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "healing",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "recovered",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "recovery",
+      "category": "Health and care words",
+      "reviewed": true
+    },
+    {
+      "text": "recovering",
+      "category": "Health and care words",
+      "reviewed": true
+    }
+  ]
+}

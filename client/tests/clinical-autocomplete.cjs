@@ -229,4 +229,57 @@ const realWords = activeVocabulary({ entries: [], doNotUse: [], words: wordFile 
 assert.equal(wd('coug', undefined, realWords).options[0], 'h');
 assert.equal(wd('wheez', undefined, realWords).options[0], 'e');
 
-console.log('Passed clinical autocomplete checks: review gate and preview, case rules, ambiguity, punctuation, caret/selection guards, sentence capitalisation, do-not-use warnings, phrase and word completion and learning from use.');
+// Everyday words (stage three and a half): they sit between medical terms in notes.
+vocab.words = [{ text: 'headache', reviewed: true }, { text: 'hearing', reviewed: true }];
+vocab.generalWords = [
+  { text: 'yesterday', reviewed: true },
+  { text: 'healthy', reviewed: true },
+  { text: 'heavy', reviewed: true },
+  { text: 'patient', reviewed: true },
+  { text: 'patients', reviewed: true },
+  { text: 'secretly', reviewed: false },
+];
+const gv = activeVocabulary(vocab), gpreview = activeVocabulary(vocab, true);
+const gd = (text, learned, v = gv) => suggest(text, text.length, text.length, v, learned);
+assert.equal(gd('yest').options[0], 'erday', 'an everyday word completes');
+assert.equal(gd('The patie').options[0], 'nt', 'in the middle of a sentence');
+assert.equal(gd('yes').options[0], 'terday', 'from the third letter');
+assert.equal(gd('ye'), null, 'two letters is too few');
+assert.equal(gd('hea').options[0], 'ring', 'a clinical word is offered ahead of everyday words that also fit (healthy, heavy)');
+assert.equal(gd('heal').options[0], 'thy', 'once only an everyday word fits, it is offered');
+assert.equal(gd('head').options[0], 'ache', 'a clinical word beats an everyday one that also fits');
+assert.equal(gd('patient'), null, 'a finished word has nothing to add, even if a longer form exists');
+assert.equal(gd('patien').options[0], 't', 'among everyday words the one listed first (the more common) comes first');
+assert.equal(gd('secret'), null, 'unreviewed everyday words are off');
+assert.equal(gd('secret', undefined, gpreview).options[0], 'ly', 'but show in reviewer preview');
+assert.equal(gd('YEST'), null, 'capitals are for abbreviations');
+// Learning ranks everyday words too: a doctor who writes the longer form gets it first.
+assert.equal(gd('pati').options[0], 'ent', 'shortest first when nothing is learned');
+let gl = emptyLearned();
+for (let i = 0; i < 2; i++) gl = recordAccepted(gl, { phrase: true, word: true, key: 'patients', abbr: 'pati', options: ['ents'], start: 4, end: 4 }, 'ents');
+assert.equal(gd('pati', gl).options[0], 'ents', 'the accepted longer form now comes first');
+assert.equal(gd('yest', gl).options[0], 'erday', 'other words are unaffected');
+// A word this doctor accepts often can outrank the default, clinical or not.
+for (let i = 0; i < 3; i++) gl = recordAccepted(gl, { phrase: true, word: true, key: 'heavy', abbr: 'heav', options: ['y'], start: 4, end: 4 }, 'y');
+assert.equal(gd('hea', gl).options[0], 'vy', 'heavy, accepted three times, now comes before hearing');
+assert.equal(gd('he', gl), null);
+
+// The shipped everyday list: lower-case letters only, five letters or more, no duplicates, nothing clashing with the clinical list.
+const generalFile = JSON.parse(fs.readFileSync(path.join(root, 'src/data/generalWords.json'), 'utf8')).words;
+const clinicalFile = new Set(JSON.parse(fs.readFileSync(path.join(root, 'src/data/clinicalWords.json'), 'utf8')).words.map(x => x.text));
+assert.ok(generalFile.length > 400);
+assert.equal(new Set(generalFile.map(x => x.text)).size, generalFile.length, 'no duplicate everyday words');
+for (const x of generalFile) { assert.ok(/^[a-z]{5,}$/.test(x.text), 'bad word: ' + x.text); assert.ok(!clinicalFile.has(x.text), 'already a clinical word: ' + x.text); }
+const combined = activeVocabulary({ entries: [], doNotUse: [], words: JSON.parse(fs.readFileSync(path.join(root, 'src/data/clinicalWords.json'), 'utf8')).words, generalWords: generalFile });
+assert.equal(gd('yest', undefined, combined).options[0], 'erday');
+assert.equal(gd('coug', undefined, combined).options[0], 'h', 'clinical words are unaffected');
+assert.equal(gd('mothe', undefined, combined).options[0], 'r');
+// Short function words offer the longer words that start with them, never themselves.
+const full = (text) => { const hit = gd(text, undefined, combined); return hit && text + hit.options[0]; };
+assert.equal(full('for'), 'forward');
+assert.equal(full('fol'), 'following');
+assert.equal(full('how'), 'however');
+assert.equal(full('how '), null, 'nothing straight after a space');
+assert.equal(full('however'), null, 'a finished word is left alone');
+
+console.log('Passed clinical autocomplete checks: review gate and preview, case rules, ambiguity, punctuation, caret/selection guards, sentence capitalisation, do-not-use warnings, phrase, word and everyday-word completion and learning from use.');
