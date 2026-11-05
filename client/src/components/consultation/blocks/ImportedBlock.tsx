@@ -60,7 +60,7 @@ export default function ImportedBlock({ data, onRemove, readOnly }: Props) {
 
   // Explicit history sections retain their labels when a previous visit is imported.
   (data.histories ?? []).forEach((history, i) => {
-    if (!(history.content.trim() || history.lmp || history.isObstetric || history.gravidity !== undefined || history.parity !== undefined) || !Object.prototype.hasOwnProperty.call(HISTORY_SECTIONS, history.type)) return;
+    if (!(history.content.trim() || history.procedures?.length || history.lmp || history.isObstetric || history.gravidity !== undefined || history.parity !== undefined) || !Object.prototype.hasOwnProperty.call(HISTORY_SECTIONS, history.type)) return;
     sections.push({
       key: `history-${i}`, label: HISTORY_SECTIONS[history.type].label,
       content: <HistorySummary data={history} />,

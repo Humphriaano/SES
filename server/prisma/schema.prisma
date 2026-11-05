@@ -1010,3 +1010,26 @@ model CashierSession {
   @@index([userId, closedAt])
   @@index([openedAt])
 }
+
+// A procedure recorded during an encounter (cannulation, suturing, ...). Billed through a PROCEDURE charge line
+// whose sourceId is this row's id. Taking one back off the note is a status change, never a delete.
+model EncounterProcedure {
+  id            String    @id @default(uuid())
+  encounterId   String
+  patientId     String
+  clientId      String                          // the note block item's own id, so a retry never records it twice
+  catalogueRef  String?                         // PROCEDURE price-list reference; null when typed in by hand (no charge)
+  name          String
+  site          String?
+  note          String?
+  performedById String
+  performedAt   DateTime  @default(now())
+  status        String    @default("ACTIVE")    // ACTIVE | REMOVED
+  removedAt     DateTime?
+  removedById   String?
+  removeReason  String?
+  createdAt     DateTime  @default(now())
+
+  @@unique([encounterId, clientId])
+  @@index([patientId, performedAt])
+}

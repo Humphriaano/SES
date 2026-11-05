@@ -154,6 +154,19 @@ export function chargeInvestigationOrder(orderId: string, userId?: string) {
   });
 }
 
+// One charge per recorded procedure, priced from the PROCEDURE price-list item it was picked from. A procedure typed
+// in by hand has no price-list item and gets no charge; the billing desk adds that one by hand.
+export function chargeProcedure(procedureId: string, userId?: string) {
+  return safely('a procedure', async () => {
+    const p = await prisma.encounterProcedure.findUnique({ where: { id: procedureId } });
+    if (!p || p.status !== 'ACTIVE' || !p.catalogueRef) return;
+    await addCharge({
+      patientId: p.patientId, encounterId: p.encounterId, sourceType: 'PROCEDURE', sourceId: p.id,
+      description: p.name, detail: p.site, price: { itemType: 'PROCEDURE', catalogueRef: p.catalogueRef }, createdById: userId,
+    });
+  });
+}
+
 // Totals are worked out from the lines every time, never stored.
 export function invoiceTotals(lines: { status: string; quantity: Prisma.Decimal; unitPrice: Prisma.Decimal | null; needsReview: boolean }[]) {
   const active = lines.filter((l) => l.status === 'ACTIVE');

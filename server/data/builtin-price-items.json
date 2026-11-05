@@ -9798,5 +9798,439 @@
     "name": "Widal test — BH (Salmonella paratyphi B H antibody titre)",
     "detail": "Serum · Serology · LOINC 21513-7",
     "unit": "per test"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_peripheral_iv_cannulation",
+    "name": "Peripheral IV cannulation",
+    "detail": "Vascular access and injections",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_venepuncture_blood_draw",
+    "name": "Venepuncture (blood draw)",
+    "detail": "Vascular access and injections",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_intravenous_injection",
+    "name": "Intravenous injection",
+    "detail": "Vascular access and injections",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_intramuscular_injection",
+    "name": "Intramuscular injection",
+    "detail": "Vascular access and injections",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_subcutaneous_injection",
+    "name": "Subcutaneous injection",
+    "detail": "Vascular access and injections",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_intradermal_injection",
+    "name": "Intradermal injection",
+    "detail": "Vascular access and injections",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_iv_fluid_infusion",
+    "name": "IV fluid infusion",
+    "detail": "Vascular access and injections",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_blood_transfusion",
+    "name": "Blood transfusion",
+    "detail": "Vascular access and injections",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_immunisation_vaccine_administration",
+    "name": "Immunisation (vaccine administration)",
+    "detail": "Vascular access and injections",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_wound_dressing",
+    "name": "Wound dressing",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_wound_cleaning_and_debridement",
+    "name": "Wound cleaning and debridement",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_suturing_of_wound",
+    "name": "Suturing of wound",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_suture_removal",
+    "name": "Suture removal",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_incision_and_drainage_of_abscess",
+    "name": "Incision and drainage of abscess",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_burns_dressing",
+    "name": "Burns dressing",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_excision_of_skin_lesion_or_lump",
+    "name": "Excision of skin lesion or lump",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_skin_punch_biopsy",
+    "name": "Skin punch biopsy",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_removal_of_foreign_body_from_skin",
+    "name": "Removal of foreign body from skin",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_ingrown_toenail_procedure",
+    "name": "Ingrown toenail procedure",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_incision_of_paronychia",
+    "name": "Incision of paronychia",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_cryotherapy",
+    "name": "Cryotherapy",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_circumcision",
+    "name": "Circumcision",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_foot_ulcer_debridement",
+    "name": "Foot ulcer debridement",
+    "detail": "Wounds and minor surgery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_nebulisation",
+    "name": "Nebulisation",
+    "detail": "Breathing and resuscitation",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_oxygen_administration",
+    "name": "Oxygen administration",
+    "detail": "Breathing and resuscitation",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_airway_suction",
+    "name": "Airway suction",
+    "detail": "Breathing and resuscitation",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_bag_valve_mask_ventilation",
+    "name": "Bag-valve-mask ventilation",
+    "detail": "Breathing and resuscitation",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_endotracheal_intubation",
+    "name": "Endotracheal intubation",
+    "detail": "Breathing and resuscitation",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_cardiopulmonary_resuscitation",
+    "name": "Cardiopulmonary resuscitation",
+    "detail": "Breathing and resuscitation",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_defibrillation",
+    "name": "Defibrillation",
+    "detail": "Breathing and resuscitation",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_pleural_aspiration",
+    "name": "Pleural aspiration",
+    "detail": "Breathing and resuscitation",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_intercostal_chest_drain_insertion",
+    "name": "Intercostal chest drain insertion",
+    "detail": "Breathing and resuscitation",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_12_lead_ecg_recording",
+    "name": "12-lead ECG recording",
+    "detail": "Heart and circulation",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_pulse_oximetry",
+    "name": "Pulse oximetry",
+    "detail": "Heart and circulation",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_urinary_catheterisation",
+    "name": "Urinary catheterisation",
+    "detail": "Digestive and urinary",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_urinary_catheter_removal",
+    "name": "Urinary catheter removal",
+    "detail": "Digestive and urinary",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_nasogastric_tube_insertion",
+    "name": "Nasogastric tube insertion",
+    "detail": "Digestive and urinary",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_gastric_lavage",
+    "name": "Gastric lavage",
+    "detail": "Digestive and urinary",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_enema",
+    "name": "Enema",
+    "detail": "Digestive and urinary",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_abdominal_paracentesis",
+    "name": "Abdominal paracentesis",
+    "detail": "Digestive and urinary",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_digital_rectal_examination",
+    "name": "Digital rectal examination",
+    "detail": "Digestive and urinary",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_proctoscopy",
+    "name": "Proctoscopy",
+    "detail": "Digestive and urinary",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_cervical_screening_via_or_pap_smear",
+    "name": "Cervical screening (VIA or Pap smear)",
+    "detail": "Women's health and delivery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_pelvic_examination",
+    "name": "Pelvic examination",
+    "detail": "Women's health and delivery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_contraceptive_implant_insertion",
+    "name": "Contraceptive implant insertion",
+    "detail": "Women's health and delivery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_contraceptive_implant_removal",
+    "name": "Contraceptive implant removal",
+    "detail": "Women's health and delivery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_iucd_insertion",
+    "name": "IUCD insertion",
+    "detail": "Women's health and delivery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_iucd_removal",
+    "name": "IUCD removal",
+    "detail": "Women's health and delivery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_normal_vaginal_delivery",
+    "name": "Normal vaginal delivery",
+    "detail": "Women's health and delivery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_episiotomy_repair",
+    "name": "Episiotomy repair",
+    "detail": "Women's health and delivery",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_ear_syringing",
+    "name": "Ear syringing",
+    "detail": "Ear, nose, throat and eye",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_removal_of_foreign_body_from_ear_or_nose",
+    "name": "Removal of foreign body from ear or nose",
+    "detail": "Ear, nose, throat and eye",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_nasal_packing_for_nosebleed",
+    "name": "Nasal packing for nosebleed",
+    "detail": "Ear, nose, throat and eye",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_eye_irrigation",
+    "name": "Eye irrigation",
+    "detail": "Ear, nose, throat and eye",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_removal_of_foreign_body_from_eye",
+    "name": "Removal of foreign body from eye",
+    "detail": "Ear, nose, throat and eye",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_plaster_cast_application",
+    "name": "Plaster cast application",
+    "detail": "Bones and joints",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_splint_application",
+    "name": "Splint application",
+    "detail": "Bones and joints",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_reduction_of_dislocation",
+    "name": "Reduction of dislocation",
+    "detail": "Bones and joints",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_joint_aspiration",
+    "name": "Joint aspiration",
+    "detail": "Bones and joints",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_joint_injection",
+    "name": "Joint injection",
+    "detail": "Bones and joints",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_lumbar_puncture",
+    "name": "Lumbar puncture",
+    "detail": "Nervous system and other",
+    "unit": "each"
+  },
+  {
+    "itemType": "PROCEDURE",
+    "catalogueRef": "procedure_fine_needle_aspiration",
+    "name": "Fine needle aspiration",
+    "detail": "Nervous system and other",
+    "unit": "each"
   }
 ]

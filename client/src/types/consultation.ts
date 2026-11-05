@@ -77,8 +77,21 @@ export interface PMHBlockData {
 
 export type HistoryType = 'drug-history' | 'gynae-history' | 'obstetric-history' | 'immunization-history' | 'procedure';
 
+// A procedure recorded on the Procedures block. recordId is the server's record (and its charge); the note keeps a copy so
+// it reads on its own in later visits.
+export interface ProcedureItem {
+  id: string;
+  recordId?: string;
+  name: string;
+  catalogueRef?: string;
+  site?: string;
+  note?: string;
+  performedAt?: string;
+}
+
 export interface HistoryBlockData {
   content: string;
+  procedures?: ProcedureItem[];
   lmp?: string;
   isObstetric?: boolean;
   datingAsOf?: string;

@@ -23,6 +23,7 @@ import InsertBar from '../components/consultation/InsertBar';
 import ConsultationSidebar from '../components/consultation/ConsultationSidebar';
 import CdsPanel from '../components/consultation/CdsPanel/CdsPanel';
 import SuggestTextarea from '../components/consultation/SuggestTextarea';
+import ProcedureRecorder from '../components/consultation/blocks/ProcedureRecorder';
 import AutocompleteToggle from '../components/consultation/AutocompleteToggle';
 
 function uid() { return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`; }
@@ -465,7 +466,13 @@ export default function ConsultationPage() {
                         if (isHistoryNode(node)) {
                           return <HistoryBlock key={node.id} type={node.type} data={node.data} readOnly={readOnly}
                             onFocus={() => { lastCursorRef.current = { id: node.id, pos: 0 }; }}
-                            onChange={data => updateBlockData(node.id, data)} onRemove={() => removeNode(node.id)} />;
+                            top={node.type === 'procedure' ? <ProcedureRecorder data={node.data} onChange={data => updateBlockData(node.id, data)} patientId={patientId} encounterId={currentIdRef.current ?? undefined} /> : undefined}
+                            onChange={data => updateBlockData(node.id, data)}
+                            onRemove={() => {
+                              // Each recorded procedure has a charge, so they are taken off one by one, not dropped with the block.
+                              if (node.type === 'procedure' && node.data.procedures?.length) { toast.error('Remove the recorded procedures first. Each one has a charge.'); return; }
+                              removeNode(node.id);
+                            }} />;
                         }
                         if (node.type === 'pmh') {
                           return (

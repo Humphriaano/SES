@@ -1,4 +1,4 @@
-import type { CanvasNode, HistoryType } from '../types/consultation';
+import type { CanvasNode, HistoryBlockData, HistoryType } from '../types/consultation';
 import type { Patient } from '../types';
 
 export const HISTORY_SECTIONS: Record<HistoryType, { label: string; tag: string }> = {
@@ -30,8 +30,13 @@ export function isHistoryNode(node: CanvasNode): node is Extract<CanvasNode, { t
   return Object.prototype.hasOwnProperty.call(HISTORY_SECTIONS, node.type);
 }
 
+// One readable line per recorded procedure, e.g. "Peripheral IV cannulation · left forearm".
+export function procedureLines(data: Pick<HistoryBlockData, 'procedures'>): string[] {
+  return (data.procedures ?? []).map(p => [p.name, p.site, p.note].filter(Boolean).join(' · '));
+}
+
 export function historySnapshots(nodes: CanvasNode[]) {
   return nodes.filter(isHistoryNode)
-    .filter(node => node.data.content.trim() || node.data.lmp || node.data.isObstetric || node.data.gravidity !== undefined || node.data.parity !== undefined)
+    .filter(node => node.data.content.trim() || node.data.procedures?.length || node.data.lmp || node.data.isObstetric || node.data.gravidity !== undefined || node.data.parity !== undefined)
     .map(node => ({ type: node.type, ...node.data }));
 }

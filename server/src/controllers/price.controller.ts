@@ -78,7 +78,7 @@ export async function lookupPrices(req: AuthRequest, res: Response): Promise<voi
   const refs = String(req.query['refs'] ?? '').split(',').map((r) => r.trim()).filter(Boolean).slice(0, 100);
   if (refs.length === 0) { res.json({}); return; }
   const rows = await prisma.priceListItem.findMany({
-    where: { catalogueRef: { in: refs }, itemType: { in: ['DRUG', 'INVESTIGATION'] }, active: true },
+    where: { catalogueRef: { in: refs }, itemType: { in: ['DRUG', 'INVESTIGATION', 'PROCEDURE'] }, active: true },
     select: { id: true, catalogueRef: true, unitPrice: true, unit: true, bottleSizeMl: true },
   });
   if (req.query['details'] === '1') {

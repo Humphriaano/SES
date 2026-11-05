@@ -1,7 +1,8 @@
 import { useEffect, useRef, useId } from 'react';
+import type { ReactNode } from 'react';
 import { X } from 'lucide-react';
 import type { HistoryBlockData, HistoryType } from '../../../types/consultation';
-import { HISTORY_SECTIONS } from '../../../lib/consultationHistory';
+import { HISTORY_SECTIONS, procedureLines } from '../../../lib/consultationHistory';
 import { calendarToday, displayCalendarDate, pregnancyDating } from '../../../lib/pregnancyDating';
 import SuggestTextarea from '../SuggestTextarea';
 
@@ -12,6 +13,7 @@ interface Props {
   onRemove: () => void;
   readOnly?: boolean;
   onFocus?: () => void;
+  top?: ReactNode;   // shown above the note while editing (the procedure recorder)
 }
 
 export function HistorySummary({ data }: { data: HistoryBlockData }) {
@@ -24,6 +26,7 @@ export function HistorySummary({ data }: { data: HistoryBlockData }) {
     {data.lmp && <div style={{ fontSize: 13, marginBottom: 8, color: 'var(--text-heading)' }}>LMP: {displayCalendarDate(data.lmp)}</div>}
     {data.isObstetric && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>Obstetric patient</div>}
     {dating && <DatingSummary dating={dating} />}
+    {procedureLines(data).length > 0 && <ul aria-label="Procedures recorded" style={{ margin: data.content ? '0 0 8px' : 0, paddingLeft: 18, fontSize: 14, lineHeight: 1.7, color: 'var(--text-heading)' }}>{procedureLines(data).map((line, i) => <li key={i}>{line}</li>)}</ul>}
     {data.content && <p style={{ margin: 0, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', fontSize: 14, lineHeight: 1.7, color: 'var(--text-heading)' }}>{data.content}</p>}
   </>;
 }
@@ -38,7 +41,7 @@ function DatingSummary({ dating }: { dating: NonNullable<ReturnType<typeof pregn
   </div>;
 }
 
-export default function HistoryBlock({ type, data, onChange, onRemove, readOnly, onFocus }: Props) {
+export default function HistoryBlock({ type, data, onChange, onRemove, readOnly, onFocus, top }: Props) {
   const field = useRef<HTMLTextAreaElement>(null);
   const lmpId = useId();
   const today = calendarToday();
@@ -77,6 +80,7 @@ export default function HistoryBlock({ type, data, onChange, onRemove, readOnly,
         )}
       </div>
       {readOnly ? <HistorySummary data={data} /> : <>
+        {top}
         {type === 'gynae-history' && <div style={{ marginBottom: 10 }} onFocus={onFocus}>
           <label htmlFor={lmpId} style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)', marginBottom: 5 }}>Last menstrual period (LMP) · first day</label>
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px 18px' }}>

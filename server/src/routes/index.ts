@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import stockRoutes from './stock.routes';
 import prescribingStockRoutes from './prescribingStock.routes';
+import { recordProcedure, removeProcedure } from '../controllers/procedures.controller';
 import { staffLoginRateLimit } from '../middleware/staffRateLimit';
 import { register, login, checkUsername, getRoles, listUsers, updateUser, getCurrentUser } from '../controllers/auth.controller';
 import { listPatients, getPatient, createPatient, updatePatient, resolveDiagnosis, addPatientDiagnosis, sendPortalInvitation } from '../controllers/patient.controller';
@@ -102,6 +103,8 @@ router.post('/patients/:patientId/vitals', authenticate, createVital);
 router.get('/patients/:patientId/medications', authenticate, getMedications);
 router.post('/patients/:patientId/medications', authenticate, createMedication);
 router.patch('/medications/:id', authenticate, updateMedication);
+router.post('/encounters/:encounterId/procedures', authenticate, recordProcedure);
+router.delete('/encounters/:encounterId/procedures/:id', authenticate, removeProcedure);
 router.get('/encounters/:encounterId/prescriptions', authenticate, getPrescriptions);
 router.post('/encounters/:encounterId/prescriptions', authenticate, createPrescription);
 router.post('/prescriptions/:id/dispense', authenticate, requireRoles('admin', 'pharmacist'), dispensePrescription);

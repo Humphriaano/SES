@@ -1,0 +1,378 @@
+{
+  "version": 1,
+  "status": "STARTER LIST for clinical review. Prices are set in the price list.",
+  "procedures": [
+    {
+      "code": "procedure_peripheral_iv_cannulation",
+      "name": "Peripheral IV cannulation",
+      "category": "Vascular access and injections",
+      "aliases": "cannulation cannula cannulate iv access drip intravenous line"
+    },
+    {
+      "code": "procedure_venepuncture_blood_draw",
+      "name": "Venepuncture (blood draw)",
+      "category": "Vascular access and injections",
+      "aliases": "venepuncture venipuncture phlebotomy blood draw blood sample bleeding"
+    },
+    {
+      "code": "procedure_intravenous_injection",
+      "name": "Intravenous injection",
+      "category": "Vascular access and injections",
+      "aliases": "iv injection iv push intravenous bolus"
+    },
+    {
+      "code": "procedure_intramuscular_injection",
+      "name": "Intramuscular injection",
+      "category": "Vascular access and injections",
+      "aliases": "im injection intramuscular jab"
+    },
+    {
+      "code": "procedure_subcutaneous_injection",
+      "name": "Subcutaneous injection",
+      "category": "Vascular access and injections",
+      "aliases": "sc injection subcutaneous"
+    },
+    {
+      "code": "procedure_intradermal_injection",
+      "name": "Intradermal injection",
+      "category": "Vascular access and injections",
+      "aliases": "intradermal"
+    },
+    {
+      "code": "procedure_iv_fluid_infusion",
+      "name": "IV fluid infusion",
+      "category": "Vascular access and injections",
+      "aliases": "iv fluids drip infusion intravenous fluids"
+    },
+    {
+      "code": "procedure_blood_transfusion",
+      "name": "Blood transfusion",
+      "category": "Vascular access and injections",
+      "aliases": "transfusion blood products"
+    },
+    {
+      "code": "procedure_immunisation_vaccine_administration",
+      "name": "Immunisation (vaccine administration)",
+      "category": "Vascular access and injections",
+      "aliases": "vaccination vaccine immunization immunisation jab"
+    },
+    {
+      "code": "procedure_wound_dressing",
+      "name": "Wound dressing",
+      "category": "Wounds and minor surgery",
+      "aliases": "dressing wound care dress"
+    },
+    {
+      "code": "procedure_wound_cleaning_and_debridement",
+      "name": "Wound cleaning and debridement",
+      "category": "Wounds and minor surgery",
+      "aliases": "wound toilet debridement cleaning irrigation"
+    },
+    {
+      "code": "procedure_suturing_of_wound",
+      "name": "Suturing of wound",
+      "category": "Wounds and minor surgery",
+      "aliases": "suture stitching stitches laceration repair wound closure"
+    },
+    {
+      "code": "procedure_suture_removal",
+      "name": "Suture removal",
+      "category": "Wounds and minor surgery",
+      "aliases": "stitch removal remove stitches removal of sutures"
+    },
+    {
+      "code": "procedure_incision_and_drainage_of_abscess",
+      "name": "Incision and drainage of abscess",
+      "category": "Wounds and minor surgery",
+      "aliases": "abscess i&d incision drainage drain boil pus"
+    },
+    {
+      "code": "procedure_burns_dressing",
+      "name": "Burns dressing",
+      "category": "Wounds and minor surgery",
+      "aliases": "burn dressing burns care"
+    },
+    {
+      "code": "procedure_excision_of_skin_lesion_or_lump",
+      "name": "Excision of skin lesion or lump",
+      "category": "Wounds and minor surgery",
+      "aliases": "excision lump cyst lipoma minor surgery"
+    },
+    {
+      "code": "procedure_skin_punch_biopsy",
+      "name": "Skin punch biopsy",
+      "category": "Wounds and minor surgery",
+      "aliases": "biopsy skin punch"
+    },
+    {
+      "code": "procedure_removal_of_foreign_body_from_skin",
+      "name": "Removal of foreign body from skin",
+      "category": "Wounds and minor surgery",
+      "aliases": "foreign body splinter thorn skin removal"
+    },
+    {
+      "code": "procedure_ingrown_toenail_procedure",
+      "name": "Ingrown toenail procedure",
+      "category": "Wounds and minor surgery",
+      "aliases": "ingrown nail toenail nail avulsion"
+    },
+    {
+      "code": "procedure_incision_of_paronychia",
+      "name": "Incision of paronychia",
+      "category": "Wounds and minor surgery",
+      "aliases": "paronychia nail bed infection"
+    },
+    {
+      "code": "procedure_cryotherapy",
+      "name": "Cryotherapy",
+      "category": "Wounds and minor surgery",
+      "aliases": "cryo freezing wart warts liquid nitrogen"
+    },
+    {
+      "code": "procedure_circumcision",
+      "name": "Circumcision",
+      "category": "Wounds and minor surgery",
+      "aliases": "circumcision vmmc male circumcision"
+    },
+    {
+      "code": "procedure_foot_ulcer_debridement",
+      "name": "Foot ulcer debridement",
+      "category": "Wounds and minor surgery",
+      "aliases": "diabetic foot ulcer debridement foot care"
+    },
+    {
+      "code": "procedure_nebulisation",
+      "name": "Nebulisation",
+      "category": "Breathing and resuscitation",
+      "aliases": "nebuliser nebulizer nebulization neb"
+    },
+    {
+      "code": "procedure_oxygen_administration",
+      "name": "Oxygen administration",
+      "category": "Breathing and resuscitation",
+      "aliases": "oxygen o2 oxygen therapy"
+    },
+    {
+      "code": "procedure_airway_suction",
+      "name": "Airway suction",
+      "category": "Breathing and resuscitation",
+      "aliases": "suction suctioning airway"
+    },
+    {
+      "code": "procedure_bag_valve_mask_ventilation",
+      "name": "Bag-valve-mask ventilation",
+      "category": "Breathing and resuscitation",
+      "aliases": "bvm ambu bag ventilation resuscitation"
+    },
+    {
+      "code": "procedure_endotracheal_intubation",
+      "name": "Endotracheal intubation",
+      "category": "Breathing and resuscitation",
+      "aliases": "intubation intubate airway ett"
+    },
+    {
+      "code": "procedure_cardiopulmonary_resuscitation",
+      "name": "Cardiopulmonary resuscitation",
+      "category": "Breathing and resuscitation",
+      "aliases": "cpr resuscitation cardiac arrest"
+    },
+    {
+      "code": "procedure_defibrillation",
+      "name": "Defibrillation",
+      "category": "Breathing and resuscitation",
+      "aliases": "defibrillation shock cardioversion"
+    },
+    {
+      "code": "procedure_pleural_aspiration",
+      "name": "Pleural aspiration",
+      "category": "Breathing and resuscitation",
+      "aliases": "pleural tap thoracentesis chest tap effusion"
+    },
+    {
+      "code": "procedure_intercostal_chest_drain_insertion",
+      "name": "Intercostal chest drain insertion",
+      "category": "Breathing and resuscitation",
+      "aliases": "chest drain chest tube icd pneumothorax"
+    },
+    {
+      "code": "procedure_12_lead_ecg_recording",
+      "name": "12-lead ECG recording",
+      "category": "Heart and circulation",
+      "aliases": "ecg ekg electrocardiogram heart tracing"
+    },
+    {
+      "code": "procedure_pulse_oximetry",
+      "name": "Pulse oximetry",
+      "category": "Heart and circulation",
+      "aliases": "spo2 oxygen saturation sats oximeter"
+    },
+    {
+      "code": "procedure_urinary_catheterisation",
+      "name": "Urinary catheterisation",
+      "category": "Digestive and urinary",
+      "aliases": "catheter foley catheterization catheterisation urinary catheter"
+    },
+    {
+      "code": "procedure_urinary_catheter_removal",
+      "name": "Urinary catheter removal",
+      "category": "Digestive and urinary",
+      "aliases": "remove catheter catheter removal"
+    },
+    {
+      "code": "procedure_nasogastric_tube_insertion",
+      "name": "Nasogastric tube insertion",
+      "category": "Digestive and urinary",
+      "aliases": "ng tube nasogastric ngt feeding tube"
+    },
+    {
+      "code": "procedure_gastric_lavage",
+      "name": "Gastric lavage",
+      "category": "Digestive and urinary",
+      "aliases": "stomach wash lavage poisoning"
+    },
+    {
+      "code": "procedure_enema",
+      "name": "Enema",
+      "category": "Digestive and urinary",
+      "aliases": "enema rectal washout"
+    },
+    {
+      "code": "procedure_abdominal_paracentesis",
+      "name": "Abdominal paracentesis",
+      "category": "Digestive and urinary",
+      "aliases": "ascitic tap paracentesis ascites tap"
+    },
+    {
+      "code": "procedure_digital_rectal_examination",
+      "name": "Digital rectal examination",
+      "category": "Digestive and urinary",
+      "aliases": "dre rectal examination per rectum pr exam"
+    },
+    {
+      "code": "procedure_proctoscopy",
+      "name": "Proctoscopy",
+      "category": "Digestive and urinary",
+      "aliases": "proctoscope haemorrhoids piles"
+    },
+    {
+      "code": "procedure_cervical_screening_via_or_pap_smear",
+      "name": "Cervical screening (VIA or Pap smear)",
+      "category": "Women's health and delivery",
+      "aliases": "via pap smear cervical cancer screening cervix"
+    },
+    {
+      "code": "procedure_pelvic_examination",
+      "name": "Pelvic examination",
+      "category": "Women's health and delivery",
+      "aliases": "speculum vaginal examination pelvic exam"
+    },
+    {
+      "code": "procedure_contraceptive_implant_insertion",
+      "name": "Contraceptive implant insertion",
+      "category": "Women's health and delivery",
+      "aliases": "implant insertion jadelle implanon family planning"
+    },
+    {
+      "code": "procedure_contraceptive_implant_removal",
+      "name": "Contraceptive implant removal",
+      "category": "Women's health and delivery",
+      "aliases": "implant removal"
+    },
+    {
+      "code": "procedure_iucd_insertion",
+      "name": "IUCD insertion",
+      "category": "Women's health and delivery",
+      "aliases": "iud coil intrauterine device insertion family planning"
+    },
+    {
+      "code": "procedure_iucd_removal",
+      "name": "IUCD removal",
+      "category": "Women's health and delivery",
+      "aliases": "iud coil removal"
+    },
+    {
+      "code": "procedure_normal_vaginal_delivery",
+      "name": "Normal vaginal delivery",
+      "category": "Women's health and delivery",
+      "aliases": "delivery childbirth labour svd"
+    },
+    {
+      "code": "procedure_episiotomy_repair",
+      "name": "Episiotomy repair",
+      "category": "Women's health and delivery",
+      "aliases": "episiotomy perineal tear repair"
+    },
+    {
+      "code": "procedure_ear_syringing",
+      "name": "Ear syringing",
+      "category": "Ear, nose, throat and eye",
+      "aliases": "ear wax syringing irrigation cerumen"
+    },
+    {
+      "code": "procedure_removal_of_foreign_body_from_ear_or_nose",
+      "name": "Removal of foreign body from ear or nose",
+      "category": "Ear, nose, throat and eye",
+      "aliases": "foreign body ear nose fb"
+    },
+    {
+      "code": "procedure_nasal_packing_for_nosebleed",
+      "name": "Nasal packing for nosebleed",
+      "category": "Ear, nose, throat and eye",
+      "aliases": "epistaxis nose bleed nasal pack packing"
+    },
+    {
+      "code": "procedure_eye_irrigation",
+      "name": "Eye irrigation",
+      "category": "Ear, nose, throat and eye",
+      "aliases": "eye wash irrigation chemical splash"
+    },
+    {
+      "code": "procedure_removal_of_foreign_body_from_eye",
+      "name": "Removal of foreign body from eye",
+      "category": "Ear, nose, throat and eye",
+      "aliases": "eye foreign body fb eye"
+    },
+    {
+      "code": "procedure_plaster_cast_application",
+      "name": "Plaster cast application",
+      "category": "Bones and joints",
+      "aliases": "plaster of paris pop cast slab fracture"
+    },
+    {
+      "code": "procedure_splint_application",
+      "name": "Splint application",
+      "category": "Bones and joints",
+      "aliases": "splint splinting immobilisation"
+    },
+    {
+      "code": "procedure_reduction_of_dislocation",
+      "name": "Reduction of dislocation",
+      "category": "Bones and joints",
+      "aliases": "dislocation reduction shoulder joint"
+    },
+    {
+      "code": "procedure_joint_aspiration",
+      "name": "Joint aspiration",
+      "category": "Bones and joints",
+      "aliases": "joint tap arthrocentesis aspirate knee"
+    },
+    {
+      "code": "procedure_joint_injection",
+      "name": "Joint injection",
+      "category": "Bones and joints",
+      "aliases": "intra-articular injection steroid joint"
+    },
+    {
+      "code": "procedure_lumbar_puncture",
+      "name": "Lumbar puncture",
+      "category": "Nervous system and other",
+      "aliases": "lp spinal tap csf meningitis"
+    },
+    {
+      "code": "procedure_fine_needle_aspiration",
+      "name": "Fine needle aspiration",
+      "category": "Nervous system and other",
+      "aliases": "fna aspiration biopsy lump thyroid"
+    }
+  ]
+}

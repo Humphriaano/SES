@@ -7,7 +7,7 @@ import {
 import api from '../../../api/client';
 import { Patient, Vital } from '../../../types';
 import { CanvasNode } from '../../../types/consultation';
-import { HISTORY_SECTIONS, isHistoryNode } from '../../../lib/consultationHistory';
+import { HISTORY_SECTIONS, isHistoryNode, procedureLines } from '../../../lib/consultationHistory';
 
 const CDS_URL          = 'http://localhost:8000/cds/suggest';
 const DEFAULT_QUESTION = 'What are the guideline-based recommendations for this patient?';
@@ -90,8 +90,8 @@ const CONDITION_ORDER = ['hypertension', 'cardiovascular', 'diabetes', 'ckd'] as
 
 function extractEncounterNotes(nodes: CanvasNode[]): string {
   return nodes
-    .map(n => n.type === 'text' ? n.content : isHistoryNode(n) && n.data.content.trim()
-      ? `${HISTORY_SECTIONS[n.type].label}: ${n.data.content}` : '')
+    .map(n => n.type === 'text' ? n.content : isHistoryNode(n) && (n.data.content.trim() || n.data.procedures?.length)
+      ? `${HISTORY_SECTIONS[n.type].label}: ${[...procedureLines(n.data), n.data.content.trim()].filter(Boolean).join('; ')}` : '')
     .filter(Boolean)
     .join('\n')
     .slice(0, 1000);
