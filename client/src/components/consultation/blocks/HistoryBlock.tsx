@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import type { HistoryBlockData, HistoryType } from '../../../types/consultation';
 import { HISTORY_SECTIONS } from '../../../lib/consultationHistory';
 import { calendarToday, displayCalendarDate, pregnancyDating } from '../../../lib/pregnancyDating';
+import SuggestTextarea from '../SuggestTextarea';
 
 interface Props {
   type: HistoryType;
@@ -101,7 +102,7 @@ export default function HistoryBlock({ type, data, onChange, onRemove, readOnly,
           {invalidLmp && <div role="alert" style={{ marginTop: 5, fontSize: 12, color: 'var(--badge-red-text)' }}>Enter a valid LMP date that is not in the future.</div>}
           {dating && <DatingSummary dating={dating} />}
         </div>}
-        <textarea ref={field} aria-label={label} value={data.content} rows={2}
+        <SuggestTextarea ref={field} aria-label={label} value={data.content} rows={2}
           onFocus={onFocus}
           onChange={event => change({ content: event.target.value })}
           style={{ display: 'block', width: '100%', boxSizing: 'border-box', minHeight: 56, resize: 'none', overflow: 'hidden', border: 'none', outline: 'none', borderRadius: 6, padding: '2px 0', background: 'transparent', font: 'inherit', fontSize: 14, lineHeight: 1.7, color: 'var(--text-heading)' }} />

@@ -22,6 +22,8 @@ import ImportedBlock from '../components/consultation/blocks/ImportedBlock';
 import InsertBar from '../components/consultation/InsertBar';
 import ConsultationSidebar from '../components/consultation/ConsultationSidebar';
 import CdsPanel from '../components/consultation/CdsPanel/CdsPanel';
+import SuggestTextarea from '../components/consultation/SuggestTextarea';
+import AutocompleteToggle from '../components/consultation/AutocompleteToggle';
 
 function uid() { return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`; }
 
@@ -331,6 +333,7 @@ export default function ConsultationPage() {
 
             {isOpen && (
               <>
+                <AutocompleteToggle />
                 <span className={saveStatus === 'error' ? 'cx-save-status cx-save-error' : 'cx-save-status'} role="status" aria-live="polite">
                   <span className="cx-save-dot" aria-hidden="true" />
                   {saveStatus === 'error' ? 'Not saved · retrying…' : saveStatus === 'saving' ? 'Saving…' : 'Saved'}
@@ -552,7 +555,7 @@ function AutoTextarea({ nodeId, value, onChange, onCursor, readOnly, label, minH
   }, [value]);
 
   return (
-    <textarea
+    <SuggestTextarea
       ref={ref}
       value={value}
       readOnly={readOnly}

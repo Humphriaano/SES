@@ -1,0 +1,1088 @@
+{
+  "version": 1,
+  "status": "ACTIVE, terminology review pending. Remove or set reviewed to false on any phrase the clinical reviewer rejects.",
+  "reviewer": null,
+  "reviewedOn": null,
+  "rules": [
+    "Full sentences a clinician would write by hand; the doctor reads them before saving.",
+    "No dosing, drug names or numbers: those belong to the prescription block.",
+    "Earlier phrases win when two start the same way, so keep the common ones first."
+  ],
+  "phrases": [
+    {
+      "text": "complaining of headache",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of abdominal pain",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of chest pain",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of cough",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of fever",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of dizziness",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of body weakness",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of loss of appetite",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of difficulty in breathing",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of palpitations",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of joint pains",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of back pain",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of leg swelling",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of vomiting",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of diarrhoea",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "complaining of sore throat",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies chest pain",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies shortness of breath",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies fever",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies cough",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies headache",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies nausea or vomiting",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies abdominal pain",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies dysuria",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies any weight loss",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies palpitations",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies dizziness",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies night sweats",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies any urinary symptoms",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies any bleeding",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "denies any known allergies",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no associated nausea or vomiting",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no associated fever",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no associated headache",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no associated chest pain",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no associated shortness of breath",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no associated vomiting",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no associated diarrhoea",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of chest pain",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of hypertension",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of diabetes",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of asthma",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of tuberculosis",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of surgery",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of trauma",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of allergies",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of similar illness",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of sick contacts",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of travel",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of blood transfusion",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of falls",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of loss of consciousness",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of seizures",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no history of fever",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no known drug allergies",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no known allergies",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no family history of hypertension",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no family history of diabetes",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no family history of cancer",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no previous hospital admissions",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no previous surgeries",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "history of similar episodes in the past",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no loss of consciousness",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no weight loss",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no night sweats",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no loss of appetite",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no blood in stool",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no blood in urine",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no haemoptysis",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no difficulty in swallowing",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no difficulty in breathing",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no difficulty in passing urine",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no swelling of the legs",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no visual disturbance",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no neck stiffness",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no ear discharge",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no sore throat",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no runny nose",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no vaginal bleeding",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no abnormal vaginal discharge",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "pain is dull in nature",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "pain is sharp in nature",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "pain is not radiating",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "pain radiates to the back",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "pain is worse on exertion",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "pain is relieved by rest",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "pain is worse after meals",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "cough is productive",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "cough is dry",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "cough is worse at night",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "bowels opened normally",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "passing urine normally",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "taking oral fluids well",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "eating and drinking well",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "sleeping well",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "tolerating oral feeds",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "good adherence to treatment",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "poor adherence to treatment",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "has missed some doses of medication",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "does not smoke",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "does not drink alcohol",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "occasional alcohol use",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "regular menstrual cycles",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "irregular menstrual cycles",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "fetal movements present",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "no leakage of liquor",
+      "category": "History: complaints and negatives",
+      "reviewed": true
+    },
+    {
+      "text": "alert and oriented",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "alert and oriented in time, place and person",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "not pale, not jaundiced",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no pallor, no jaundice",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no pallor, jaundice, cyanosis or oedema",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no lymphadenopathy",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no pedal oedema",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no peripheral oedema",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no clubbing",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "not dehydrated",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "well hydrated",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "not in distress",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "in no acute distress",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "comfortable at rest",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "good general condition",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "looks unwell",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "well looking",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "heart sounds normal, no murmurs",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "first and second heart sounds heard, no murmurs",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "pulse regular",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "pulse is regular and of good volume",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "jugular venous pressure not raised",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "apex beat not displaced",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "capillary refill normal",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "chest clear",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "chest clear, no added sounds",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "air entry equal bilaterally",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "good air entry bilaterally",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "normal breath sounds",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no wheeze or crackles",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no crepitations",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no use of accessory muscles",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no respiratory distress",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "reduced air entry",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "bilateral expiratory wheeze",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "bilateral crackles",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "abdomen soft, non-tender",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "abdomen soft and non-tender",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "abdomen is soft, not distended",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no organomegaly",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no masses palpable",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "bowel sounds present",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "bowel sounds normal",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no guarding or rebound tenderness",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no tenderness",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "tender in the epigastrium",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "tender in the right iliac fossa",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "tender in the right upper quadrant",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "tender in the suprapubic region",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no focal neurological deficit",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "cranial nerves intact",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "power normal in all limbs",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "tone normal",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "reflexes normal",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "normal gait",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "pupils equal and reactive to light",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "sensation intact",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "sensation intact in both feet",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "foot pulses palpable",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no foot ulcers",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "tympanic membranes intact",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "throat not inflamed",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "tonsils not enlarged",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no discharge from the ears",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "full range of movement",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no joint swelling",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no joint tenderness",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no deformity",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "spine non-tender",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no muscle wasting",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no rash",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "skin warm and dry",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no skin lesions",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "no ulcers",
+      "category": "Examination",
+      "reviewed": true
+    },
+    {
+      "text": "patient is stable",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "patient is haemodynamically stable",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "patient is afebrile",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "patient is comfortable",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "blood pressure well controlled",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "blood pressure above target",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "blood sugar well controlled",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "blood sugar above target",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "advised to return if symptoms worsen",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "advised to return if no improvement",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "advised to return to the clinic if symptoms persist",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "advised on adequate fluid intake",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "advised on healthy diet and regular exercise",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "advised to reduce salt intake",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "advised to stop smoking",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "advised to avoid alcohol",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "counselled on medication adherence",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "counselled on the diagnosis",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "counselled on lifestyle modification",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "patient understood the advice",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "patient agrees with the plan",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "patient counselled and reassured",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "review in clinic after investigations",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "review with results",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "review in clinic as scheduled",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "review earlier if symptoms worsen",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "continue current medication",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "continue with current treatment",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "referred to the specialist clinic",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "referred for further evaluation",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "to be admitted for further management",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "discharged home in a stable condition",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "follow up at the nearest clinic",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "for investigations as above",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "results pending",
+      "category": "Assessment and plan",
+      "reviewed": true
+    }
+  ]
+}

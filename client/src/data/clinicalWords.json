@@ -1,0 +1,1393 @@
+{
+  "version": 1,
+  "status": "ACTIVE, terminology review pending. Remove or set reviewed to false on any word the clinical reviewer rejects.",
+  "reviewer": null,
+  "reviewedOn": null,
+  "rules": [
+    "Single lower-case clinical words, British spelling as used in Zambian practice.",
+    "No dosing, drug names or numbers: those belong to the prescription block.",
+    "Inflections (coughing) are left out when the base word is listed; the shortest match is suggested first."
+  ],
+  "words": [
+    {
+      "text": "fever",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "fatigue",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "weakness",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "malaise",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "lethargy",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "chills",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "rigors",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "sweating",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "dizziness",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "drowsiness",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "appetite",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "anorexia",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "cachexia",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "dehydration",
+      "category": "General symptoms",
+      "reviewed": true
+    },
+    {
+      "text": "cough",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "sputum",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "wheeze",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "wheezing",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "breathlessness",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "dyspnoea",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "orthopnoea",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "haemoptysis",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "hoarseness",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "pleuritic",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "tachypnoea",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "stridor",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "cyanosis",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "sneezing",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "congestion",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "bronchitis",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "pneumonia",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "bronchiectasis",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "emphysema",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "effusion",
+      "category": "Respiratory",
+      "reviewed": true
+    },
+    {
+      "text": "palpitations",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "angina",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "syncope",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "oedema",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "swelling",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "murmur",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "hypertension",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "hypotension",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "tachycardia",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "bradycardia",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "arrhythmia",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "claudication",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "cardiomegaly",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "cardiomyopathy",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "thrombosis",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "embolism",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "aneurysm",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "infarction",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "ischaemic",
+      "category": "Cardiovascular",
+      "reviewed": true
+    },
+    {
+      "text": "abdominal",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "nausea",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "vomiting",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "diarrhoea",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "constipation",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "dyspepsia",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "heartburn",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "indigestion",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "bloating",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "haematemesis",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "melaena",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "dysphagia",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "odynophagia",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "hepatomegaly",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "splenomegaly",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "ascites",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "flatulence",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "tenesmus",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "haemorrhoids",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "hernia",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "epigastric",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "umbilical",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "tenderness",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "distension",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "distended",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "guarding",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "rebound",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "reflux",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "regurgitation",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "gastritis",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "gastroenteritis",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "hepatitis",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "cirrhosis",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "pancreatitis",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "appendicitis",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "cholecystitis",
+      "category": "Gastrointestinal",
+      "reviewed": true
+    },
+    {
+      "text": "dysuria",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "frequency",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "urgency",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "nocturia",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "haematuria",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "polyuria",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "oliguria",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "incontinence",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "retention",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "urethral",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "discharge",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "pelvic",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "testicular",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "scrotal",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "penile",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "vaginal",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "menorrhagia",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "dysmenorrhoea",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "amenorrhoea",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "metrorrhagia",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "postmenopausal",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "pregnancy",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "antenatal",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "postnatal",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "contractions",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "lactation",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "infertility",
+      "category": "Genitourinary and obstetric",
+      "reviewed": true
+    },
+    {
+      "text": "headache",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "migraine",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "seizures",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "convulsions",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "confusion",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "disorientation",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "tremor",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "numbness",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "tingling",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "paraesthesia",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "paralysis",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "hemiparesis",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "aphasia",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "dysarthria",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "vertigo",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "tinnitus",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "photophobia",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "ataxia",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "neuropathy",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "memory",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "unconscious",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "irritability",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "insomnia",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "depression",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "anxiety",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "epilepsy",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "stroke",
+      "category": "Neurological and mental health",
+      "reviewed": true
+    },
+    {
+      "text": "arthralgia",
+      "category": "Musculoskeletal",
+      "reviewed": true
+    },
+    {
+      "text": "myalgia",
+      "category": "Musculoskeletal",
+      "reviewed": true
+    },
+    {
+      "text": "stiffness",
+      "category": "Musculoskeletal",
+      "reviewed": true
+    },
+    {
+      "text": "deformity",
+      "category": "Musculoskeletal",
+      "reviewed": true
+    },
+    {
+      "text": "limping",
+      "category": "Musculoskeletal",
+      "reviewed": true
+    },
+    {
+      "text": "contracture",
+      "category": "Musculoskeletal",
+      "reviewed": true
+    },
+    {
+      "text": "arthritis",
+      "category": "Musculoskeletal",
+      "reviewed": true
+    },
+    {
+      "text": "osteoarthritis",
+      "category": "Musculoskeletal",
+      "reviewed": true
+    },
+    {
+      "text": "osteoporosis",
+      "category": "Musculoskeletal",
+      "reviewed": true
+    },
+    {
+      "text": "gout",
+      "category": "Musculoskeletal",
+      "reviewed": true
+    },
+    {
+      "text": "fracture",
+      "category": "Musculoskeletal",
+      "reviewed": true
+    },
+    {
+      "text": "sprain",
+      "category": "Musculoskeletal",
+      "reviewed": true
+    },
+    {
+      "text": "rash",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "itching",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "pruritus",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "ulcer",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "ulcers",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "lesion",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "lesions",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "blisters",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "erythema",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "wound",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "abscess",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "cellulitis",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "lump",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "nodule",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "scabies",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "eczema",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "urticaria",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "pigmentation",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "dermatitis",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "jaundice",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "pallor",
+      "category": "Skin",
+      "reviewed": true
+    },
+    {
+      "text": "otalgia",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "otorrhoea",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "epistaxis",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "rhinorrhoea",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "pharyngitis",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "tonsillitis",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "conjunctivitis",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "blurring",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "blurred",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "diplopia",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "redness",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "lacrimation",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "hearing",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "sinusitis",
+      "category": "Ear, nose, throat and eye",
+      "reviewed": true
+    },
+    {
+      "text": "diabetes",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "hyperglycaemia",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "hypoglycaemia",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "hyperlipidaemia",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "hypothyroidism",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "hyperthyroidism",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "tuberculosis",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "malaria",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "infection",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "sepsis",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "malnutrition",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "obesity",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "anaemia",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "nephropathy",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "retinopathy",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "asthma",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "pleural",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "urinary",
+      "category": "Conditions",
+      "reviewed": true
+    },
+    {
+      "text": "pale",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "jaundiced",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "febrile",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "afebrile",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "dehydrated",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "cyanosed",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "icteric",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "distressed",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "lethargic",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "cachectic",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "obese",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "oedematous",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "bilateral",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "unilateral",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "symmetrical",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "regular",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "irregular",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "normal",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "abnormal",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "enlarged",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "palpable",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "tender",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "swollen",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "inflamed",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "erythematous",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "warm",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "clammy",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "diaphoretic",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "alert",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "oriented",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "conscious",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "drowsy",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "comfortable",
+      "category": "Examination findings",
+      "reviewed": true
+    },
+    {
+      "text": "chronic",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "acute",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "recurrent",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "intermittent",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "persistent",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "progressive",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "sudden",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "gradual",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "severe",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "moderate",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "mild",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "worsening",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "improving",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "radiating",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "constant",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "episodic",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "nocturnal",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "productive",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "associated",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "diffuse",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "localised",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "generalised",
+      "category": "Qualifiers",
+      "reviewed": true
+    },
+    {
+      "text": "counselled",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "advised",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "reassured",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "referred",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "admitted",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "discharged",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "investigations",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "adherence",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "lifestyle",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "monitoring",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "symptomatic",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "management",
+      "category": "Assessment and plan",
+      "reviewed": true
+    },
+    {
+      "text": "complications",
+      "category": "Assessment and plan",
+      "reviewed": true
+    }
+  ]
+}

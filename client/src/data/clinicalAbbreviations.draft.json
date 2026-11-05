@@ -1,0 +1,1996 @@
+{
+  "version": 1,
+  "status": "ACTIVE, terminology review pending. Entries are switched on; set reviewed to false on any entry the clinical reviewer rejects.",
+  "reviewer": null,
+  "reviewedOn": null,
+  "rules": [
+    "Ambiguous abbreviations (more than one meaning) show the choices and never expand silently.",
+    "Dosing, frequencies, routes, drug names and numbers are deliberately not in this list; they belong to the prescription block.",
+    "matchCapitals: only offered when typed in capitals, because the abbreviation is also an everyday word."
+  ],
+  "entries": [
+    {
+      "abbr": "c/o",
+      "meanings": [
+        "complaining of"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "h/o",
+      "meanings": [
+        "history of"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "Hx",
+      "meanings": [
+        "history"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PMH",
+      "meanings": [
+        "past medical history"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PSH",
+      "meanings": [
+        "past surgical history"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "FH",
+      "meanings": [
+        "family history"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "FHx",
+      "meanings": [
+        "family history"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "SH",
+      "meanings": [
+        "social history"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "DH",
+      "meanings": [
+        "drug history"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "ROS",
+      "meanings": [
+        "review of systems"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HPC",
+      "meanings": [
+        "history of presenting complaint"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HPI",
+      "meanings": [
+        "history of present illness"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "NKDA",
+      "meanings": [
+        "no known drug allergies"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "SOB",
+      "meanings": [
+        "shortness of breath"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": true,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "DOE",
+      "meanings": [
+        "dyspnoea on exertion"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PND",
+      "meanings": [
+        "paroxysmal nocturnal dyspnoea"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "N&V",
+      "meanings": [
+        "nausea and vomiting"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "D&V",
+      "meanings": [
+        "diarrhoea and vomiting"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PUO",
+      "meanings": [
+        "pyrexia of unknown origin"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "CP",
+      "meanings": [
+        "chest pain",
+        "cerebral palsy"
+      ],
+      "category": "History and general",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "Pt",
+      "meanings": [
+        "patient",
+        "physiotherapy",
+        "prothrombin time"
+      ],
+      "category": "History and general",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "Dx",
+      "meanings": [
+        "diagnosis"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "DDx",
+      "meanings": [
+        "differential diagnosis"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "Ix",
+      "meanings": [
+        "investigations"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "Mx",
+      "meanings": [
+        "management"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "Sx",
+      "meanings": [
+        "symptoms"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "Fx",
+      "meanings": [
+        "fracture"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "f/u",
+      "meanings": [
+        "follow-up"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "r/v",
+      "meanings": [
+        "review"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "r/o",
+      "meanings": [
+        "rule out"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "s/p",
+      "meanings": [
+        "status post"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "w/o",
+      "meanings": [
+        "without"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "c/w",
+      "meanings": [
+        "consistent with"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "b/l",
+      "meanings": [
+        "bilateral"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "WNL",
+      "meanings": [
+        "within normal limits"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "RTC",
+      "meanings": [
+        "return to clinic"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "NBM",
+      "meanings": [
+        "nil by mouth"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "OPD",
+      "meanings": [
+        "outpatient department"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "ICU",
+      "meanings": [
+        "intensive care unit"
+      ],
+      "category": "History and general",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "NAD",
+      "meanings": [
+        "no abnormality detected",
+        "no acute distress"
+      ],
+      "category": "History and general",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "BS",
+      "meanings": [
+        "blood sugar",
+        "bowel sounds",
+        "breath sounds"
+      ],
+      "category": "History and general",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "O/E",
+      "meanings": [
+        "on examination"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "BP",
+      "meanings": [
+        "blood pressure"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HR",
+      "meanings": [
+        "heart rate"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "RR",
+      "meanings": [
+        "respiratory rate"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "SpO2",
+      "meanings": [
+        "oxygen saturation"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "BMI",
+      "meanings": [
+        "body mass index"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "JVP",
+      "meanings": [
+        "jugular venous pressure"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "GCS",
+      "meanings": [
+        "Glasgow Coma Scale"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "AVPU",
+      "meanings": [
+        "alert, responds to voice, responds to pain, unresponsive"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "CVS",
+      "meanings": [
+        "cardiovascular system"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "RS",
+      "meanings": [
+        "respiratory system"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "CNS",
+      "meanings": [
+        "central nervous system"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "GIT",
+      "meanings": [
+        "gastrointestinal tract"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": true,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "GU",
+      "meanings": [
+        "genitourinary"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "MSK",
+      "meanings": [
+        "musculoskeletal"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "ENT",
+      "meanings": [
+        "ear, nose and throat"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "Abd",
+      "meanings": [
+        "abdomen"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "ROM",
+      "meanings": [
+        "range of motion",
+        "rupture of membranes"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PR",
+      "meanings": [
+        "per rectum",
+        "pulse rate",
+        "PR interval"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PV",
+      "meanings": [
+        "per vaginam",
+        "polycythaemia vera"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "LP",
+      "meanings": [
+        "lumbar puncture",
+        "light perception"
+      ],
+      "category": "Examination and vital signs",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HTN",
+      "meanings": [
+        "hypertension"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "CAD",
+      "meanings": [
+        "coronary artery disease"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "IHD",
+      "meanings": [
+        "ischaemic heart disease"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "MI",
+      "meanings": [
+        "myocardial infarction",
+        "mitral insufficiency"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HF",
+      "meanings": [
+        "heart failure"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "CHF",
+      "meanings": [
+        "congestive heart failure"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HFrEF",
+      "meanings": [
+        "heart failure with reduced ejection fraction"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HFpEF",
+      "meanings": [
+        "heart failure with preserved ejection fraction"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "AF",
+      "meanings": [
+        "atrial fibrillation"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "CVA",
+      "meanings": [
+        "cerebrovascular accident"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "TIA",
+      "meanings": [
+        "transient ischaemic attack"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "DVT",
+      "meanings": [
+        "deep vein thrombosis"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PE",
+      "meanings": [
+        "pulmonary embolism",
+        "physical examination"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PVD",
+      "meanings": [
+        "peripheral vascular disease"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PAD",
+      "meanings": [
+        "peripheral arterial disease"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": true,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "LVH",
+      "meanings": [
+        "left ventricular hypertrophy"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "RHD",
+      "meanings": [
+        "rheumatic heart disease"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "ECG",
+      "meanings": [
+        "electrocardiogram"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "MS",
+      "meanings": [
+        "multiple sclerosis",
+        "mitral stenosis"
+      ],
+      "category": "Cardiovascular",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "DM",
+      "meanings": [
+        "diabetes mellitus"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "T1DM",
+      "meanings": [
+        "type 1 diabetes mellitus"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "T2DM",
+      "meanings": [
+        "type 2 diabetes mellitus"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "GDM",
+      "meanings": [
+        "gestational diabetes mellitus"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "DKA",
+      "meanings": [
+        "diabetic ketoacidosis"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HHS",
+      "meanings": [
+        "hyperosmolar hyperglycaemic state"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HbA1c",
+      "meanings": [
+        "glycated haemoglobin"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "FBG",
+      "meanings": [
+        "fasting blood glucose"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "RBG",
+      "meanings": [
+        "random blood glucose"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "FBS",
+      "meanings": [
+        "fasting blood sugar"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "RBS",
+      "meanings": [
+        "random blood sugar"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "OGTT",
+      "meanings": [
+        "oral glucose tolerance test"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "DPN",
+      "meanings": [
+        "diabetic peripheral neuropathy"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "LDL",
+      "meanings": [
+        "low-density lipoprotein cholesterol"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HDL",
+      "meanings": [
+        "high-density lipoprotein cholesterol"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "TFT",
+      "meanings": [
+        "thyroid function tests"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "TSH",
+      "meanings": [
+        "thyroid-stimulating hormone"
+      ],
+      "category": "Endocrine and metabolic",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "COPD",
+      "meanings": [
+        "chronic obstructive pulmonary disease"
+      ],
+      "category": "Respiratory",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "URTI",
+      "meanings": [
+        "upper respiratory tract infection"
+      ],
+      "category": "Respiratory",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "LRTI",
+      "meanings": [
+        "lower respiratory tract infection"
+      ],
+      "category": "Respiratory",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "CAP",
+      "meanings": [
+        "community-acquired pneumonia"
+      ],
+      "category": "Respiratory",
+      "ambiguous": false,
+      "matchCapitals": true,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PFT",
+      "meanings": [
+        "pulmonary function tests"
+      ],
+      "category": "Respiratory",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PEF",
+      "meanings": [
+        "peak expiratory flow"
+      ],
+      "category": "Respiratory",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "CXR",
+      "meanings": [
+        "chest X-ray"
+      ],
+      "category": "Respiratory",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "ARDS",
+      "meanings": [
+        "acute respiratory distress syndrome"
+      ],
+      "category": "Respiratory",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "OSA",
+      "meanings": [
+        "obstructive sleep apnoea"
+      ],
+      "category": "Respiratory",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PCP",
+      "meanings": [
+        "Pneumocystis pneumonia",
+        "primary care physician"
+      ],
+      "category": "Respiratory",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HIV",
+      "meanings": [
+        "human immunodeficiency virus"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "AIDS",
+      "meanings": [
+        "acquired immunodeficiency syndrome"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": true,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "ART",
+      "meanings": [
+        "antiretroviral therapy"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": true,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PMTCT",
+      "meanings": [
+        "prevention of mother-to-child transmission"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "TB",
+      "meanings": [
+        "tuberculosis"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PTB",
+      "meanings": [
+        "pulmonary tuberculosis"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "EPTB",
+      "meanings": [
+        "extrapulmonary tuberculosis"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "STI",
+      "meanings": [
+        "sexually transmitted infection"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "UTI",
+      "meanings": [
+        "urinary tract infection"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PID",
+      "meanings": [
+        "pelvic inflammatory disease"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HBV",
+      "meanings": [
+        "hepatitis B virus"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HCV",
+      "meanings": [
+        "hepatitis C virus"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "HBsAg",
+      "meanings": [
+        "hepatitis B surface antigen"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "mRDT",
+      "meanings": [
+        "malaria rapid diagnostic test"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "VL",
+      "meanings": [
+        "viral load"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "SSTI",
+      "meanings": [
+        "skin and soft tissue infection"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "C&S",
+      "meanings": [
+        "culture and sensitivity"
+      ],
+      "category": "Infectious disease",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "CKD",
+      "meanings": [
+        "chronic kidney disease"
+      ],
+      "category": "Renal and urological",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "AKI",
+      "meanings": [
+        "acute kidney injury"
+      ],
+      "category": "Renal and urological",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "ESRD",
+      "meanings": [
+        "end-stage renal disease"
+      ],
+      "category": "Renal and urological",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "eGFR",
+      "meanings": [
+        "estimated glomerular filtration rate"
+      ],
+      "category": "Renal and urological",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "RFT",
+      "meanings": [
+        "renal function tests"
+      ],
+      "category": "Renal and urological",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "U&E",
+      "meanings": [
+        "urea and electrolytes"
+      ],
+      "category": "Renal and urological",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "BPH",
+      "meanings": [
+        "benign prostatic hyperplasia"
+      ],
+      "category": "Renal and urological",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "LUTS",
+      "meanings": [
+        "lower urinary tract symptoms"
+      ],
+      "category": "Renal and urological",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PCR",
+      "meanings": [
+        "polymerase chain reaction",
+        "protein-creatinine ratio"
+      ],
+      "category": "Renal and urological",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "GERD",
+      "meanings": [
+        "gastro-oesophageal reflux disease"
+      ],
+      "category": "Gastrointestinal and liver",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PUD",
+      "meanings": [
+        "peptic ulcer disease"
+      ],
+      "category": "Gastrointestinal and liver",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "IBS",
+      "meanings": [
+        "irritable bowel syndrome"
+      ],
+      "category": "Gastrointestinal and liver",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "IBD",
+      "meanings": [
+        "inflammatory bowel disease"
+      ],
+      "category": "Gastrointestinal and liver",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "UGIB",
+      "meanings": [
+        "upper gastrointestinal bleeding"
+      ],
+      "category": "Gastrointestinal and liver",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "LFT",
+      "meanings": [
+        "liver function tests"
+      ],
+      "category": "Gastrointestinal and liver",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "NAFLD",
+      "meanings": [
+        "non-alcoholic fatty liver disease"
+      ],
+      "category": "Gastrointestinal and liver",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "GTCS",
+      "meanings": [
+        "generalised tonic-clonic seizure"
+      ],
+      "category": "Neurological and mental health",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "MMSE",
+      "meanings": [
+        "Mini-Mental State Examination"
+      ],
+      "category": "Neurological and mental health",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PTSD",
+      "meanings": [
+        "post-traumatic stress disorder"
+      ],
+      "category": "Neurological and mental health",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "GAD",
+      "meanings": [
+        "generalised anxiety disorder",
+        "glutamic acid decarboxylase"
+      ],
+      "category": "Neurological and mental health",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "OA",
+      "meanings": [
+        "osteoarthritis"
+      ],
+      "category": "Musculoskeletal",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "RA",
+      "meanings": [
+        "rheumatoid arthritis",
+        "room air"
+      ],
+      "category": "Musculoskeletal",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "SLE",
+      "meanings": [
+        "systemic lupus erythematosus"
+      ],
+      "category": "Musculoskeletal",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "LBP",
+      "meanings": [
+        "low back pain"
+      ],
+      "category": "Musculoskeletal",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "FBC",
+      "meanings": [
+        "full blood count"
+      ],
+      "category": "Haematology and oncology",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "CBC",
+      "meanings": [
+        "complete blood count"
+      ],
+      "category": "Haematology and oncology",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "Hb",
+      "meanings": [
+        "haemoglobin"
+      ],
+      "category": "Haematology and oncology",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "WCC",
+      "meanings": [
+        "white cell count"
+      ],
+      "category": "Haematology and oncology",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "ESR",
+      "meanings": [
+        "erythrocyte sedimentation rate"
+      ],
+      "category": "Haematology and oncology",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "CRP",
+      "meanings": [
+        "C-reactive protein"
+      ],
+      "category": "Haematology and oncology",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "INR",
+      "meanings": [
+        "international normalised ratio"
+      ],
+      "category": "Haematology and oncology",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "SCD",
+      "meanings": [
+        "sickle cell disease",
+        "sudden cardiac death"
+      ],
+      "category": "Haematology and oncology",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "Ca",
+      "meanings": [
+        "cancer",
+        "carcinoma",
+        "calcium"
+      ],
+      "category": "Haematology and oncology",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "LMP",
+      "meanings": [
+        "last menstrual period"
+      ],
+      "category": "Obstetrics and gynaecology",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "EDD",
+      "meanings": [
+        "expected date of delivery"
+      ],
+      "category": "Obstetrics and gynaecology",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "ANC",
+      "meanings": [
+        "antenatal care"
+      ],
+      "category": "Obstetrics and gynaecology",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PNC",
+      "meanings": [
+        "postnatal care"
+      ],
+      "category": "Obstetrics and gynaecology",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "PIH",
+      "meanings": [
+        "pregnancy-induced hypertension"
+      ],
+      "category": "Obstetrics and gynaecology",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "CS",
+      "meanings": [
+        "caesarean section",
+        "culture and sensitivity"
+      ],
+      "category": "Obstetrics and gynaecology",
+      "ambiguous": true,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "USS",
+      "meanings": [
+        "ultrasound scan"
+      ],
+      "category": "Imaging",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "CT",
+      "meanings": [
+        "computed tomography"
+      ],
+      "category": "Imaging",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    },
+    {
+      "abbr": "MRI",
+      "meanings": [
+        "magnetic resonance imaging"
+      ],
+      "category": "Imaging",
+      "ambiguous": false,
+      "matchCapitals": false,
+      "note": "",
+      "reviewed": true
+    }
+  ],
+  "doNotUse": [
+    {
+      "written": "U or u (for unit)",
+      "risk": "Mistaken for 0, 4 or cc",
+      "writeInstead": "unit",
+      "tokens": [
+        "u"
+      ],
+      "reviewed": true
+    },
+    {
+      "written": "IU",
+      "risk": "Mistaken for IV or the number 10",
+      "writeInstead": "international unit",
+      "tokens": [
+        "iu"
+      ],
+      "reviewed": true
+    },
+    {
+      "written": "QD, Q.D., qd",
+      "risk": "Mistaken for QID",
+      "writeInstead": "daily or once daily",
+      "tokens": [
+        "qd"
+      ],
+      "reviewed": true
+    },
+    {
+      "written": "QOD",
+      "risk": "Mistaken for QD or QID",
+      "writeInstead": "every other day",
+      "tokens": [
+        "qod"
+      ],
+      "reviewed": true
+    },
+    {
+      "written": "Trailing zero (5.0 mg)",
+      "risk": "Read as 50 mg",
+      "writeInstead": "Write 5 mg",
+      "tokens": [],
+      "reviewed": true
+    },
+    {
+      "written": "No leading zero (.5 mg)",
+      "risk": "Read as 5 mg",
+      "writeInstead": "Write 0.5 mg",
+      "tokens": [],
+      "reviewed": true
+    },
+    {
+      "written": "MSO4, MgSO4",
+      "risk": "Morphine sulphate and magnesium sulphate are confused",
+      "writeInstead": "Write the full name",
+      "tokens": [
+        "mso4",
+        "mgso4"
+      ],
+      "reviewed": true
+    },
+    {
+      "written": "µg",
+      "risk": "Mistaken for mg",
+      "writeInstead": "mcg",
+      "tokens": [],
+      "reviewed": true
+    },
+    {
+      "written": "cc",
+      "risk": "Mistaken for U (units)",
+      "writeInstead": "mL",
+      "tokens": [
+        "cc"
+      ],
+      "reviewed": true
+    },
+    {
+      "written": "D/C",
+      "risk": "Discharge or discontinue",
+      "writeInstead": "Write the word in full",
+      "tokens": [
+        "d/c"
+      ],
+      "reviewed": true
+    },
+    {
+      "written": "HS",
+      "risk": "Half-strength or at bedtime",
+      "writeInstead": "at night, or half-strength",
+      "tokens": [
+        "hs"
+      ],
+      "reviewed": true
+    },
+    {
+      "written": "TIW",
+      "risk": "Three times a week or twice a week",
+      "writeInstead": "three times weekly",
+      "tokens": [
+        "tiw"
+      ],
+      "reviewed": true
+    },
+    {
+      "written": "SQ or SC",
+      "risk": "SQ is mistaken for \"5 every\"",
+      "writeInstead": "subcutaneous",
+      "tokens": [
+        "sq",
+        "sc"
+      ],
+      "reviewed": true
+    },
+    {
+      "written": "OD (reviewer decision)",
+      "risk": "Once daily or right eye (OD/OS/OU are eye terms)",
+      "writeInstead": "once daily, or right eye",
+      "tokens": [
+        "od"
+      ],
+      "reviewed": true
+    }
+  ]
+}
