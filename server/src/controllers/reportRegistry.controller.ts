@@ -6,6 +6,7 @@ import { AuthRequest } from '../middleware/auth';
 import { userNames } from '../lib/billingOps';
 import { addReportSheet, type Report } from './billingReports.controller';
 import { addDefinitionsSheet, appliedFilters, canOpen, findReport, mayUse, reportsFor, type ReportDefinition } from '../lib/reportRegistry';
+import { hubSummary } from '../lib/hubSummary';
 import '../lib/reportDefinitions';
 
 const denied = (res: Response, what: string) => { res.status(403).json({ error: `You don’t have permission to ${what}.` }); };
@@ -20,6 +21,13 @@ export function listRegisteredReports(req: AuthRequest, res: Response): void {
       lineList: !!d.lineList && mayUse(req.userRole, d.roles.lineList ?? []), canSeeNames: mayUse(req.userRole, d.roles.names ?? []),
     })),
   });
+}
+
+// GET /reports/hub/summary?from=&to=: the figures behind the overview's tiles, each read from the report it opens, for the reports this person may open.
+export async function getHubSummary(req: AuthRequest, res: Response): Promise<void> {
+  const out = await hubSummary(req.userRole, req.query as Record<string, unknown>);
+  if ('error' in out) { res.status(400).json({ error: out.error }); return; }
+  res.json(out);
 }
 
 // Every export is logged before the file is sent; if the log cannot be written, nothing is sent.

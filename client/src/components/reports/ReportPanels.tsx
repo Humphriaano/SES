@@ -22,7 +22,7 @@ export function Panel({ title, note, aside, children }: { title: string; note?: 
 }
 
 interface BarRow { key: string; label: string; sub?: string; value: number }
-export function BarList({ rows, empty }: { rows: BarRow[]; empty: string }) {
+export function BarList({ rows, empty, format }: { rows: BarRow[]; empty: string; format?: (n: number) => string }) {
   if (rows.length === 0) return <p className="rp-empty">{empty}</p>;
   const max = Math.max(...rows.map(r => r.value));
   return (
@@ -31,7 +31,7 @@ export function BarList({ rows, empty }: { rows: BarRow[]; empty: string }) {
         <li key={r.key}>
           <div className="rp-bar-text">
             <span className="rp-bar-label">{r.label}{r.sub && <span className="rp-sub"> · {r.sub}</span>}</span>
-            <b className="rp-bar-value">{r.value.toLocaleString()}</b>
+            <b className="rp-bar-value">{format ? format(r.value) : r.value.toLocaleString()}</b>
           </div>
           <div className="rp-track" aria-hidden="true"><div className="rp-fill" style={{ width: `${barFraction(r.value, max) * 100}%` }} /></div>
         </li>

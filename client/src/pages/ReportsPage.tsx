@@ -13,6 +13,7 @@ import AttendancePanel from '../components/reports/AttendancePanel';
 import ChronicTab from '../components/reports/ChronicTab';
 import LabTab, { type LabAccess } from '../components/reports/LabTab';
 import type { View as LabView } from '../lib/labReport';
+import OverviewSummary from '../components/reports/OverviewSummary';
 import PharmacyTab, { type PharmacyAccess } from '../components/reports/PharmacyTab';
 import type { View as PharmacyView } from '../lib/pharmacyReport';
 import { readSaved, writeSaved, type Overview } from '../lib/populationReport';
@@ -176,6 +177,8 @@ export default function ReportsPage() {
         </div>
       )}
       {!current?.error && showingCopy && !loading && savedAt && <div className="rp-note" role="status">Showing the copy saved {when(savedAt)}.</div>}
+
+      {!problem && <OverviewSummary period={period} onOpen={next => chooseTab(next as Tab)} />}
 
       <div className="reports-kpis" aria-busy={loading}>
         {kpis.length ? kpis.map(k => <KpiCard key={k.label} k={k} />) : Array.from({ length: 6 }, (_, i) => <KpiSkeleton key={i} />)}

@@ -49,7 +49,7 @@ import { mySession, openSession, closeSession, listSessions, deskOverview } from
 import { runReport, reportCashiers } from '../controllers/billingReports.controller';
 import { authenticate, requireRoles } from '../middleware/auth';
 import { CLINICAL_ROLES, REPORT_ROLES } from '../lib/clinicalAccess';
-import { listRegisteredReports, runRegisteredLines, runRegisteredReport } from '../controllers/reportRegistry.controller';
+import { getHubSummary, listRegisteredReports, runRegisteredLines, runRegisteredReport } from '../controllers/reportRegistry.controller';
 import { CONDITION_EDITORS, createChronicCondition, listChronicConditions, updateChronicCondition } from '../controllers/chronicConditions.controller';
 
 const router = Router();
@@ -250,6 +250,7 @@ router.get('/reports/population/patients', populationPatients);
 // Registered reports (billing, stock, and the hub's own as they are added) come after the population routes so those keep their own paths.
 // Each report declares its own roles, so the login is the only guard here.
 router.get('/reports/registry', authenticate, listRegisteredReports);
+router.get('/reports/hub/summary', authenticate, getHubSummary);   // before the :area/:name routes, which would otherwise answer it
 router.get('/reports/:area/:name', authenticate, runRegisteredReport);
 router.get('/reports/:area/:name/lines', authenticate, runRegisteredLines);
 

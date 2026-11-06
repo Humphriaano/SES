@@ -137,3 +137,18 @@ a.rp-kpi:hover,a.rp-kpi:focus-visible{border-color:var(--selection-accent);box-s
 .rp-conds b{font-weight:500;color:var(--text-heading);font-size:14px}
 .rp-cond-form{display:flex;flex-direction:column;gap:10px;width:100%;padding:6px 0 10px}
 .rp-cond-form label{display:block;margin-bottom:5px;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-subtle)}
+
+/* Overview summary: one tile per report area, and the billing snapshot */
+.rp-glance{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.rp-tile{display:flex;flex-direction:column;justify-content:flex-start;width:100%;text-align:left;font:inherit;color:inherit;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;min-width:0;box-shadow:0 1px 3px var(--shadow-sm);cursor:pointer}
+.rp-tile:hover,.rp-tile:focus-visible{border-color:var(--selection-accent);box-shadow:0 0 0 3px var(--selection-glow);outline:0}
+.rp-tile-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;color:var(--text-heading)}
+.rp-tile-head b{font-weight:500;font-size:14px}
+.rp-tile dl{margin:0;display:grid;gap:6px}
+.rp-tile dl div{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:12.5px;border-top:1px solid var(--border-light);padding-top:6px}
+.rp-tile dl div:first-child{border-top:0;padding-top:0}
+.rp-tile dt{color:var(--text-muted);min-width:0}
+.rp-tile dd{margin:0;font-weight:500;color:var(--attention-text);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rp-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+@media(max-width:1100px){.rp-glance{grid-template-columns:repeat(2,minmax(0,1fr))}.rp-three{grid-template-columns:1fr}}
+@media(max-width:560px){.rp-glance{grid-template-columns:1fr}}

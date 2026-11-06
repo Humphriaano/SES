@@ -12,7 +12,7 @@ import {
 } from '../../lib/pharmacyReport';
 
 interface Col { key: string; header: string; type: string }
-interface Table { title: string; period: string; columns: Col[]; rows: Record<string, unknown>[]; totals: Record<string, unknown> | null; summary: { label: string; value: number | string }[]; definitions: string[] }
+interface Table { title: string; period: string; columns: Col[]; rows: Record<string, unknown>[]; totals: Record<string, unknown> | null; summary: { label: string; value: number | string }[]; definitions?: string[] }
 export interface PharmacyAccess { lineList: boolean; canSeeNames: boolean }
 const PAGE = 10, BASE: Record<View, string> = { dispensed: '/reports/pharmacy/dispensed', prescriptions: '/reports/pharmacy/prescriptions' };
 const VIEW_TEXT: Record<View, { tab: string; title: string; sub: string; file: string }> = {
@@ -165,7 +165,6 @@ function PharmacyView({ view, period, access, filters, setFilters }: { view: Vie
         </section>
       )}
 
-      {table && <section className="rp-card" aria-label="Definitions"><div className="rp-card-head"><h2>Definitions</h2></div><ul className="rp-defs">{table.definitions.map(d => <li key={d}>{d}</li>)}</ul></section>}
     </>
   );
 }

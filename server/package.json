@@ -26,7 +26,8 @@
     "test:attendance": "node tests/attendance.reports.cjs",
     "test:chronic": "node tests/chronic.reports.cjs",
     "test:lab": "node tests/lab.reports.cjs",
-    "test:pharmacy-reports": "node tests/pharmacy.reports.cjs"
+    "test:pharmacy-reports": "node tests/pharmacy.reports.cjs",
+    "test:hub-summary": "node tests/hub.summary.cjs"
   },
   "keywords": [],
   "author": "",
