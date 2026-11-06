@@ -4,6 +4,7 @@ import { buildStockReport } from '../controllers/stockReports.controller';
 import { StockError } from './stock';
 import { CLINICAL_ROLES, REPORT_ROLES } from './clinicalAccess';
 import { ATTENDANCE_DEFINITIONS, attendanceLines, attendanceReport } from './attendanceReports';
+import { CHRONIC_DEFINITIONS, chronicLines, chronicOverdue, chronicRegister } from './chronicReports';
 
 // Every report the Reports hub can open, with who may see it. Importing this file registers them.
 // The billing and stock reports are wrapped as they are: the same queries, the same figures, the same roles as their own screens.
@@ -100,4 +101,19 @@ registerReport({
   filters: ['from', 'to', 'servicePoint', 'sex', 'ageBand', 'groupBy', 'visit', 'names'],
   roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
   run: attendanceReport, lineList: { run: attendanceLines },
+});
+
+// Chronic disease (Reports Hub stage 4). Counts are open to everyone who may open the Reports page; the patients behind them are for the clinical roles.
+const CHRONIC_FILTERS = ['from', 'to', 'condition', 'measure', 'status', 'seen', 'control', 'names'];
+registerReport({
+  area: 'chronic', name: 'register', title: 'Chronic disease register', description: 'Active, new, resolved, seen and overdue patients per condition, with blood pressure control for hypertension.',
+  definitions: CHRONIC_DEFINITIONS, filters: CHRONIC_FILTERS,
+  roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
+  run: chronicRegister, lineList: { run: (q, o) => chronicLines('register', q, o) },
+});
+registerReport({
+  area: 'chronic', name: 'overdue', title: 'Overdue and defaulters', description: 'Patients with a chronic condition who have not been seen in 90 days, and how long it has been.',
+  definitions: CHRONIC_DEFINITIONS, filters: CHRONIC_FILTERS,
+  roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
+  run: chronicOverdue, lineList: { run: (q, o) => chronicLines('overdue', q, o) },
 });

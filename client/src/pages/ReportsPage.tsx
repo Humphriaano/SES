@@ -10,6 +10,7 @@ import { canAccessModule } from '../lib/moduleAccess';
 import { DEFAULT_PERIOD, PERIOD_PRESETS, periodFor, periodId, periodProblem, rangeLabel, type PeriodChoice, type PeriodKey } from '../lib/reportPeriod';
 import PeriodBar from '../components/reports/PeriodBar';
 import AttendancePanel from '../components/reports/AttendancePanel';
+import ChronicTab from '../components/reports/ChronicTab';
 import { readSaved, writeSaved, type Overview } from '../lib/populationReport';
 import { BILLING_CSS } from '../components/billing/ui';
 import ReportsAIPanel from '../components/reports/ReportsAIPanel';
@@ -17,6 +18,8 @@ import { ChronicPanel, DiagnosesPanel, InvestigationsPanel, MedicinesPanel, Pati
 import './ReportsPage.css';
 
 const PERIOD_KEY = 'ses.reports.period', TAB_KEY = 'ses.reports.tab';
+type Tab = 'overview' | 'attendance' | 'chronic';
+interface Access { lineList: boolean; canSeeNames: boolean }
 function savedChoice(): PeriodChoice {
   try {
     const raw = JSON.parse(localStorage.getItem(PERIOD_KEY) ?? 'null') as { key?: string; from?: string; to?: string } | null;
@@ -60,8 +63,8 @@ export default function ReportsPage() {
   const [reloads, setReloads] = useState(0);
   const [result, setResult] = useState<Result | null>(null);
   const [exporting, setExporting] = useState(false);
-  const [tabChoice, setTabChoice] = useState<'overview' | 'attendance'>(() => { try { return localStorage.getItem(TAB_KEY) === 'attendance' ? 'attendance' : 'overview'; } catch { return 'overview'; } });
-  const [attendance, setAttendance] = useState<{ lineList: boolean; canSeeNames: boolean } | null>(null);   // set when the server says this person may open attendance
+  const [tabChoice, setTabChoice] = useState<Tab>(() => { try { const t = localStorage.getItem(TAB_KEY); return t === 'attendance' || t === 'chronic' ? t : 'overview'; } catch { return 'overview'; } });
+  const [access, setAccess] = useState<Partial<Record<Exclude<Tab, 'overview'>, Access>>>({});   // the tabs the server says this person may open
 
   const problem = choice.key === 'custom' ? periodProblem(choice.from, choice.to) : '';
   const id = periodId(choice);
@@ -83,7 +86,10 @@ export default function ReportsPage() {
   useEffect(() => {   // which tabs this person may open comes from the server; if that cannot be read, the overview alone is shown
     let alive = true;
     api.get<{ reports: { area: string; name: string; lineList?: boolean; canSeeNames?: boolean }[] }>('/reports/registry')
-      .then(r => { const a = r.data.reports.find(x => x.area === 'attendance' && x.name === 'attendance'); if (alive) setAttendance(a ? { lineList: !!a.lineList, canSeeNames: !!a.canSeeNames } : null); })
+      .then(r => {
+        const open = (area: string, name: string): Access | undefined => { const a = r.data.reports.find(x => x.area === area && x.name === name); return a ? { lineList: !!a.lineList, canSeeNames: !!a.canSeeNames } : undefined; };
+        if (alive) setAccess({ attendance: open('attendance', 'attendance'), chronic: open('chronic', 'register') });
+      })
       .catch(() => { /* the overview does not depend on it */ });
     return () => { alive = false; };
   }, [userId]);
@@ -98,7 +104,7 @@ export default function ReportsPage() {
     setChoice(next);
     try { localStorage.setItem(PERIOD_KEY, JSON.stringify(next)); } catch { /* the choice just is not remembered */ }
   }
-  function chooseTab(next: 'overview' | 'attendance') { setTabChoice(next); try { localStorage.setItem(TAB_KEY, next); } catch { /* not remembered */ } }
+  function chooseTab(next: Tab) { setTabChoice(next); try { localStorage.setItem(TAB_KEY, next); } catch { /* not remembered */ } }
   function setDate(which: 'from' | 'to', value: string) {
     const next = { ...choice, [which]: value };
     setChoice(next);
@@ -115,7 +121,7 @@ export default function ReportsPage() {
   const when = (iso: string) => new Date(iso).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
   const showingCopy = !!data && !current?.data;   // saved figures on screen while a fresh copy loads, or after it failed
   const dim = loading && !!data;
-  const tab = attendance && tabChoice === 'attendance' ? 'attendance' : 'overview';
+  const tab: Tab = tabChoice !== 'overview' && access[tabChoice] ? tabChoice : 'overview';
 
   return (
     <div className="reports-page clinical-module">
@@ -137,13 +143,15 @@ export default function ReportsPage() {
       </div>
 
       <PeriodBar choice={choice} problem={problem} onPick={pick} onDate={setDate} />
-      {attendance && (
+      {(access.attendance || access.chronic) && (
         <div role="tablist" aria-label="Report area" className="rp-tabs">
           <button type="button" role="tab" aria-selected={tab === 'overview'} onClick={() => chooseTab('overview')}>Overview</button>
-          <button type="button" role="tab" aria-selected={tab === 'attendance'} onClick={() => chooseTab('attendance')}>Attendance</button>
+          {access.attendance && <button type="button" role="tab" aria-selected={tab === 'attendance'} onClick={() => chooseTab('attendance')}>Attendance</button>}
+          {access.chronic && <button type="button" role="tab" aria-selected={tab === 'chronic'} onClick={() => chooseTab('chronic')}>Chronic disease</button>}
         </div>
       )}
-      {tab === 'attendance' && attendance && !problem && <AttendancePanel period={{ from: choice.from, to: choice.to }} canLines={attendance.lineList} canSeeNames={attendance.canSeeNames} />}
+      {tab === 'attendance' && access.attendance && !problem && <AttendancePanel period={{ from: choice.from, to: choice.to }} canLines={access.attendance.lineList} canSeeNames={access.attendance.canSeeNames} />}
+      {tab === 'chronic' && access.chronic && !problem && <ChronicTab period={{ from: choice.from, to: choice.to }} canLines={access.chronic.lineList} canSeeNames={access.chronic.canSeeNames} isAdmin={hasRole(user?.role, 'admin')} />}
 
       {tab === 'overview' && (<>
       {current?.error && (

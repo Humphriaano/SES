@@ -64,6 +64,8 @@ Diabetes control is not reported: the glucose readings do not record whether the
 - `npm run test:report-period` (client): period presets across month and year ends, custom range problems, waiting times and shares.
 - The page was driven in a browser against sample server answers: period changes, an incomplete custom range sending nothing, a failed refresh showing the saved copy with a way to retry, the export asking for the same period, both themes and a phone width.
 
+_Stage 4 moved the chronic disease figures into `lib/chronic.ts` and the condition list into the database; see [report-chronic.md](report-chronic.md). The text above describes how the Overview first defined them._
+
 ## Not built
 
 - Comparison with the previous period, trends over time, or outbreak alerts.

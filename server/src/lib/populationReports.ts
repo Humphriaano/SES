@@ -1,117 +1,13 @@
 import { Prisma } from '@prisma/client';
 import prisma from './prisma';
 import type { Report } from '../controllers/billingReports.controller';
+import { within, sqlWithin, type Period } from './reportPeriod';
+import { chronicSummary, type ChronicRow, type ChronicSummary } from './chronic';
+
+export { parsePeriod, type Period } from './reportPeriod';
+export { chronicSummary, type ChronicRow, type ChronicSummary };
 
 // Population figures for the Reports page and its Excel export. Aggregates only: no patient is ever named here.
-
-export interface Period { from: Date | null; to: Date | null; fromDay: string | null; toDay: string | null; label: string }   // `to` is the start of the day after the last day, so a range is [from, to)
-
-const DAY = /^(\d{4})-(\d{2})-(\d{2})$/;
-function parseDay(value: string): Date | null {
-  const m = DAY.exec(value);
-  if (!m) return null;
-  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
-  const date = new Date(y, mo - 1, d);
-  return date.getFullYear() === y && date.getMonth() === mo - 1 && date.getDate() === d ? date : null;   // rejects 31 February
-}
-const dayText = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-const shortDate = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-
-// No dates means all time. Dates are whole local days, both ends included.
-export function parsePeriod(q: Record<string, unknown>): Period | { error: string } {
-  const from = typeof q['from'] === 'string' ? q['from'] : '', to = typeof q['to'] === 'string' ? q['to'] : '';
-  if (!from && !to) return { from: null, to: null, fromDay: null, toDay: null, label: 'All time' };
-  if (!from || !to) return { error: 'Give both a start date and an end date.' };
-  const start = parseDay(from), last = parseDay(to);
-  if (!start || !last) return { error: 'Dates must be real days written as YYYY-MM-DD.' };
-  if (last < start) return { error: 'The end date is before the start date.' };
-  const end = new Date(last.getFullYear(), last.getMonth(), last.getDate() + 1);
-  return { from: start, to: end, fromDay: dayText(start), toDay: dayText(last), label: from === to ? shortDate(start) : `${shortDate(start)} to ${shortDate(last)}` };
-}
-
-const within = (p: Period): Prisma.DateTimeFilter | undefined => (p.from && p.to ? { gte: p.from, lt: p.to } : undefined);
-const sqlWithin = (column: string, p: Period): Prisma.Sql => (p.from && p.to ? Prisma.sql`AND ${Prisma.raw(column)} >= ${p.from} AND ${Prisma.raw(column)} < ${p.to}` : Prisma.empty);
-
-// ── Chronic diseases ───────────────────────────────────────────────────────
-// A starter list for clinical review. A diagnosis counts when its ICD-11 code starts with one of the prefixes (so every more
-// specific code under it counts too) and does not start with an excluded one. Custom diagnoses without an ICD-11 code are not matched.
-export interface ChronicCondition { key: string; label: string; prefixes: string[]; exclude?: string[] }
-export const CHRONIC_CONDITIONS: ChronicCondition[] = [
-  { key: 'hypertension', label: 'Hypertension', prefixes: ['BA00', 'BA01', 'BA02', 'BA04'] },
-  { key: 'diabetes', label: 'Diabetes mellitus', prefixes: ['5A10', '5A11', '5A13', '5A14'] },
-  { key: 'hiv', label: 'HIV disease', prefixes: ['1C60', '1C61', '1C62'] },
-  { key: 'asthma', label: 'Asthma', prefixes: ['CA23'] },
-  { key: 'copd', label: 'Chronic obstructive pulmonary disease', prefixes: ['CA22'] },
-  { key: 'epilepsy', label: 'Epilepsy', prefixes: ['8A60', '8A61', '8A62'] },
-  { key: 'heart_failure', label: 'Heart failure', prefixes: ['BD10', 'BD11'] },
-  { key: 'ckd', label: 'Chronic kidney disease', prefixes: ['GB61'] },
-  { key: 'sickle_cell', label: 'Sickle cell disease', prefixes: ['3A51'], exclude: ['3A51.0'] },   // 3A51.0 is the trait, not the disease
-  { key: 'depression', label: 'Depression', prefixes: ['6A70', '6A71'] },
-];
-export const BP_LIMITS = { systolic: 140, diastolic: 90, recentDays: 90 } as const;
-export const SEEN_DAYS = 90;
-
-export interface ChronicRow {
-  key: string; label: string; active: number; newInPeriod: number;
-  female: number; male: number; other: number; under18: number; adults: number; older: number;
-  seenRecently: number; notSeenRecently: number;
-  bpControl: { controlled: number; notControlled: number; noRecentReading: number } | null;
-}
-export interface ChronicSummary { rows: ChronicRow[]; patientsWithAny: number; patientsWithSeveral: number; seenDays: number; bp: typeof BP_LIMITS }
-
-interface ChronicRaw { grp: string; patientId: string; active: boolean; firstRecorded: Date; gender: string; age: number; lastVisit: Date | null; sys: number | null; dia: number | null; bpAt: Date | null }
-
-export async function chronicSummary(p: Period, now = new Date()): Promise<ChronicSummary> {
-  const defs = CHRONIC_CONDITIONS.flatMap(c => c.prefixes.map(prefix => Prisma.sql`(${c.key}::text, ${prefix}::text)`));
-  const excludes = CHRONIC_CONDITIONS.flatMap(c => (c.exclude ?? []).map(prefix => Prisma.sql`(${c.key}::text, ${prefix}::text)`));
-  const raw = await prisma.$queryRaw<ChronicRaw[]>`
-    WITH defs(key, prefix) AS (VALUES ${Prisma.join(defs)}),
-    skip(key, prefix) AS (VALUES ${excludes.length ? Prisma.join(excludes) : Prisma.sql`(NULL::text, NULL::text)`}),
-    dx AS (
-      SELECT pd."patientId", d.key AS grp, MIN(pd."createdAt") AS first_recorded, BOOL_OR(pd."resolvedAt" IS NULL) AS active
-      FROM "PatientDiagnosis" pd
-      JOIN "ICD11Code" c ON c.id = pd."icd11Id"
-      JOIN defs d ON c.code LIKE d.prefix || '%'
-      WHERE NOT EXISTS (SELECT 1 FROM skip s WHERE s.key = d.key AND c.code LIKE s.prefix || '%')
-      GROUP BY pd."patientId", d.key
-    )
-    SELECT dx.grp, dx."patientId", dx.active, dx.first_recorded AS "firstRecorded", p.gender::text AS gender,
-      date_part('year', age(CURRENT_DATE, p."dateOfBirth"))::int AS age,
-      (SELECT MAX(e."createdAt") FROM "Encounter" e WHERE e."patientId" = dx."patientId") AS "lastVisit",
-      lb.sys, lb.dia, lb."recordedAt" AS "bpAt"
-    FROM dx
-    JOIN "Patient" p ON p.id = dx."patientId"
-    LEFT JOIN LATERAL (
-      SELECT v."bloodPressureSystolic" AS sys, v."bloodPressureDiastolic" AS dia, v."recordedAt"
-      FROM "Vital" v
-      WHERE v."patientId" = dx."patientId" AND dx.grp = 'hypertension'
-        AND v."bloodPressureSystolic" IS NOT NULL AND v."bloodPressureDiastolic" IS NOT NULL
-      ORDER BY v."recordedAt" DESC LIMIT 1
-    ) lb ON TRUE`;
-
-  const seenSince = now.getTime() - SEEN_DAYS * 86_400_000, bpSince = now.getTime() - BP_LIMITS.recentDays * 86_400_000;
-  const perPatient = new Map<string, number>();
-  const rows = CHRONIC_CONDITIONS.map((c): ChronicRow => {
-    const mine = raw.filter(r => r.grp === c.key), active = mine.filter(r => r.active);
-    const row: ChronicRow = {
-      key: c.key, label: c.label, active: active.length,
-      newInPeriod: mine.filter(r => !p.from || (r.firstRecorded >= p.from && r.firstRecorded < p.to!)).length,
-      female: active.filter(r => r.gender === 'FEMALE').length, male: active.filter(r => r.gender === 'MALE').length,
-      other: active.filter(r => r.gender !== 'FEMALE' && r.gender !== 'MALE').length,
-      under18: active.filter(r => r.age < 18).length, adults: active.filter(r => r.age >= 18 && r.age < 65).length, older: active.filter(r => r.age >= 65).length,
-      seenRecently: active.filter(r => r.lastVisit && r.lastVisit.getTime() >= seenSince).length, notSeenRecently: 0, bpControl: null,
-    };
-    row.notSeenRecently = row.active - row.seenRecently;
-    if (c.key === 'hypertension') {
-      const measured = active.filter(r => r.bpAt && r.bpAt.getTime() >= bpSince && r.sys !== null && r.dia !== null);
-      const controlled = measured.filter(r => r.sys! < BP_LIMITS.systolic && r.dia! < BP_LIMITS.diastolic).length;
-      row.bpControl = { controlled, notControlled: measured.length - controlled, noRecentReading: row.active - measured.length };
-    }
-    for (const r of active) perPatient.set(r.patientId, (perPatient.get(r.patientId) ?? 0) + 1);
-    return row;
-  });
-  return { rows, patientsWithAny: perPatient.size, patientsWithSeveral: [...perPatient.values()].filter(n => n > 1).length, seenDays: SEEN_DAYS, bp: BP_LIMITS };
-}
 
 // ── Patients ───────────────────────────────────────────────────────────────
 export const AGE_BANDS = ['0-4', '5-17', '18-35', '36-50', '51-64', '65+'] as const;

@@ -110,3 +110,30 @@ a.rp-kpi:hover,a.rp-kpi:focus-visible{border-color:var(--selection-accent);box-s
 .rp-pager{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
 .rp-defs{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text-body)}
 @media print{.rp-tabs{display:none!important}.rp-att-grid{display:block}}
+
+/* Chronic diseases. */
+.rp-subtabs{display:flex;gap:8px;flex-wrap:wrap}
+.rp-subtabs button{height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--btn2-line);background:var(--btn2);color:var(--text-body);font:inherit;font-size:13px;font-weight:500;cursor:pointer}
+.rp-subtabs button[aria-selected="true"]{background:var(--ws-chip-on);color:var(--ws-chip-on-text);border-color:var(--attention-border)}
+.rp-register th:first-child,.rp-register td:first-child{min-width:150px}
+.rp-ctl{text-align:left!important;font-size:12.5px;color:var(--text-body);min-width:170px}
+.rp-two{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:14px;align-items:start}
+@media(max-width:1100px){.rp-two{grid-template-columns:minmax(0,1fr)}}
+.rp-2seg,.rp-3seg{display:flex;height:10px;background:var(--bg-surface-2)}
+.rp-3seg{height:16px;margin:4px 0 12px}
+.rp-2seg .rp-fill,.rp-3seg .rp-fill{border-radius:0}
+.rp-late{background:var(--attention-border);height:100%}
+.rp-bad{background:var(--clinical-abnormal);height:100%}
+.rp-none{background:var(--text-faint);height:100%}
+.rp-sw{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--selection-accent);margin:0 5px 0 0;vertical-align:-1px}
+.rp-sw.late{background:var(--attention-border);margin-left:12px}.rp-sw.bad{background:var(--clinical-abnormal)}.rp-sw.none{background:var(--text-faint)}
+.rp-legend{margin:12px 0 0;font-size:12px;color:var(--text-muted)}
+.rp-legend-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text-body)}
+.rp-legend-list li{display:flex;align-items:center;gap:6px}.rp-legend-list li .rp-cell,.rp-legend-list li > span:last-child{margin-left:auto}
+.rp-rose{color:var(--clinical-abnormal);font-weight:500}
+.rp-conds{list-style:none;margin:0;padding:0}
+.rp-conds li{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;padding:12px 0;border-top:1px solid var(--border-light)}
+.rp-conds li.off b{color:var(--text-muted)}
+.rp-conds b{font-weight:500;color:var(--text-heading);font-size:14px}
+.rp-cond-form{display:flex;flex-direction:column;gap:10px;width:100%;padding:6px 0 10px}
+.rp-cond-form label{display:block;margin-bottom:5px;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-subtle)}

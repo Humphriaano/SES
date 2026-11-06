@@ -1058,3 +1058,37 @@ model ReportExportLog {
   @@index([at])
   @@index([userId, at])
 }
+
+// The chronic conditions the reports count, matched on ICD-11 code prefixes. Kept as data so a clinical lead can review and change the
+// list without a code change. Editing a condition clears its review; every change is kept in ChronicConditionHistory.
+model ChronicCondition {
+  id           String    @id @default(uuid())
+  key          String    @unique              // a short stable name the reports and rules refer to; never changed
+  label        String
+  prefixes     String[]                       // a diagnosis counts when its ICD-11 code starts with one of these
+  exclude      String[]                       // ...unless it starts with one of these
+  active       Boolean   @default(true)       // switched off, a condition drops out of every report
+  sortOrder    Int       @default(0)
+  reviewedAt   DateTime?                      // when a clinical lead last confirmed the definition
+  reviewedById String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  updatedById  String?
+
+  history ChronicConditionHistory[]
+}
+
+// Append-only: a database trigger refuses any change to or removal of a row.
+model ChronicConditionHistory {
+  id          String   @id @default(uuid())
+  at          DateTime @default(now())
+  conditionId String
+  userId      String
+  action      String                           // CREATE | UPDATE | REVIEW
+  before      Json?
+  after       Json?
+
+  condition ChronicCondition @relation(fields: [conditionId], references: [id])
+
+  @@index([conditionId, at])
+}

@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import prisma from './prisma';
-import { parsePeriod, type Period } from './populationReports';
+import { parsePeriod, type Period } from './reportPeriod';
 import { userNames } from './billingOps';
 import type { Report } from '../controllers/billingReports.controller';
 

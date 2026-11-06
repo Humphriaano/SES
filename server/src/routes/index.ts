@@ -50,6 +50,7 @@ import { runReport, reportCashiers } from '../controllers/billingReports.control
 import { authenticate, requireRoles } from '../middleware/auth';
 import { CLINICAL_ROLES, REPORT_ROLES } from '../lib/clinicalAccess';
 import { listRegisteredReports, runRegisteredLines, runRegisteredReport } from '../controllers/reportRegistry.controller';
+import { CONDITION_EDITORS, createChronicCondition, listChronicConditions, updateChronicCondition } from '../controllers/chronicConditions.controller';
 
 const router = Router();
 router.use('/pharmacy-stock', stockRoutes);
@@ -251,5 +252,10 @@ router.get('/reports/population/patients', populationPatients);
 router.get('/reports/registry', authenticate, listRegisteredReports);
 router.get('/reports/:area/:name', authenticate, runRegisteredReport);
 router.get('/reports/:area/:name/lines', authenticate, runRegisteredLines);
+
+// The chronic condition list the reports count: clinical roles read it, only an admin changes it.
+router.get('/chronic-conditions', authenticate, requireRoles(...CLINICAL_ROLES), listChronicConditions);
+router.post('/chronic-conditions', authenticate, requireRoles(...CONDITION_EDITORS), createChronicCondition);
+router.patch('/chronic-conditions/:id', authenticate, requireRoles(...CONDITION_EDITORS), updateChronicCondition);
 
 export default router;
