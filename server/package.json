@@ -27,7 +27,8 @@
     "test:chronic": "node tests/chronic.reports.cjs",
     "test:lab": "node tests/lab.reports.cjs",
     "test:pharmacy-reports": "node tests/pharmacy.reports.cjs",
-    "test:hub-summary": "node tests/hub.summary.cjs"
+    "test:hub-summary": "node tests/hub.summary.cjs",
+    "test:hia2": "node tests/hia2.reports.cjs"
   },
   "keywords": [],
   "author": "",

@@ -14,6 +14,7 @@ import ChronicTab from '../components/reports/ChronicTab';
 import LabTab, { type LabAccess } from '../components/reports/LabTab';
 import type { View as LabView } from '../lib/labReport';
 import OverviewSummary from '../components/reports/OverviewSummary';
+import Hia2Tab from '../components/reports/Hia2Tab';
 import PharmacyTab, { type PharmacyAccess } from '../components/reports/PharmacyTab';
 import type { View as PharmacyView } from '../lib/pharmacyReport';
 import { readSaved, writeSaved, type Overview } from '../lib/populationReport';
@@ -23,7 +24,7 @@ import { ChronicPanel, DiagnosesPanel, InvestigationsPanel, MedicinesPanel, Pati
 import './ReportsPage.css';
 
 const PERIOD_KEY = 'ses.reports.period', TAB_KEY = 'ses.reports.tab';
-type Tab = 'overview' | 'attendance' | 'chronic' | 'lab' | 'pharmacy';
+type Tab = 'overview' | 'attendance' | 'chronic' | 'lab' | 'pharmacy' | 'hia2';
 interface Access { lineList: boolean; canSeeNames: boolean }
 function savedChoice(): PeriodChoice {
   try {
@@ -68,9 +69,10 @@ export default function ReportsPage() {
   const [reloads, setReloads] = useState(0);
   const [result, setResult] = useState<Result | null>(null);
   const [exporting, setExporting] = useState(false);
-  const [tabChoice, setTabChoice] = useState<Tab>(() => { try { const t = localStorage.getItem(TAB_KEY); return t === 'attendance' || t === 'chronic' || t === 'lab' || t === 'pharmacy' ? t : 'overview'; } catch { return 'overview'; } });
+  const [tabChoice, setTabChoice] = useState<Tab>(() => { try { const t = localStorage.getItem(TAB_KEY); return t === 'attendance' || t === 'chronic' || t === 'lab' || t === 'pharmacy' || t === 'hia2' ? t : 'overview'; } catch { return 'overview'; } });
   const [access, setAccess] = useState<Partial<Record<'attendance' | 'chronic', Access>>>({});   // the tabs the server says this person may open
   const [labAccess, setLabAccess] = useState<Partial<Record<LabView, LabAccess>>>({});
+  const [hia2Access, setHia2Access] = useState<Access | undefined>(undefined);
   const [pharmacyAccess, setPharmacyAccess] = useState<Partial<Record<PharmacyView, PharmacyAccess>>>({});
 
   const problem = choice.key === 'custom' ? periodProblem(choice.from, choice.to) : '';
@@ -96,7 +98,7 @@ export default function ReportsPage() {
     api.get<{ reports: { area: string; name: string; lineList?: boolean; canSeeNames?: boolean }[] }>('/reports/registry')
       .then(r => {
         const open = (area: string, name: string): Access | undefined => { const a = r.data.reports.find(x => x.area === area && x.name === name); return a ? { lineList: !!a.lineList, canSeeNames: !!a.canSeeNames } : undefined; };
-        if (alive) { setAccess({ attendance: open('attendance', 'attendance'), chronic: open('chronic', 'register') }); setLabAccess({ tests: open('lab', 'tests'), turnaround: open('lab', 'turnaround'), abnormal: open('lab', 'abnormal') }); setPharmacyAccess({ dispensed: open('pharmacy', 'dispensed'), prescriptions: open('pharmacy', 'prescriptions') }); }
+        if (alive) { setAccess({ attendance: open('attendance', 'attendance'), chronic: open('chronic', 'register') }); setLabAccess({ tests: open('lab', 'tests'), turnaround: open('lab', 'turnaround'), abnormal: open('lab', 'abnormal') }); setHia2Access(open('hia2', 'opd')); setPharmacyAccess({ dispensed: open('pharmacy', 'dispensed'), prescriptions: open('pharmacy', 'prescriptions') }); }
       })
       .catch(() => { /* the overview does not depend on it */ });
     return () => { alive = false; };
@@ -131,7 +133,7 @@ export default function ReportsPage() {
   const dim = loading && !!data;
   const hasLab = !!(labAccess.tests || labAccess.turnaround || labAccess.abnormal);
   const hasPharmacy = !!(pharmacyAccess.dispensed || pharmacyAccess.prescriptions);
-  const tab: Tab = tabChoice === 'lab' ? (hasLab ? 'lab' : 'overview') : tabChoice === 'pharmacy' ? (hasPharmacy ? 'pharmacy' : 'overview') : tabChoice !== 'overview' && access[tabChoice] ? tabChoice : 'overview';
+  const tab: Tab = tabChoice === 'lab' ? (hasLab ? 'lab' : 'overview') : tabChoice === 'hia2' ? (hia2Access ? 'hia2' : 'overview') : tabChoice === 'pharmacy' ? (hasPharmacy ? 'pharmacy' : 'overview') : tabChoice !== 'overview' && access[tabChoice] ? tabChoice : 'overview';
 
   return (
     <div className="reports-page clinical-module">
@@ -152,14 +154,15 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      <PeriodBar choice={choice} problem={problem} onPick={pick} onDate={setDate} />
-      {(access.attendance || access.chronic || hasLab || hasPharmacy) && (
+      {tab !== 'hia2' && <PeriodBar choice={choice} problem={problem} onPick={pick} onDate={setDate} />}
+      {(access.attendance || access.chronic || hasLab || hasPharmacy || hia2Access) && (
         <div role="tablist" aria-label="Report area" className="rp-tabs">
           <button type="button" role="tab" aria-selected={tab === 'overview'} onClick={() => chooseTab('overview')}>Overview</button>
           {access.attendance && <button type="button" role="tab" aria-selected={tab === 'attendance'} onClick={() => chooseTab('attendance')}>Attendance</button>}
           {access.chronic && <button type="button" role="tab" aria-selected={tab === 'chronic'} onClick={() => chooseTab('chronic')}>Chronic disease</button>}
           {hasLab && <button type="button" role="tab" aria-selected={tab === 'lab'} onClick={() => chooseTab('lab')}>Lab</button>}
           {hasPharmacy && <button type="button" role="tab" aria-selected={tab === 'pharmacy'} onClick={() => chooseTab('pharmacy')}>Pharmacy</button>}
+          {hia2Access && <button type="button" role="tab" aria-selected={tab === 'hia2'} onClick={() => chooseTab('hia2')}>HIA2 return</button>}
         </div>
       )}
       {tab === 'attendance' && access.attendance && !problem && <AttendancePanel period={period} canLines={access.attendance.lineList} canSeeNames={access.attendance.canSeeNames} />}
@@ -168,6 +171,8 @@ export default function ReportsPage() {
       {tab === 'lab' && hasLab && !problem && <LabTab period={period} access={labAccess} />}
 
       {tab === 'pharmacy' && hasPharmacy && !problem && <PharmacyTab period={period} access={pharmacyAccess} stockLink={canAccessModule(user?.role, 'pharmacy')} />}
+
+      {tab === 'hia2' && hia2Access && <Hia2Tab canLines={hia2Access.lineList} canSeeNames={hia2Access.canSeeNames} />}
 
       {tab === 'overview' && (<>
       {current?.error && (

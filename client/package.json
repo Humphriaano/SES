@@ -12,6 +12,7 @@
     "test:chronic-report": "node tests/chronic-report.cjs",
     "test:lab-report": "node tests/lab-report.cjs",
     "test:pharmacy-report": "node tests/pharmacy-report.cjs",
+    "test:hia2-report": "node tests/hia2-report.cjs",
     "test:stock-receiving": "node tests/stock-receiving.cjs",
     "test:stock-views": "node tests/stock-views.cjs",
     "test:stock-dispensing": "node tests/stock-dispensing.cjs",

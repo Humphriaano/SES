@@ -51,7 +51,7 @@ async function main() {
     const origin = 'http://127.0.0.1:' + server.address().port;
     const get = (p, user) => fetch(origin + '/api' + p, { headers: user ? { authorization: 'Bearer ' + jwt.sign({ userId: user.id }, process.env.JWT_SECRET) } : {} });
     const list = async user => (await (await get('/reports/registry', user)).json()).reports.map(x => x.area + '/' + x.name).filter(x => !x.startsWith('testing/'));
-    const BILL = ['billing/daybook', 'billing/revenue', 'billing/fast-moving', 'billing/outstanding', 'billing/collections'], ATT = ['attendance/attendance', 'chronic/register', 'chronic/overdue'], PHARM = ['pharmacy/dispensed', 'pharmacy/prescriptions'], LAB = ['lab/tests', 'lab/turnaround', 'lab/abnormal'], LAB_COUNTS = ['lab/tests', 'lab/turnaround'], STOCK = ['stock/on-hand', 'stock/expiry', 'stock/movements', 'stock/adjustments', 'stock/reorder'];
+    const BILL = ['billing/daybook', 'billing/revenue', 'billing/fast-moving', 'billing/outstanding', 'billing/collections'], ATT = ['attendance/attendance', 'chronic/register', 'chronic/overdue'], PHARM = ['pharmacy/dispensed', 'pharmacy/prescriptions', 'hia2/opd'], LAB = ['lab/tests', 'lab/turnaround', 'lab/abnormal'], LAB_COUNTS = ['lab/tests', 'lab/turnaround'], STOCK = ['stock/on-hand', 'stock/expiry', 'stock/movements', 'stock/adjustments', 'stock/reorder'];
 
     // Who sees what: the same roles as the screens these reports already have.
     assert.equal((await get('/reports/registry')).status, 401); assert.equal((await get('/reports/billing/collections')).status, 401); assert.equal((await get('/reports/billing/collections?format=xlsx')).status, 401);

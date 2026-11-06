@@ -30,7 +30,7 @@ const GROUPS = ['period', 'day', 'week', 'month'] as const;
 type Group = (typeof GROUPS)[number];
 
 interface Filters { period: Period; servicePoint?: string; sex?: string; ageBand?: string; groupBy: Group; visit?: 'new' | 're' }
-interface Row { id: string; at: Date; patientId: string; roomId: string; room: string; startedById: string | null; gender: string; age: number; isNew: boolean }
+export interface Row { id: string; at: Date; patientId: string; roomId: string; room: string; startedById: string | null; gender: string; age: number; isNew: boolean }
 
 function parseFilters(q: Record<string, unknown>): Filters | { error: string } {
   const period = parsePeriod(q);
@@ -46,7 +46,7 @@ function parseFilters(q: Record<string, unknown>): Filters | { error: string } {
 }
 
 // Every counted check-in in the period, with whether it was the patient's first visit ever. History is looked at in full, not only the period.
-async function loadRows(p: Period): Promise<Row[]> {
+export async function loadRows(p: Period): Promise<Row[]> {
   const within = p.from && p.to ? Prisma.sql`AND q."checkedInAt" >= ${p.from} AND q."checkedInAt" < ${p.to}` : Prisma.empty;
   return prisma.$queryRaw<Row[]>`
     SELECT q.id, q."checkedInAt" AS at, q."patientId", q."roomId", r.name AS room, q."startedById", pt.gender::text AS gender,
@@ -132,7 +132,12 @@ export const maskNrc = (nrc: string | null | undefined) => (nrc ? nrc.replace(/[
 export async function attendanceLines(q: Record<string, unknown>, options: { names: boolean }): Promise<Report | { error: string }> {
   const f = parseFilters(q);
   if ('error' in f) return f;
-  const all = keep(await loadRows(f.period), f, true).sort((a, b) => b.at.getTime() - a.at.getTime() || b.id.localeCompare(a.id));
+  return lineReport(keep(await loadRows(f.period), f, true), f.period.label, options);
+}
+
+// The records behind attendance numbers, newest first. Shared with the HIA2 return so its cells open exactly the same records.
+export async function lineReport(counted: Row[], periodLabel: string, options: { names: boolean }): Promise<Report> {
+  const all = [...counted].sort((a, b) => b.at.getTime() - a.at.getTime() || b.id.localeCompare(a.id));
   const rows = all.slice(0, LINE_LIMIT);
 
   const detail = rows.length === 0 ? [] : await prisma.$queryRaw<{ id: string; firstName: string; lastName: string; nationalId: string | null; clinicianId: string | null; diagnosis: string | null }[]>`
@@ -162,7 +167,7 @@ export async function attendanceLines(q: Record<string, unknown>, options: { nam
   });
   const text = (key: string, header: string, width: number) => ({ key, header, type: 'text' as const, width });
   return {
-    name: 'attendance-lines', title: 'Attendance line list', period: f.period.label,
+    name: 'attendance-lines', title: 'Attendance line list', period: periodLabel,
     columns: [
       { key: 'time', header: 'Date and time', type: 'date', width: 18 }, text('patientCode', 'Patient ID', 16), ...(options.names ? [text('name', 'Name', 26)] : []),
       text('nrc', options.names ? 'NRC' : 'NRC (masked)', 16), text('sex', 'Sex', 9), { key: 'age', header: 'Age', type: 'int' as const, width: 7 },
