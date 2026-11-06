@@ -90,6 +90,7 @@ async function main() {
     assert.ok(o.diagnoses.top.every(d => d.count === 1) && o.diagnoses.top.some(d => d.code === '5A11' && d.description === 'Type 2 diabetes mellitus')); ok();
     assert.equal(o.medications.dispensed, 2); assert.deepEqual(o.medications.top, [{ name: 'Paracetamol', count: 2 }]); assert.equal(o.medications.dispensedToday, 0); ok();
     assert.deepEqual(o.investigations.byStatus.map(s => [s.status, s.count]).sort(), [['Pending', 1], ['Resulted', 1]]);
+    assert.deepEqual(o.investigations.byTest, [{ name: 'FBC', count: 1 }, { name: 'Malaria RDT', count: 1 }], 'by the name of the test, not by single or panel');
     assert.deepEqual(o.investigations.waiting, { pending: 1, inProgress: 0 }, 'what is waiting now ignores the period'); ok();
     assert.equal(o.procedures.done, 3); assert.equal(o.procedures.doneViaRoom, 2); assert.equal(o.procedures.medianWaitMinutes, 75);
     assert.equal(o.procedures.sentToRoom, 5); assert.equal(o.procedures.returned, 1);

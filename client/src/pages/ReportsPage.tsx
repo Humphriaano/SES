@@ -11,6 +11,8 @@ import { DEFAULT_PERIOD, PERIOD_PRESETS, periodFor, periodId, periodProblem, ran
 import PeriodBar from '../components/reports/PeriodBar';
 import AttendancePanel from '../components/reports/AttendancePanel';
 import ChronicTab from '../components/reports/ChronicTab';
+import LabTab, { type LabAccess } from '../components/reports/LabTab';
+import type { View as LabView } from '../lib/labReport';
 import { readSaved, writeSaved, type Overview } from '../lib/populationReport';
 import { BILLING_CSS } from '../components/billing/ui';
 import ReportsAIPanel from '../components/reports/ReportsAIPanel';
@@ -18,7 +20,7 @@ import { ChronicPanel, DiagnosesPanel, InvestigationsPanel, MedicinesPanel, Pati
 import './ReportsPage.css';
 
 const PERIOD_KEY = 'ses.reports.period', TAB_KEY = 'ses.reports.tab';
-type Tab = 'overview' | 'attendance' | 'chronic';
+type Tab = 'overview' | 'attendance' | 'chronic' | 'lab';
 interface Access { lineList: boolean; canSeeNames: boolean }
 function savedChoice(): PeriodChoice {
   try {
@@ -63,8 +65,9 @@ export default function ReportsPage() {
   const [reloads, setReloads] = useState(0);
   const [result, setResult] = useState<Result | null>(null);
   const [exporting, setExporting] = useState(false);
-  const [tabChoice, setTabChoice] = useState<Tab>(() => { try { const t = localStorage.getItem(TAB_KEY); return t === 'attendance' || t === 'chronic' ? t : 'overview'; } catch { return 'overview'; } });
-  const [access, setAccess] = useState<Partial<Record<Exclude<Tab, 'overview'>, Access>>>({});   // the tabs the server says this person may open
+  const [tabChoice, setTabChoice] = useState<Tab>(() => { try { const t = localStorage.getItem(TAB_KEY); return t === 'attendance' || t === 'chronic' || t === 'lab' ? t : 'overview'; } catch { return 'overview'; } });
+  const [access, setAccess] = useState<Partial<Record<'attendance' | 'chronic', Access>>>({});   // the tabs the server says this person may open
+  const [labAccess, setLabAccess] = useState<Partial<Record<LabView, LabAccess>>>({});
 
   const problem = choice.key === 'custom' ? periodProblem(choice.from, choice.to) : '';
   const id = periodId(choice);
@@ -88,7 +91,7 @@ export default function ReportsPage() {
     api.get<{ reports: { area: string; name: string; lineList?: boolean; canSeeNames?: boolean }[] }>('/reports/registry')
       .then(r => {
         const open = (area: string, name: string): Access | undefined => { const a = r.data.reports.find(x => x.area === area && x.name === name); return a ? { lineList: !!a.lineList, canSeeNames: !!a.canSeeNames } : undefined; };
-        if (alive) setAccess({ attendance: open('attendance', 'attendance'), chronic: open('chronic', 'register') });
+        if (alive) { setAccess({ attendance: open('attendance', 'attendance'), chronic: open('chronic', 'register') }); setLabAccess({ tests: open('lab', 'tests'), turnaround: open('lab', 'turnaround'), abnormal: open('lab', 'abnormal') }); }
       })
       .catch(() => { /* the overview does not depend on it */ });
     return () => { alive = false; };
@@ -121,7 +124,8 @@ export default function ReportsPage() {
   const when = (iso: string) => new Date(iso).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
   const showingCopy = !!data && !current?.data;   // saved figures on screen while a fresh copy loads, or after it failed
   const dim = loading && !!data;
-  const tab: Tab = tabChoice !== 'overview' && access[tabChoice] ? tabChoice : 'overview';
+  const hasLab = !!(labAccess.tests || labAccess.turnaround || labAccess.abnormal);
+  const tab: Tab = tabChoice === 'lab' ? (hasLab ? 'lab' : 'overview') : tabChoice !== 'overview' && access[tabChoice] ? tabChoice : 'overview';
 
   return (
     <div className="reports-page clinical-module">
@@ -143,15 +147,18 @@ export default function ReportsPage() {
       </div>
 
       <PeriodBar choice={choice} problem={problem} onPick={pick} onDate={setDate} />
-      {(access.attendance || access.chronic) && (
+      {(access.attendance || access.chronic || hasLab) && (
         <div role="tablist" aria-label="Report area" className="rp-tabs">
           <button type="button" role="tab" aria-selected={tab === 'overview'} onClick={() => chooseTab('overview')}>Overview</button>
           {access.attendance && <button type="button" role="tab" aria-selected={tab === 'attendance'} onClick={() => chooseTab('attendance')}>Attendance</button>}
           {access.chronic && <button type="button" role="tab" aria-selected={tab === 'chronic'} onClick={() => chooseTab('chronic')}>Chronic disease</button>}
+          {hasLab && <button type="button" role="tab" aria-selected={tab === 'lab'} onClick={() => chooseTab('lab')}>Lab</button>}
         </div>
       )}
       {tab === 'attendance' && access.attendance && !problem && <AttendancePanel period={{ from: choice.from, to: choice.to }} canLines={access.attendance.lineList} canSeeNames={access.attendance.canSeeNames} />}
       {tab === 'chronic' && access.chronic && !problem && <ChronicTab period={{ from: choice.from, to: choice.to }} canLines={access.chronic.lineList} canSeeNames={access.chronic.canSeeNames} isAdmin={hasRole(user?.role, 'admin')} />}
+
+      {tab === 'lab' && hasLab && !problem && <LabTab period={{ from: choice.from, to: choice.to }} access={labAccess} />}
 
       {tab === 'overview' && (<>
       {current?.error && (

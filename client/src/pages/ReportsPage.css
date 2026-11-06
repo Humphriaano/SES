@@ -95,7 +95,7 @@ a.rp-kpi:hover,a.rp-kpi:focus-visible{border-color:var(--selection-accent);box-s
 .rp-matrix th,.rp-matrix td{padding:9px 6px;border-bottom:1px solid var(--border-light);text-align:center}
 .rp-matrix thead th{font-size:11.5px;font-weight:500;color:var(--text-muted);background:var(--bg-surface);border-bottom:1px solid var(--border)}
 .rp-matrix thead tr:first-child th{text-align:center}
-.rp-matrix th[scope=row],.rp-matrix thead th:first-child{text-align:left;color:var(--text-heading);font-weight:500}
+.rp-matrix th[scope=row],.rp-matrix thead th:first-child,.rp-matrix thead tr:first-child th:first-child{text-align:left;color:var(--text-heading);font-weight:500}
 .rp-matrix tfoot th,.rp-matrix tfoot td{border-top:1px solid var(--border);border-bottom:0;background:var(--attention-bg)}
 .rp-strong{font-weight:500;color:var(--text-heading)}
 .rp-zero{color:var(--text-faint)}

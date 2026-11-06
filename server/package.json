@@ -24,7 +24,8 @@
     "test:population-reports": "node tests/population.reports.cjs",
     "test:report-registry": "node tests/report.registry.cjs",
     "test:attendance": "node tests/attendance.reports.cjs",
-    "test:chronic": "node tests/chronic.reports.cjs"
+    "test:chronic": "node tests/chronic.reports.cjs",
+    "test:lab": "node tests/lab.reports.cjs"
   },
   "keywords": [],
   "author": "",

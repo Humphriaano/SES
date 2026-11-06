@@ -14,7 +14,7 @@ export interface Overview {
   diagnoses: { total: number; top: { description: string; code: string; count: number }[] };
   medications: { prescriptions: number; dispensed: number; dispensedToday: number; top: { name: string; count: number }[] };
   investigations: {
-    byStatus: { status: string; count: number }[]; byType: { type: string; count: number }[];
+    byStatus: { status: string; count: number }[]; byTest: { name: string; count: number }[];
     waiting: { pending: number; inProgress: number };
   };
   procedures: {

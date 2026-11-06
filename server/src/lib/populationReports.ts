@@ -47,7 +47,7 @@ export async function buildOverview(p: Period, limit = 10, now = new Date()) {
     prisma.dispensing.count({ where: { dispensedAt: { gte: startOfToday } } }),
     prisma.prescription.count({ where: range ? { createdAt: range } : {} }),
     prisma.investigationOrderItem.groupBy({ by: ['status'], _count: { id: true }, where: range ? { order: { orderedAt: range } } : {} }),
-    prisma.investigationOrderItem.groupBy({ by: ['type'], _count: { id: true }, where: range ? { order: { orderedAt: range } } : {}, orderBy: { _count: { id: 'desc' } }, take: limit }),
+    prisma.investigationOrderItem.groupBy({ by: ['name'], _count: { id: true }, where: range ? { order: { orderedAt: range } } : {}, orderBy: [{ _count: { id: 'desc' } }, { name: 'asc' }], take: limit }),
     prisma.investigationOrderItem.groupBy({ by: ['status'], _count: { id: true }, where: { status: { in: ['Pending', 'In Progress'] } } }),
     prisma.$queryRaw<{ done: number; viaRoom: number; medianWait: number | null }[]>`
       SELECT COUNT(*)::int AS done, COUNT("orderedAt")::int AS "viaRoom",
@@ -74,7 +74,7 @@ export async function buildOverview(p: Period, limit = 10, now = new Date()) {
     medications: { prescriptions, dispensed, dispensedToday, top: drugTop.map(d => ({ name: d.dispensedDrug, count: d._count.id })) },
     investigations: {
       byStatus: invStatus.map(s => ({ status: s.status, count: s._count.id })).sort((a, b) => b.count - a.count),
-      byType: invType.map(t => ({ type: t.type, count: t._count.id })),
+      byTest: invType.map(t => ({ name: t.name, count: t._count.id })),
       waiting: { pending: count(invWaiting, 'Pending'), inProgress: count(invWaiting, 'In Progress') },
     },
     procedures: {
@@ -118,7 +118,7 @@ export function exportSheets(o: Overview): Report[] {
       o.medications.top.map((m, i) => ({ rank: i + 1, ...m })), { name: 'All dispensings', count: o.medications.dispensed }),
     sheet('investigations', 'Investigations', [text('kind', 'Grouped by', 14), text('name', 'Name', 40), int('count', 'Count')], [
       ...o.investigations.byStatus.map(s => ({ kind: 'Status', name: s.status, count: s.count })),
-      ...o.investigations.byType.map(t => ({ kind: 'Test type', name: t.type, count: t.count })),
+      ...o.investigations.byTest.map(t => ({ kind: 'Test', name: t.name, count: t.count })),
     ], null, [{ label: 'Waiting now (pending)', value: o.investigations.waiting.pending }, { label: 'Waiting now (in progress)', value: o.investigations.waiting.inProgress }]),
     sheet('patients', 'Patients by age and sex', [text('band', 'Age (years)', 14), int('female', 'Female'), int('male', 'Male'), int('other', 'Other'), int('total', 'Total')],
       o.patients.byAge.map(b => ({ ...b })), { band: 'All ages', female: o.patients.female, male: o.patients.male, other: o.patients.other, total: o.patients.total }),

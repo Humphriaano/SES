@@ -68,9 +68,9 @@ export function InvestigationsPanel({ o }: { o: Overview }) {
     <Panel title="Investigations" note={`Ordered in ${o.period.allTime ? 'all time' : o.period.label}. Waiting now: ${waiting.pending} pending, ${waiting.inProgress} in progress.`}>
       <p className="rp-k">By status</p>
       <BarList rows={o.investigations.byStatus.map(s => ({ key: s.status, label: s.status, value: s.count }))} empty={none(o.period)} />
-      {o.investigations.byType.length > 0 && (<>
+      {o.investigations.byTest.length > 0 && (<>
         <p className="rp-k" style={{ marginTop: 16 }}>By test</p>
-        <BarList rows={o.investigations.byType.map(t => ({ key: t.type, label: t.type, value: t.count }))} empty="" />
+        <BarList rows={o.investigations.byTest.map(t => ({ key: t.name, label: t.name, value: t.count }))} empty="" />
       </>)}
     </Panel>
   );

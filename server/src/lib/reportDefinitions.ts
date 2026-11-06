@@ -4,6 +4,7 @@ import { buildStockReport } from '../controllers/stockReports.controller';
 import { StockError } from './stock';
 import { CLINICAL_ROLES, REPORT_ROLES } from './clinicalAccess';
 import { ATTENDANCE_DEFINITIONS, attendanceLines, attendanceReport } from './attendanceReports';
+import { LAB_DEFINITIONS, labAbnormal, labAbnormalLines, labTestLines, labTests, labTurnaround, labTurnaroundLines } from './labReports';
 import { CHRONIC_DEFINITIONS, chronicLines, chronicOverdue, chronicRegister } from './chronicReports';
 
 // Every report the Reports hub can open, with who may see it. Importing this file registers them.
@@ -116,4 +117,26 @@ registerReport({
   definitions: CHRONIC_DEFINITIONS, filters: CHRONIC_FILTERS,
   roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
   run: chronicOverdue, lineList: { run: (q, o) => chronicLines('overdue', q, o) },
+});
+
+// Laboratory (Reports Hub stage 5). How long tests take and how many are done are operational counts, open to everyone who may open the Reports page.
+// Abnormal and positive results say something about patients' health (an HIV or malaria result, for example), so they are for the clinical roles only.
+const LAB_FILTERS = ['from', 'to', 'test', 'specimen', 'groupBy', 'names'];
+registerReport({
+  area: 'lab', name: 'tests', title: 'Tests ordered and done', description: 'Tests ordered in the period by test or specimen, and how many are pending, in progress or completed.',
+  definitions: LAB_DEFINITIONS, filters: [...LAB_FILTERS, 'status'],
+  roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
+  run: labTests, lineList: { run: labTestLines },
+});
+registerReport({
+  area: 'lab', name: 'turnaround', title: 'Turnaround', description: 'Median and longest time from order to result, slowest tests first.',
+  definitions: LAB_DEFINITIONS, filters: LAB_FILTERS,
+  roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
+  run: labTurnaround, lineList: { run: labTurnaroundLines },
+});
+registerReport({
+  area: 'lab', name: 'abnormal', title: 'Abnormal and positive results', description: 'Results the lab flagged as abnormal, positive or critical, by test, and the patients they belong to.',
+  definitions: LAB_DEFINITIONS, filters: [...LAB_FILTERS, 'flag'],
+  roles: { aggregate: CLINICAL_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: CLINICAL_ROLES },
+  run: labAbnormal, lineList: { run: labAbnormalLines },
 });

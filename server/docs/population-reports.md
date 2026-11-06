@@ -66,6 +66,8 @@ Diabetes control is not reported: the glucose readings do not record whether the
 
 _Stage 4 moved the chronic disease figures into `lib/chronic.ts` and the condition list into the database; see [report-chronic.md](report-chronic.md). The text above describes how the Overview first defined them._
 
+_Stage 5 added the Lab tab, see [report-lab.md](report-lab.md). The Overview's investigations panel now lists tests by name (it listed `single` and `panel`), and the export sheet's "Test type" rows are now "Test"._
+
 ## Not built
 
 - Comparison with the previous period, trends over time, or outbreak alerts.
