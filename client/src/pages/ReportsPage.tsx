@@ -13,6 +13,7 @@ import AttendancePanel from '../components/reports/AttendancePanel';
 import ChronicTab from '../components/reports/ChronicTab';
 import LabTab, { type LabAccess } from '../components/reports/LabTab';
 import type { View as LabView } from '../lib/labReport';
+import { AttendancePerDay, BusyTimes, LabTurnaround, WhoAttends } from '../components/reports/AttendanceCharts';
 import OverviewSummary from '../components/reports/OverviewSummary';
 import Hia2Tab from '../components/reports/Hia2Tab';
 import PharmacyTab, { type PharmacyAccess } from '../components/reports/PharmacyTab';
@@ -188,6 +189,14 @@ export default function ReportsPage() {
       <div className="reports-kpis" aria-busy={loading}>
         {kpis.length ? kpis.map(k => <KpiCard key={k.label} k={k} />) : Array.from({ length: 6 }, (_, i) => <KpiSkeleton key={i} />)}
       </div>
+
+      {!problem && (access.attendance || labAccess.turnaround) && (
+        <div className="rp-charts">
+          {access.attendance && <AttendancePerDay period={period} onOpen={next => chooseTab(next as Tab)} />}
+          {access.attendance && <div className="rp-charts-two"><BusyTimes period={period} /><WhoAttends period={period} onOpen={next => chooseTab(next as Tab)} /></div>}
+          {labAccess.turnaround && <LabTurnaround period={period} onOpen={next => chooseTab(next as Tab)} />}
+        </div>
+      )}
 
       <div className="reports-columns">
         <div className="reports-insights" style={{ opacity: dim ? 0.55 : 1 }} aria-busy={loading}>

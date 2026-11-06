@@ -1,5 +1,5 @@
 // The attendance screen's logic: what to ask the server for, and what a clicked number stands for. Kept apart from the screen so it can be tested.
-export type GroupBy = 'period' | 'day' | 'week' | 'month';
+export type GroupBy = 'period' | 'day' | 'week' | 'month' | 'servicePoint';
 export type Sex = 'MALE' | 'FEMALE' | 'OTHER';
 export type Visit = 'new' | 're';
 
@@ -11,7 +11,7 @@ export const AGE_BANDS = [
   { key: 'u1', label: 'Under 1' }, { key: '1-4', label: '1 to 4' }, { key: '5-14', label: '5 to 14' },
   { key: '15-24', label: '15 to 24' }, { key: '25-49', label: '25 to 49' }, { key: '50plus', label: '50 and over' },
 ];
-export const GROUP_LABEL: Record<GroupBy, string> = { period: 'Whole period', day: 'By day', week: 'By week', month: 'By month' };
+export const GROUP_LABEL: Record<GroupBy, string> = { period: 'Whole period', day: 'By day', week: 'By week', month: 'By month', servicePoint: 'By service point' };
 
 export interface AttendanceRow {
   label: string; key: string; from?: string; to?: string;
@@ -37,6 +37,7 @@ export function attendanceParams(period: Period, f: AttendanceFilters): Record<s
 export function cellParams(period: Period, f: AttendanceFilters, cell: Cell): Record<string, string> {
   const out = attendanceParams(period, { ...f, groupBy: 'period' });
   if (cell.row && f.groupBy === 'period') out['ageBand'] = cell.row.key;
+  if (cell.row && f.groupBy === 'servicePoint') out['servicePoint'] = cell.row.key;   // a service point's row opens that service point's attendances
   if (cell.row && f.groupBy !== 'period' && cell.row.from && cell.row.to) { out['from'] = cell.row.from; out['to'] = cell.row.to; }
   if (cell.visit) out['visit'] = cell.visit;
   if (cell.sex) out['sex'] = cell.sex;
@@ -49,7 +50,7 @@ export function cellLabel(cell: Cell, groupBy: GroupBy): string {
   return [
     cell.visit === 'new' ? 'New attendance' : cell.visit === 're' ? 'Re-attendance' : 'All attendances',
     cell.sex ? SEX_TEXT[cell.sex] : null,
-    cell.row ? cell.row.label : groupBy === 'period' ? 'All ages' : 'All periods',
+    cell.row ? cell.row.label : groupBy === 'period' ? 'All ages' : groupBy === 'servicePoint' ? 'All service points' : 'All periods',
   ].filter(Boolean).join(' · ');
 }
 

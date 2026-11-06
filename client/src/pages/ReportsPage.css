@@ -158,3 +158,42 @@ a.rp-kpi:hover,a.rp-kpi:focus-visible{border-color:var(--selection-accent);box-s
 .rp-code{display:block;font-size:10.5px;color:var(--text-subtle);letter-spacing:.02em;margin-top:1px}
 .rp-printonly{display:none}
 @media print{.rp-printonly{display:flex;flex-direction:column;gap:6px;font-size:12px;color:#000;margin:0 0 12px}.rp-form-foot{margin:18px 0 0}}
+
+/* Report pictures: plain SVG and HTML, colours from the system tokens. New and female/male are the only two-colour pairs. */
+.reports-page{--rp-new:color-mix(in srgb,var(--selection-accent) 52%,var(--bg-card));--rp-re:var(--selection-accent);--rp-female:var(--selection-accent);--rp-male:#E0713A}
+button.rp-link{background:none;border:0;padding:0;font:inherit;font-size:13px;font-weight:500;cursor:pointer}
+button.rp-link:focus-visible{outline:2px solid var(--selection-accent);outline-offset:2px;border-radius:4px}
+.rp-svg-wrap{width:100%;overflow-x:auto}
+.rp-svg{display:block}
+.rp-grid{stroke:var(--border-light);stroke-width:1}
+.rp-axis{fill:var(--text-subtle);font-size:11px;font-family:inherit}
+.rp-bar-a{fill:var(--rp-re)}.rp-bar-b{fill:var(--rp-new)}
+.rp-line-a .rp-stroke{stroke:var(--rp-re)}.rp-line-a .rp-dot{fill:var(--rp-re)}.rp-line-a .rp-end{fill:var(--rp-re)}
+.rp-line-b .rp-stroke{stroke:var(--rp-new)}.rp-line-b .rp-dot{fill:var(--rp-new)}.rp-line-b .rp-end{fill:var(--rp-new)}
+.rp-point{fill:var(--text-body);font-size:11px;font-variant-numeric:tabular-nums}.rp-end{font-size:12px;font-weight:500}
+.rp-sw-re{background:var(--rp-re)}.rp-sw-new{background:var(--rp-new)}.rp-sw-female{background:var(--rp-female)}.rp-sw-male{background:var(--rp-male)}
+.rp-legend .rp-sw:not(:first-child){margin-left:18px}
+.rp-legend b{color:var(--text-heading);font-weight:500;margin-left:2px}
+.rp-legend-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px}
+.rp-seg{display:inline-flex;border:1px solid var(--border);border-radius:999px;overflow:hidden}
+.rp-seg button{font:inherit;font-size:12.5px;padding:6px 14px;border:0;background:transparent;color:var(--text-muted);cursor:pointer}
+.rp-seg button[aria-pressed="true"]{background:var(--attention-bg);color:var(--attention-text);font-weight:500}
+.rp-seg button:focus-visible{outline:2px solid var(--selection-accent);outline-offset:-2px}
+.rp-heat{border-collapse:separate;border-spacing:3px;width:100%;font-size:12px;font-variant-numeric:tabular-nums}
+.rp-heat th{font-weight:400;color:var(--text-subtle);text-align:center;padding:2px 0}
+.rp-heat tbody th{text-align:left;padding-right:8px;color:var(--text-body)}
+.rp-heat td{text-align:center;padding:7px 0;border-radius:6px;min-width:30px;background:var(--attention-bg)}
+.rp-heat td.rp-heat-zero{color:var(--text-faint);background:var(--bg-surface)}
+.rp-ramp{display:inline-block;width:90px;height:8px;border-radius:999px;vertical-align:middle;background:linear-gradient(90deg,color-mix(in srgb,var(--selection-accent) 15%,var(--bg-card)),var(--selection-accent))}
+.rp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.rp-paired{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.rp-paired li{display:grid;grid-template-columns:34px 1fr 78px 1fr 34px;align-items:center;gap:6px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.rp-paired .rp-pv{text-align:right;color:var(--text-body)}.rp-paired .rp-pv.left{text-align:left}
+.rp-paired .rp-pl{text-align:center;color:var(--text-muted);font-size:12px}
+.rp-side{display:flex;height:10px}.rp-side.left{justify-content:flex-end}
+.rp-side i{display:block;height:100%;border-radius:3px}.rp-side .rp-female{background:var(--rp-female)}.rp-side .rp-male{background:var(--rp-male)}
+.rp-charts{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin:0 0 24px}
+.rp-charts > *,.rp-charts-two > *{min-width:0}
+.rp-charts-two{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:14px}
+@media(max-width:1000px){.rp-charts-two{grid-template-columns:minmax(0,1fr)}}
+@media print{.rp-seg{display:none}}

@@ -38,4 +38,8 @@ assert.equal(pageText(0, 10, 121), 'Showing 1–10 of 121'); assert.equal(pageTe
 assert.equal(lastPage(10, 121), 12); assert.equal(lastPage(10, 120), 11); assert.equal(lastPage(10, 0), 0);
 assert.deepEqual(plain(AGE_BANDS.map(b => b.key)), ['u1', '1-4', '5-14', '15-24', '25-49', '50plus']); assert.ok(AGE_BANDS.every(b => !/[+&=#%\s]/.test(b.key)), 'keys are safe in a URL');
 
+// By service point: a row opens that service point's attendances, and the totals row keeps the filters.
+assert.deepEqual(plain(cellParams(month, { ...DEFAULT_FILTERS, groupBy: 'servicePoint', sex: 'FEMALE' }, { row: { ...weekRow, key: 'room-9', label: 'Treatment room', from: undefined, to: undefined }, visit: 'new', sex: null })), { from: '2026-10-08', to: '2026-11-06', servicePoint: 'room-9', sex: 'FEMALE', visit: 'new' });
+assert.equal(plain(cellParams(month, { ...DEFAULT_FILTERS, groupBy: 'servicePoint' }, { row: null, visit: null, sex: null }))['servicePoint'], undefined);
+assert.equal(cellLabel({ row: null, visit: null, sex: null }, 'servicePoint'), 'All attendances · All service points');
 console.log('Passed attendance report checks: what is asked for, what a clicked number opens, the line list heading, cell values and paging.');

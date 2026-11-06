@@ -68,7 +68,7 @@ _Stage 4 moved the chronic disease figures into `lib/chronic.ts` and the conditi
 
 _Stage 5 added the Lab tab, see [report-lab.md](report-lab.md). The Overview's investigations panel now lists tests by name (it listed `single` and `panel`), and the export sheet's "Test type" rows are now "Test"._
 
-_Stage 6 added the Pharmacy tab, see [report-pharmacy.md](report-pharmacy.md). Stage 8 added the overview tiles and billing snapshot, see [report-overview.md](report-overview.md). Stage 7 added the HIA2 return (section 6.1 OPD), see [report-hia2.md](report-hia2.md)._
+_Stage 6 added the Pharmacy tab, see [report-pharmacy.md](report-pharmacy.md). Stage 8 added the overview tiles and billing snapshot, see [report-overview.md](report-overview.md). Stage 7 added the HIA2 return (section 6.1 OPD), see [report-hia2.md](report-hia2.md). The charts of the design are described in [report-charts.md](report-charts.md)._
 
 ## Not built
 

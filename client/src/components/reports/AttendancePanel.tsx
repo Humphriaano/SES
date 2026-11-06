@@ -4,6 +4,7 @@ import { Download, Lock } from 'lucide-react';
 import api from '../../api/client';
 import { apiError } from '../../lib/money';
 import { downloadError, downloadWorkbook } from '../../lib/reportDownload';
+import { ByServicePoint, WeeklyTrend } from './AttendanceCharts';
 import {
   AGE_BANDS, DEFAULT_FILTERS, GROUP_LABEL, attendanceParams, cellLabel, cellParams, cellValue, lastPage, pageText,
   type AttendanceFilters, type AttendanceRow, type Cell, type GroupBy, type Period, type Sex, type Visit,
@@ -30,6 +31,7 @@ export default function AttendancePanel({ period, canLines, canSeeNames }: { per
   // Names change the records and the Excel file, never the counts, so they are left out of what the counts are fetched with.
   const exportParams = useMemo(() => attendanceParams(period, filters), [period, filters]);
   const countParams = useMemo(() => attendanceParams(period, { ...filters, names: false }), [period, filters]);
+  const chartParams = useMemo(() => { const p = attendanceParams(period, { ...filters, groupBy: 'period', names: false }); return p; }, [period, filters]);   // the pictures follow the filters, and group themselves
   const countId = JSON.stringify(countParams) + reloads;
   const lineParams = useMemo(() => (cell ? { ...cellParams(period, filters, cell), ...(filters.names ? { names: '1' } : {}) } : null), [period, filters, cell]);
   const lineId = lineParams ? JSON.stringify(lineParams) + reloads : '';
@@ -176,6 +178,11 @@ export default function AttendancePanel({ period, canLines, canSeeNames }: { per
             {!canSeeNames && <p className="rp-sub" style={{ marginTop: 10 }}>Line lists name patients, so they open only for clinical roles. Every line list export is logged.</p>}
           </section>
         )}
+      </div>
+
+      <div className="rp-charts-two rp-noprint-chart">
+        <WeeklyTrend params={chartParams} />
+        <ByServicePoint params={chartParams} onPick={id => set({ servicePoint: id })} />
       </div>
 
       {table && (

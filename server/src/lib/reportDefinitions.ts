@@ -6,6 +6,7 @@ import { CLINICAL_ROLES, REPORT_ROLES } from './clinicalAccess';
 import { ATTENDANCE_DEFINITIONS, attendanceLines, attendanceReport } from './attendanceReports';
 import { LAB_DEFINITIONS, labAbnormal, labAbnormalLines, labTestLines, labTests, labTurnaround, labTurnaroundLines } from './labReports';
 import { PHARMACY_DEFINITIONS, pharmacyDispensed, pharmacyDispensedLines, pharmacyPrescriptionLines, pharmacyPrescriptions } from './pharmacyReports';
+import { BUSY_DEFINITIONS, busyTimes, busyTimesLines } from './busyTimes';
 import { HIA2_DEFINITIONS, hia2Opd, hia2OpdLines } from './hia2Reports';
 import { CHRONIC_DEFINITIONS, chronicLines, chronicOverdue, chronicRegister } from './chronicReports';
 
@@ -165,4 +166,13 @@ registerReport({
   definitions: HIA2_DEFINITIONS, filters: ['month', 'code', 'names'],
   roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
   run: hia2Opd, lineList: { run: hia2OpdLines },
+});
+
+// Busy times (weekday by hour of check-in): the picture behind the staffing chart. Counts are open to everyone who may open the Reports page; the attendances
+// behind each cell are for the clinical roles, like the Attendance report it is built from.
+registerReport({
+  area: 'attendance', name: 'busy-times', title: 'Busy times', description: 'Attendances by weekday and hour of check-in, to plan staffing.',
+  definitions: BUSY_DEFINITIONS, filters: ['from', 'to', 'servicePoint', 'weekday', 'hour', 'names'],
+  roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
+  run: busyTimes, lineList: { run: busyTimesLines },
 });

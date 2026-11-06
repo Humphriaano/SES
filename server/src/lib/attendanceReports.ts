@@ -26,7 +26,7 @@ export const bandOf = (age: number) => AGE_BANDS.find(b => Math.max(0, age) <= b
 
 export const LINE_LIMIT = 5000;
 const SEXES = ['MALE', 'FEMALE', 'OTHER'] as const;
-const GROUPS = ['period', 'day', 'week', 'month'] as const;
+const GROUPS = ['period', 'day', 'week', 'month', 'servicePoint'] as const;
 type Group = (typeof GROUPS)[number];
 
 interface Filters { period: Period; servicePoint?: string; sex?: string; ageBand?: string; groupBy: Group; visit?: 'new' | 're' }
@@ -39,7 +39,7 @@ function parseFilters(q: Record<string, unknown>): Filters | { error: string } {
   const sex = text(q['sex']), ageBand = text(q['ageBand']), groupBy = text(q['groupBy']) ?? 'period', visit = text(q['visit']), servicePoint = text(q['servicePoint']);
   if (sex && !(SEXES as readonly string[]).includes(sex)) return { error: 'Choose male, female or other for the sex filter.' };
   if (ageBand && !AGE_BANDS.some(b => b.key === ageBand)) return { error: 'Choose one of the age bands listed.' };
-  if (!(GROUPS as readonly string[]).includes(groupBy)) return { error: 'Group by day, week, month or the whole period.' };
+  if (!(GROUPS as readonly string[]).includes(groupBy)) return { error: 'Group by service point, day, week, month or the whole period.' };
   if (visit && visit !== 'new' && visit !== 're') return { error: 'Choose new attendance or re-attendance.' };
   if (servicePoint && !/^[0-9a-f-]{36}$/i.test(servicePoint)) return { error: 'Choose a service point from the list.' };
   return { period, servicePoint, sex, ageBand, groupBy: groupBy as Group, visit: visit as Filters['visit'] };
@@ -93,22 +93,24 @@ export async function attendanceReport(q: Record<string, unknown>): Promise<Repo
   if (f.groupBy === 'period') for (const b of AGE_BANDS) groups.set(b.key, { key: b.key, label: b.label, counts: blank() });
   for (const r of rows) {
     if (f.groupBy === 'period') { addTo(groups.get(bandOf(r.age).key)!.counts, r); continue; }
+    if (f.groupBy === 'servicePoint') { const g = groups.get(r.roomId) ?? { key: r.roomId, label: r.room, counts: blank() }; addTo(g.counts, r); groups.set(r.roomId, g); continue; }
     const b = bucket(r.at, f.groupBy);
     const g = groups.get(b.key) ?? { key: b.key, label: b.label, from: dayText(b.start), to: dayText(b.end), counts: blank() };
     if (f.period.fromDay && g.from! < f.period.fromDay) g.from = f.period.fromDay;   // a week or month cut by the period only reaches as far as the period does
     if (f.period.toDay && g.to! > f.period.toDay) g.to = f.period.toDay;
     addTo(g.counts, r); groups.set(b.key, g);
   }
-  const ordered = [...groups.values()].sort((a, b) => (f.groupBy === 'period' ? 0 : a.key.localeCompare(b.key)));
+  const size = (g: { counts: Counts }) => finish(g.counts).all;
+  const ordered = [...groups.values()].sort((a, b) => (f.groupBy === 'period' ? 0 : f.groupBy === 'servicePoint' ? size(b) - size(a) || a.label.localeCompare(b.label) : a.key.localeCompare(b.key)));   // service points busiest first, dates in order
   const body = ordered.map(g => ({ label: g.label, key: g.key, from: g.from, to: g.to, ...finish(g.counts) }));
   const total = finish(rows.reduce((c, r) => { addTo(c, r); return c; }, blank()));
   const anyOther = total.newOther + total.reOther > 0;   // the Other columns appear only when someone is counted there, so the row totals always add up
 
   const col = (key: string, header: string, width = 13) => ({ key, header, type: 'int' as const, width });
-  const first = f.groupBy === 'period' ? 'Age band' : f.groupBy === 'day' ? 'Day' : f.groupBy === 'week' ? 'Week' : 'Month';
+  const first = f.groupBy === 'period' ? 'Age band' : f.groupBy === 'servicePoint' ? 'Service point' : f.groupBy === 'day' ? 'Day' : f.groupBy === 'week' ? 'Week' : 'Month';
   const filterText = [f.servicePoint && 'one service point', f.sex && `sex ${f.sex.toLowerCase()}`, f.ageBand && `age ${AGE_BANDS.find(b => b.key === f.ageBand)!.label}`].filter(Boolean).join(', ');
   return {
-    name: 'attendance', title: f.groupBy === 'period' ? 'Attendance by age and sex' : `Attendance by ${f.groupBy}`, period: filterText ? `${f.period.label} · ${filterText}` : f.period.label,
+    name: 'attendance', title: f.groupBy === 'period' ? 'Attendance by age and sex' : f.groupBy === 'servicePoint' ? 'Attendance by service point' : `Attendance by ${f.groupBy}`, period: filterText ? `${f.period.label} · ${filterText}` : f.period.label,
     columns: [
       { key: 'label', header: first, type: 'text', width: 26 },
       col('newMale', 'New male'), col('newFemale', 'New female'), ...(anyOther ? [col('newOther', 'New other')] : []), col('newTotal', 'New total'),
