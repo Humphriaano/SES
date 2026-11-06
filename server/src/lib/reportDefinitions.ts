@@ -2,6 +2,8 @@ import { registerReport } from './reportRegistry';
 import { buildReport } from '../controllers/billingReports.controller';
 import { buildStockReport } from '../controllers/stockReports.controller';
 import { StockError } from './stock';
+import { CLINICAL_ROLES, REPORT_ROLES } from './clinicalAccess';
+import { ATTENDANCE_DEFINITIONS, attendanceLines, attendanceReport } from './attendanceReports';
 
 // Every report the Reports hub can open, with who may see it. Importing this file registers them.
 // The billing and stock reports are wrapped as they are: the same queries, the same figures, the same roles as their own screens.
@@ -88,4 +90,14 @@ registerReport({
     'Suggested order is the quantity that covers the delivery time plus the cover days at that rate of use, less what is available now.',
   ],
   filters: ['days', 'lead', 'cover', 'status', 'q'], roles: { aggregate: PHARMACY, export: PHARMACY }, run: stock('reorder'),
+});
+
+// Attendance (Reports Hub stage 3). Counts are open to everyone who may open the Reports page. The records behind them name real people,
+// so they are limited to the clinical roles, and names (as opposed to a patient code and a masked NRC) must be asked for, by those roles only.
+registerReport({
+  area: 'attendance', name: 'attendance', title: 'Attendance', description: 'Who came, split into new and returning, by age and sex, with the records behind every number.',
+  definitions: ATTENDANCE_DEFINITIONS,
+  filters: ['from', 'to', 'servicePoint', 'sex', 'ageBand', 'groupBy', 'visit', 'names'],
+  roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
+  run: attendanceReport, lineList: { run: attendanceLines },
 });

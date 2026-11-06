@@ -5,16 +5,18 @@ import { Users, Activity, Pill, Package, FlaskConical, Syringe, Wallet, Download
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { apiError, hasRole } from '../lib/money';
+import { downloadError, downloadWorkbook } from '../lib/reportDownload';
 import { canAccessModule } from '../lib/moduleAccess';
 import { DEFAULT_PERIOD, PERIOD_PRESETS, periodFor, periodId, periodProblem, rangeLabel, type PeriodChoice, type PeriodKey } from '../lib/reportPeriod';
 import PeriodBar from '../components/reports/PeriodBar';
+import AttendancePanel from '../components/reports/AttendancePanel';
 import { readSaved, writeSaved, type Overview } from '../lib/populationReport';
 import { BILLING_CSS } from '../components/billing/ui';
 import ReportsAIPanel from '../components/reports/ReportsAIPanel';
 import { ChronicPanel, DiagnosesPanel, InvestigationsPanel, MedicinesPanel, PatientsPanel, ProceduresPanel } from '../components/reports/ReportPanels';
 import './ReportsPage.css';
 
-const PERIOD_KEY = 'ses.reports.period';
+const PERIOD_KEY = 'ses.reports.period', TAB_KEY = 'ses.reports.tab';
 function savedChoice(): PeriodChoice {
   try {
     const raw = JSON.parse(localStorage.getItem(PERIOD_KEY) ?? 'null') as { key?: string; from?: string; to?: string } | null;
@@ -50,13 +52,6 @@ function kpisFor(o: Overview, role: string | undefined): Kpi[] {
   ];
 }
 
-// An error answer sent as a file (the Excel export) arrives as a Blob: read the server's message out of it.
-async function exportError(e: unknown): Promise<string> {
-  const data = (e as { response?: { data?: unknown } })?.response?.data;
-  if (data instanceof Blob) { try { const msg = (JSON.parse(await data.text()) as { error?: string }).error; if (msg) return msg; } catch { /* not JSON */ } }
-  return apiError(e, 'Could not build the Excel file. Check your connection and try again.');
-}
-
 interface Result { id: string; data?: Overview; error?: string; savedAt?: string }
 
 export default function ReportsPage() {
@@ -65,6 +60,8 @@ export default function ReportsPage() {
   const [reloads, setReloads] = useState(0);
   const [result, setResult] = useState<Result | null>(null);
   const [exporting, setExporting] = useState(false);
+  const [tabChoice, setTabChoice] = useState<'overview' | 'attendance'>(() => { try { return localStorage.getItem(TAB_KEY) === 'attendance' ? 'attendance' : 'overview'; } catch { return 'overview'; } });
+  const [attendance, setAttendance] = useState<{ lineList: boolean; canSeeNames: boolean } | null>(null);   // set when the server says this person may open attendance
 
   const problem = choice.key === 'custom' ? periodProblem(choice.from, choice.to) : '';
   const id = periodId(choice);
@@ -83,6 +80,13 @@ export default function ReportsPage() {
       .catch(e => { if (alive) { const copy = readSaved(userId, id); setResult({ id, data: copy?.data, savedAt: copy?.savedAt, error: apiError(e, 'Could not load the reports. Check your connection and try again.') }); } });
     return () => { alive = false; };
   }, [id, problem, choice.from, choice.to, userId, reloads]);
+  useEffect(() => {   // which tabs this person may open comes from the server; if that cannot be read, the overview alone is shown
+    let alive = true;
+    api.get<{ reports: { area: string; name: string; lineList?: boolean; canSeeNames?: boolean }[] }>('/reports/registry')
+      .then(r => { const a = r.data.reports.find(x => x.area === 'attendance' && x.name === 'attendance'); if (alive) setAttendance(a ? { lineList: !!a.lineList, canSeeNames: !!a.canSeeNames } : null); })
+      .catch(() => { /* the overview does not depend on it */ });
+    return () => { alive = false; };
+  }, [userId]);
   useEffect(() => {   // a lost connection coming back refreshes whatever failed
     const again = () => setReloads(n => n + 1);
     window.addEventListener('online', again);
@@ -94,6 +98,7 @@ export default function ReportsPage() {
     setChoice(next);
     try { localStorage.setItem(PERIOD_KEY, JSON.stringify(next)); } catch { /* the choice just is not remembered */ }
   }
+  function chooseTab(next: 'overview' | 'attendance') { setTabChoice(next); try { localStorage.setItem(TAB_KEY, next); } catch { /* not remembered */ } }
   function setDate(which: 'from' | 'to', value: string) {
     const next = { ...choice, [which]: value };
     setChoice(next);
@@ -102,18 +107,15 @@ export default function ReportsPage() {
   async function exportExcel() {
     if (exporting || problem) return;
     setExporting(true);
-    try {
-      const res = await api.get('/reports/population/export', { params: choice.from ? { from: choice.from, to: choice.to } : {}, responseType: 'blob' });
-      const url = URL.createObjectURL(res.data as Blob), a = document.createElement('a');
-      a.href = url; a.download = `ses-reports-${choice.from ? `${choice.from}${choice.to !== choice.from ? `_to_${choice.to}` : ''}` : 'all-time'}.xlsx`;
-      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    } catch (e) { toast.error(await exportError(e)); } finally { setExporting(false); }
+    try { await downloadWorkbook('/reports/population/export', choice.from ? { from: choice.from, to: choice.to } : {}, 'ses-reports.xlsx'); }
+    catch (e) { toast.error(await downloadError(e)); } finally { setExporting(false); }
   }
 
   const kpis = data ? kpisFor(data, user?.role) : [];
   const when = (iso: string) => new Date(iso).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
   const showingCopy = !!data && !current?.data;   // saved figures on screen while a fresh copy loads, or after it failed
   const dim = loading && !!data;
+  const tab = attendance && tabChoice === 'attendance' ? 'attendance' : 'overview';
 
   return (
     <div className="reports-page clinical-module">
@@ -127,14 +129,23 @@ export default function ReportsPage() {
           </p>
         </div>
         <div className="rp-noprint" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button type="button" className="bl-btn" onClick={() => setReloads(n => n + 1)} disabled={loading || !!problem} aria-label="Refresh the figures"><RefreshCw size={15} /> Refresh</button>
-          <button type="button" className="bl-btn" onClick={() => window.print()} disabled={!data || !!problem}><Printer size={15} /> Print</button>
-          <button type="button" className="bl-btn" onClick={() => void exportExcel()} disabled={exporting || !!problem} aria-busy={exporting}><Download size={15} /> {exporting ? 'Preparing…' : 'Export to Excel'}</button>
+          {tab === 'overview' && <button type="button" className="bl-btn" onClick={() => setReloads(n => n + 1)} disabled={loading || !!problem} aria-label="Refresh the figures"><RefreshCw size={15} /> Refresh</button>}
+          <button type="button" className="bl-btn" onClick={() => window.print()} disabled={(tab === 'overview' && !data) || !!problem}><Printer size={15} /> Print</button>
+          {tab === 'overview' && <button type="button" className="bl-btn" onClick={() => void exportExcel()} disabled={exporting || !!problem} aria-busy={exporting}><Download size={15} /> {exporting ? 'Preparing…' : 'Export to Excel'}</button>}
           {hasRole(user?.role, 'admin', 'billing') && <Link to="/billing/reports" className="bl-btn" style={{ textDecoration: 'none' }}><Wallet size={15} /> Billing reports</Link>}
         </div>
       </div>
 
       <PeriodBar choice={choice} problem={problem} onPick={pick} onDate={setDate} />
+      {attendance && (
+        <div role="tablist" aria-label="Report area" className="rp-tabs">
+          <button type="button" role="tab" aria-selected={tab === 'overview'} onClick={() => chooseTab('overview')}>Overview</button>
+          <button type="button" role="tab" aria-selected={tab === 'attendance'} onClick={() => chooseTab('attendance')}>Attendance</button>
+        </div>
+      )}
+      {tab === 'attendance' && attendance && !problem && <AttendancePanel period={{ from: choice.from, to: choice.to }} canLines={attendance.lineList} canSeeNames={attendance.canSeeNames} />}
+
+      {tab === 'overview' && (<>
       {current?.error && (
         <div className="rp-note bad" role="alert">
           <span>{current.error}{data && savedAt ? ` Showing the copy saved ${when(savedAt)}.` : ''}</span>
@@ -171,6 +182,7 @@ export default function ReportsPage() {
           </div>
         </div>
       </div>
+      </>)}
     </div>
   );
 }

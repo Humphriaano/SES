@@ -35,7 +35,10 @@ async function main() {
     refused({ roles: { aggregate: [], export: [] } }, /who may open/); refused({ definitions: [] }, /how it counts/); refused({ definitions: ['  '] }, /how it counts/);
     refused({ title: ' ' }, /title and a description/); refused({ description: '' }, /title and a description/); refused({ name: 'Bad Name' }, /lower-case/); refused({ area: '9x' }, /lower-case/);
     refused({ roles: { aggregate: ['nurse'], export: ['admin'] } }, /can open the report can export/);
-    registry.registerReport({ ...good, name: 'lines', roles: { aggregate: ['nurse'], lineList: ['clinician'], export: ['clinician'] } });   // a line-list role may export even without the aggregate
+    const lineList = { run: async (_q, o) => ({ name: 'sample-lines', title: 'Sample lines', period: 'Today', columns: [{ key: 'a', header: 'A', type: 'int', width: 8 }], rows: [{ a: o.names ? 100 : 1 }], totals: null, summary: [] }) };
+    refused({ lineList }, /go together/); refused({ roles: { aggregate: ['nurse'], lineList: ['clinician'], export: [] } }, /go together/);
+    refused({ lineList, roles: { aggregate: ['nurse'], lineList: ['clinician'], names: ['nurse'], export: [] } }, /see names/);
+    registry.registerReport({ ...good, name: 'lines', lineList, roles: { aggregate: ['nurse'], lineList: ['clinician'], names: ['clinician'], export: ['clinician'] } });   // a line-list role may export even without the counts
     registry.registerReport(good);
     assert.throws(() => registry.registerReport(good), /already registered/);
     for (const d of registry.reportsFor('admin,billing,pharmacist,nurse,clinician')) {
@@ -48,13 +51,14 @@ async function main() {
     const origin = 'http://127.0.0.1:' + server.address().port;
     const get = (p, user) => fetch(origin + '/api' + p, { headers: user ? { authorization: 'Bearer ' + jwt.sign({ userId: user.id }, process.env.JWT_SECRET) } : {} });
     const list = async user => (await (await get('/reports/registry', user)).json()).reports.map(x => x.area + '/' + x.name).filter(x => !x.startsWith('testing/'));
-    const BILL = ['billing/daybook', 'billing/revenue', 'billing/fast-moving', 'billing/outstanding', 'billing/collections'], STOCK = ['stock/on-hand', 'stock/expiry', 'stock/movements', 'stock/adjustments', 'stock/reorder'];
+    const BILL = ['billing/daybook', 'billing/revenue', 'billing/fast-moving', 'billing/outstanding', 'billing/collections'], ATT = ['attendance/attendance'], STOCK = ['stock/on-hand', 'stock/expiry', 'stock/movements', 'stock/adjustments', 'stock/reorder'];
 
     // Who sees what: the same roles as the screens these reports already have.
     assert.equal((await get('/reports/registry')).status, 401); assert.equal((await get('/reports/billing/collections')).status, 401); assert.equal((await get('/reports/billing/collections?format=xlsx')).status, 401);
-    assert.deepEqual((await list(biller)).sort(), [...BILL].sort()); assert.deepEqual((await list(pharm)).sort(), [...STOCK].sort());
-    assert.deepEqual((await list(boss)).sort(), [...BILL, ...STOCK].sort()); assert.deepEqual((await list(both)).sort(), [...BILL].sort(), 'a person with several roles gets the union');
-    for (const nobody of [desk, nurse, dr]) assert.deepEqual(await list(nobody), [], 'no billing or stock reports');
+    assert.deepEqual((await list(biller)).sort(), [...BILL].sort()); assert.deepEqual((await list(pharm)).sort(), [...STOCK, ...ATT].sort());
+    assert.deepEqual((await list(boss)).sort(), [...BILL, ...STOCK, ...ATT].sort()); assert.deepEqual((await list(both)).sort(), [...BILL, ...ATT].sort(), 'a person with several roles gets the union');
+    for (const nobody of [desk, nurse, dr]) assert.deepEqual(await list(nobody), ATT, 'no billing or stock reports, only attendance');
+    assert.equal((await get('/reports/attendance/attendance', biller)).status, 403, 'billing has no attendance');
     for (const [who, other] of [[biller, STOCK], [pharm, BILL], [desk, BILL], [dr, STOCK]]) for (const rep of other) assert.equal((await get('/reports/' + rep, who)).status, 403, rep);
     assert.equal((await get('/reports/billing/nothing', boss)).status, 404); assert.equal((await get('/reports/nothing/nothing', boss)).status, 404);
     const listing = (await (await get('/reports/registry', biller)).json()).reports[0]; assert.ok(listing.canExport === true && Array.isArray(listing.definitions) && Array.isArray(listing.filters)); ok();
@@ -103,7 +107,7 @@ async function main() {
     // A role that may open a report but not export it gets a 403 and leaves no log row; a line-list-only role may export.
     const before = await db.reportExportLog.count();
     assert.equal((await get('/reports/testing/sample', nurse)).status, 200); assert.equal((await get('/reports/testing/sample?format=xlsx', nurse)).status, 403);
-    assert.equal((await get('/reports/testing/sample', dr)).status, 403, 'a clinician has no access to the sample'); assert.equal((await get('/reports/testing/lines?format=xlsx', dr)).status, 200);
+    assert.equal((await get('/reports/testing/sample', dr)).status, 403, 'a clinician has no access to the sample'); assert.equal((await get('/reports/testing/lines?format=xlsx', dr)).status, 403, 'the counts need the aggregate role'); assert.equal((await get('/reports/testing/lines/lines?format=xlsx', dr)).status, 200);
     assert.equal(await db.reportExportLog.count(), before + 1); ok();
 
     // The log can be added to and read, never changed or removed.

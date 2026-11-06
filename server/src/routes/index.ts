@@ -49,7 +49,7 @@ import { mySession, openSession, closeSession, listSessions, deskOverview } from
 import { runReport, reportCashiers } from '../controllers/billingReports.controller';
 import { authenticate, requireRoles } from '../middleware/auth';
 import { CLINICAL_ROLES, REPORT_ROLES } from '../lib/clinicalAccess';
-import { listRegisteredReports, runRegisteredReport } from '../controllers/reportRegistry.controller';
+import { listRegisteredReports, runRegisteredLines, runRegisteredReport } from '../controllers/reportRegistry.controller';
 
 const router = Router();
 router.use('/pharmacy-stock', stockRoutes);
@@ -250,5 +250,6 @@ router.get('/reports/population/patients', populationPatients);
 // Each report declares its own roles, so the login is the only guard here.
 router.get('/reports/registry', authenticate, listRegisteredReports);
 router.get('/reports/:area/:name', authenticate, runRegisteredReport);
+router.get('/reports/:area/:name/lines', authenticate, runRegisteredLines);
 
 export default router;

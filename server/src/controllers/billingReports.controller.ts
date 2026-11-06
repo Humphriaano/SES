@@ -266,8 +266,8 @@ export async function toWorkbook(r: Report, by: string): Promise<Buffer> {
 }
 
 // One branded sheet per report, so a workbook can hold several (the reports page export).
-export function addReportSheet(wb: ExcelJS.Workbook, r: Report, by: string): void {
-  const ws = wb.addWorksheet(r.title.slice(0, 30), { views: [{ state: 'frozen', ySplit: 6, showGridLines: false }] });
+export function addReportSheet(wb: ExcelJS.Workbook, r: Report, by: string, sheetName?: string): void {
+  const ws = wb.addWorksheet((sheetName ?? r.title).slice(0, 30), { views: [{ state: 'frozen', ySplit: 6, showGridLines: false }] });
   const n = r.columns.length;
   ws.columns = r.columns.map((c) => ({ key: c.key, width: c.width }));
 

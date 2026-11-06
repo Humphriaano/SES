@@ -13,9 +13,11 @@ export interface ReportDefinition {
   roles: {
     aggregate: readonly string[];      // who may open the counts and totals
     lineList?: readonly string[];      // who may open the records behind them (none for a report that has no line list)
+    names?: readonly string[];         // who may ask for patient names on a line list; without them a line list shows only a patient code and a masked NRC
     export: readonly string[];         // who may export to Excel; each must also be able to open the report
   };
   run: (query: Record<string, unknown>) => Promise<Report | { error: string }>;
+  lineList?: { run: (query: Record<string, unknown>, options: { names: boolean }) => Promise<Report | { error: string }> };   // the records behind the counts
 }
 
 const registry = new Map<string, ReportDefinition>();
@@ -29,6 +31,8 @@ export function registerReport(def: ReportDefinition): void {
   if (!def.title.trim() || !def.description.trim()) throw new Error(`Report ${where}: a title and a description are required.`);
   if (def.definitions.length === 0 || def.definitions.some(d => !d.trim())) throw new Error(`Report ${where}: write down how it counts.`);
   if (def.roles.aggregate.length === 0) throw new Error(`Report ${where}: say who may open it.`);
+  if (!!def.lineList !== !!def.roles.lineList?.length) throw new Error(`Report ${where}: a line list and the roles that may open it go together.`);
+  if ((def.roles.names ?? []).some(r => !(def.roles.lineList ?? []).includes(r))) throw new Error(`Report ${where}: only a role that can open the line list can see names on it.`);
   const may = new Set([...def.roles.aggregate, ...(def.roles.lineList ?? [])]);
   if (def.roles.export.some(r => !may.has(r))) throw new Error(`Report ${where}: only a role that can open the report can export it.`);
   registry.set(where, def);

@@ -22,7 +22,8 @@
     "test:stock-reports": "node tests/stock.reports.cjs",
     "test:procedures": "node tests/procedures.cjs",
     "test:population-reports": "node tests/population.reports.cjs",
-    "test:report-registry": "node tests/report.registry.cjs"
+    "test:report-registry": "node tests/report.registry.cjs",
+    "test:attendance": "node tests/attendance.reports.cjs"
   },
   "keywords": [],
   "author": "",
