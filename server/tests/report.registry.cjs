@@ -51,14 +51,14 @@ async function main() {
     const origin = 'http://127.0.0.1:' + server.address().port;
     const get = (p, user) => fetch(origin + '/api' + p, { headers: user ? { authorization: 'Bearer ' + jwt.sign({ userId: user.id }, process.env.JWT_SECRET) } : {} });
     const list = async user => (await (await get('/reports/registry', user)).json()).reports.map(x => x.area + '/' + x.name).filter(x => !x.startsWith('testing/'));
-    const BILL = ['billing/daybook', 'billing/revenue', 'billing/fast-moving', 'billing/outstanding', 'billing/collections'], ATT = ['attendance/attendance', 'chronic/register', 'chronic/overdue'], LAB = ['lab/tests', 'lab/turnaround', 'lab/abnormal'], LAB_COUNTS = ['lab/tests', 'lab/turnaround'], STOCK = ['stock/on-hand', 'stock/expiry', 'stock/movements', 'stock/adjustments', 'stock/reorder'];
+    const BILL = ['billing/daybook', 'billing/revenue', 'billing/fast-moving', 'billing/outstanding', 'billing/collections'], ATT = ['attendance/attendance', 'chronic/register', 'chronic/overdue'], PHARM = ['pharmacy/dispensed', 'pharmacy/prescriptions'], LAB = ['lab/tests', 'lab/turnaround', 'lab/abnormal'], LAB_COUNTS = ['lab/tests', 'lab/turnaround'], STOCK = ['stock/on-hand', 'stock/expiry', 'stock/movements', 'stock/adjustments', 'stock/reorder'];
 
     // Who sees what: the same roles as the screens these reports already have.
     assert.equal((await get('/reports/registry')).status, 401); assert.equal((await get('/reports/billing/collections')).status, 401); assert.equal((await get('/reports/billing/collections?format=xlsx')).status, 401);
-    assert.deepEqual((await list(biller)).sort(), [...BILL].sort()); assert.deepEqual((await list(pharm)).sort(), [...STOCK, ...ATT, ...LAB].sort());
-    assert.deepEqual((await list(boss)).sort(), [...BILL, ...STOCK, ...ATT, ...LAB].sort()); assert.deepEqual((await list(both)).sort(), [...BILL, ...ATT, ...LAB].sort(), 'a person with several roles gets the union');
-    assert.deepEqual((await list(desk)).sort(), [...ATT, ...LAB_COUNTS].sort(), 'reception: attendance, chronic and lab counts, never abnormal results');
-    for (const clinical of [nurse, dr]) assert.deepEqual((await list(clinical)).sort(), [...ATT, ...LAB].sort(), 'no billing or stock reports');
+    assert.deepEqual((await list(biller)).sort(), [...BILL].sort()); assert.deepEqual((await list(pharm)).sort(), [...STOCK, ...ATT, ...LAB, ...PHARM].sort());
+    assert.deepEqual((await list(boss)).sort(), [...BILL, ...STOCK, ...ATT, ...LAB, ...PHARM].sort()); assert.deepEqual((await list(both)).sort(), [...BILL, ...ATT, ...LAB, ...PHARM].sort(), 'a person with several roles gets the union');
+    assert.deepEqual((await list(desk)).sort(), [...ATT, ...LAB_COUNTS, ...PHARM].sort(), 'reception: attendance, chronic and lab counts, never abnormal results');
+    for (const clinical of [nurse, dr]) assert.deepEqual((await list(clinical)).sort(), [...ATT, ...LAB, ...PHARM].sort(), 'no billing or stock reports');
     assert.equal((await get('/reports/attendance/attendance', biller)).status, 403, 'billing has no attendance');
     for (const [who, other] of [[biller, STOCK], [pharm, BILL], [desk, BILL], [dr, STOCK]]) for (const rep of other) assert.equal((await get('/reports/' + rep, who)).status, 403, rep);
     assert.equal((await get('/reports/billing/nothing', boss)).status, 404); assert.equal((await get('/reports/nothing/nothing', boss)).status, 404);

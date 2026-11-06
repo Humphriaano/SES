@@ -5,6 +5,7 @@ import { StockError } from './stock';
 import { CLINICAL_ROLES, REPORT_ROLES } from './clinicalAccess';
 import { ATTENDANCE_DEFINITIONS, attendanceLines, attendanceReport } from './attendanceReports';
 import { LAB_DEFINITIONS, labAbnormal, labAbnormalLines, labTestLines, labTests, labTurnaround, labTurnaroundLines } from './labReports';
+import { PHARMACY_DEFINITIONS, pharmacyDispensed, pharmacyDispensedLines, pharmacyPrescriptionLines, pharmacyPrescriptions } from './pharmacyReports';
 import { CHRONIC_DEFINITIONS, chronicLines, chronicOverdue, chronicRegister } from './chronicReports';
 
 // Every report the Reports hub can open, with who may see it. Importing this file registers them.
@@ -139,4 +140,19 @@ registerReport({
   definitions: LAB_DEFINITIONS, filters: [...LAB_FILTERS, 'flag'],
   roles: { aggregate: CLINICAL_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: CLINICAL_ROLES },
   run: labAbnormal, lineList: { run: labAbnormalLines },
+});
+
+// Pharmacy (Reports Hub stage 6): what was dispensed and what was prescribed against it. Counts are open to everyone who may open the Reports page;
+// the patients behind them are for the clinical roles. The stock reports keep their own area and screens.
+registerReport({
+  area: 'pharmacy', name: 'dispensed', title: 'Medicines dispensed', description: 'What was dispensed in the period, by item or by brand, with the dispensings behind every number.',
+  definitions: PHARMACY_DEFINITIONS, filters: ['from', 'to', 'groupBy', 'item', 'brand', 'type', 'names'],
+  roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
+  run: pharmacyDispensed, lineList: { run: pharmacyDispensedLines },
+});
+registerReport({
+  area: 'pharmacy', name: 'prescriptions', title: 'Prescriptions and dispensed', description: 'Prescriptions written in the period against what was dispensed, not available or still waiting, by item.',
+  definitions: PHARMACY_DEFINITIONS, filters: ['from', 'to', 'item', 'status', 'names'],
+  roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
+  run: pharmacyPrescriptions, lineList: { run: pharmacyPrescriptionLines },
 });
