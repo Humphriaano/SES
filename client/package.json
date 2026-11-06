@@ -7,6 +7,7 @@
     "test:clinical-autocomplete": "node tests/clinical-autocomplete.cjs",
     "test:procedure-search": "node tests/procedure-search.cjs",
     "test:treatment-room": "node tests/treatment-room.cjs",
+    "test:report-period": "node tests/report-period.cjs",
     "test:stock-receiving": "node tests/stock-receiving.cjs",
     "test:stock-views": "node tests/stock-views.cjs",
     "test:stock-dispensing": "node tests/stock-dispensing.cjs",

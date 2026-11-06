@@ -20,7 +20,8 @@
     "db:deploy": "prisma migrate deploy",
     "create-admin": "ts-node --transpile-only scripts/create-admin.ts",
     "test:stock-reports": "node tests/stock.reports.cjs",
-    "test:procedures": "node tests/procedures.cjs"
+    "test:procedures": "node tests/procedures.cjs",
+    "test:population-reports": "node tests/population.reports.cjs"
   },
   "keywords": [],
   "author": "",

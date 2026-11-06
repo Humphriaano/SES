@@ -219,6 +219,7 @@ KEYWORD_MAP = {
     "medications":    ["medication", "drug", "prescri", "dispens", "medicine"],
     "investigations": ["investigation", "lab", "pending", "test", "result", "sample"],
     "patients":       ["patient", "how many", "count", "total", "sex", "age", "gender", "demographic"],
+    "chronic":        ["chronic", "ncd", "follow-up", "follow up", "lost to", "defaulter", "controlled", "control rate", "asthma", "copd", "epilepsy", "hiv", "heart failure", "kidney", "sickle", "depression"],
 }
 
 
@@ -269,12 +270,17 @@ async def fetch_population_data(question: str, authorization: Optional[str] = No
         needed = set(KEYWORD_MAP.keys())  # general question → fetch all
 
     results = {}
+    # The population endpoints need a login: the asker's own is forwarded, so the chat can read only what they can see on the page.
+    headers = {"Authorization": authorization} if authorization else {}
     async with httpx.AsyncClient(timeout=10.0) as client:
-        tasks = {ep: client.get(f"{EXPRESS_BASE}/reports/population/{ep}") for ep in needed}
+        tasks = {ep: client.get(f"{EXPRESS_BASE}/reports/population/{ep}", headers=headers) for ep in needed}
         responses = await asyncio.gather(*tasks.values(), return_exceptions=True)
         for ep, resp in zip(tasks.keys(), responses):
             if isinstance(resp, Exception):
                 results[ep] = None
+            elif resp.status_code in (401, 403):
+                results[ep] = None
+                results["population"] = "This user is not signed in or does not have access to population reports. Tell them so."
             else:
                 try:
                     results[ep] = resp.json()

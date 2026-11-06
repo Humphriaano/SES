@@ -11,11 +11,11 @@ import { CHART_PALETTE } from '../../lib/chartPalette';
 const CDS_BASE = 'http://localhost:8000';
 
 const STARTERS = [
-  'Which patients have uncontrolled hypertension?',
-  'What is the most common diagnosis this month?',
-  'Show pending investigations by test type',
-  'Which medications are most frequently prescribed?',
-  'How many patients were seen this week?',
+  'How many patients have each chronic disease?',
+  'How many hypertension patients have controlled blood pressure?',
+  'How many chronic disease patients have not been seen in 90 days?',
+  'What are the most common diagnoses?',
+  'Which medications are most frequently dispensed?',
 ];
 
 interface TableData { headers: string[]; rows: Record<string, string | number>[]; }
@@ -332,8 +332,8 @@ export default function ReportsAIPanel() {
         flexShrink: 0, background: 'var(--bg-card)', borderRadius: '10px 10px 0 0',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--badge-red-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Bot size={16} color="var(--ses-red)" />
+          <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--attention-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Bot size={16} color="var(--attention-text)" />
           </div>
           <div>
             <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-heading)' }}>AI Analytics Assistant</div>
@@ -350,7 +350,7 @@ export default function ReportsAIPanel() {
                 cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4,
                 fontSize: 11, padding: '4px 9px',
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--ses-red)'; e.currentTarget.style.color = 'var(--ses-red)'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--selection-accent)'; e.currentTarget.style.color = 'var(--attention-text)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
             >
               <Download size={12} /> Export PDF
@@ -379,12 +379,12 @@ export default function ReportsAIPanel() {
             </div>
             {STARTERS.map((s) => (
               <button key={s} onClick={() => sendMessage(s)} style={{
-                background: 'var(--badge-red-bg)', border: '1px solid var(--badge-red-bg)', borderRadius: 20,
-                padding: '7px 14px', fontSize: 12, color: 'var(--ses-red)', fontWeight: 500,
+                background: 'var(--attention-bg)', border: '1px solid var(--attention-border)', borderRadius: 20,
+                padding: '7px 14px', fontSize: 12, color: 'var(--attention-text)', fontWeight: 500,
                 cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.15s',
               }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--ses-red)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--badge-red-bg)'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--selection-accent)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--attention-border)'; }}
               >
                 {s}
               </button>
@@ -401,7 +401,7 @@ export default function ReportsAIPanel() {
           >
             <div style={{
               maxWidth: '90%', position: 'relative',
-              background: msg.role === 'user' ? 'var(--ses-red)' : 'var(--bg-surface-2)',
+              background: msg.role === 'user' ? 'var(--ses-blue-deep)' : 'var(--bg-surface-2)',
               color: msg.role === 'user' ? '#fff' : 'var(--text-heading)',
               borderRadius: msg.role === 'user' ? '12px 12px 3px 12px' : '12px 12px 12px 3px',
               padding: '10px 13px', fontSize: 13, lineHeight: 1.55,
@@ -458,14 +458,14 @@ export default function ReportsAIPanel() {
               background: loading ? 'var(--bg-surface)' : 'var(--bg-input)', color: 'var(--text-heading)',
               transition: 'border-color 0.15s', fontFamily: 'inherit',
             }}
-            onFocus={(e) => (e.target.style.borderColor = 'var(--ses-red)')}
+            onFocus={(e) => (e.target.style.borderColor = 'var(--selection-accent)')}
             onBlur={(e) => (e.target.style.borderColor = 'var(--border-input)')}
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
             style={{
-              background: loading || !input.trim() ? 'var(--border-input)' : 'var(--ses-red)',
+              background: loading || !input.trim() ? 'var(--border-input)' : 'var(--ses-blue-deep)',
               border: 'none', borderRadius: 999, padding: '9px 12px',
               cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',

@@ -1,5 +1,8 @@
 export const CLINICAL_ROLES = ['admin', 'clinician', 'doctor', 'nurse', 'pharmacist', 'lab_tech', 'lab_technician', 'paramedic'] as const;
 
+// Who may open the Reports page: the same list as the client's `reports` module. The figures are aggregates, so reception sees them too.
+export const REPORT_ROLES = [...CLINICAL_ROLES, 'receptionist'] as const;
+
 export function canReadClinical(role: string | null | undefined): boolean {
   return (role ?? '').split(',').some(item => (CLINICAL_ROLES as readonly string[]).includes(item.trim()));
 }

@@ -261,6 +261,12 @@ function logoPng(): Buffer | null {
 export async function toWorkbook(r: Report, by: string): Promise<Buffer> {
   const wb = new ExcelJS.Workbook();
   wb.creator = 'SES EHR';
+  addReportSheet(wb, r, by);
+  return Buffer.from(await wb.xlsx.writeBuffer());
+}
+
+// One branded sheet per report, so a workbook can hold several (the reports page export).
+export function addReportSheet(wb: ExcelJS.Workbook, r: Report, by: string): void {
   const ws = wb.addWorksheet(r.title.slice(0, 30), { views: [{ state: 'frozen', ySplit: 6, showGridLines: false }] });
   const n = r.columns.length;
   ws.columns = r.columns.map((c) => ({ key: c.key, width: c.width }));
@@ -328,7 +334,6 @@ export async function toWorkbook(r: Report, by: string): Promise<Buffer> {
     sr++;
   }
   ws.pageSetup = { orientation: 'landscape', fitToPage: true, fitToWidth: 1, fitToHeight: 0 };
-  return Buffer.from(await wb.xlsx.writeBuffer());
 }
 
 // GET /billing/reports/:name?from=&to=&method=&service=&cashier=&format=xlsx

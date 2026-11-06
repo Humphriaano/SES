@@ -1,6 +1,10 @@
 import { Response } from 'express';
 import prisma from '../lib/prisma';
+import ExcelJS from 'exceljs';
 import { AuthRequest } from '../middleware/auth';
+import { addReportSheet } from './billingReports.controller';
+import { userNames } from '../lib/billingOps';
+import { ageSexBands, buildOverview, chronicSummary, exportSheets, parsePeriod } from '../lib/populationReports';
 
 export async function populationDiagnoses(_req: AuthRequest, res: Response): Promise<void> {
   try {
@@ -181,29 +185,59 @@ export async function populationKpis(_req: AuthRequest, res: Response): Promise<
 
 export async function populationPatients(_req: AuthRequest, res: Response): Promise<void> {
   try {
-    const [total, bySex, patients] = await Promise.all([
+    const [total, bySex, bands] = await Promise.all([
       prisma.patient.count(),
       prisma.patient.groupBy({ by: ['gender'], _count: { id: true } }),
-      prisma.patient.findMany({ select: { dateOfBirth: true } }),
+      ageSexBands(),
     ]);
-
-    const now = new Date();
-    const ageGroups: Record<string, number> = { '0-17': 0, '18-35': 0, '36-50': 0, '51-65': 0, '65+': 0 };
-    patients.forEach((p) => {
-      const age = Math.floor((now.getTime() - p.dateOfBirth.getTime()) / (365.25 * 86400000));
-      if (age < 18) ageGroups['0-17']++;
-      else if (age <= 35) ageGroups['18-35']++;
-      else if (age <= 50) ageGroups['36-50']++;
-      else if (age <= 65) ageGroups['51-65']++;
-      else ageGroups['65+']++;
-    });
-
     res.json({
       total,
       bySex: bySex.map((s) => ({ gender: s.gender, count: s._count.id })),
-      byAgeGroup: Object.entries(ageGroups).map(([group, count]) => ({ group, count })),
+      byAgeGroup: bands.map((b) => ({ group: b.band, count: b.total })),
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
+  }
+}
+
+// GET /reports/population/chronic: the chronic disease register as counts (also read by the CDS chat service).
+export async function populationChronic(_req: AuthRequest, res: Response): Promise<void> {
+  try {
+    res.json(await chronicSummary({ from: null, to: null, fromDay: null, toDay: null, label: 'All time' }));
+  } catch (err) {
+    console.error('Chronic disease report failed:', err);
+    res.status(500).json({ error: 'Could not build the chronic disease report. Try again.' });
+  }
+}
+
+// GET /reports/population/overview?from=YYYY-MM-DD&to=YYYY-MM-DD: every figure on the Reports page in one request. No dates = all time.
+export async function populationOverview(req: AuthRequest, res: Response): Promise<void> {
+  const period = parsePeriod(req.query as Record<string, unknown>);
+  if ('error' in period) { res.status(400).json({ error: period.error }); return; }
+  try {
+    res.json(await buildOverview(period));
+  } catch (err) {
+    console.error('Reports overview failed:', err);
+    res.status(500).json({ error: 'Could not build the reports. Try again.' });
+  }
+}
+
+// GET /reports/population/export?from=&to=: the same figures as an Excel workbook, one sheet per section.
+export async function populationExport(req: AuthRequest, res: Response): Promise<void> {
+  const period = parsePeriod(req.query as Record<string, unknown>);
+  if ('error' in period) { res.status(400).json({ error: period.error }); return; }
+  try {
+    const [overview, names] = await Promise.all([buildOverview(period, 100), userNames([req.userId])]);
+    const by = names[req.userId ?? ''] ?? 'staff';
+    const wb = new ExcelJS.Workbook();
+    wb.creator = 'SES EHR';
+    for (const sheet of exportSheets(overview)) addReportSheet(wb, sheet, by);
+    const stamp = period.fromDay ? `${period.fromDay}_to_${period.toDay}` : 'all-time';
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="ses-reports-${stamp}.xlsx"`);
+    res.send(Buffer.from(await wb.xlsx.writeBuffer()));
+  } catch (err) {
+    console.error('Reports export failed:', err);
+    res.status(500).json({ error: 'Could not build the export. Try again.' });
   }
 }

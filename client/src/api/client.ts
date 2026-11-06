@@ -44,7 +44,12 @@ api.interceptors.response.use(
     } else if (err.response.status === 429) {
       toast.error(err.response.data?.error ?? 'Too many requests. Please wait a moment and try again.', { id: 'api-429' });
     } else if (err.response.status >= 500) {
-      toast.error('Something went wrong on the server. Your last action may not have been saved — please try again.', { id: 'api-500' });
+      toast.error(
+        WRITE.has((err.config?.method ?? '').toLowerCase())
+          ? 'Something went wrong on the server. Your last action may not have been saved — please try again.'
+          : 'Something went wrong on the server while loading this. Please try again.',
+        { id: 'api-500' },
+      );
     }
     return Promise.reject(err);
   }

@@ -37,7 +37,7 @@ import { getPatientQueue } from '../controllers/queue.controller';
 import { getActiveRooms, getAllRooms, createRoom, updateRoom, deleteRoom } from '../controllers/facility.room.controller';
 import { getEntries, getQueueSummary, getPatientEntry, callNext, checkin, updateStatus, rerouteEntry, startEntry } from '../controllers/queue.entry.controller';
 import { recordPreference, getPreferences } from '../controllers/user.room.preference.controller';
-import { populationDiagnoses, populationVitals, populationMedications, populationInvestigations, populationPatients, populationKpis } from '../controllers/reports.controller';
+import { populationDiagnoses, populationVitals, populationMedications, populationInvestigations, populationPatients, populationKpis, populationChronic, populationOverview, populationExport } from '../controllers/reports.controller';
 import { getRiskPrediction } from '../controllers/risk.controller';
 import { buildCdsPayload, getCdsSignature } from '../controllers/cdsContext.controller';
 import { listCustom, createDrug, updateDrug, createTest, updateTest, createDiagnosis, updateDiagnosis } from '../controllers/catalogue.controller';
@@ -48,7 +48,7 @@ import {
 import { mySession, openSession, closeSession, listSessions, deskOverview } from '../controllers/cashier.controller';
 import { runReport, reportCashiers } from '../controllers/billingReports.controller';
 import { authenticate, requireRoles } from '../middleware/auth';
-import { CLINICAL_ROLES } from '../lib/clinicalAccess';
+import { CLINICAL_ROLES, REPORT_ROLES } from '../lib/clinicalAccess';
 
 const router = Router();
 router.use('/pharmacy-stock', stockRoutes);
@@ -233,7 +233,12 @@ router.get('/patients/:patientId/risk-predict', authenticate, getRiskPrediction)
 router.post('/patients/:patientId/cds-payload', authenticate, buildCdsPayload);
 router.get('/patients/:patientId/cds-signature', authenticate, getCdsSignature);
 
-// Reports — population analytics (aggregate only, called internally by CDS service)
+// Reports — population analytics (aggregate only). A login and a reports role are required; the CDS chat service
+// forwards the asker's own login, so what it can read matches what that person can see on the Reports page.
+router.use('/reports', authenticate, requireRoles(...REPORT_ROLES));
+router.get('/reports/population/overview', populationOverview);
+router.get('/reports/population/export', populationExport);
+router.get('/reports/population/chronic', populationChronic);
 router.get('/reports/population/kpis', populationKpis);
 router.get('/reports/population/diagnoses', populationDiagnoses);
 router.get('/reports/population/vitals', populationVitals);
