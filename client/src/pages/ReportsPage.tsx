@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Users, Activity, Pill, Package, FlaskConical, Syringe, Wallet, Download, RefreshCw, ChevronRight } from 'lucide-react';
+import { Users, Activity, Pill, Package, FlaskConical, Syringe, Wallet, Download, Printer, RefreshCw, ChevronRight } from 'lucide-react';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { apiError, hasRole } from '../lib/money';
 import { canAccessModule } from '../lib/moduleAccess';
 import { DEFAULT_PERIOD, PERIOD_PRESETS, periodFor, periodId, periodProblem, rangeLabel, type PeriodChoice, type PeriodKey } from '../lib/reportPeriod';
+import PeriodBar from '../components/reports/PeriodBar';
 import { readSaved, writeSaved, type Overview } from '../lib/populationReport';
 import { BILLING_CSS } from '../components/billing/ui';
 import ReportsAIPanel from '../components/reports/ReportsAIPanel';
@@ -125,23 +126,15 @@ export default function ReportsPage() {
             Counts for all patients · {rangeLabel(choice.from, choice.to)}{current?.data ? ` · updated ${when(current.data.generatedAt)}` : ''}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <div className="rp-noprint" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button type="button" className="bl-btn" onClick={() => setReloads(n => n + 1)} disabled={loading || !!problem} aria-label="Refresh the figures"><RefreshCw size={15} /> Refresh</button>
+          <button type="button" className="bl-btn" onClick={() => window.print()} disabled={!data || !!problem}><Printer size={15} /> Print</button>
           <button type="button" className="bl-btn" onClick={() => void exportExcel()} disabled={exporting || !!problem} aria-busy={exporting}><Download size={15} /> {exporting ? 'Preparing…' : 'Export to Excel'}</button>
           {hasRole(user?.role, 'admin', 'billing') && <Link to="/billing/reports" className="bl-btn" style={{ textDecoration: 'none' }}><Wallet size={15} /> Billing reports</Link>}
         </div>
       </div>
 
-      <div role="radiogroup" aria-label="Period" className="bl-seg">
-        {PERIOD_PRESETS.map(p => <button key={p.key} type="button" role="radio" aria-checked={choice.key === p.key} onClick={() => pick(p.key)}>{p.label}</button>)}
-      </div>
-      {choice.key === 'custom' && (
-        <div className="rp-dates">
-          <div><label htmlFor="rp-from">From</label><input id="rp-from" type="date" className="bl-in" value={choice.from} max={choice.to || undefined} onChange={e => setDate('from', e.target.value)} /></div>
-          <div><label htmlFor="rp-to">To</label><input id="rp-to" type="date" className="bl-in" value={choice.to} min={choice.from || undefined} onChange={e => setDate('to', e.target.value)} /></div>
-        </div>
-      )}
-      {problem && <div className="rp-note" role="status">{problem}</div>}
+      <PeriodBar choice={choice} problem={problem} onPick={pick} onDate={setDate} />
       {current?.error && (
         <div className="rp-note bad" role="alert">
           <span>{current.error}{data && savedAt ? ` Showing the copy saved ${when(savedAt)}.` : ''}</span>

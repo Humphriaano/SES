@@ -62,3 +62,15 @@ a.rp-kpi:hover,a.rp-kpi:focus-visible{border-color:var(--selection-accent);box-s
 .rp-skel{border-radius:10px;background:linear-gradient(90deg,var(--bg-surface-2) 25%,var(--border) 50%,var(--bg-surface-2) 75%);background-size:200% 100%;animation:rp-shimmer 1.5s infinite}
 @keyframes rp-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 @media(prefers-reduced-motion:reduce){.rp-skel{animation:none}.rp-fill{transition:none}}
+
+/* Print: the figures only. Navigation, controls and the chat are left off, and the page flows over as many sheets as it needs. */
+@media print {
+  header.tn, .reports-chat, .rp-noprint, .rp-kpi-go, .rp-note.bad button { display: none !important; }
+  body:has(.reports-page) #root > div, body:has(.reports-page) #root > div > div { height: auto !important; overflow: visible !important; display: block !important; }
+  body:has(.reports-page) main { overflow: visible !important; }
+  .reports-page { padding: 0; max-width: none; background: #fff; }
+  .reports-columns { display: block; }
+  .reports-insights { opacity: 1 !important; }
+  .reports-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .rp-card, .rp-kpi { box-shadow: none; break-inside: avoid; }
+}

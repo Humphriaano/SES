@@ -1,0 +1,91 @@
+import { registerReport } from './reportRegistry';
+import { buildReport } from '../controllers/billingReports.controller';
+import { buildStockReport } from '../controllers/stockReports.controller';
+import { StockError } from './stock';
+
+// Every report the Reports hub can open, with who may see it. Importing this file registers them.
+// The billing and stock reports are wrapped as they are: the same queries, the same figures, the same roles as their own screens.
+
+const BILLING = ['admin', 'billing'], PHARMACY = ['admin', 'pharmacist'];
+const billing = (name: string) => (q: Record<string, unknown>) => buildReport(name, q);
+const stock = (name: string) => async (q: Record<string, unknown>) => {
+  try { return await buildStockReport(name, q as Record<string, string>); }
+  catch (error) { if (error instanceof StockError && error.status < 500) return { error: error.message }; throw error; }
+};
+
+registerReport({
+  area: 'billing', name: 'daybook', title: 'Day book', description: 'Every payment taken and every invoice raised in the period.',
+  definitions: [
+    'Money in is cash, mobile money and card actually received. Account credit used is shown but is not new money.',
+    'Every invoice raised in the period appears as a billed line, paid or not. Filtering by payment type or cashier shows money taken only.',
+    'Voided receipts are listed and not counted. Voided and waived invoices are not counted as billed.',
+    'Shows at most the first 5,000 payments and 5,000 invoices of the period.',
+  ],
+  filters: ['from', 'to', 'method', 'service', 'cashier'], roles: { aggregate: BILLING, export: BILLING }, run: billing('daybook'),
+});
+registerReport({
+  area: 'billing', name: 'revenue', title: 'Revenue by service', description: 'What was charged in the period, by kind of service.',
+  definitions: [
+    'Charged is the value of active charge lines created in the period, on invoices that are not void or waived.',
+    'Discounts are those on invoices raised in the period. Waived is the value of waived invoices raised in the period.',
+    'Money collected is payments received in the period, other than account credit.',
+  ],
+  filters: ['from', 'to', 'service'], roles: { aggregate: BILLING, export: BILLING }, run: billing('revenue'),
+});
+registerReport({
+  area: 'billing', name: 'fast-moving', title: 'Fast-moving items and services', description: 'The items and services charged most often in the period.',
+  definitions: [
+    'Active charge lines created in the period on invoices that are not void or waived, grouped by catalogue item. Items typed in by hand are grouped by their own wording.',
+    'Ranked by number of charges. The sort filter ranks by quantity or by value instead.',
+  ],
+  filters: ['from', 'to', 'service', 'sort'], roles: { aggregate: BILLING, export: BILLING }, run: billing('fast-moving'),
+});
+registerReport({
+  area: 'billing', name: 'outstanding', title: 'Outstanding balances', description: 'Invoices that still have a balance to pay, as at now.',
+  definitions: [
+    'Invoices that are open or part paid with a balance above zero. The period does not apply: it is always as at now.',
+    'Age is the days since the invoice was raised. Overdue means past the invoice\'s due date.',
+    'Shows at most 2,000 invoices.',
+  ],
+  filters: [], roles: { aggregate: BILLING, export: BILLING }, run: billing('outstanding'),
+});
+registerReport({
+  area: 'billing', name: 'collections', title: 'Collections by staff member', description: 'Money received in the period, by the staff member who took it.',
+  definitions: [
+    'Payments received in the period, grouped by the staff member who took them.',
+    'Total is cash, mobile money and card. Account credit used is shown separately and is not new money.',
+    'Voided receipts are counted separately and are not in the totals.',
+  ],
+  filters: ['from', 'to'], roles: { aggregate: BILLING, export: BILLING }, run: billing('collections'),
+});
+
+registerReport({
+  area: 'stock', name: 'on-hand', title: 'Stock on hand', description: 'What the pharmacy holds now, by item.',
+  definitions: ['Quantity on hand is the sum of the stock ledger for each batch, as at now. The ledger is never edited; a correction is a new entry.'],
+  filters: ['q', 'level'], roles: { aggregate: PHARMACY, export: PHARMACY }, run: stock('on-hand'),
+});
+registerReport({
+  area: 'stock', name: 'expiry', title: 'Batches by expiry', description: 'Batches that still hold stock, by expiry date.',
+  definitions: [
+    'Batches that still hold stock, as at now. The within filter keeps only those expiring in that many days; the state filter chooses usable or expired.',
+  ],
+  filters: ['q', 'state', 'within'], roles: { aggregate: PHARMACY, export: PHARMACY }, run: stock('expiry'),
+});
+registerReport({
+  area: 'stock', name: 'movements', title: 'Stock movements', description: 'Everything received, issued, lost, adjusted or reversed in the period.',
+  definitions: ['Every stock movement recorded in the period: received, issued, loss, adjustment and reversal. A mistake is corrected by a reversal, never by editing a row.'],
+  filters: ['from', 'to', 'type', 'q'], roles: { aggregate: PHARMACY, export: PHARMACY }, run: stock('movements'),
+});
+registerReport({
+  area: 'stock', name: 'adjustments', title: 'Adjustments, losses and write-offs', description: 'Stock adjustments submitted in the period and their review status.',
+  definitions: ['Adjustments, losses and write-offs submitted in the period, with whether they have been reviewed.'],
+  filters: ['from', 'to', 'status', 'q'], roles: { aggregate: PHARMACY, export: PHARMACY }, run: stock('adjustments'),
+});
+registerReport({
+  area: 'stock', name: 'reorder', title: 'Reorder suggestions', description: 'What to order, from recent use and delivery time.',
+  definitions: [
+    'Use is the quantity issued less issues reversed over the last days (default 90), per day it was in stock.',
+    'Suggested order is the quantity that covers the delivery time plus the cover days at that rate of use, less what is available now.',
+  ],
+  filters: ['days', 'lead', 'cover', 'status', 'q'], roles: { aggregate: PHARMACY, export: PHARMACY }, run: stock('reorder'),
+});

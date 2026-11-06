@@ -49,6 +49,7 @@ import { mySession, openSession, closeSession, listSessions, deskOverview } from
 import { runReport, reportCashiers } from '../controllers/billingReports.controller';
 import { authenticate, requireRoles } from '../middleware/auth';
 import { CLINICAL_ROLES, REPORT_ROLES } from '../lib/clinicalAccess';
+import { listRegisteredReports, runRegisteredReport } from '../controllers/reportRegistry.controller';
 
 const router = Router();
 router.use('/pharmacy-stock', stockRoutes);
@@ -235,7 +236,7 @@ router.get('/patients/:patientId/cds-signature', authenticate, getCdsSignature);
 
 // Reports — population analytics (aggregate only). A login and a reports role are required; the CDS chat service
 // forwards the asker's own login, so what it can read matches what that person can see on the Reports page.
-router.use('/reports', authenticate, requireRoles(...REPORT_ROLES));
+router.use('/reports/population', authenticate, requireRoles(...REPORT_ROLES));
 router.get('/reports/population/overview', populationOverview);
 router.get('/reports/population/export', populationExport);
 router.get('/reports/population/chronic', populationChronic);
@@ -245,5 +246,9 @@ router.get('/reports/population/vitals', populationVitals);
 router.get('/reports/population/medications', populationMedications);
 router.get('/reports/population/investigations', populationInvestigations);
 router.get('/reports/population/patients', populationPatients);
+// Registered reports (billing, stock, and the hub's own as they are added) come after the population routes so those keep their own paths.
+// Each report declares its own roles, so the login is the only guard here.
+router.get('/reports/registry', authenticate, listRegisteredReports);
+router.get('/reports/:area/:name', authenticate, runRegisteredReport);
 
 export default router;

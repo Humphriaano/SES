@@ -1041,3 +1041,20 @@ model EncounterProcedure {
   @@index([patientId, performedAt])
   @@index([status, orderedAt])
 }
+
+// One row for every report exported to Excel: who, which report, with which filters, how many rows, when.
+// Written before the file is sent and never changed or removed afterwards (a database trigger refuses both).
+model ReportExportLog {
+  id       String   @id @default(uuid())
+  at       DateTime @default(now())
+  userId   String
+  role     String?
+  area     String
+  report   String
+  kind     String   @default("AGGREGATE")   // AGGREGATE | LINE_LIST
+  filters  Json?
+  rowCount Int
+
+  @@index([at])
+  @@index([userId, at])
+}
