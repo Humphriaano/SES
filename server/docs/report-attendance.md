@@ -50,6 +50,6 @@ A new **Attendance** tab on the Reports page, shown only to people the server sa
 
 ## Not built
 
-- Workload (by service point and clinician, with waiting times), OPD diagnoses, the HIA2 return, and the charts in the design (weekly trend, busy times heat map, who attends). Each is a picture of, or a further report on, the same rows.
+- Workload by clinician, with waiting times (by service point is built, see [report-charts.md](report-charts.md)), OPD diagnoses, and the HIA2 return (built in stage 7, then removed for now).
 - A facility name in the Excel header (there is no facility setting), and merged "New" / "Re-attendance" group headers in the Excel summary: it has flat headings such as "New male".
 - Service points no longer in use are not offered in the filter, though their old check-ins are still counted.

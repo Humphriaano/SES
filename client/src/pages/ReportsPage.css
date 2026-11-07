@@ -153,12 +153,6 @@ a.rp-kpi:hover,a.rp-kpi:focus-visible{border-color:var(--selection-accent);box-s
 @media(max-width:1100px){.rp-glance{grid-template-columns:repeat(2,minmax(0,1fr))}.rp-three{grid-template-columns:1fr}}
 @media(max-width:560px){.rp-glance{grid-template-columns:1fr}}
 
-/* HIA2 return: the code of the form beside each number, and the form's own header and signature lines on paper */
-.rp-hia2 caption{caption-side:top;text-align:left;font-size:13px;font-weight:500;color:var(--text-heading);padding:4px 0 8px}
-.rp-code{display:block;font-size:10.5px;color:var(--text-subtle);letter-spacing:.02em;margin-top:1px}
-.rp-printonly{display:none}
-@media print{.rp-printonly{display:flex;flex-direction:column;gap:6px;font-size:12px;color:#000;margin:0 0 12px}.rp-form-foot{margin:18px 0 0}}
-
 /* Report pictures: plain SVG and HTML, colours from the system tokens. New and female/male are the only two-colour pairs. */
 .reports-page{--rp-new:color-mix(in srgb,var(--selection-accent) 52%,var(--bg-card));--rp-re:var(--selection-accent);--rp-female:var(--selection-accent);--rp-male:#E0713A}
 button.rp-link{background:none;border:0;padding:0;font:inherit;font-size:13px;font-weight:500;cursor:pointer}

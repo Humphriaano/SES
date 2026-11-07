@@ -137,7 +137,7 @@ export async function attendanceLines(q: Record<string, unknown>, options: { nam
   return lineReport(keep(await loadRows(f.period), f, true), f.period.label, options);
 }
 
-// The records behind attendance numbers, newest first. Shared with the HIA2 return so its cells open exactly the same records.
+// The records behind attendance numbers, newest first. Shared with busy times, so its cells open exactly the same records.
 export async function lineReport(counted: Row[], periodLabel: string, options: { names: boolean }): Promise<Report> {
   const all = [...counted].sort((a, b) => b.at.getTime() - a.at.getTime() || b.id.localeCompare(a.id));
   const rows = all.slice(0, LINE_LIMIT);

@@ -7,7 +7,6 @@ import { ATTENDANCE_DEFINITIONS, attendanceLines, attendanceReport } from './att
 import { LAB_DEFINITIONS, labAbnormal, labAbnormalLines, labTestLines, labTests, labTurnaround, labTurnaroundLines } from './labReports';
 import { PHARMACY_DEFINITIONS, pharmacyDispensed, pharmacyDispensedLines, pharmacyPrescriptionLines, pharmacyPrescriptions } from './pharmacyReports';
 import { BUSY_DEFINITIONS, busyTimes, busyTimesLines } from './busyTimes';
-import { HIA2_DEFINITIONS, hia2Opd, hia2OpdLines } from './hia2Reports';
 import { CHRONIC_DEFINITIONS, chronicLines, chronicOverdue, chronicRegister } from './chronicReports';
 
 // Every report the Reports hub can open, with who may see it. Importing this file registers them.
@@ -157,15 +156,6 @@ registerReport({
   definitions: PHARMACY_DEFINITIONS, filters: ['from', 'to', 'item', 'status', 'names'],
   roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
   run: pharmacyPrescriptions, lineList: { run: pharmacyPrescriptionLines },
-});
-
-// HIA2 monthly return (Reports Hub stage 7): section 6.1 Out patients (OPD). One calendar month, laid out as the form's cells and codes. Counts are open to
-// everyone who may open the Reports page; the attendances behind each cell are for the clinical roles, like the Attendance report they come from.
-registerReport({
-  area: 'hia2', name: 'opd', title: 'HIA2 OPD attendances (6.1)', description: 'First attendances, revisits and total OPD attendances by age and sex for one month, with the codes of the form.',
-  definitions: HIA2_DEFINITIONS, filters: ['month', 'code', 'names'],
-  roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
-  run: hia2Opd, lineList: { run: hia2OpdLines },
 });
 
 // Busy times (weekday by hour of check-in): the picture behind the staffing chart. Counts are open to everyone who may open the Reports page; the attendances

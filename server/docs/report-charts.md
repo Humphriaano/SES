@@ -38,7 +38,7 @@ The Attendance tab's "Group by" now also offers **By service point**, which is t
 - **Workload by clinician and median waiting time**: the design shows service point only, and the plan holds clinician and waiting time until the queue timestamps are verified.
 - **OPD diagnoses**: a sub-tab in the design, but the HIA2 form has no diagnosis groups, so there is nothing to group them for. The Overview already lists the top diagnoses.
 - The design's **Reports list** panel (a menu of every report): the tabs and their report lists do that job.
-- Charts for the Lab, Pharmacy and HIA2 tabs beyond the turnaround bars: their tables with labelled bars were chosen over more pictures.
+- Charts for the Lab and Pharmacy tabs beyond the turnaround bars: their tables with labelled bars were chosen over more pictures.
 
 ## Checks
 
