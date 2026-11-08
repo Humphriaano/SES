@@ -48,8 +48,18 @@ A new **Attendance** tab on the Reports page, shown only to people the server sa
 - `npm run test:attendance-report` (client): what is asked for, what each clicked number opens, headings, cell values, paging.
 - The screen was driven in a browser against sample answers, in both themes and at phone width.
 
+## Workload and OPD diagnoses (the tab's other two views)
+
+The Attendance tab has three views: **Attendance**, **Workload** and **OPD diagnoses**. Each is a registered report with a line list behind every number, Excel export and the export log; counts are for the Reports roles, the records behind them for the clinical roles.
+
+**Workload** (`/reports/attendance/workload`) uses the same check-ins as the Attendance report, so its total equals it. Group by service point or by staff member (whoever started the visit on the queue; patients nobody started form their own row, "Not seen yet", last). For each: attendances, seen, not seen yet, and the median and longest wait from check-in to being seen. A start recorded before its check-in is a recording error: the visit counts as seen, its wait is left out and counted in a note. The queue keeps when a visit started but not when it ended, so time spent with the patient cannot be reported.
+
+**OPD diagnoses** (`/reports/attendance/diagnoses`) counts the ICD-11 diagnoses recorded on consultations in the period: consultations, patients, how often as the main diagnosis, female and male (other when present), commonest first, the first 25 shown with the rest one click away. Filters: sex, age band (age on the day of the consultation), main diagnoses only. A code recorded twice on one consultation counts once, as the main diagnosis if either entry was. A consultation with two diagnoses counts under each. Problem-list diagnoses not recorded on a consultation are not counted (the chronic reports use those).
+
+Checks: `npm run test:workload` (server, 7 groups): exact waits and counts from fixed times, the recording-error rule, grouping by staff with the "Not seen yet" row, equality with the Attendance report, every number equal to its line list, the duplicate-code rule, the filters, bad requests, roles, the workbook and the registry. Two rules were broken on purpose (no de-duplication, negative waits counted) to confirm the test notices. `npm run test:attendance-extras` (client): what each clicked number asks for and what it is called.
+
 ## Not built
 
-- Workload by clinician, with waiting times (by service point is built, see [report-charts.md](report-charts.md)), OPD diagnoses, and the HIA2 return (built in stage 7, then removed for now).
+- The HIA2 return (built in stage 7, then removed for now).
 - A facility name in the Excel header (there is no facility setting), and merged "New" / "Re-attendance" group headers in the Excel summary: it has flat headings such as "New male".
 - Service points no longer in use are not offered in the filter, though their old check-ins are still counted.

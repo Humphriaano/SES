@@ -13,6 +13,7 @@
     "test:lab-report": "node tests/lab-report.cjs",
     "test:pharmacy-report": "node tests/pharmacy-report.cjs",
     "test:charts": "node tests/charts.cjs",
+    "test:attendance-extras": "node tests/attendance-extras.cjs",
     "test:stock-receiving": "node tests/stock-receiving.cjs",
     "test:stock-views": "node tests/stock-views.cjs",
     "test:stock-dispensing": "node tests/stock-dispensing.cjs",

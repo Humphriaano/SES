@@ -7,6 +7,8 @@ import { ATTENDANCE_DEFINITIONS, attendanceLines, attendanceReport } from './att
 import { LAB_DEFINITIONS, labAbnormal, labAbnormalLines, labTestLines, labTests, labTurnaround, labTurnaroundLines } from './labReports';
 import { PHARMACY_DEFINITIONS, pharmacyDispensed, pharmacyDispensedLines, pharmacyPrescriptionLines, pharmacyPrescriptions } from './pharmacyReports';
 import { BUSY_DEFINITIONS, busyTimes, busyTimesLines } from './busyTimes';
+import { WORKLOAD_DEFINITIONS, workload, workloadLines } from './workloadReports';
+import { DIAGNOSIS_DEFINITIONS, opdDiagnoses, opdDiagnosisLines } from './diagnosisReports';
 import { CHRONIC_DEFINITIONS, chronicLines, chronicOverdue, chronicRegister } from './chronicReports';
 
 // Every report the Reports hub can open, with who may see it. Importing this file registers them.
@@ -165,4 +167,20 @@ registerReport({
   definitions: BUSY_DEFINITIONS, filters: ['from', 'to', 'servicePoint', 'weekday', 'hour', 'names'],
   roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
   run: busyTimes, lineList: { run: busyTimesLines },
+});
+
+// Workload (Attendance tab): attendances by service point or staff member, how many were seen, and the wait from check-in to being seen.
+registerReport({
+  area: 'attendance', name: 'workload', title: 'Workload', description: 'Attendances by service point or staff member, how many were seen, and how long they waited.',
+  definitions: WORKLOAD_DEFINITIONS, filters: ['from', 'to', 'groupBy', 'servicePoint', 'staff', 'seen', 'names'],
+  roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
+  run: workload, lineList: { run: workloadLines },
+});
+
+// OPD diagnoses (Attendance tab): ICD-11 diagnoses recorded on consultations. Counts are open to the Reports roles, the consultations behind them to the clinical roles.
+registerReport({
+  area: 'attendance', name: 'diagnoses', title: 'OPD diagnoses', description: 'The diagnoses recorded on consultations in the period, by ICD-11 code, with the consultations behind each.',
+  definitions: DIAGNOSIS_DEFINITIONS, filters: ['from', 'to', 'code', 'sex', 'ageBand', 'main', 'names'],
+  roles: { aggregate: REPORT_ROLES, lineList: CLINICAL_ROLES, names: CLINICAL_ROLES, export: REPORT_ROLES },
+  run: opdDiagnoses, lineList: { run: opdDiagnosisLines },
 });

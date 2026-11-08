@@ -30,7 +30,7 @@ const GROUPS = ['period', 'day', 'week', 'month', 'servicePoint'] as const;
 type Group = (typeof GROUPS)[number];
 
 interface Filters { period: Period; servicePoint?: string; sex?: string; ageBand?: string; groupBy: Group; visit?: 'new' | 're' }
-export interface Row { id: string; at: Date; patientId: string; roomId: string; room: string; startedById: string | null; gender: string; age: number; isNew: boolean }
+export interface Row { id: string; at: Date; patientId: string; roomId: string; room: string; startedAt: Date | null; startedById: string | null; gender: string; age: number; isNew: boolean }
 
 function parseFilters(q: Record<string, unknown>): Filters | { error: string } {
   const period = parsePeriod(q);
@@ -49,7 +49,7 @@ function parseFilters(q: Record<string, unknown>): Filters | { error: string } {
 export async function loadRows(p: Period): Promise<Row[]> {
   const within = p.from && p.to ? Prisma.sql`AND q."checkedInAt" >= ${p.from} AND q."checkedInAt" < ${p.to}` : Prisma.empty;
   return prisma.$queryRaw<Row[]>`
-    SELECT q.id, q."checkedInAt" AS at, q."patientId", q."roomId", r.name AS room, q."startedById", pt.gender::text AS gender,
+    SELECT q.id, q."checkedInAt" AS at, q."patientId", q."roomId", r.name AS room, q."startedAt", q."startedById", pt.gender::text AS gender,
       date_part('year', age(q."checkedInAt"::date, pt."dateOfBirth"::date))::int AS age,
       (NOT EXISTS (SELECT 1 FROM "QueueEntry" e WHERE e."patientId" = q."patientId" AND e.status <> 'Removed'
                      AND (e."checkedInAt" < q."checkedInAt" OR (e."checkedInAt" = q."checkedInAt" AND e.id < q.id)))

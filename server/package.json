@@ -29,7 +29,8 @@
     "test:pharmacy-reports": "node tests/pharmacy.reports.cjs",
     "test:hub-summary": "node tests/hub.summary.cjs",
     "test:attendance-charts": "node tests/attendance.charts.cjs",
-    "test:facility": "node tests/facility.settings.cjs"
+    "test:facility": "node tests/facility.settings.cjs",
+    "test:workload": "node tests/attendance.workload.cjs"
   },
   "keywords": [],
   "author": "",

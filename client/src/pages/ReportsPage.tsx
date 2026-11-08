@@ -9,7 +9,7 @@ import { downloadError, downloadWorkbook } from '../lib/reportDownload';
 import { canAccessModule } from '../lib/moduleAccess';
 import { DEFAULT_PERIOD, PERIOD_PRESETS, periodFor, periodId, periodProblem, rangeLabel, type PeriodChoice, type PeriodKey } from '../lib/reportPeriod';
 import PeriodBar from '../components/reports/PeriodBar';
-import AttendancePanel from '../components/reports/AttendancePanel';
+import AttendanceArea from '../components/reports/AttendanceArea';
 import ChronicTab from '../components/reports/ChronicTab';
 import LabTab, { type LabAccess } from '../components/reports/LabTab';
 import type { View as LabView } from '../lib/labReport';
@@ -70,7 +70,7 @@ export default function ReportsPage() {
   const [result, setResult] = useState<Result | null>(null);
   const [exporting, setExporting] = useState(false);
   const [tabChoice, setTabChoice] = useState<Tab>(() => { try { const t = localStorage.getItem(TAB_KEY); return t === 'attendance' || t === 'chronic' || t === 'lab' || t === 'pharmacy' ? t : 'overview'; } catch { return 'overview'; } });
-  const [access, setAccess] = useState<Partial<Record<'attendance' | 'chronic', Access>>>({});   // the tabs the server says this person may open
+  const [access, setAccess] = useState<Partial<Record<'attendance' | 'workload' | 'diagnoses' | 'chronic', Access>>>({});   // the tabs the server says this person may open
   const [labAccess, setLabAccess] = useState<Partial<Record<LabView, LabAccess>>>({});
   const [pharmacyAccess, setPharmacyAccess] = useState<Partial<Record<PharmacyView, PharmacyAccess>>>({});
 
@@ -97,7 +97,7 @@ export default function ReportsPage() {
     api.get<{ reports: { area: string; name: string; lineList?: boolean; canSeeNames?: boolean }[] }>('/reports/registry')
       .then(r => {
         const open = (area: string, name: string): Access | undefined => { const a = r.data.reports.find(x => x.area === area && x.name === name); return a ? { lineList: !!a.lineList, canSeeNames: !!a.canSeeNames } : undefined; };
-        if (alive) { setAccess({ attendance: open('attendance', 'attendance'), chronic: open('chronic', 'register') }); setLabAccess({ tests: open('lab', 'tests'), turnaround: open('lab', 'turnaround'), abnormal: open('lab', 'abnormal') }); setPharmacyAccess({ dispensed: open('pharmacy', 'dispensed'), prescriptions: open('pharmacy', 'prescriptions') }); }
+        if (alive) { setAccess({ attendance: open('attendance', 'attendance'), workload: open('attendance', 'workload'), diagnoses: open('attendance', 'diagnoses'), chronic: open('chronic', 'register') }); setLabAccess({ tests: open('lab', 'tests'), turnaround: open('lab', 'turnaround'), abnormal: open('lab', 'abnormal') }); setPharmacyAccess({ dispensed: open('pharmacy', 'dispensed'), prescriptions: open('pharmacy', 'prescriptions') }); }
       })
       .catch(() => { /* the overview does not depend on it */ });
     return () => { alive = false; };
@@ -163,7 +163,7 @@ export default function ReportsPage() {
           {hasPharmacy && <button type="button" role="tab" aria-selected={tab === 'pharmacy'} onClick={() => chooseTab('pharmacy')}>Pharmacy</button>}
         </div>
       )}
-      {tab === 'attendance' && access.attendance && !problem && <AttendancePanel period={period} canLines={access.attendance.lineList} canSeeNames={access.attendance.canSeeNames} />}
+      {tab === 'attendance' && access.attendance && !problem && <AttendanceArea period={period} access={{ attendance: access.attendance, workload: access.workload, diagnoses: access.diagnoses }} />}
       {tab === 'chronic' && access.chronic && !problem && <ChronicTab period={period} canLines={access.chronic.lineList} canSeeNames={access.chronic.canSeeNames} isAdmin={hasRole(user?.role, 'admin')} />}
 
       {tab === 'lab' && hasLab && !problem && <LabTab period={period} access={labAccess} />}
