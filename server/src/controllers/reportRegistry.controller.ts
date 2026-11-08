@@ -7,18 +7,27 @@ import { userNames } from '../lib/billingOps';
 import { addReportSheet, type Report } from './billingReports.controller';
 import { addDefinitionsSheet, appliedFilters, canOpen, findReport, mayUse, reportsFor, type ReportDefinition } from '../lib/reportRegistry';
 import { hubSummary } from '../lib/hubSummary';
+import { facilityLabel, getFacility } from '../lib/facility';
 import '../lib/reportDefinitions';
 
 const denied = (res: Response, what: string) => { res.status(403).json({ error: `You don’t have permission to ${what}.` }); };
 const wantsNames = (req: AuthRequest) => req.query['names'] === '1' || req.query['names'] === 'true';
 
+// Names on a line list need the role that may see them and the facility's permission; why they are refused says which was missing.
+async function namesRefusal(req: AuthRequest, def: ReportDefinition): Promise<string | null> {
+  if (!mayUse(req.userRole, def.roles.names ?? [])) return 'see patient names in this report';
+  if (!(await getFacility()).lineListNames) return 'see patient names: names on report line lists are switched off for this facility';
+  return null;
+}
+
 // GET /reports/registry: the reports the signed-in person may open, for building the hub's tabs.
-export function listRegisteredReports(req: AuthRequest, res: Response): void {
+export async function listRegisteredReports(req: AuthRequest, res: Response): Promise<void> {
+  const namesOn = (await getFacility()).lineListNames;
   res.json({
     reports: reportsFor(req.userRole).map(d => ({
       area: d.area, name: d.name, title: d.title, description: d.description, definitions: d.definitions, filters: d.filters,
       canExport: mayUse(req.userRole, d.roles.export),
-      lineList: !!d.lineList && mayUse(req.userRole, d.roles.lineList ?? []), canSeeNames: mayUse(req.userRole, d.roles.names ?? []),
+      lineList: !!d.lineList && mayUse(req.userRole, d.roles.lineList ?? []), canSeeNames: namesOn && mayUse(req.userRole, d.roles.names ?? []),
     })),
   });
 }
@@ -36,11 +45,11 @@ async function sendWorkbook(req: AuthRequest, res: Response, def: ReportDefiniti
   await prisma.reportExportLog.create({
     data: { userId: req.userId ?? '', role: req.userRole ?? null, area: def.area, report: def.name, kind, filters: filters as Prisma.InputJsonValue, rowCount },
   });
-  const by = (await userNames([req.userId]))[req.userId ?? ''] ?? 'staff';
+  const by = (await userNames([req.userId]))[req.userId ?? ''] ?? 'staff', facility = facilityLabel(await getFacility());
   const wb = new ExcelJS.Workbook();
   wb.creator = 'SES EHR';
-  for (const s of sheets) addReportSheet(wb, s.report, by, s.name);
-  addDefinitionsSheet(wb, def, sheets[0]!.report, filters, by);
+  for (const s of sheets) addReportSheet(wb, s.report, by, s.name, facility);
+  addDefinitionsSheet(wb, def, sheets[0]!.report, filters, by, facility);
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader('Content-Disposition', `attachment; filename="ses-${def.area}-${def.name}${kind === 'LINE_LIST' && sheets.length === 1 ? '-line-list' : ''}-${new Date().toISOString().slice(0, 10)}.xlsx"`);
   res.send(Buffer.from(await wb.xlsx.writeBuffer()));
@@ -61,7 +70,7 @@ export async function runRegisteredReport(req: AuthRequest, res: Response): Prom
   if (!excel) { res.json({ ...report, definitions: def.definitions, filters: appliedFilters(def, req.query as Record<string, unknown>) }); return; }
 
   const withLines = !!def.lineList && mayUse(req.userRole, def.roles.lineList ?? []);
-  if (withLines && wantsNames(req) && !mayUse(req.userRole, def.roles.names ?? [])) { denied(res, 'see patient names in this report'); return; }
+  if (withLines && wantsNames(req)) { const refused = await namesRefusal(req, def); if (refused) { denied(res, refused); return; } }
   if (!withLines) { await sendWorkbook(req, res, def, [{ report, name: def.lineList ? 'Summary' : undefined }], 'AGGREGATE', report.rows.length); return; }
   const lines = await def.lineList!.run(req.query as Record<string, unknown>, { names: wantsNames(req) });
   if ('error' in lines) { res.status(400).json({ error: lines.error }); return; }
@@ -75,7 +84,7 @@ export async function runRegisteredLines(req: AuthRequest, res: Response): Promi
   if (!def || !def.lineList) { res.status(404).json({ error: 'Unknown report.' }); return; }
   if (!mayUse(req.userRole, def.roles.lineList ?? [])) { denied(res, 'open the records behind this report'); return; }
   const names = wantsNames(req);
-  if (names && !mayUse(req.userRole, def.roles.names ?? [])) { denied(res, 'see patient names in this report'); return; }
+  if (names) { const refused = await namesRefusal(req, def); if (refused) { denied(res, refused); return; } }
   const excel = req.query['format'] === 'xlsx';
   if (excel && !mayUse(req.userRole, def.roles.export)) { denied(res, 'export this report'); return; }
 

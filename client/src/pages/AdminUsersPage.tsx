@@ -26,7 +26,7 @@ interface AdminUser {
 
 interface FacilityRoom { id: string; name: string; tag: string; active: boolean; waitingCount: number; }
 
-type Section = 'pending' | 'users' | 'rooms' | 'prices' | 'catalogue';
+type Section = 'pending' | 'users' | 'rooms' | 'prices' | 'catalogue' | 'facility';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -442,6 +442,79 @@ function RoomsSection({ rooms, loading, onChange }: { rooms: FacilityRoom[]; loa
   );
 }
 
+// ── Facility ──────────────────────────────────────────────────────────────────
+
+interface Facility { name: string; district: string; lineListNames: boolean }
+
+// The facility's name and district (they head every report and Excel file) and whether report line lists may show patient names.
+function FacilitySection() {
+  const [saved, setSaved] = useState<Facility | null>(null);
+  const [draft, setDraft] = useState<Facility>({ name: '', district: '', lineListNames: true });
+  const [state, setState] = useState<'loading' | 'ready' | 'failed'>('loading');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [reload, setReload] = useState(0);
+
+  useEffect(() => {   // the state is set only once the answer is in, and not after the section has closed
+    let alive = true;
+    api.get<Facility>('/facility-settings')
+      .then((r) => { if (alive) { setSaved(r.data); setDraft(r.data); setState('ready'); } })
+      .catch(() => { if (alive) setState('failed'); });
+    return () => { alive = false; };
+  }, [reload]);
+  const retry = () => { setState('loading'); setReload((n) => n + 1); };
+
+  const changed = !!saved && (draft.name.trim() !== saved.name || draft.district.trim() !== saved.district || draft.lineListNames !== saved.lineListNames);
+  async function save(e: FormEvent) {
+    e.preventDefault();
+    if (!changed || busy) return;
+    setBusy(true); setError('');
+    try {
+      const r = await api.patch<Facility>('/facility-settings', { name: draft.name, district: draft.district, lineListNames: draft.lineListNames });
+      setSaved(r.data); setDraft(r.data); toast.success('Facility details saved');
+    } catch (err) { setError(apiError(err, 'Could not save the facility details. Try again.') ?? 'Could not save the facility details. Try again.'); }
+    finally { setBusy(false); }
+  }
+
+  return (
+    <section aria-labelledby="a-f" className="a-card">
+      <div className="a-head" style={{ padding: '14px 16px 14px 20px' }}>
+        <div>
+          <h2 id="a-f" className="a-h2" style={{ marginBottom: 2 }}>Facility</h2>
+          <p className="a-muted" style={{ margin: 0, fontSize: 13 }}>The name and district head every report and Excel file. Changes are recorded in the audit log.</p>
+        </div>
+      </div>
+      {state === 'loading' && <Skeleton />}
+      {state === 'failed' && (<>
+        <Empty title="Couldn’t load the facility details" text="Check your connection, then try again." />
+        <div style={{ textAlign: 'center', paddingBottom: 28 }}><button type="button" className="a-q" onClick={retry}>Try again</button></div>
+      </>)}
+      {state === 'ready' && (
+        <form onSubmit={save} style={{ padding: '6px 20px 22px', display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 620 }}>
+          <div>
+            <label className="a-k" htmlFor="fac-name" style={{ display: 'block', marginBottom: 6 }}>Facility name</label>
+            <input id="fac-name" className="a-field" value={draft.name} maxLength={120} placeholder="e.g. Mtendere Clinic" onChange={(e) => { setDraft({ ...draft, name: e.target.value }); setError(''); }} />
+          </div>
+          <div>
+            <label className="a-k" htmlFor="fac-district" style={{ display: 'block', marginBottom: 6 }}>District</label>
+            <input id="fac-district" className="a-field" value={draft.district} maxLength={80} placeholder="e.g. Lusaka" onChange={(e) => { setDraft({ ...draft, district: e.target.value }); setError(''); }} />
+          </div>
+          <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13.5, color: 'var(--text-body)', cursor: 'pointer' }}>
+            <input type="checkbox" checked={draft.lineListNames} onChange={(e) => { setDraft({ ...draft, lineListNames: e.target.checked }); setError(''); }} style={{ marginTop: 3 }} />
+            <span><b style={{ fontWeight: 500, color: 'var(--text-heading)' }}>Allow patient names on report line lists</b><br />
+              <span className="a-muted">Clinical staff can then choose to show names. Switched off, every line list shows only the patient ID and a masked NRC, for everyone.</span></span>
+          </label>
+          {error && <p role="alert" className="a-err" style={{ margin: 0 }}>{error}</p>}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button type="submit" className="a-btn" disabled={!changed || busy}>{busy ? 'Saving…' : 'Save'}</button>
+            {changed && !busy && <button type="button" className="a-q" style={{ height: 40 }} onClick={() => { setDraft(saved!); setError(''); }}>Undo changes</button>}
+          </div>
+        </form>
+      )}
+    </section>
+  );
+}
+
 // ── Shared bits ───────────────────────────────────────────────────────────────
 
 function Skeleton() {
@@ -474,7 +547,7 @@ export default function AdminUsersPage() {
   const staff = useMemo(() => users.filter((u) => u.status !== 'pending'), [users]);
 
   const requested = params.get('section') as Section | null;
-  const section: Section = requested && ['pending', 'users', 'rooms', 'prices', 'catalogue'].includes(requested)
+  const section: Section = requested && ['pending', 'users', 'rooms', 'prices', 'catalogue', 'facility'].includes(requested)
     ? requested
     : pending.length > 0 ? 'pending' : 'users';
 
@@ -499,6 +572,7 @@ export default function AdminUsersPage() {
     { id: 'rooms', label: 'Rooms', count: rooms.length },
     { id: 'catalogue', label: 'Catalogue' },
     { id: 'prices', label: 'Price list' },
+    { id: 'facility', label: 'Facility' },
   ];
 
   return (
@@ -526,6 +600,7 @@ export default function AdminUsersPage() {
               <div style={{ textAlign: 'center', paddingBottom: 28 }}><button type="button" className="a-q" onClick={load}>Try again</button></div>
             </section>
           ) : section === 'prices' ? <PriceListSection />
+            : section === 'facility' ? <FacilitySection />
             : section === 'catalogue' ? <CatalogueSection />
             : section === 'pending' ? <PendingSection users={pending} loading={loading} onChange={load} />
             : section === 'users' ? <UsersSection users={staff} loading={loading} onChange={load} />

@@ -51,6 +51,7 @@ import { authenticate, requireRoles } from '../middleware/auth';
 import { CLINICAL_ROLES, REPORT_ROLES } from '../lib/clinicalAccess';
 import { getHubSummary, listRegisteredReports, runRegisteredLines, runRegisteredReport } from '../controllers/reportRegistry.controller';
 import { CONDITION_EDITORS, createChronicCondition, listChronicConditions, updateChronicCondition } from '../controllers/chronicConditions.controller';
+import { changeFacility, readFacility } from '../controllers/facility.controller';
 
 const router = Router();
 router.use('/pharmacy-stock', stockRoutes);
@@ -258,5 +259,9 @@ router.get('/reports/:area/:name/lines', authenticate, runRegisteredLines);
 router.get('/chronic-conditions', authenticate, requireRoles(...CLINICAL_ROLES), listChronicConditions);
 router.post('/chronic-conditions', authenticate, requireRoles(...CONDITION_EDITORS), createChronicCondition);
 router.patch('/chronic-conditions/:id', authenticate, requireRoles(...CONDITION_EDITORS), updateChronicCondition);
+
+// The facility's name, district and reporting policy: anyone signed in reads it (it heads every report), only an admin changes it.
+router.get('/facility-settings', authenticate, readFacility);
+router.patch('/facility-settings', authenticate, requireRoles('admin'), changeFacility);
 
 export default router;

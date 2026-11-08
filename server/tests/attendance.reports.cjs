@@ -118,7 +118,9 @@ async function main() {
     wb = await sheets(`${A}?${range}&format=xlsx`, dr);
     assert.deepEqual(wb.worksheets.map(w => w.name), ['Summary', 'Line list', 'Definitions']);
     const header = wb.getWorksheet('Line list').getRow(6).values.slice(1); assert.ok(header.includes('NRC (masked)') && !header.includes('Name'));
-    assert.match(JSON.stringify(wb.getWorksheet('Definitions').getSheetValues()), /first visit to this facility/); assert.equal(wb.getWorksheet('Summary').getRow(7).getCell(1).value, 'Under 1');
+    assert.match(JSON.stringify(wb.getWorksheet('Definitions').getSheetValues()), /first visit to this facility/); const sum = wb.getWorksheet('Summary');
+    assert.deepEqual([sum.getRow(6).getCell(2).value, sum.getRow(6).getCell(6).value, sum.getRow(7).getCell(1).value, sum.getRow(8).getCell(1).value], ['New attendance', 'Re-attendance', 'Age band', 'Under 1'], 'group headings over the new and re-attendance columns, as in the design');
+    assert.ok(sum.getCell(6, 3).isMerged && sum.getCell(6, 5).isMerged && sum.getCell(6, 9).isMerged && !sum.getCell(6, 10).isMerged, 'each heading spans its male, female, other and total columns only');
     wb = await sheets(`${A}?${range}&format=xlsx&names=1`, dr); assert.ok(wb.getWorksheet('Line list').getRow(6).values.includes('Name'));
     wb = await sheets(`${A}/lines?${range}&format=xlsx&visit=re`, dr); assert.deepEqual(wb.worksheets.map(w => w.name), ['Line list', 'Definitions']); assert.equal(wb.getWorksheet('Line list').rowCount > 6, true);
     logged = await db.reportExportLog.findMany({ orderBy: { at: 'asc' } });

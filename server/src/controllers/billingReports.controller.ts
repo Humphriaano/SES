@@ -13,6 +13,7 @@ interface Col { key: string; header: string; type: ColType; width: number }
 export interface Report {
   name: string; title: string; period: string; columns: Col[]; rows: Record<string, unknown>[];
   totals: Record<string, unknown> | null; summary: { label: string; value: number | string; money?: boolean }[];
+  groups?: { label: string; from: string; to: string }[];   // headings over runs of columns, by first and last column key, e.g. "New attendance" over its male, female and total
 }
 
 const SERVICES = ['CONSULTATION', 'PRESCRIPTION', 'INVESTIGATION', 'PROCEDURE', 'MANUAL'] as const;
@@ -266,8 +267,10 @@ export async function toWorkbook(r: Report, by: string): Promise<Buffer> {
 }
 
 // One branded sheet per report, so a workbook can hold several (the reports page export).
-export function addReportSheet(wb: ExcelJS.Workbook, r: Report, by: string, sheetName?: string): void {
-  const ws = wb.addWorksheet((sheetName ?? r.title).slice(0, 30), { views: [{ state: 'frozen', ySplit: 6, showGridLines: false }] });
+// `facility` is the facility's name and district, written beside who generated the sheet.
+export function addReportSheet(wb: ExcelJS.Workbook, r: Report, by: string, sheetName?: string, facility?: string): void {
+  const top = r.groups?.length ? 7 : 6;   // the row of column headings, one lower when group headings sit above them
+  const ws = wb.addWorksheet((sheetName ?? r.title).slice(0, 30), { views: [{ state: 'frozen', ySplit: top, showGridLines: false }] });
   const n = r.columns.length;
   ws.columns = r.columns.map((c) => ({ key: c.key, width: c.width }));
 
@@ -284,10 +287,20 @@ export function addReportSheet(wb: ExcelJS.Workbook, r: Report, by: string, shee
   ws.getCell(3, 2).value = r.period; ws.getCell(3, 2).font = { name: 'Calibri', size: 11, color: { argb: 'FFFFFFFF' } };
   for (let c = 1; c <= n; c++) ws.getCell(4, c).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: RED } };
   ws.getRow(4).height = 4;
-  ws.getCell(5, 1).value = `Generated ${new Date().toLocaleString('en-GB')} by ${by}`;
+  ws.getCell(5, 1).value = `${facility ? facility + ' · ' : ''}Generated ${new Date().toLocaleString('en-GB')} by ${by}`;
   ws.getCell(5, 1).font = { name: 'Calibri', size: 9, italic: true, color: { argb: 'FF6B7280' } };
 
-  const head = ws.getRow(6);
+  for (const g of r.groups ?? []) {
+    const from = r.columns.findIndex(c => c.key === g.from) + 1, to = r.columns.findIndex(c => c.key === g.to) + 1;
+    if (from < 1 || to < from) continue;   // a group whose columns are not all on this sheet is left out rather than drawn wrong
+    if (to > from) ws.mergeCells(top - 1, from, top - 1, to);
+    const cell = ws.getCell(top - 1, from);
+    cell.value = g.label;
+    cell.font = { name: 'Calibri', bold: true, size: 11, color: { argb: BLUE } };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE8F0F8' } };
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+  }
+  const head = ws.getRow(top);
   r.columns.forEach((c, i) => {
     const cell = head.getCell(i + 1);
     cell.value = c.header;
@@ -299,7 +312,7 @@ export function addReportSheet(wb: ExcelJS.Workbook, r: Report, by: string, shee
 
   const fmt = (c: Col) => (c.type === 'money' ? '#,##0.00' : c.type === 'int' ? '#,##0' : c.type === 'number' ? '#,##0.##' : c.type === 'date' ? 'dd mmm yyyy hh:mm' : '@');
   r.rows.forEach((row, ri) => {
-    const wr = ws.getRow(7 + ri);
+    const wr = ws.getRow(top + 1 + ri);
     r.columns.forEach((c, i) => {
       const v = row[c.key];
       const cell = wr.getCell(i + 1);
@@ -311,7 +324,7 @@ export function addReportSheet(wb: ExcelJS.Workbook, r: Report, by: string, shee
     });
   });
 
-  const end = 6 + r.rows.length;
+  const end = top + r.rows.length;
   if (r.totals) {
     const tr = ws.getRow(end + 1);
     r.columns.forEach((c, i) => {
@@ -323,8 +336,8 @@ export function addReportSheet(wb: ExcelJS.Workbook, r: Report, by: string, shee
       cell.border = { top: { style: 'medium', color: { argb: BLUE } } };
     });
   }
-  if (r.rows.length === 0) ws.getCell(7, 1).value = 'Nothing to show for this period.';
-  if (r.rows.length > 0) ws.autoFilter = { from: { row: 6, column: 1 }, to: { row: end, column: n } };
+  if (r.rows.length === 0) ws.getCell(top + 1, 1).value = 'Nothing to show for this period.';
+  if (r.rows.length > 0) ws.autoFilter = { from: { row: top, column: 1 }, to: { row: end, column: n } };
 
   let sr = end + 4;
   ws.getCell(sr - 1, 1).value = 'Summary'; ws.getCell(sr - 1, 1).font = { name: 'Calibri', bold: true, size: 12, color: { argb: BLUE } };

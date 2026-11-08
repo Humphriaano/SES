@@ -57,7 +57,7 @@ export function appliedFilters(def: ReportDefinition, query: Record<string, unkn
 
 const BLUE = 'FF1F5F96';
 // A sheet beside the numbers that says what they mean, who asked for them and when.
-export function addDefinitionsSheet(wb: ExcelJS.Workbook, def: ReportDefinition, report: Report, filters: Record<string, string>, by: string): void {
+export function addDefinitionsSheet(wb: ExcelJS.Workbook, def: ReportDefinition, report: Report, filters: Record<string, string>, by: string, facility = ''): void {
   const ws = wb.addWorksheet('Definitions', { views: [{ showGridLines: false }] });
   ws.columns = [{ width: 24 }, { width: 100 }];
   const heading = (row: number, text: string) => { const c = ws.getCell(row, 1); c.value = text; c.font = { name: 'Calibri', bold: true, size: 12, color: { argb: BLUE } }; };
@@ -69,11 +69,12 @@ export function addDefinitionsSheet(wb: ExcelJS.Workbook, def: ReportDefinition,
   ws.getCell(1, 1).value = def.title; ws.getCell(1, 1).font = { name: 'Calibri', bold: true, size: 16 };
   ws.getCell(2, 1).value = def.description; ws.getCell(2, 1).font = { name: 'Calibri', size: 11, color: { argb: 'FF6B7280' } };
   heading(4, 'About this file');
-  put(5, 'Period', report.period);
+  put(5, 'Facility', facility || 'Not set (an admin can set it under Administration, Facility)');
+  put(6, 'Period', report.period);
   const used = Object.entries(filters);
-  put(6, 'Filters applied', used.length ? used.map(([k, v]) => `${k}: ${v}`).join('; ') : 'None');
-  put(7, 'Generated', `${new Date().toLocaleString('en-GB')} by ${by}`);
-  put(8, 'Rows', String(report.rows.length));
-  heading(10, 'How it counts');
-  def.definitions.forEach((text, i) => put(11 + i, `${i + 1}`, text));
+  put(7, 'Filters applied', used.length ? used.map(([k, v]) => `${k}: ${v}`).join('; ') : 'None');
+  put(8, 'Generated', `${new Date().toLocaleString('en-GB')} by ${by}`);
+  put(9, 'Rows', String(report.rows.length));
+  heading(11, 'How it counts');
+  def.definitions.forEach((text, i) => put(12 + i, `${i + 1}`, text));
 }

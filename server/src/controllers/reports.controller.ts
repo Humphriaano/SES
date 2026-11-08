@@ -3,6 +3,7 @@ import prisma from '../lib/prisma';
 import ExcelJS from 'exceljs';
 import { AuthRequest } from '../middleware/auth';
 import { addReportSheet } from './billingReports.controller';
+import { facilityLabel, getFacility } from '../lib/facility';
 import { userNames } from '../lib/billingOps';
 import { ageSexBands, buildOverview, chronicSummary, exportSheets, parsePeriod } from '../lib/populationReports';
 
@@ -227,11 +228,11 @@ export async function populationExport(req: AuthRequest, res: Response): Promise
   const period = parsePeriod(req.query as Record<string, unknown>);
   if ('error' in period) { res.status(400).json({ error: period.error }); return; }
   try {
-    const [overview, names] = await Promise.all([buildOverview(period, 100), userNames([req.userId])]);
+    const [overview, names, facility] = await Promise.all([buildOverview(period, 100), userNames([req.userId]), getFacility()]);
     const by = names[req.userId ?? ''] ?? 'staff';
     const wb = new ExcelJS.Workbook();
     wb.creator = 'SES EHR';
-    for (const sheet of exportSheets(overview)) addReportSheet(wb, sheet, by);
+    for (const sheet of exportSheets(overview)) addReportSheet(wb, sheet, by, undefined, facilityLabel(facility));
     const stamp = period.fromDay ? `${period.fromDay}_to_${period.toDay}` : 'all-time';
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename="ses-reports-${stamp}.xlsx"`);

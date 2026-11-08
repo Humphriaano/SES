@@ -118,6 +118,7 @@ export async function attendanceReport(q: Record<string, unknown>): Promise<Repo
       col('all', 'All attendances', 16),
     ],
     rows: body,
+    groups: [{ label: 'New attendance', from: 'newMale', to: 'newTotal' }, { label: 'Re-attendance', from: 'reMale', to: 'reTotal' }],
     totals: { label: f.groupBy === 'period' ? 'All ages' : 'All', ...total },
     summary: [
       { label: 'Attendances', value: total.all }, { label: 'New attendance', value: total.newTotal }, { label: 'Re-attendance', value: total.reTotal },

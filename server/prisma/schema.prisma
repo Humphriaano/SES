@@ -583,6 +583,16 @@ model InvestigationResult {
 
 // ── Facility Rooms & Queue Entries ────────────────────────────────────────────
 
+// The facility this installation serves, and its reporting policy. There is one row (id 1).
+model FacilitySetting {
+  id            Int      @id @default(1)
+  name          String   @default("")
+  district      String   @default("")
+  lineListNames Boolean  @default(true)   // whether clinical roles may ask for patient names on report line lists
+  updatedAt     DateTime @updatedAt
+  updatedById   String?
+}
+
 model FacilityRoom {
   id        String      @id @default(uuid())
   name      String      @unique
