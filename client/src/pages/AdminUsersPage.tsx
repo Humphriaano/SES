@@ -648,11 +648,11 @@ const CSS = `
   font: inherit; font-size: 13px; font-weight:500; cursor: pointer; transition: background .15s, border-color .15s, color .15s; }
 .a-q:hover:not(:disabled) { background: var(--ws-chip); }
 .a-q:disabled { opacity: .55; cursor: not-allowed; }
-.a-q-pri { background: var(--ses-red); border-color: var(--ses-red); color: #fff; }
-.a-q-pri:hover:not(:disabled) { background: var(--ses-red); filter: brightness(1.06); }
+.a-q-pri { background: var(--btn-accent); border-color: var(--btn-accent); color: #fff; }
+.a-q-pri:hover:not(:disabled) { background: var(--btn-accent-hover); filter: brightness(1.06); }
 .a-q-bad { color: var(--st-bad); border-color: var(--st-bad); }
 .a-q-bad:hover:not(:disabled) { background: var(--st-bad-bg); }
-.a-btn { height: 38px; padding: 0 16px; border: 0; border-radius: 10px; background: var(--ses-red); color: #fff; font: inherit; font-size: 13px; font-weight:500;
+.a-btn { height: 38px; padding: 0 16px; border: 0; border-radius: 10px; background: var(--btn-accent); color: #fff; font: inherit; font-size: 13px; font-weight:500;
   cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: filter .15s, opacity .15s; }
 .a-btn:hover:not(:disabled) { filter: brightness(1.06); }
 .a-btn:disabled { opacity: .5; cursor: not-allowed; }

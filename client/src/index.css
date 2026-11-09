@@ -203,7 +203,7 @@ h1, h2, h3, h4 { font-family: var(--font-heading); }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--ses-red);
+  background: var(--btn-accent);
   color: #fff;
   font-size: 13px;
   font-weight: 600;
@@ -215,7 +215,7 @@ h1, h2, h3, h4 { font-family: var(--font-heading); }
   cursor: pointer;
   transition: background 0.15s, box-shadow 0.15s;
 }
-.btn-primary:hover { background: var(--ses-red-dark); box-shadow: 0 6px 16px rgba(196,30,37,0.28); }
+.btn-primary:hover { background: var(--btn-accent-hover); box-shadow: 0 6px 16px var(--btn-accent-shadow); }
 .btn-primary:active { transform: translateY(1px); }
 .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
 

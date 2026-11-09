@@ -166,7 +166,7 @@ export default function ProcedureRecorder({ data, onChange, patientId, encounter
           )}
           {error && <div role="alert" style={{ fontSize: 12, color: 'var(--badge-red-text)' }}>{error}</div>}
           <div style={{ display: 'flex', gap: 8 }}>
-            <button type="button" onClick={() => void record()} disabled={busy} style={{ background: busy ? 'var(--text-subtle)' : 'var(--ses-red)', color: '#fff', border: 'none', borderRadius: 999, padding: '7px 16px', fontSize: 13, fontWeight: 500, cursor: busy ? 'not-allowed' : 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <button type="button" onClick={() => void record()} disabled={busy} style={{ background: busy ? 'var(--text-subtle)' : 'var(--btn-accent)', color: '#fff', border: 'none', borderRadius: 999, padding: '7px 16px', fontSize: 13, fontWeight: 500, cursor: busy ? 'not-allowed' : 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
               <Plus size={13} />{busy ? (ordering ? 'Sending…' : 'Recording…') : ordering ? 'Send to treatment room' : 'Record procedure'}
             </button>
             <button type="button" onClick={cancel} disabled={busy} style={{ background: 'none', border: '1px solid var(--border-input)', borderRadius: 999, padding: '7px 14px', fontSize: 13, color: 'var(--text-body2)', cursor: 'pointer' }}>Cancel</button>

@@ -489,7 +489,7 @@ export default function SignupPage() {
                 to="/login"
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 6,
-                  padding: '10px 24px', background: 'var(--ses-red)', color: '#fff',
+                  padding: '10px 24px', background: 'var(--btn-accent)', color: '#fff',
                   borderRadius: 12, fontSize: 13.5, fontWeight: 500, textDecoration: 'none',
                 }}
               >

@@ -153,7 +153,7 @@ export default function PrescriptionForm({ onAdd, onSave, onCancel, patientId, e
     </div>
     <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
       <button type="button" className="bl-btn" disabled={saving} onClick={onCancel} style={{ borderRadius: 999, padding: '6px 14px', background: 'var(--bg-surface-2)', color: 'var(--text-body)', border: '1px solid var(--border)' }}>Cancel</button>
-      <button type="button" disabled={!canAdd} onClick={save} style={{ background: canAdd ? 'var(--ses-red)' : 'var(--border-input)', color: canAdd ? '#fff' : 'var(--text-subtle)', border: 'none', borderRadius: 999, padding: '7px 15px', fontSize: 12, fontWeight: 500, cursor: canAdd ? 'pointer' : 'not-allowed' }}>{saving ? 'Saving…' : submitLabel}</button>
+      <button type="button" disabled={!canAdd} onClick={save} style={{ background: canAdd ? 'var(--btn-accent)' : 'var(--border-input)', color: canAdd ? '#fff' : 'var(--text-subtle)', border: 'none', borderRadius: 999, padding: '7px 15px', fontSize: 12, fontWeight: 500, cursor: canAdd ? 'pointer' : 'not-allowed' }}>{saving ? 'Saving…' : submitLabel}</button>
     </div>
   </div>;
 }

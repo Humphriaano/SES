@@ -404,7 +404,7 @@ export default function InvestigationBlock({
               style={{
                 marginTop: 8,
                 width: '100%',
-                background: submitting ? 'var(--text-subtle)' : 'var(--ses-red)',
+                background: submitting ? 'var(--text-subtle)' : 'var(--btn-accent)',
                 color: '#fff',
                 border: 'none',
                 borderRadius: 999,

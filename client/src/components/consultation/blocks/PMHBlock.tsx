@@ -206,7 +206,7 @@ export default function PMHBlock({ data, onChange, onRemove, onResolve, readOnly
                 <button onClick={reset} disabled={saving}
                   style={{ height: 36, padding: '0 14px', borderRadius: 999, border: '1px solid var(--border-input)', background: 'var(--bg-card)', color: 'var(--text-heading)', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>Cancel</button>
                 <button onClick={save} disabled={saving}
-                  style={{ height: 36, padding: '0 16px', borderRadius: 999, border: 'none', background: 'var(--ses-red)', color: '#fff', fontSize: 13, fontWeight: 500, cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+                  style={{ height: 36, padding: '0 16px', borderRadius: 999, border: 'none', background: 'var(--btn-accent)', color: '#fff', fontSize: 13, fontWeight: 500, cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.7 : 1 }}>
                   {saving ? 'Saving…' : 'Add to history'}
                 </button>
               </div>

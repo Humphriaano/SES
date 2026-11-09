@@ -46,8 +46,8 @@ export const BILLING_CSS = `
 .bl-btn { height: 34px; padding: 0 13px; border-radius: 8px; border: 1px solid var(--btn2-line); background: var(--btn2); color: var(--text-heading); font: inherit; font-size: 13px; font-weight:500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .bl-btn:hover:not(:disabled) { background: var(--ws-chip); }
 .bl-btn:disabled { opacity: .5; cursor: not-allowed; }
-.bl-btn.primary { background: var(--ses-red); border-color: var(--ses-red); color: #fff; }
-.bl-btn.primary:hover:not(:disabled) { background: var(--ses-red-dark); }
+.bl-btn.primary { background: var(--btn-accent); border-color: var(--btn-accent); color: #fff; }
+.bl-btn.primary:hover:not(:disabled) { background: var(--btn-accent-hover); }
 .bl-btn.sm { height: 28px; padding: 0 10px; font-size: 12px; }
 .bl-btn.danger { color: var(--badge-red-text); }
 .bl-scrim { position: fixed; inset: 0; z-index: 400; background: rgba(15,18,22,.55); display: flex; align-items: center; justify-content: center; padding: 16px; }

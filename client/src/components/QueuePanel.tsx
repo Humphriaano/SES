@@ -612,7 +612,7 @@ const DRAWER_CSS = `
 .qd-x { width: 32px; height: 32px; border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex: none; }
 .qd-x:hover:not(:disabled) { background: var(--ws-chip); color: var(--text-heading); }
 .qd-bordered { border: 1px solid var(--btn2-line); }
-.qd-call { height: 42px; border: 0; border-radius: 10px; background: var(--ses-red); color: #fff; font: inherit; font-size: 14px; font-weight:500; cursor: pointer; transition: filter .15s; }
+.qd-call { height: 42px; border: 0; border-radius: 10px; background: var(--btn-accent); color: #fff; font: inherit; font-size: 14px; font-weight:500; cursor: pointer; transition: filter .15s; }
 .qd-call:hover:not(:disabled) { filter: brightness(1.06); }
 .qd-call:disabled { opacity: .7; cursor: wait; }
 .qd-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card); }

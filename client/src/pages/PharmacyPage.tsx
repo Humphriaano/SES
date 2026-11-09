@@ -74,7 +74,7 @@ function primaryBtn(disabled = false): React.CSSProperties {
   return {
     display: 'flex', alignItems: 'center', gap: 6,
     padding: '9px 18px', minHeight: 40, borderRadius: 999, border: 'none',
-    background: disabled ? 'var(--border-input)' : C.red,
+    background: disabled ? 'var(--border-input)' : 'var(--btn-accent)',
     color: disabled ? C.faint : '#fff',
     fontSize: 13, fontWeight: 500,
     cursor: disabled ? 'not-allowed' : 'pointer',

@@ -524,7 +524,7 @@ export default function ConsultationPage() {
           cursor: pointer; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
         .cx-btn:hover:not(:disabled) { background: var(--ws-chip); }
         .cx-btn:disabled { opacity: .6; cursor: wait; }
-        .cx-red { height: 32px; padding: 0 16px; border: 0; border-radius: 10px; background: var(--ses-red); color: #fff; font: inherit; font-size: 13px; font-weight:500; cursor: pointer;
+        .cx-red { height: 32px; padding: 0 16px; border: 0; border-radius: 10px; background: var(--btn-accent); color: #fff; font: inherit; font-size: 13px; font-weight:500; cursor: pointer;
           display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; transition: filter .15s; }
         .cx-red:hover { filter: brightness(1.06); }
         .cx-red:disabled { opacity: .6; cursor: wait; }

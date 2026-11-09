@@ -351,7 +351,7 @@ select.rg-f { padding-right: 38px; cursor: pointer; }
 .rg-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 28px; background: var(--rg-foot); border-top: 1px solid var(--border); }
 .rg-ghost { height: 44px; padding: 0 18px; border: 1px solid var(--rg-field-line); border-radius: 10px; background: transparent; color: var(--text-heading); font: inherit; font-size: 14px; font-weight:500; cursor: pointer; }
 .rg-ghost:hover { background: var(--rg-x-hover); }
-.rg-pri { height: 44px; padding: 0 20px; border: 0; border-radius: 10px; background: var(--ses-red); color: #fff; font-family: var(--font-heading); font-size: 14px; font-weight:500; cursor: pointer; }
+.rg-pri { height: 44px; padding: 0 20px; border: 0; border-radius: 10px; background: var(--btn-accent); color: #fff; font-family: var(--font-heading); font-size: 14px; font-weight:500; cursor: pointer; }
 .rg-pri:hover:not(:disabled) { filter: brightness(1.06); }
 .rg-pri:disabled { opacity: .7; cursor: default; }
 @media (max-width: 700px) {

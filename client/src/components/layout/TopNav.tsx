@@ -358,7 +358,7 @@ export default function TopNav() {
           background: var(--ws-head); font-size: 12px; color: var(--text-muted); flex-wrap: wrap; }
         .sd-link { border: 0; background: none; padding: 0; font: inherit; font-size: 12px; font-weight:500; color: var(--ws-link); cursor: pointer; }
         .sd-link:hover { text-decoration: underline; }
-        .sd-reg { height: 40px; padding: 0 18px; border: 0; border-radius: 10px; background: var(--ses-red); color: #fff; font: inherit; font-size: 13px;
+        .sd-reg { height: 40px; padding: 0 18px; border: 0; border-radius: 10px; background: var(--btn-accent); color: #fff; font: inherit; font-size: 13px;
           font-weight:500; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: filter .15s; }
         .sd-reg:hover { filter: brightness(1.06); }
         .tn-q { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 8px; border: 0; border-radius: 8px; background: transparent; color: var(--bar-text); font: inherit; font-size: 12px; cursor: pointer; white-space: nowrap; }

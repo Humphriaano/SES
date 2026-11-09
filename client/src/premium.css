@@ -1,6 +1,10 @@
 /* Visual system adapted from ses-ehr-premium-html.zip.
    Existing components, handlers, validation and data flows remain in place. */
 :root {
+  /* Filled buttons: the accent blue, dark enough to carry white text in each theme. Destructive actions keep red. */
+  --btn-accent: #1F5F96;
+  --btn-accent-hover: #184E7D;
+  --btn-accent-shadow: rgba(31,95,150,.22);
   --font-body: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-heading: var(--font-body);
   --bg-page: #F2F3F5;
@@ -51,6 +55,9 @@
   --shadow-md: rgba(15,18,22,.08);
 }
 [data-theme="dark"] {
+  --btn-accent: #2A74AB;
+  --btn-accent-hover: #327DB8;
+  --btn-accent-shadow: rgba(42,116,171,.30);
   --bg-page: #08090B;
   --bg-card: #111316;
   --bg-surface: #16191D;
@@ -123,11 +130,15 @@ body :is(.btn-primary,.btn-secondary,.a-btn,.a-q,.bl-btn,.vp-btn,.vp-btn2,.cx-bt
   font-weight: 500;
 }
 body :is(.btn-primary,.a-btn,.vp-btn,.cx-red,.rg-pri,.qd-call,.ws-next,.ar-pri,.bl-btn.primary) {
-  background: var(--ses-red);
+  background: var(--btn-accent);
   color: #fff;
-  box-shadow: 0 6px 20px rgba(224,38,44,.20);
+  box-shadow: 0 6px 20px var(--btn-accent-shadow);
   font-weight: 600;
 }
+body :is(.btn-primary,.a-btn,.vp-btn,.cx-red,.rg-pri,.qd-call,.ws-next,.ar-pri,.bl-btn.primary):hover:not(:disabled) { background: var(--btn-accent-hover); }
+/* A destructive action is outlined red, never the accent: Reject keeps the look its own style gives it. */
+body .a-btn.a-btn-bad { background: transparent; color: var(--st-bad); border: 1px solid var(--st-bad); box-shadow: none; }
+body .a-btn.a-btn-bad:hover:not(:disabled) { background: var(--st-bad-bg); }
 body :is(.a-q,.bl-btn,.btn-secondary) { display: inline-flex; align-items: center; justify-content: center; gap: 7px; white-space: nowrap; }
 body :is(.a-tbl,.bl-tbl,.vp-table) th { font-weight: 500; letter-spacing: .08em; background: transparent; }
 body :is(.a-tbl,.bl-tbl,.vp-table) td { border-color: var(--border); }
@@ -233,11 +244,11 @@ body .ar-r.on { background: var(--bg-surface); box-shadow: inset 3px 0 0 var(--s
 body .pl-actions > button { border-radius: 999px; font-weight: 500; }
 
 /* Shared sign-in and staff registration use the same premium auth treatment. */
-body .sl[data-t] { --page: var(--bg-page); --fg: var(--text-heading); --heading: var(--text-heading); --muted: var(--text-muted); --label: var(--text-muted); --field: var(--bg-surface); --field-border: var(--border); --field-focus: var(--bg-surface); --ph: var(--text-subtle); --link: var(--ws-link); --link-hover: var(--ws-link); --accent: var(--ses-red); font-family: var(--font-body); }
+body .sl[data-t] { --page: var(--bg-page); --fg: var(--text-heading); --heading: var(--text-heading); --muted: var(--text-muted); --label: var(--text-muted); --field: var(--bg-surface); --field-border: var(--border); --field-focus: var(--bg-surface); --ph: var(--text-subtle); --link: var(--ws-link); --link-hover: var(--ws-link); --accent: var(--btn-accent); font-family: var(--font-body); }
 body .sl-brand { margin: 12px 0 12px 12px; border-radius: 28px; height: calc(100vh - 24px); min-height: calc(100vh - 24px); padding: 36px 44px; background: radial-gradient(700px 500px at 20% 110%,rgba(38,113,174,.20),transparent 60%),#0E1116; border: 1px solid rgba(255,255,255,.08); }
 body .sl-copy h1 { font-weight: 300 !important; font-size: 46px !important; line-height: 1.08 !important; letter-spacing: -.03em !important; }
 body .sl-field { height: 44px; border-radius: 14px; font-size: 14px; }
-body .sl-btn { border-radius: 999px; height: 46px; font-family: var(--font-body); font-weight: 600; letter-spacing: 0; box-shadow: 0 6px 20px rgba(224,38,44,.24); }
+body .sl-btn { border-radius: 999px; height: 46px; font-family: var(--font-body); font-weight: 600; letter-spacing: 0; box-shadow: 0 6px 20px var(--btn-accent-shadow); }
 body .sl-eye { width: 36px; height: 36px; top: 4px; right: 4px; border-radius: 999px; }
 body .sl-form-title { font-weight: 400; font-size: 30px; letter-spacing: -.02em; }
 body .sl-content > h2 { font-weight: 400 !important; font-size: 30px !important; letter-spacing: -.02em !important; }

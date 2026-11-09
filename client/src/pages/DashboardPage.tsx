@@ -363,7 +363,7 @@ export default function DashboardPage() {
         .ws-seg { display: inline-flex; padding: 3px; gap: 2px; border: 1px solid var(--border); border-radius: 10px; background: var(--ws-head); }
         .ws-seg button { height: 28px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; font-weight:500; cursor: pointer; white-space: nowrap; }
         .ws-seg button.on { background: var(--ws-chip-on); color: var(--ws-chip-on-text); }
-        .ws-next { height: 34px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--ses-red); color: #fff; font: inherit; font-size: 13px; font-weight:500; cursor: pointer;
+        .ws-next { height: 34px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--btn-accent); color: #fff; font: inherit; font-size: 13px; font-weight:500; cursor: pointer;
           display: inline-flex; align-items: center; gap: 8px; transition: filter .15s; }
         .ws-next:hover:not(:disabled) { filter: brightness(1.06); }
         .ws-next:disabled { opacity: .6; cursor: wait; }
@@ -377,8 +377,8 @@ export default function DashboardPage() {
         .ws-ic { width: 30px; height: 30px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--text-muted); cursor: pointer;
           display: inline-flex; align-items: center; justify-content: center; transition: background .15s, color .15s, border-color .15s; }
         .ws-ic:hover:not(:disabled) { background: var(--bg-card); border-color: var(--border); color: var(--text-heading); }
-        .ws-ic-go { color: #fff; background: var(--ses-red); border-color: var(--ses-red); }
-        .ws-ic-go:hover:not(:disabled) { background: var(--ses-red); color: #fff; border-color: var(--ses-red); filter: brightness(1.08); }
+        .ws-ic-go { color: #fff; background: var(--btn-accent); border-color: var(--btn-accent); }
+        .ws-ic-go:hover:not(:disabled) { background: var(--btn-accent-hover); color: #fff; border-color: var(--btn-accent-hover); filter: brightness(1.08); }
         .ws-ic-bad:hover:not(:disabled) { color: var(--st-bad); border-color: var(--st-bad); }
         .ws-ic:disabled, .ws-act:disabled { opacity: .5; cursor: wait; }
         .ws-act { height: 28px; padding: 0 10px; border: 1px solid var(--btn2-line); border-radius: 8px; background: transparent; color: var(--text-heading); font: inherit; font-size: 12px; font-weight:500; cursor: pointer; }

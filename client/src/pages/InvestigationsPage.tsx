@@ -30,7 +30,7 @@ const T = {
   title: 'var(--text-heading)',
   body: 'var(--text-body2)',
   muted: 'var(--text-muted)',
-  primary: 'var(--ses-red)',
+  primary: 'var(--btn-accent)',
   font: 'var(--font-body)',
 };
 
@@ -169,7 +169,7 @@ function OrderBasket({ basket, setBasket }: {
                       {isPanel ? `${panel!.specimen} · ${panel!.components.length} tests` : single!.specimen || ''}
                     </div>
                   </div>
-                  {inBasket && <span style={{ fontSize: 10, color: T.primary }}>Added</span>}
+                  {inBasket && <span style={{ fontSize: 10, color: 'var(--attention-text)' }}>Added</span>}
                 </button>
               );
             })}

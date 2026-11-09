@@ -488,7 +488,7 @@ const CSS = `
 .v-err { color: var(--st-bad); font-weight:500; }
 .vp-alert { margin: 18px 0 0; padding: 10px 14px; border-radius: 10px; background: var(--st-bad-bg); color: var(--st-bad); font-size: 13px; font-weight:500; }
 .vp-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border-light); }
-.vp-btn { height: 40px; padding: 0 18px; border: 0; border-radius: 10px; background: var(--ses-red); color: #fff; font: inherit; font-size: 13px; font-weight:500; cursor: pointer; transition: filter .15s, opacity .15s; }
+.vp-btn { height: 40px; padding: 0 18px; border: 0; border-radius: 10px; background: var(--btn-accent); color: #fff; font: inherit; font-size: 13px; font-weight:500; cursor: pointer; transition: filter .15s, opacity .15s; }
 .vp-btn:hover:not(:disabled) { filter: brightness(1.06); }
 .vp-btn:disabled { opacity: .5; cursor: not-allowed; }
 .vp-btn2 { height: 40px; padding: 0 16px; border: 1px solid var(--vp-line2); border-radius: 10px; background: var(--vp-field); color: var(--text-heading); font: inherit; font-size: 13px; font-weight:500; cursor: pointer; }
