@@ -256,19 +256,43 @@ async def fetch_billing_data(question: str, authorization: Optional[str]) -> dic
             else:
                 try:
                     r = resp.json()
-                    out[key] = {"period": r.get("period"), "summary": r.get("summary"), "totals": r.get("totals"), "rows": (r.get("rows") or [])[:25]}
+                    out[key] = {"period": r.get("period"), "summary": r.get("summary"), "totals": r.get("totals"), "rows": (r.get("rows") or [])[:10]}
                 except Exception:
                     out[key] = None
     return out
 
 
-async def fetch_population_data(question: str, authorization: Optional[str] = None) -> dict:
-    q = question.lower()
-    needed = {ep for ep, kws in KEYWORD_MAP.items() if any(kw in q for kw in kws)}
-    wants_billing = any(w in q for w in BILLING_WORDS)
-    if not needed and not wants_billing:
-        needed = set(KEYWORD_MAP.keys())  # general question → fetch all
+MAX_QUESTION_CHARS = 500
+HELP_REPLY = (
+    "I answer from the reports, so ask about a topic: patients (how many, by sex), diagnoses, medicines dispensed, "
+    "lab investigations, vital signs, chronic diseases (for example, how many hypertension patients have controlled "
+    "blood pressure), or billing. Nothing is read from the reports until you ask."
+)
+TREND_WORDS = ["trend", "over time", "history", "per day", "each day"]
 
+
+def topics_for(text: str) -> tuple[set[str], bool]:
+    """The report topics a question names: which population endpoints, and whether billing. Nothing named = nothing needed."""
+    q = text.lower()
+    return {ep for ep, kws in KEYWORD_MAP.items() if any(kw in q for kw in kws)}, any(w in q for w in BILLING_WORDS)
+
+
+def topics_for_chat(question: str, history: list) -> tuple[set[str], bool]:
+    """Topics for this question; a follow-up that names none ("and for women?") reuses the last earlier question that did."""
+    needed, billing = topics_for(question)
+    if needed or billing:
+        return needed, billing
+    earlier = [m for m in history if m.role == "user"]
+    if earlier and earlier[-1].content.strip() == question.strip():
+        earlier = earlier[:-1]  # the page sends the new question as the last history entry too
+    for m in reversed(earlier):
+        needed, billing = topics_for(m.content)
+        if needed or billing:
+            return needed, billing
+    return set(), False
+
+
+async def fetch_population_data(needed: set[str], wants_billing: bool, question: str, authorization: Optional[str] = None) -> dict:
     results = {}
     # The population endpoints need a login: the asker's own is forwarded, so the chat can read only what they can see on the page.
     headers = {"Authorization": authorization} if authorization else {}
@@ -350,13 +374,28 @@ def build_render_data(fetched: dict, response_type: str, chart_type: Optional[st
 
 @app.post("/cds/reports-chat", response_model=ReportsChatResponse)
 async def reports_chat(req: ReportsChatRequest, authorization: Optional[str] = Header(None)):
-    # 1. Fetch relevant population data
+    question = req.question.strip()
+    # 0. Nothing runs unless a person asked something: no question, no sign-in or no topic means no report is read and the AI is not called.
+    if not question:
+        raise HTTPException(status_code=400, detail="Ask a question to get an answer.")
+    if len(question) > MAX_QUESTION_CHARS:
+        raise HTTPException(status_code=400, detail=f"Keep the question under {MAX_QUESTION_CHARS} characters.")
+    if not authorization:
+        return ReportsChatResponse(answer="Sign in to ask questions about the reports.", responseType="text", data=None)
+    needed, wants_billing = topics_for_chat(question, req.history)
+    if not needed and not wants_billing:
+        return ReportsChatResponse(answer=HELP_REPLY, responseType="text", data=None)
+
+    # 1. Fetch only the reports the question is about
     try:
-        fetched = await fetch_population_data(req.question, authorization)
+        fetched = await fetch_population_data(needed, wants_billing, question, authorization)
     except Exception as e:
         fetched = {}
+    # Vital-sign time series are long and only a trend question uses them.
+    if isinstance(fetched.get("vitals"), dict) and not any(w in question.lower() for w in TREND_WORDS):
+        fetched["vitals"].pop("timeSeries", None)
 
-    data_json = json.dumps(fetched, indent=2, default=str)
+    data_json = json.dumps(fetched, separators=(",", ":"), default=str)
 
     # 2. Build prompt — data-grounded, no hallucination
     system_msg = (
@@ -383,13 +422,14 @@ async def reports_chat(req: ReportsChatRequest, authorization: Optional[str] = H
 
     user_prompt = (
         f"DATA (from the live database — answer only from this):\n{data_json}\n\n"
-        f"QUESTION: {req.question}\n\n"
+        f"QUESTION: {question}\n\n"
         "Remember: answer only from the DATA above. If the information is not there, say so. Respond with JSON only."
     )
 
     messages = [{"role": "system", "content": system_msg}]
-    for msg in req.history[-6:]:
-        messages.append({"role": msg.role, "content": msg.content})
+    earlier = req.history[:-1] if req.history and req.history[-1].role == "user" and req.history[-1].content.strip() == question else req.history
+    for msg in earlier[-4:]:
+        messages.append({"role": msg.role, "content": msg.content[:300]})
     messages.append({"role": "user", "content": user_prompt})
 
     # 3. Call Ollama
@@ -412,7 +452,7 @@ async def reports_chat(req: ReportsChatRequest, authorization: Optional[str] = H
         chart_type = None
 
     # 5. Override responseType deterministically based on data shape + keywords
-    q = req.question.lower()
+    q = question.lower()
     if response_type != "chart":
         has_diag_list = fetched.get("diagnoses") and len(fetched["diagnoses"]) >= 1
         has_med_list = fetched.get("medications") and len(fetched["medications"]) >= 1

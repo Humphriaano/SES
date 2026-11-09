@@ -389,6 +389,9 @@ export default function ReportsAIPanel() {
                 {s}
               </button>
             ))}
+            <div style={{ fontSize: 11.5, color: 'var(--text-subtle)', textAlign: 'center', marginTop: 6, maxWidth: 260 }}>
+              Nothing is read from the reports until you ask a question, and only the reports that question is about.
+            </div>
           </div>
         )}
 
@@ -451,6 +454,7 @@ export default function ReportsAIPanel() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask a question about your patients..."
+            maxLength={500}
             disabled={loading}
             style={{
               flex: 1, border: '1px solid var(--border-input)', borderRadius: 14,
