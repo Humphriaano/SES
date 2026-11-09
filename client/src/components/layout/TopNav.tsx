@@ -368,7 +368,7 @@ export default function TopNav() {
         .tn-icon { width: 38px; height: 38px; border: 0; border-radius: 10px; background: transparent; color: var(--bar-text);
           display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .tn-icon:hover { background: rgba(255,255,255,.08); }
-        .tn-me { width: 32px; height: 32px; border-radius: 50%; background: var(--ses-red); color: #fff; font-weight:500; font-size: 13px;
+        .tn-me { width: 32px; height: 32px; border-radius: 50%; background: var(--btn-accent); color: #fff; font-weight:500; font-size: 13px;
           display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .tn .sp-btn { height: 30px; }
         .tn-nav { display: flex; gap: 2px; height: 32px; align-items: stretch; border-top: 1px solid var(--bar-line); overflow-x: auto; }

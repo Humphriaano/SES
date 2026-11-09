@@ -160,7 +160,7 @@ body .tn-link:hover { color: var(--text-heading); background: var(--bg-surface);
 body .tn-link.active { color: var(--selection-text); background: var(--bg-card); box-shadow: var(--premium-selected-shadow); }
 body :is(.tn-q,.tn .sp-btn) { border: 1px solid var(--border); background: var(--bg-surface); border-radius: 999px; height: 30px; color: var(--text-heading); font-weight: 500; }
 body .tn-qn { background: var(--bg-surface-2); color: var(--text-muted); }
-body .tn-me { background: radial-gradient(circle at 30% 30%,#F0484E,#B0161C); box-shadow: 0 4px 14px rgba(224,38,44,.24); font-weight: 500; }
+body .tn-me { background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--btn-accent) 78%, #fff), var(--btn-accent)); box-shadow: 0 4px 14px var(--btn-accent-shadow); font-weight: 500; }
 body .tn-icon { border-radius: 999px; color: var(--text-muted); }
 body .tn-icon:hover { background: var(--bg-surface); color: var(--text-heading); }
 body .sd, body .sp-menu { background: var(--premium-panel-bg); border-radius: 24px; box-shadow: var(--premium-pop-shadow); border-color: var(--border-input); }
