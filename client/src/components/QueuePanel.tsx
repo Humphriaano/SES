@@ -64,7 +64,7 @@ function CountBadge({ count, style }: { count: number; style?: React.CSSProperti
       minWidth: 18, height: 18, borderRadius: 9, padding: '0 4px',
       fontSize: 10, fontWeight: 500, lineHeight: '18px', textAlign: 'center',
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      background: count > 0 ? 'var(--ses-red)' : 'var(--bg-surface-2)',
+      background: count > 0 ? 'var(--btn-accent)' : 'var(--bg-surface-2)',
       color: count > 0 ? '#fff' : 'var(--text-subtle)',
       flexShrink: 0,
       ...style,
@@ -529,7 +529,7 @@ export default function QueuePanel({ open, onClose }: Props) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 16px 12px 20px', flexShrink: 0 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
             <h2 id="qd-t" style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 17, fontWeight: 500, color: 'var(--text-heading)' }}>Queue</h2>
-            <span style={{ minWidth: 20, height: 20, padding: '0 6px', borderRadius: 10, background: 'var(--ses-red)', color: '#fff', fontSize: 12, fontWeight: 500, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
+            <span style={{ minWidth: 20, height: 20, padding: '0 6px', borderRadius: 10, background: 'var(--btn-accent)', color: '#fff', fontSize: 12, fontWeight: 500, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
               {activeCount}
             </span>
             {lastUpdated && <span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Updated {secsAgo()}</span>}
