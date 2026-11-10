@@ -113,7 +113,8 @@ function RoomViewSwitch({
     <div ref={ref} style={{ position: 'relative', padding: '8px 14px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: 'var(--text-muted)' }}>
         <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {viewingMine ? 'Showing your room' : 'Showing'}{' '}
+          {/* Your own room needs no caption: its name is enough. Any other room or all rooms says "Showing", so it is never mistaken for yours. */}
+          {viewingMine ? null : <>Showing{' '}</>}
           <b style={{ color: 'var(--text-heading)' }}>{current ? current.name : 'all rooms'}</b>
         </span>
         {mine && !viewingMine && (
